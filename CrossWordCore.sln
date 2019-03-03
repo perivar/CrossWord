@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp", "TestApp\TestApp.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "CrossWord.Test\Test.csproj", "{F2C79498-4BCB-4A1B-B292-AE9684EF66DC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrossWordWeb", "CrossWordWeb\CrossWordWeb.csproj", "{B33A5F5F-D650-4E8F-9AF1-745BD493255C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{F2C79498-4BCB-4A1B-B292-AE9684EF66DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2C79498-4BCB-4A1B-B292-AE9684EF66DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2C79498-4BCB-4A1B-B292-AE9684EF66DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B33A5F5F-D650-4E8F-9AF1-745BD493255C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B33A5F5F-D650-4E8F-9AF1-745BD493255C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B33A5F5F-D650-4E8F-9AF1-745BD493255C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B33A5F5F-D650-4E8F-9AF1-745BD493255C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -7,3 +7,4 @@ packages
 *.bak
 /.vs/*
 out.txt
+node_modules

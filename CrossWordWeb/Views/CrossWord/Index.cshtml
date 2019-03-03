@@ -1,0 +1,179 @@
+@{
+    ViewData["Title"] = "CrossWord Page";
+    var dateStringFormatted = Context.Request.Query["date"];
+    //var dateStringFormatted = DateTime.ParseExact(dateString, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture)
+    //                                    .ToString("yyyy/MM/dd", System.Globalization.CultureInfo.InvariantCulture);
+}
+
+@section Head {
+    <style>
+    @* 
+        body { font-family:Tahoma, Helvetica, Sans-Serif; background-color:#f6f6f6; font-size:14px; }
+        h2 { color:#00008B; }
+        a { color:#0c519f; text-decoration:none; }
+        a:hover { color:#cc0000; text-decoration:underline; }
+        .links { margin-bottom:20px; font-size:12px; }
+        .links a { margin-left: 4px; margin-right: 4px; }
+    *@
+        #puzNotepad { background-color: #ffffe0; max-width:800px; padding:4px; border:1px solid #808080; margin-bottom:8px; display:none; }
+        #puzTable { border-collapse:collapse; border-spacing: 0; font-family:Tahoma, Helvetica, Sans-Serif; }
+        #puzTable td { width:26px;  text-align:center; font-size:12px; border:1px solid #000000; background-color:White; padding: 0; }
+        #puzTable .black { background-color: black; }
+        #puzTable .circle { background-color: yellow; }
+        #puzTable .shade { background-color: lightgray; }
+        .grid { font-size:8px; text-align:left; padding-left:1px; height:9px }
+        .letter { height:17px; vertical-align:baseline; font-weight:bold; }
+        .copy {  font-size:11px; color:#303030; font-style:italic; margin-top:2px; }
+        .clue { float:left; background-color:#ffffff; padding: 8px; border: 1px solid #00008B; margin: 20px 20px 20px 0; max-width:380px; font-size:12px; display:none; }
+        .cluehead { font-size:18px; background-color: #87CEFA; font-weight:bold; padding:4px; margin-bottom: 20px; border:1px solid #808080; text-align:center; letter-spacing:2px; }
+    </style>
+}
+
+@section Scripts { 
+    @* 
+    Javascripts section
+    *@
+    <script src="~/lib/signalr/signalr.js"></script>
+    <script>
+        function SetupSignalR() {
+            let connection = new signalR.HubConnectionBuilder()
+                .withUrl("/crosswords")
+                .configureLogging(signalR.LogLevel.Information)
+                .build();
+        
+            connection.on("Broadcast", (user, message) => {
+                const msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                const encodedMsg = user + ": " + msg;
+                $("#puzTitle").html(encodedMsg);
+            });
+
+            connection.start()
+                .then(_ => connection.invoke("AssociateJob", "@dateStringFormatted"))
+                .catch(err => console.error(err.toString()));
+        }
+
+        function RandomDate(start, end) {
+            var d = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2) month = '0' + month;
+            if (day.length < 2) day = '0' + day;
+
+            return [year, month, day].join('/');
+        }
+
+        //
+        // using JSONP and jQuery
+        //
+        function ShowPuzzle(puzzle) {
+            "use strict";
+
+            // Fill in text fields
+            $("#puzTitle").html(puzzle.title);
+            $("#puzAuthor").html("by " + puzzle.author);
+            $("#puzCopy").html("&copy; " + puzzle.copyright);
+
+            // Create the puzzle dynamically and fill in grid numbers and answers
+            var pt = $("#puzTable")[0];
+            var n = 0;
+            var i = 0;
+            var row, thisrow, col, cell, grid, val;
+
+            for (row = 0; row < puzzle.size.rows; row += 1) {
+                thisrow = pt.insertRow(row);
+                for (col = 0; col < puzzle.size.cols; col += 1) {
+                    cell = thisrow.insertCell(col);
+                    grid = puzzle.gridnums[n];
+                    if (grid === 0) {                       // 0 means no grid number at this location
+                        grid = " ";
+                    }
+                    val = puzzle.grid[n];
+                    if (val === ".") {
+                        cell.className = "black";
+                    }
+                    else {
+                        cell.innerHTML = "<div class='grid'>" + grid + "</div>" + "<div class='letter'>" + val + "</div>";
+                        if (puzzle.circles && puzzle.circles[n] === 1) {
+                            cell.className = puzzle.shadecircles ? "shade" : "circle";
+                        }
+                    }
+                    n += 1;
+                }
+            }
+
+            if (puzzle.notepad) {
+                $("#puzNotepad").show().html("<b>Notepad:</b> " + puzzle.notepad);
+                var w = document.getElementById("puzTable").clientWidth;
+                document.getElementById("puzNotepad").style.width = (w - 10) + "px";
+            }
+
+            // Fill in clues
+            $(".clue").show();
+
+            for (i in puzzle.clues.across) {
+                $("#across").append(puzzle.clues.across[i] + "<br />");
+            }
+
+            for (i in puzzle.clues.down) {
+                $("#down").append(puzzle.clues.down[i] + "<br />");
+            }
+        }
+
+        // This function is called in response to either button click
+        function LoadPuzzle(date) {
+            "use strict";
+
+            // clear out old text fields
+            $("#puzNotepad, .clue").hide();
+            $("#puzAuthor, #puzCopy, #across, #down").html("");
+            $("#puzTitle").html("Fetching data...");
+
+            // delete old table
+            var tbl = $("#puzTable")[0];
+            var n = tbl.rows.length;
+            while (n > 0) {
+                tbl.deleteRow(--n);
+            }
+
+            // make the JSONP call and send result to ShowPuzzle()
+			// The ? on the end of the URL tells jQuery that it’s dealing with a JSONP request instead of JSON. 
+			// jQuery then automatically registers the callback function which it calls when the request returns.
+            //$.getJSON("https://www.xwordinfo.com/JSON/Data.aspx?callback=?", { date: date }, ShowPuzzle);
+
+            if(date == "random") {
+                var start = new Date("1976-01-01");
+                var end = new Date("2017-05-29");
+                var randomDateString = RandomDate(start, end)
+			    $.getJSON("https://raw.githubusercontent.com/doshea/nyt_crosswords/master/" + randomDateString + ".json", function( json ) {
+                    ShowPuzzle(json);
+                })
+                .fail(function() {
+                    $("#puzTitle").html("Could not find a crossword for this date, please try again ...");
+                });
+            } else {
+                var currentDateString = '@dateStringFormatted';
+			    $.getJSON("https://raw.githubusercontent.com/doshea/nyt_crosswords/master/" + currentDateString + ".json", function( json ) {
+                    ShowPuzzle(json);
+                })
+                .fail(function() {
+                    $("#puzTitle").html("Could not find a crossword for this date, please try again ...");
+                });
+            }		
+        }
+    </script>
+}    
+
+<button id="recent" onclick="LoadPuzzle('current')">Current Puzzle</button> &nbsp;
+<button id="random" onclick="LoadPuzzle('random')">Random Puzzle</button> &nbsp;
+<button id="signalr" onclick="SetupSignalR()">Setup SignalR</button>
+
+<h2 id="puzTitle"></h2>
+<p id="puzAuthor"></p>
+<div id="puzNotepad"></div>
+<table id="puzTable"></table>
+<div id="puzCopy" class="copy"></div>
+<div class="clue"><div class="cluehead">Across</div><div id="across"></div></div>
+<div class="clue"><div class="cluehead">Down</div><div id="down"></div></div>
+<br style="clear:both" />
