@@ -17,7 +17,7 @@ namespace CrossWord
 
         public IEnumerable<ICrossBoard> GetAllPossiblePlacements(ICrossDictionary dictionary)
         {
-            var puzzle = NormalizePuzzle(_puzzle).AsSpan();
+            var puzzle = NormalizePuzzle(_puzzle);
             var board = _board.Clone();
             board.Preprocess(dictionary);
             var patterns = new List<CrossPattern>();
@@ -39,7 +39,7 @@ namespace CrossWord
                     var patt = patterns[idx];
                     if (restPuzzleLength < patt.Length) continue;
                     if (restPuzzleLength - patt.Length == 1) continue;
-                    var trans = patt.TryFillPuzzle(puzzle.Slice(puzzle.Length - restPuzzleLength,
+                    var trans = patt.TryFillPuzzle(puzzle.AsSpan().Slice(puzzle.Length - restPuzzleLength,
                                                    patt.Length), dictionary);
                     if (trans != null)
                     {

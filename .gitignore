@@ -6,3 +6,4 @@ packages
 *.suo
 *.bak
 /.vs/*
+out.txt
