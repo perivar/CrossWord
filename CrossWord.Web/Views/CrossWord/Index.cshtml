@@ -35,21 +35,36 @@
     *@
     <script src="~/lib/signalr/signalr.js"></script>
     <script>
-        function SetupSignalR() {
-            let connection = new signalR.HubConnectionBuilder()
+        const connection = new signalR.HubConnectionBuilder()
                 .withUrl("/crosswords")
                 .configureLogging(signalR.LogLevel.Information)
                 .build();
-        
-            connection.on("Broadcast", (user, message) => {
-                const msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                const encodedMsg = user + ": " + msg;
-                $("#puzTitle").html(encodedMsg);
-            });
+
+        // listen to Broadcast events
+        connection.on("Broadcast", (user, message) => {
+            const msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            const encodedMsg = user + ": " + msg;
+            $("#puzTitle").html(encodedMsg);
+        });
+
+        // listen to Progress events
+        connection.on("Progress", (user, json) => {
+            $("#puzTitle").html(json.title);
+        });
+
+        function StartCrosswordGeneration() {
+            
+            //await connection.start();
+            //await connection.invoke("StartTask").catch(err => console.error(err.toString()));
 
             connection.start()
-                .then(_ => connection.invoke("AssociateJob", "@dateStringFormatted"))
-                .catch(err => console.error(err.toString()));
+                //.then(_ => connection.invoke("AssociateJob", "@dateStringFormatted")) 
+                .then(_ => connection.invoke("StartTask"))
+                .catch(err => console.error(err.toString()));                
+        }
+
+        function CancelCrosswordGeneration() {
+            connection.invoke("CancelTask").catch(err => console.error(err.toString()));
         }
 
         function RandomDate(start, end) {
@@ -167,7 +182,8 @@
 
 <button id="recent" onclick="LoadPuzzle('current')">Current Puzzle</button> &nbsp;
 <button id="random" onclick="LoadPuzzle('random')">Random Puzzle</button> &nbsp;
-<button id="signalr" onclick="SetupSignalR()">Setup SignalR</button>
+<button id="startgeneration" onclick="StartCrosswordGeneration()">Start Crossword Generation</button> &nbsp;
+<button id="cancelgeneration" onclick="CancelCrosswordGeneration()">Cancel Crossword Generation</button>
 
 <h2 id="puzTitle"></h2>
 <p id="puzAuthor"></p>

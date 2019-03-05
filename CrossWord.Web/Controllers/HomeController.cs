@@ -4,9 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using CrossWordWeb.Models;
+using CrossWord.Web.Models;
 
-namespace CrossWordWeb.Controllers
+namespace CrossWord.Web.Controllers
 {
     public class HomeController : Controller
     {

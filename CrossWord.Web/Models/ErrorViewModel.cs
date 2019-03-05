@@ -1,6 +1,6 @@
 using System;
 
-namespace CrossWordWeb.Models
+namespace CrossWord.Web.Models
 {
     public class ErrorViewModel
     {

@@ -1,15 +1,22 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "build",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "build",
-                "${workspaceFolder}/CrossWord/CrossWord.csproj"
-            ],
-            "problemMatcher": "$msCompile"
-        }
-    ]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "command": "dotnet",
+      "type": "process",
+      "args": ["build", "${workspaceFolder}/CrossWord/CrossWord.csproj"],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "build web",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/CrossWord.Web/CrossWord.Web.csproj"
+      ],
+      "problemMatcher": "$msCompile"
+    }
+  ]
 }

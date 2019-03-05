@@ -5,9 +5,9 @@ using System.Globalization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace CrossWordWeb.Models
+namespace CrossWord.Web.Models
 {
-    public partial class CrossWord
+    public partial class CrossWordModel
     {
         [JsonProperty("title")]
         public string Title { get; set; }
@@ -125,14 +125,14 @@ namespace CrossWordWeb.Models
         public long Rows { get; set; }
     }
 
-    public partial class CrossWord
+    public partial class CrossWordModel
     {
-        public static CrossWord FromJson(string json) => JsonConvert.DeserializeObject<CrossWord>(json, CrossWordWeb.Models.Converter.Settings);
+        public static CrossWordModel FromJson(string json) => JsonConvert.DeserializeObject<CrossWordModel>(json, Converter.Settings);
     }
 
     public static class Serialize
     {
-        public static string ToJson(this CrossWord self) => JsonConvert.SerializeObject(self, CrossWordWeb.Models.Converter.Settings);
+        public static string ToJson(this CrossWordModel self) => JsonConvert.SerializeObject(self, Converter.Settings);
     }
 
     internal static class Converter

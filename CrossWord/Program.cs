@@ -99,20 +99,6 @@ namespace CrossWord
             var gen = new CrossGenerator(dictionary, board);
             board.Preprocess(dictionary);
 
-            // int counter = 0;
-            // foreach (var resultBoard in gen.Generate())
-            // {
-            //     counter++;
-            //     Console.WriteLine("Solution has been found: {0}", counter);
-            //     using (var writer = new StreamWriter(new FileStream("out.txt", FileMode.Append)))
-            //     {
-            //         writer.WriteLine("SOLUTION: " + counter);
-            //         resultBoard.WriteTo(writer);
-            //         resultBoard.WritePatternsTo(writer, dictionary);
-            //         writer.WriteLine();
-            //     }
-            // }
-
             return gen.Generate().FirstOrDefault();
         }
 

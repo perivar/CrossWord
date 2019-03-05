@@ -31,7 +31,7 @@ namespace CrossWord
     {
         int _sizeX;
         int _sizeY;
-        List<StartWord> _startWords; //StartWord
+        List<StartWord> _startWords; // StartWord
 
         List<CrossPattern> _horizontalPatterns;
         List<CrossPattern> _verticalPatterns;
@@ -130,7 +130,9 @@ namespace CrossWord
                     _verticalPatterns.Add(cp);
                 }
             }
+
             BindAdjacentPatterns();
+
             //calculate instantiation count
             var wordLengthCount = new int[aDict.MaxWordLength + 1];
             for (int i = 1; i <= aDict.MaxWordLength; i++)
@@ -217,7 +219,6 @@ namespace CrossWord
             return result;
         }
 
-
         public void WriteTo(StreamWriter writer)
         {
             var board = new char[_sizeX, _sizeY];
@@ -257,8 +258,8 @@ namespace CrossWord
                     row += board[x, y] + " ";
                 writer.WriteLine("{0:00}: {1}", y, row);
             }
-            writer.WriteLine();
 
+            writer.WriteLine();
         }
 
         public void WritePatternsTo(StreamWriter writer)

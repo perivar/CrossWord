@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp", "TestApp\TestApp.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "CrossWord.Test\Test.csproj", "{F2C79498-4BCB-4A1B-B292-AE9684EF66DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrossWordWeb", "CrossWordWeb\CrossWordWeb.csproj", "{B33A5F5F-D650-4E8F-9AF1-745BD493255C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrossWord.Web", "CrossWord.Web\CrossWord.Web.csproj", "{B33A5F5F-D650-4E8F-9AF1-745BD493255C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
