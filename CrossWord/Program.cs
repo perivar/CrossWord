@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.Logging;
 
 namespace CrossWord
 {
@@ -38,33 +40,99 @@ namespace CrossWord
                 Console.WriteLine(string.Format("Cannot load dictionary from file {0}.", dictionaryFile), e);
                 return 3;
             }
-            ICrossBoard resultBoard;
-            try
+
+            if (outputFile.Equals("signalr"))
             {
-                resultBoard = puzzle != null
-                    ? GenerateFirstCrossWord(board, dictionary, puzzle)
-                    : GenerateFirstCrossWord(board, dictionary);
+                // generate and send to signalr hub
+                var cancellationTokenSource = new CancellationTokenSource();
+
+                Task.Run(() => MainAsync(cancellationTokenSource.Token).GetAwaiter().GetResult(), cancellationTokenSource.Token);
+
+                Console.WriteLine("Press Enter to Exit ...");
+                Console.ReadLine();
+
+                cancellationTokenSource.Cancel();
             }
-            catch (Exception e)
+            else
             {
-                Console.WriteLine("Generating crossword has failed.", e);
-                return 4;
-            }
-            if (resultBoard == null)
-            {
-                Console.WriteLine(string.Format("No solution has been found."));
-                return 5;
-            }
-            try
-            {
-                SaveResultToFile(outputFile, resultBoard, dictionary);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(string.Format("Saving result crossword to file {0} has failed.", outputFile), e);
-                return 6;
+
+                ICrossBoard resultBoard;
+                try
+                {
+                    resultBoard = puzzle != null
+                        ? GenerateFirstCrossWord(board, dictionary, puzzle)
+                        : GenerateFirstCrossWord(board, dictionary);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Generating crossword has failed.", e);
+                    return 4;
+                }
+                if (resultBoard == null)
+                {
+                    Console.WriteLine(string.Format("No solution has been found."));
+                    return 5;
+                }
+                try
+                {
+                    SaveResultToFile(outputFile, resultBoard, dictionary);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(string.Format("Saving result crossword to file {0} has failed.", outputFile), e);
+                    return 6;
+                }
             }
             return 0;
+        }
+
+        private static async Task MainAsync(CancellationToken cancellationToken)
+        {
+            // Keep trying to until we can start
+            HubConnection hubConnection = null;
+            while (true)
+            {
+                hubConnection = new HubConnectionBuilder()
+                    .WithUrl("http://localhost:5000/crosswords")
+                    .ConfigureLogging(logging =>
+                    {
+                        logging.SetMinimumLevel(LogLevel.Information);
+                        logging.AddConsole();
+                    })
+                    .Build();
+
+                try
+                {
+                    await hubConnection.StartAsync();
+                    break;
+                }
+                catch (Exception)
+                {
+                    await Task.Delay(1000);
+                }
+
+            }
+
+            // Initialize a new Random Number Generator:
+            Random rnd = new Random();
+
+            double value = 0.0d;
+
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                await Task.Delay(1000, cancellationToken);
+
+                // Generate the value to Broadcast to Clients:
+                value = Math.Min(Math.Max(value + (0.1 - rnd.NextDouble() / 5.0), -1), 1);
+
+                // Create the Measurement with a Timestamp assigned:
+                var measurement = string.Format("{0} {1}", DateTime.UtcNow, value);
+
+                // Finally send the value:
+                await hubConnection.InvokeAsync("Broadcast", "Client", measurement, cancellationToken);
+            }
+
+            await hubConnection.DisposeAsync();
         }
 
         static bool ParseInput(IEnumerable<string> args, out string inputFile, out string outputFile, out string puzzle,

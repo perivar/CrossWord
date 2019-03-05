@@ -37,6 +37,16 @@ namespace CrossWord.Web
 
             // Enable SignalR
             services.AddSignalR();
+
+            services.AddCors(o =>
+            {
+                o.AddPolicy("Everything", p =>
+                {
+                    p.AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowAnyOrigin();
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,9 +69,11 @@ namespace CrossWord.Web
                 routes.MapHub<CrossWordsHub>("/crosswords");
             });
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+
+            app.UseCors("Everything");
 
             // the default route is sufficient
             // {controller=Home}/{action=Index}/{id?}

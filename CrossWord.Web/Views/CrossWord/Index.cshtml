@@ -52,6 +52,8 @@
             $("#puzTitle").html(json.title);
         });
 
+        connection.start().catch(err => console.error(err.toString()));                
+
         function StartCrosswordGeneration() {
             
             //await connection.start();
@@ -59,7 +61,7 @@
 
             connection.start()
                 //.then(_ => connection.invoke("AssociateJob", "@dateStringFormatted")) 
-                .then(_ => connection.invoke("StartTask"))
+                //.then(_ => connection.invoke("StartTask"))
                 .catch(err => console.error(err.toString()));                
         }
 
