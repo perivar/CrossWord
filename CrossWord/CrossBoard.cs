@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CrossWord.Models;
 
 namespace CrossWord
 {
@@ -332,6 +333,74 @@ namespace CrossWord
                 result.BindAdjacentPatterns();
             }
             return result;
+        }
+
+        public CrossWordModel ToCrossWordModel(ICrossDictionary dictionary)
+        {
+            var model = new CrossWordModel();
+
+            var board = new char[_sizeX, _sizeY];
+
+            foreach (var sw in _startWords)
+            {
+                board[sw.StartX, sw.StartY] = '.';
+            }
+
+            foreach (var p in _horizontalPatterns)
+            {
+                var word = p.GetWord();
+                string description;
+                if (!dictionary.TryGetDescription(word, out description))
+                    description = "[PUZZLE]";
+
+                for (int x = p.StartX; x < p.StartX + p.Length; x++)
+                {
+                    if (p.Pattern != null)
+                        board[x, p.StartY] = p.Pattern[x - p.StartX];
+                    else
+                        board[x, p.StartY] = ' ';
+                }
+            }
+            
+            foreach (var p in _verticalPatterns)
+            {
+                var word = p.GetWord();
+                string description;
+                if (!dictionary.TryGetDescription(word, out description))
+                    description = "[PUZZLE]";
+
+                for (int y = p.StartY; y < p.StartY + p.Length; y++)
+                {
+                    if (p.Pattern != null)
+                    {
+                        var c = p.Pattern[y - p.StartY];
+                        if (c != ' ')
+                            board[p.StartX, y] = c;
+                    }
+                }
+            }
+
+            var grid = new List<String>();
+            var stringWriter = new StringWriter();
+            for (int y = 0; y < _sizeY; y++)
+            {
+                string row = "";
+                for (int x = 0; x < _sizeX; x++)
+                {
+                    row += board[x, y] + " ";
+                    grid.Add(board[x, y].ToString());
+                }
+
+                stringWriter.WriteLine("{0:00}: {1} <br>", y, row);
+            }
+
+            model.Title = "Generated";
+            model.Size = new Size { Cols = _sizeX, Rows = _sizeY };
+            model.Notepad = "<br>" + stringWriter.ToString();
+            model.Grid = grid.ToArray();
+            model.Gridnums = new long[model.Grid.Length];
+
+            return model;
         }
     }
 }

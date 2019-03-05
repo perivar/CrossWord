@@ -5,7 +5,7 @@ using System.Globalization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace CrossWord.Web.Models
+namespace CrossWord.Models
 {
     public partial class CrossWordModel
     {

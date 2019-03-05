@@ -46,7 +46,7 @@ namespace CrossWord
                 // generate and send to signalr hub
                 var cancellationTokenSource = new CancellationTokenSource();
 
-                Task.Run(() => MainAsync(cancellationTokenSource.Token).GetAwaiter().GetResult(), cancellationTokenSource.Token);
+                Task.Run(() => MainAsync(board, dictionary, cancellationTokenSource.Token).GetAwaiter().GetResult(), cancellationTokenSource.Token);
 
                 Console.WriteLine("Press Enter to Exit ...");
                 Console.ReadLine();
@@ -86,7 +86,7 @@ namespace CrossWord
             return 0;
         }
 
-        private static async Task MainAsync(CancellationToken cancellationToken)
+        private static async Task MainAsync(ICrossBoard board, ICrossDictionary dictionary, CancellationToken cancellationToken)
         {
             // Keep trying to until we can start
             HubConnection hubConnection = null;
@@ -110,26 +110,20 @@ namespace CrossWord
                 {
                     await Task.Delay(1000);
                 }
-
             }
 
-            // Initialize a new Random Number Generator:
-            Random rnd = new Random();
-
-            double value = 0.0d;
-
-            while (!cancellationToken.IsCancellationRequested)
+            try
             {
-                await Task.Delay(1000, cancellationToken);
-
-                // Generate the value to Broadcast to Clients:
-                value = Math.Min(Math.Max(value + (0.1 - rnd.NextDouble() / 5.0), -1), 1);
-
-                // Create the Measurement with a Timestamp assigned:
-                var measurement = string.Format("{0} {1}", DateTime.UtcNow, value);
-
-                // Finally send the value:
-                await hubConnection.InvokeAsync("Broadcast", "Client", measurement, cancellationToken);
+                foreach (var curCrossword in Generator.GenerateCrossWords(board, dictionary, cancellationToken))
+                {
+                    var cb = curCrossword as CrossBoard;  
+                    var crossWordModel = cb.ToCrossWordModel(dictionary);
+                    await hubConnection.InvokeAsync("SendCrossword", "Client", crossWordModel, cancellationToken);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Cancel and timeout logic
             }
 
             await hubConnection.DisposeAsync();

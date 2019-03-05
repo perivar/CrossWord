@@ -15,7 +15,7 @@
         .links { margin-bottom:20px; font-size:12px; }
         .links a { margin-left: 4px; margin-right: 4px; }
     *@
-        #puzNotepad { background-color: #ffffe0; max-width:800px; padding:4px; border:1px solid #808080; margin-bottom:8px; display:none; }
+        #puzNotepad { background-color: #ffffe0; max-width:800px; padding:4px; border:1px solid #808080; margin-bottom:8px; display:none; font-family:Courier New, Courier, monospace; }
         #puzTable { border-collapse:collapse; border-spacing: 0; font-family:Tahoma, Helvetica, Sans-Serif; }
         #puzTable td { width:26px;  text-align:center; font-size:12px; border:1px solid #000000; background-color:White; padding: 0; }
         #puzTable .black { background-color: black; }
@@ -48,8 +48,22 @@
         });
 
         // listen to Progress events
-        connection.on("Progress", (user, json) => {
-            $("#puzTitle").html(json.title);
+        connection.on("SendCrossword", (user, puzzle) => {
+            "use strict";
+
+            // clear out old text fields
+            $("#puzNotepad, .clue").hide();
+            $("#puzAuthor, #puzCopy, #across, #down").html("");
+            $("#puzTitle").html("Fetching data...");
+
+            // delete old table
+            var tbl = $("#puzTable")[0];
+            var n = tbl.rows.length;
+            while (n > 0) {
+                tbl.deleteRow(--n);
+            }
+
+            ShowPuzzle(puzzle);
         });
 
         connection.start().catch(err => console.error(err.toString()));                
