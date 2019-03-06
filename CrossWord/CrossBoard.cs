@@ -6,6 +6,68 @@ using CrossWord.Models;
 
 namespace CrossWord
 {
+    public class Coordinate : IEquatable<Coordinate>, IComparable<Coordinate>
+    {
+        public int X { get; protected set; }
+        public int Y { get; protected set; }
+        public int GridNumber { get; protected set; }
+
+        public Coordinate(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
+
+        public Coordinate(int x, int y, int gridNumber)
+        {
+            X = x;
+            Y = y;
+            GridNumber = gridNumber;
+        }
+
+        public bool Equals(Coordinate other)
+        {
+            return (this.X == other.X && this.Y == other.Y);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals(obj as Coordinate);
+        }
+
+        public static bool operator ==(Coordinate obj1, Coordinate obj2)
+        {
+            return obj1.Equals(obj2);
+        }
+
+        public static bool operator !=(Coordinate obj1, Coordinate obj2)
+        {
+            return !(obj1 == obj2);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.Y + 1000 * this.X;
+        }
+
+        public int CompareTo(Coordinate other)
+        {
+            // sort by Y then X
+            int result = this.Y.CompareTo(other.Y);
+            if (result == 0)
+                result = this.X.CompareTo(other.X);
+            return result;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("X: {0}, Y: {1}, GridNumber: {2}", X, Y, GridNumber);
+        }
+    }
+
     public class XYStartWordComparer : IComparer<StartWord>
     {
         int IComparer<StartWord>.Compare(StartWord sw1, StartWord sw2)
@@ -63,7 +125,7 @@ namespace CrossWord
         public void Preprocess(ICrossDictionary aDict)
         {
             _horizontalPatterns = new List<CrossPattern>();
-            _startWords.Sort(new YXStartWordComparer()); //first create horizontal patterns
+            _startWords.Sort(new YXStartWordComparer()); // first create horizontal patterns
 
             int wordIdx = 0;
             for (int y = 0; y < _sizeY; y++)
@@ -72,13 +134,13 @@ namespace CrossWord
                 while (wordIdx < _startWords.Count)
                 {
                     var sw = _startWords[wordIdx];
-                    //Console.WriteLine("StartWord x:{0} y:{1} idx:{2}/cnt:{3}",sw.StartX,sw.StartY,wordIdx,_startWords.Count);
+                    // Console.WriteLine("StartWord x:{0} y:{1} idx:{2}/cnt:{3}",sw.StartX,sw.StartY,wordIdx,_startWords.Count);
                     if (sw.StartY == y)
                     {
                         if (sw.StartX - nextX >= MinPatternLength)
                         {
                             var cp = new CrossPattern(nextX, y, sw.StartX - nextX, true);
-                            //Console.WriteLine("SW pattern startX: {0} startY: {1} len: {2}",cp.StartX, cp.StartY, cp.Length);
+                            // Console.WriteLine("SW pattern startX: {0} startY: {1} len: {2}",cp.StartX, cp.StartY, cp.Length);
                             _horizontalPatterns.Add(cp);
                         }
                         nextX = sw.StartX + 1;
@@ -92,13 +154,13 @@ namespace CrossWord
                 if (_sizeX - nextX >= MinPatternLength)
                 {
                     var cp = new CrossPattern(nextX, y, _sizeX - nextX, true);
-                    //Console.WriteLine("EL pattern startX: {0} startY: {1} len: {2}",cp.StartX, cp.StartY, cp.Length);
+                    // Console.WriteLine("EL pattern startX: {0} startY: {1} len: {2}",cp.StartX, cp.StartY, cp.Length);
                     _horizontalPatterns.Add(cp);
                 }
             }
 
             _verticalPatterns = new List<CrossPattern>();
-            _startWords.Sort(new XYStartWordComparer()); //first create horizontal patterns
+            _startWords.Sort(new XYStartWordComparer()); // then create vertical patterns
 
             wordIdx = 0;
             for (int x = 0; x < _sizeX; x++)
@@ -107,13 +169,13 @@ namespace CrossWord
                 while (wordIdx < _startWords.Count)
                 {
                     var sw = _startWords[wordIdx];
-                    //Console.WriteLine("StartWord x:{0} y:{1} idx:{2}/cnt:{3}",sw.StartX,sw.StartY,wordIdx,_startWords.Count);
+                    // onsole.WriteLine("StartWord x:{0} y:{1} idx:{2}/cnt:{3}",sw.StartX,sw.StartY,wordIdx,_startWords.Count);
                     if (sw.StartX == x)
                     {
                         if (sw.StartY - nextY >= MinPatternLength)
                         {
                             var cp = new CrossPattern(x, nextY, sw.StartY - nextY, false);
-                            //Console.WriteLine("SW patternY startX: {0} startY: {1} len: {2}",cp.StartX, cp.StartY, cp.Length);
+                            // Console.WriteLine("SW patternY startX: {0} startY: {1} len: {2}",cp.StartX, cp.StartY, cp.Length);
                             _verticalPatterns.Add(cp);
                         }
                         nextY = sw.StartY + 1;
@@ -127,32 +189,33 @@ namespace CrossWord
                 if (_sizeY - nextY >= MinPatternLength)
                 {
                     var cp = new CrossPattern(x, nextY, _sizeY - nextY, false);
-                    //Console.WriteLine("EL patternY startX: {0} startY: {1} len: {2}",cp.StartX, cp.StartY, cp.Length);
+                    // Console.WriteLine("EL patternY startX: {0} startY: {1} len: {2}",cp.StartX, cp.StartY, cp.Length);
                     _verticalPatterns.Add(cp);
                 }
             }
 
             BindAdjacentPatterns();
 
-            //calculate instantiation count
+            // calculate instantiation count
             var wordLengthCount = new int[aDict.MaxWordLength + 1];
             for (int i = 1; i <= aDict.MaxWordLength; i++)
             {
                 wordLengthCount[i] = aDict.GetWordOfLengthCount(i);
             }
+
             int patternCount = GetPatternCount();
             for (int i = 0; i < patternCount; i++)
             {
                 var pattern = GetCrossPattern(i);
                 if (pattern.Pattern == null)
                 {
-                    //empty
+                    // empty
                     pattern.InstantiationCount = wordLengthCount[pattern.Length];
                     pattern.Pattern = Enumerable.Repeat('.', pattern.Length).ToArray();
                 }
                 else
                 {
-                    //already set some letters
+                    // already set some letters
                     pattern.InstantiationCount = aDict.GetMatchCount(pattern.Pattern);
                 }
             }
@@ -167,10 +230,11 @@ namespace CrossWord
                     if (ver.StartX >= hor.StartX && ver.StartX < hor.StartX + hor.Length &&
                         hor.StartY >= ver.StartY && hor.StartY < ver.StartY + ver.Length)
                     {
-                        //adjacent
+                        // adjacent
                         hor.AdjacentPatterns[ver.StartX - hor.StartX] = ver;
                         ver.AdjacentPatterns[hor.StartY - ver.StartY] = hor;
-                        //Console.WriteLine("New dep for startX: {0} startY: {1} and startX {2} start Y {3} ",hor.StartX, hor.StartY, ver.StartX, ver.StartY);
+
+                        // Console.WriteLine("New dep for startX: {0} startY: {1} and startX {2} start Y {3} ", hor.StartX, hor.StartY, ver.StartX, ver.StartY);
                     }
                 }
             }
@@ -193,10 +257,10 @@ namespace CrossWord
             return _verticalPatterns[aIndex - _horizontalPatterns.Count];
         }
 
-        //get pattern at given position
+        // get pattern at given position
         public CrossPattern GetCrossPattern(int aStartX, int aStartY, Orientation aOrientation)
         {
-            return _horizontalPatterns[0]; //todo getCrossPattern
+            throw new NotImplementedException();
         }
 
         public CrossPattern GetMostConstrainedPattern(ICrossDictionary aDict)
@@ -281,9 +345,8 @@ namespace CrossWord
             {
                 var pattern = GetCrossPattern(i);
                 var word = pattern.GetWord();
-                string description;
-                if (!dictionary.TryGetDescription(word, out description))
-                    description = "[PUZZLE]";
+                var description = GetDescription(dictionary, word);
+
                 writer.WriteLine(string.Format("{0},{1}", pattern, description));
             }
         }
@@ -321,18 +384,30 @@ namespace CrossWord
             if (_horizontalPatterns != null && _verticalPatterns != null)
             {
                 result._horizontalPatterns = new List<CrossPattern>();
-                foreach (var patt in _horizontalPatterns)
+                foreach (var horPattern in _horizontalPatterns)
                 {
-                    result._horizontalPatterns.Add((CrossPattern)patt.Clone());
+                    result._horizontalPatterns.Add((CrossPattern)horPattern.Clone());
                 }
+
                 result._verticalPatterns = new List<CrossPattern>();
-                foreach (var patt in _verticalPatterns)
+                foreach (var verPattern in _verticalPatterns)
                 {
-                    result._verticalPatterns.Add((CrossPattern)patt.Clone());
+                    result._verticalPatterns.Add((CrossPattern)verPattern.Clone());
                 }
                 result.BindAdjacentPatterns();
             }
             return result;
+        }
+
+        private static string GetDescription(ICrossDictionary dictionary, string word)
+        {
+            string description;
+            if (!dictionary.TryGetDescription(word, out description))
+            {
+                description = "[PUZZLE]";
+            }
+
+            return description;
         }
 
         public CrossWordModel ToCrossWordModel(ICrossDictionary dictionary)
@@ -346,28 +421,33 @@ namespace CrossWord
                 board[sw.StartX, sw.StartY] = '.';
             }
 
+            var patterns = new List<CrossPattern>();
+            var stringWriter = new StringWriter();
+
+            // across = horizontal
             foreach (var p in _horizontalPatterns)
             {
-                var word = p.GetWord();
-                string description;
-                if (!dictionary.TryGetDescription(word, out description))
-                    description = "[PUZZLE]";
+                patterns.Add(p);
 
                 for (int x = p.StartX; x < p.StartX + p.Length; x++)
                 {
                     if (p.Pattern != null)
+                    {
                         board[x, p.StartY] = p.Pattern[x - p.StartX];
+                    }
                     else
+                    {
                         board[x, p.StartY] = ' ';
+                    }
                 }
+
+                // stringWriter.WriteLine("{0}<br>", p);
             }
-            
+
+            // down = vertical
             foreach (var p in _verticalPatterns)
             {
-                var word = p.GetWord();
-                string description;
-                if (!dictionary.TryGetDescription(word, out description))
-                    description = "[PUZZLE]";
+                patterns.Add(p);
 
                 for (int y = p.StartY; y < p.StartY + p.Length; y++)
                 {
@@ -375,13 +455,58 @@ namespace CrossWord
                     {
                         var c = p.Pattern[y - p.StartY];
                         if (c != ' ')
+                        {
                             board[p.StartX, y] = c;
+                        }
                     }
                 }
+
+                // stringWriter.WriteLine("{0}<br>", p);
             }
 
+            // calculate grid numbers and build clues lists
+            var acrossList = new List<String>();
+            var downList = new List<String>();
+            model.Gridnums = new long[_sizeX * _sizeY];
+            var sortedPatterns = patterns.OrderBy(s => s.StartY).ThenBy(s => s.StartX);
+            int gridNumber = 0;
+            CrossPattern lastPattern = null;
+            var coordinateMap = new Dictionary<CrossPattern, Coordinate>();
+            foreach (var p in sortedPatterns)
+            {
+                if (lastPattern != null && lastPattern.StartX == p.StartX && lastPattern.StartY == p.StartY)
+                {
+                    // patterns starts at same index
+                }
+                else
+                {
+                    // pattern start at new index, increment
+                    gridNumber++;
+                }
+
+                // store grid number as a part of the coordinate
+                coordinateMap.Add(p, new Coordinate(p.StartX, p.StartY, gridNumber));
+
+                // and store the clues
+                var word = p.GetWord();
+                var description = GetDescription(dictionary, word);
+
+                string clue = string.Format("{0}. {1}", gridNumber, description);
+                if (p.IsHorizontal)
+                {
+                    acrossList.Add(clue);
+                }
+                else
+                {
+                    downList.Add(clue);
+                }
+
+                // save last pattern to compare with
+                lastPattern = p;
+            }
+
+            // build output
             var grid = new List<String>();
-            var stringWriter = new StringWriter();
             for (int y = 0; y < _sizeY; y++)
             {
                 string row = "";
@@ -389,16 +514,28 @@ namespace CrossWord
                 {
                     row += board[x, y] + " ";
                     grid.Add(board[x, y].ToString());
+
+                    if (board[x, y] != '.')
+                    {
+                        var coordinate = new Coordinate(x, y);
+                        if (coordinateMap.ContainsValue(coordinate))
+                        {
+                            var coordinates = coordinateMap.Where(v => v.Value == coordinate).First();
+                            model.Gridnums[(y * _sizeX) + x] = coordinates.Value.GridNumber;
+                        }
+                    }
                 }
 
-                stringWriter.WriteLine("{0:00}: {1} <br>", y, row);
+                // stringWriter.WriteLine("{0:00}: {1} <br>", y, row);
             }
 
-            model.Title = "Generated";
+            model.Title = "Generated Crossword";
+            model.Author = "Crossword Generator";
+            model.Copyright = "Crossword Generator";
             model.Size = new Size { Cols = _sizeX, Rows = _sizeY };
-            model.Notepad = "<br>" + stringWriter.ToString();
+            // model.Notepad = "<br>" + stringWriter.ToString();
             model.Grid = grid.ToArray();
-            model.Gridnums = new long[model.Grid.Length];
+            model.Clues = new Answers() { Across = acrossList.ToArray(), Down = downList.ToArray() };
 
             return model;
         }

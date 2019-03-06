@@ -44,14 +44,29 @@ namespace CrossWord
             if (outputFile.Equals("signalr"))
             {
                 // generate and send to signalr hub
-                var cancellationTokenSource = new CancellationTokenSource();
+                
+                // http://mark.mymonster.nl/2013/02/15/cancel-a-threadsleep-uh-taskdelay-the-right-way
+                var tokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+                Task workerTask = Task.Run(
+                            async () =>
+                            {
+                                CancellationToken token = tokenSource.Token;
+                                try
+                                {
+                                    await MainAsync(board, dictionary, token);
+                                }
+                                catch (OperationCanceledException)
+                                {
+                                    Console.WriteLine("Cancelled @ {0}", DateTime.Now);
+                                }
+                            });
 
-                Task.Run(() => MainAsync(board, dictionary, cancellationTokenSource.Token).GetAwaiter().GetResult(), cancellationTokenSource.Token);
+                Task.WaitAll(workerTask);
 
-                Console.WriteLine("Press Enter to Exit ...");
-                Console.ReadLine();
-
-                cancellationTokenSource.Cancel();
+                // Task.Run(() => .GetAwaiter().GetResult(), cancellationTokenSource.Token);
+                // Console.WriteLine("Press Enter to Exit ...");
+                // Console.ReadLine();
+                // cancellationTokenSource.Cancel();
             }
             else
             {
@@ -116,7 +131,7 @@ namespace CrossWord
             {
                 foreach (var curCrossword in Generator.GenerateCrossWords(board, dictionary, cancellationToken))
                 {
-                    var cb = curCrossword as CrossBoard;  
+                    var cb = curCrossword as CrossBoard;
                     var crossWordModel = cb.ToCrossWordModel(dictionary);
                     await hubConnection.InvokeAsync("SendCrossword", "Client", crossWordModel, cancellationToken);
                 }
