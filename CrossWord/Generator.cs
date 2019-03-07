@@ -11,6 +11,8 @@ namespace CrossWord
 {
     public static class Generator
     {
+        private const int MAX_GENERATOR_COUNT = 10;
+
         public static async Task GenerateCrosswordsAsync(ICrossBoard board, ICrossDictionary dictionary, string puzzle, CancellationToken cancellationToken)
         {
             // Keep trying to until we can start
@@ -33,18 +35,25 @@ namespace CrossWord
                 }
                 catch (Exception)
                 {
-                    await Task.Delay(1000);
+                    await Task.Delay(500);
                 }
             }
 
             try
             {
                 var generated = GenerateCrossWords(board, dictionary, puzzle, cancellationToken);
+                int generatedCount = 0;
                 foreach (var curCrossword in generated)
                 {
+                    generatedCount++;
+
                     var cb = curCrossword as CrossBoard;
                     var crossWordModel = cb.ToCrossWordModel(dictionary);
+                    crossWordModel.Title = "Generated " + generatedCount;
+
                     await hubConnection.InvokeAsync("SendCrossword", "Client", crossWordModel, cancellationToken);
+
+                    await Task.Delay(200); // this makes the generation slower, can be removed
                 }
             }
             catch (OperationCanceledException)
@@ -53,19 +62,6 @@ namespace CrossWord
             }
 
             await hubConnection.DisposeAsync();
-        }
-
-        private static IEnumerable<ICrossBoard> GenerateCrossWords(ICrossBoard board, ICrossDictionary dictionary, CancellationToken cancellationToken)
-        {
-            var gen = new CrossGenerator(dictionary, board);
-            board.Preprocess(dictionary);
-
-            var crosswords = gen.Generate();
-            foreach (var resultBoard in crosswords)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                yield return resultBoard;
-            }
         }
 
         private static IEnumerable<ICrossBoard> GenerateCrossWords(ICrossBoard board, ICrossDictionary dictionary, string puzzle, CancellationToken cancellationToken)
@@ -78,9 +74,16 @@ namespace CrossWord
                     cancellationToken.ThrowIfCancellationRequested();
                     var gen = new CrossGenerator(dictionary, boardWithPuzzle);
 
+                    // limit
+                    int generatedCount = 0;
+
                     foreach (var solution in gen.Generate())
                     {
                         cancellationToken.ThrowIfCancellationRequested();
+                        generatedCount++;
+
+                        if (generatedCount >= MAX_GENERATOR_COUNT) break;
+
                         yield return solution;
                     }
                 }
@@ -91,9 +94,18 @@ namespace CrossWord
                 board.Preprocess(dictionary);
 
                 var crosswords = gen.Generate();
+
+                // limit
+                int generatedCount = 0;
+
                 foreach (var resultBoard in crosswords)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
+
+                    generatedCount++;
+
+                    if (generatedCount >= MAX_GENERATOR_COUNT) break;
+
                     yield return resultBoard;
                 }
             }

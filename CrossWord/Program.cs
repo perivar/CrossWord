@@ -58,8 +58,10 @@ namespace CrossWord
                                 }
                             });
 
-                Task.WaitAll(workerTask);
+                // wait untill the task is done
+                //Task.WaitAll(workerTask);
 
+                // or wait until the user presses a key
                 Console.WriteLine("Press Enter to Exit ...");
                 Console.ReadLine();
                 tokenSource.Cancel();

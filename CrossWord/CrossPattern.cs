@@ -12,6 +12,8 @@ namespace CrossWord
         readonly int _startX;
         readonly int _startY;
 
+        bool _isPuzzle;
+
         public CrossPattern(int startX, int startY, int length, bool isHorizontal)
         {
             _startX = startX;
@@ -24,6 +26,12 @@ namespace CrossWord
         {
             get { return _isHorizontal; }
             set { _isHorizontal = value; }
+        }
+
+        public bool IsPuzzle
+        {
+            get { return _isPuzzle; }
+            set { _isPuzzle = value; }
         }
 
         public int StartX
@@ -62,7 +70,7 @@ namespace CrossWord
 
         public CrossTransformation TryFillPuzzle(ReadOnlySpan<char> word, ICrossDictionary dict)
         {
-            for (int i = 0; i < word.Length; i++ )
+            for (int i = 0; i < word.Length; i++)
                 if (_pattern[i] != '.')
                     return null;
             return TryFill(null, word, dict, true);
@@ -123,6 +131,7 @@ namespace CrossWord
         {
             var result = new CrossPattern(_startX, _startY, _length, _isHorizontal);
             result._instantiationCount = _instantiationCount;
+            result._isPuzzle = _isPuzzle;
             result._pattern = new char[_pattern.Length];
             Array.Copy(_pattern, result._pattern, _pattern.Length);
             return result;

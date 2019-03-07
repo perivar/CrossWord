@@ -169,7 +169,7 @@ namespace CrossWord
                 while (wordIdx < _startWords.Count)
                 {
                     var sw = _startWords[wordIdx];
-                    // onsole.WriteLine("StartWord x:{0} y:{1} idx:{2}/cnt:{3}",sw.StartX,sw.StartY,wordIdx,_startWords.Count);
+                    // Console.WriteLine("StartWord x:{0} y:{1} idx:{2}/cnt:{3}",sw.StartX,sw.StartY,wordIdx,_startWords.Count);
                     if (sw.StartX == x)
                     {
                         if (sw.StartY - nextY >= MinPatternLength)
@@ -418,7 +418,7 @@ namespace CrossWord
 
             foreach (var sw in _startWords)
             {
-                board[sw.StartX, sw.StartY] = '.';
+                board[sw.StartX, sw.StartY] = '-';
             }
 
             var patterns = new List<CrossPattern>();
@@ -437,7 +437,7 @@ namespace CrossWord
                     }
                     else
                     {
-                        board[x, p.StartY] = ' ';
+                        board[x, p.StartY] = '.';
                     }
                 }
 
@@ -454,7 +454,7 @@ namespace CrossWord
                     if (p.Pattern != null)
                     {
                         var c = p.Pattern[y - p.StartY];
-                        if (c != ' ')
+                        if (c != '.')
                         {
                             board[p.StartX, y] = c;
                         }
@@ -489,7 +489,7 @@ namespace CrossWord
 
                 // and store the clues
                 var word = p.GetWord();
-                var description = GetDescription(dictionary, word);
+                var description = p.IsPuzzle ? "[PUZZLE]" : GetDescription(dictionary, word);
 
                 string clue = string.Format("{0}. {1}", gridNumber, description);
                 if (p.IsHorizontal)
@@ -513,9 +513,11 @@ namespace CrossWord
                 for (int x = 0; x < _sizeX; x++)
                 {
                     row += board[x, y] + " ";
-                    grid.Add(board[x, y].ToString());
 
-                    if (board[x, y] != '.')
+                    // set grid but replace - with .
+                    grid.Add(board[x, y].ToString().Replace('-', '.'));
+
+                    if (board[x, y] != '-')
                     {
                         var coordinate = new Coordinate(x, y);
                         if (coordinateMap.ContainsValue(coordinate))
@@ -526,16 +528,20 @@ namespace CrossWord
                     }
                 }
 
-                // stringWriter.WriteLine("{0:00}: {1} <br>", y, row);
+                stringWriter.WriteLine("{0:00}: {1} <br>", y, row);
             }
 
             model.Title = "Generated Crossword";
-            model.Author = "Crossword Generator";
+            model.Author = "The amazing crossword generator";
             model.Copyright = "Crossword Generator";
             model.Size = new Size { Cols = _sizeX, Rows = _sizeY };
             // model.Notepad = "<br>" + stringWriter.ToString();
             model.Grid = grid.ToArray();
             model.Clues = new Answers() { Across = acrossList.ToArray(), Down = downList.ToArray() };
+            model.Circles = new long[_sizeX * _sizeY];
+            model.Circles[0] = 1;
+            model.Circles[1] = 1;
+            model.Shadecircles = false;
 
             return model;
         }

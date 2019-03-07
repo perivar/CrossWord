@@ -20,9 +20,14 @@ namespace CrossWord
             var puzzle = NormalizePuzzle(_puzzle);
             var board = _board.Clone();
             board.Preprocess(dictionary);
+
             var patterns = new List<CrossPattern>();
             for (int i = 0; i < board.GetPatternCount(); i++)
+            {
                 patterns.Add(board.GetCrossPattern(i));
+            }
+
+            // sort by word length
             patterns.Sort((a, b) => -1 * a.Length.CompareTo(b.Length));
             if (patterns.Count == 0)
                 yield break;
@@ -36,31 +41,36 @@ namespace CrossWord
             continueOuterLoop:
                 for (; idx < patterns.Count; idx++)
                 {
-                    var patt = patterns[idx];
-                    if (restPuzzleLength < patt.Length) continue;
-                    if (restPuzzleLength - patt.Length == 1) continue;
-                    var trans = patt.TryFillPuzzle(puzzle.AsSpan().Slice(puzzle.Length - restPuzzleLength,
-                                                   patt.Length), dictionary);
+                    var pattern = patterns[idx];
+                    if (restPuzzleLength < pattern.Length) continue;
+                    if (restPuzzleLength - pattern.Length == 1) continue;
+                    var trans = pattern.TryFillPuzzle(puzzle.AsSpan().Slice(puzzle.Length - restPuzzleLength,
+                                                   pattern.Length), dictionary);
                     if (trans != null)
                     {
-                        trans.Transform(patt);
-                        if (restPuzzleLength == patt.Length)
+                        trans.Transform(pattern);
+                        if (restPuzzleLength == pattern.Length)
                         {
-                            var cloned = (ICrossBoard)board.Clone();
-                            trans.Undo(patt);
+                            // set the pattern as puzzle
+                            pattern.IsPuzzle = true;
+                            var cloned = (ICrossBoard)board.Clone(); // clone before we revert the puzzle pattern
+                            trans.Undo(pattern);
                             yield return cloned;
                             continue;
                         }
+
                         stack.Add(idx + 1);
-                        trans.Pattern = patt;
+                        trans.Pattern = pattern;
                         appliedTransformations.Add(trans);
-                        restPuzzleLength -= patt.Length;
+                        restPuzzleLength -= pattern.Length;
                         idx = 0;
                         goto continueOuterLoop;
                     }
                 }
+
                 if (stack.Count == 0)
                     break;
+
                 idx = stack.Back();
                 stack.Pop();
                 var appTr = appliedTransformations.Back();

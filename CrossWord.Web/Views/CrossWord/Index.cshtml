@@ -121,7 +121,7 @@
                     else {
                         cell.innerHTML = "<div class='grid'>" + grid + "</div>" + "<div class='letter'>" + val + "</div>";
                         if (puzzle.circles && puzzle.circles[n] === 1) {
-                            cell.className = puzzle.shadecircles ? "shade" : "circle";
+                            cell.className = puzzle.shadecircles === "true" ? "shade" : "circle";
                         }
                     }
                     n += 1;

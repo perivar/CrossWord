@@ -4,6 +4,7 @@ cd "C:\Users\perner\My Projects\CrossWord\CrossWord\bin\Release\netcoreapp2.2\wi
 
 CrossWord -i "C:\Users\perner\My Projects\CrossWord\templates\american.txt" ^
 -d "C:\Users\perner\My Projects\CrossWord\dict\en" ^
--o "signalr"
+-o "signalr" ^
+-p "UMBRELLA"
 
 pause
