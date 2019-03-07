@@ -27,5 +27,14 @@ namespace CrossWord.Web.Hubs
                .SendAsync("SendCrossword", name, json);
         }
 
+        public async Task StartTask()
+        {
+            await Clients.All.SendAsync("Broadcast", "HUB", "Starting Task...");
+        }
+
+        public async Task CancelTask()
+        {
+            await Clients.All.SendAsync("Broadcast", "HUB", "Cancelling Task...");
+        }
     }
 }

@@ -70,13 +70,7 @@
 
         function StartCrosswordGeneration() {
             
-            //await connection.start();
-            //await connection.invoke("StartTask").catch(err => console.error(err.toString()));
-
-            connection.start()
-                //.then(_ => connection.invoke("AssociateJob", "@dateStringFormatted")) 
-                //.then(_ => connection.invoke("StartTask"))
-                .catch(err => console.error(err.toString()));                
+           connection.invoke("StartTask").catch(err => console.error(err.toString()));        
         }
 
         function CancelCrosswordGeneration() {

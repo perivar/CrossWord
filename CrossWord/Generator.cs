@@ -4,12 +4,58 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.Logging;
 
 namespace CrossWord
 {
     public static class Generator
     {
-        public static IEnumerable<ICrossBoard> GenerateCrossWords(ICrossBoard board, ICrossDictionary dictionary, CancellationToken cancellationToken)
+        public static async Task GenerateCrosswordsAsync(ICrossBoard board, ICrossDictionary dictionary, string puzzle, CancellationToken cancellationToken)
+        {
+            // Keep trying to until we can start
+            HubConnection hubConnection = null;
+            while (true)
+            {
+                hubConnection = new HubConnectionBuilder()
+                    .WithUrl("http://localhost:5000/crosswords")
+                    .ConfigureLogging(logging =>
+                    {
+                        logging.SetMinimumLevel(LogLevel.Information);
+                        logging.AddConsole();
+                    })
+                    .Build();
+
+                try
+                {
+                    await hubConnection.StartAsync();
+                    break;
+                }
+                catch (Exception)
+                {
+                    await Task.Delay(1000);
+                }
+            }
+
+            try
+            {
+                var generated = GenerateCrossWords(board, dictionary, puzzle, cancellationToken);
+                foreach (var curCrossword in generated)
+                {
+                    var cb = curCrossword as CrossBoard;
+                    var crossWordModel = cb.ToCrossWordModel(dictionary);
+                    await hubConnection.InvokeAsync("SendCrossword", "Client", crossWordModel, cancellationToken);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Cancel and timeout logic
+            }
+
+            await hubConnection.DisposeAsync();
+        }
+
+        private static IEnumerable<ICrossBoard> GenerateCrossWords(ICrossBoard board, ICrossDictionary dictionary, CancellationToken cancellationToken)
         {
             var gen = new CrossGenerator(dictionary, board);
             board.Preprocess(dictionary);
@@ -22,75 +68,35 @@ namespace CrossWord
             }
         }
 
-        public static async Task GenerateCrossWords(ICrossBoard board, ICrossDictionary dictionary, CancellationToken cancellationToken, IProgress<ICrossBoard> progress)
+        private static IEnumerable<ICrossBoard> GenerateCrossWords(ICrossBoard board, ICrossDictionary dictionary, string puzzle, CancellationToken cancellationToken)
         {
-            var gen = new CrossGenerator(dictionary, board);
-            board.Preprocess(dictionary);
-
-            foreach (var resultBoard in gen.Generate())
+            if (puzzle != null)
             {
-                if (cancellationToken.IsCancellationRequested)
+                var placer = new PuzzlePlacer(board, puzzle);
+                foreach (var boardWithPuzzle in placer.GetAllPossiblePlacements(dictionary))
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-                }
+                    var gen = new CrossGenerator(dictionary, boardWithPuzzle);
 
-                // report which number of crossword we have generated
-                if (progress != null)
-                {
-                    progress.Report(resultBoard);
+                    foreach (var solution in gen.Generate())
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        yield return solution;
+                    }
                 }
-
-                // await System.Threading.Tasks.Task.Delay(100);
             }
-
-            // for (int i = 0; i <= 100; i++)
-            // {
-            //     if (cancellationToken.IsCancellationRequested)
-            //     {
-            //         cancellationToken.ThrowIfCancellationRequested();
-            //     }
-            //     if (progress != null)
-            //     {
-            //         var curCrossBoard = new CrossBoard();
-            //         progress.Report(curCrossBoard);
-            //     }
-
-            //     await System.Threading.Tasks.Task.Delay(1000);
-            // }
-
-            // if (progress != null)
-            // {
-            //     var curCrossBoard = new CrossBoard();
-            //     progress.Report(curCrossBoard);
-            // }
-        }
-
-        public static ICrossBoard GenerateCrossWords(ICrossBoard board, ICrossDictionary dictionary, string puzzle)
-        {
-            var placer = new PuzzlePlacer(board, puzzle);
-            var cts = new CancellationTokenSource();
-            var mre = new ManualResetEvent(false);
-            ICrossBoard successFullBoard = null;
-            foreach (var boardWithPuzzle in placer.GetAllPossiblePlacements(dictionary))
+            else
             {
-                var gen = new CrossGenerator(dictionary, boardWithPuzzle);
+                var gen = new CrossGenerator(dictionary, board);
+                board.Preprocess(dictionary);
 
-                var t = Task.Factory.StartNew(() =>
-                                          {
-                                              foreach (var solution in gen.Generate())
-                                              {
-                                                  successFullBoard = solution;
-                                                  cts.Cancel();
-                                                  mre.Set();
-                                                  break; // interested in the first one
-                                              }
-                                          }, cts.Token);
-
-                if (cts.IsCancellationRequested)
-                    break;
+                var crosswords = gen.Generate();
+                foreach (var resultBoard in crosswords)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    yield return resultBoard;
+                }
             }
-            mre.WaitOne();
-            return successFullBoard;
         }
     }
 }

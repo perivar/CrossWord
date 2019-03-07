@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.SignalR.Client;
-using Microsoft.Extensions.Logging;
 
 namespace CrossWord
 {
@@ -44,16 +42,15 @@ namespace CrossWord
             if (outputFile.Equals("signalr"))
             {
                 // generate and send to signalr hub
-                
-                // http://mark.mymonster.nl/2013/02/15/cancel-a-threadsleep-uh-taskdelay-the-right-way
-                var tokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+                // var tokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+                var tokenSource = new CancellationTokenSource();
                 Task workerTask = Task.Run(
                             async () =>
                             {
                                 CancellationToken token = tokenSource.Token;
                                 try
                                 {
-                                    await MainAsync(board, dictionary, token);
+                                    await Generator.GenerateCrosswordsAsync(board, dictionary, puzzle, token);
                                 }
                                 catch (OperationCanceledException)
                                 {
@@ -63,10 +60,9 @@ namespace CrossWord
 
                 Task.WaitAll(workerTask);
 
-                // Task.Run(() => .GetAwaiter().GetResult(), cancellationTokenSource.Token);
-                // Console.WriteLine("Press Enter to Exit ...");
-                // Console.ReadLine();
-                // cancellationTokenSource.Cancel();
+                Console.WriteLine("Press Enter to Exit ...");
+                Console.ReadLine();
+                tokenSource.Cancel();
             }
             else
             {
@@ -99,49 +95,6 @@ namespace CrossWord
                 }
             }
             return 0;
-        }
-
-        private static async Task MainAsync(ICrossBoard board, ICrossDictionary dictionary, CancellationToken cancellationToken)
-        {
-            // Keep trying to until we can start
-            HubConnection hubConnection = null;
-            while (true)
-            {
-                hubConnection = new HubConnectionBuilder()
-                    .WithUrl("http://localhost:5000/crosswords")
-                    .ConfigureLogging(logging =>
-                    {
-                        logging.SetMinimumLevel(LogLevel.Information);
-                        logging.AddConsole();
-                    })
-                    .Build();
-
-                try
-                {
-                    await hubConnection.StartAsync();
-                    break;
-                }
-                catch (Exception)
-                {
-                    await Task.Delay(1000);
-                }
-            }
-
-            try
-            {
-                foreach (var curCrossword in Generator.GenerateCrossWords(board, dictionary, cancellationToken))
-                {
-                    var cb = curCrossword as CrossBoard;
-                    var crossWordModel = cb.ToCrossWordModel(dictionary);
-                    await hubConnection.InvokeAsync("SendCrossword", "Client", crossWordModel, cancellationToken);
-                }
-            }
-            catch (OperationCanceledException)
-            {
-                // Cancel and timeout logic
-            }
-
-            await hubConnection.DisposeAsync();
         }
 
         static bool ParseInput(IEnumerable<string> args, out string inputFile, out string outputFile, out string puzzle,
@@ -187,7 +140,7 @@ namespace CrossWord
             ICrossBoard successFullBoard = null;
             foreach (var boardWithPuzzle in placer.GetAllPossiblePlacements(dictionary))
             {
-                //boardWithPuzzle.WriteTo(new StreamWriter(Console.OpenStandardOutput(), Console.OutputEncoding) { AutoFlush = true });
+                // boardWithPuzzle.WriteTo(new StreamWriter(Console.OpenStandardOutput(), Console.OutputEncoding) { AutoFlush = true });
                 var gen = new CrossGenerator(dictionary, boardWithPuzzle);
                 var t = Task.Factory.StartNew(() =>
                                           {
