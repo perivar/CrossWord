@@ -468,6 +468,7 @@ namespace CrossWord
             var acrossList = new List<String>();
             var downList = new List<String>();
             model.Gridnums = new long[_sizeX * _sizeY];
+            model.Circles = new long[_sizeX * _sizeY];
             var sortedPatterns = patterns.OrderBy(s => s.StartY).ThenBy(s => s.StartX);
             int gridNumber = 0;
             CrossPattern lastPattern = null;
@@ -524,6 +525,7 @@ namespace CrossWord
                         {
                             var coordinates = coordinateMap.Where(v => v.Value == coordinate).First();
                             model.Gridnums[(y * _sizeX) + x] = coordinates.Value.GridNumber;
+                            if (coordinates.Key.IsPuzzle) model.Circles[(y * _sizeX) + x] = 1;
                         }
                     }
                 }
@@ -538,9 +540,6 @@ namespace CrossWord
             // model.Notepad = "<br>" + stringWriter.ToString();
             model.Grid = grid.ToArray();
             model.Clues = new Answers() { Across = acrossList.ToArray(), Down = downList.ToArray() };
-            model.Circles = new long[_sizeX * _sizeY];
-            model.Circles[0] = 1;
-            model.Circles[1] = 1;
             model.Shadecircles = false;
 
             return model;
