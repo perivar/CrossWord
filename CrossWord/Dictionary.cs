@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace CrossWord
 {
@@ -32,25 +34,48 @@ namespace CrossWord
         public Dictionary(string aFileName, int maxWordLength)
             : this(maxWordLength)
         {
-            //read streams
-            using (StreamReader reader = File.OpenText(aFileName))
+            if (Path.GetExtension(aFileName).ToLower().Equals(".json"))
             {
-                string str = reader.ReadLine();
-                TextInfo ti = new CultureInfo("en-US").TextInfo;
-                while (str != null)
+                // read json files
+                using (StreamReader r = new StreamReader(aFileName))
                 {
-                    int pos = str.IndexOf('|');
-                    if (pos==-1)
+                    var json = r.ReadToEnd();
+                    var jobj = JObject.Parse(json);
+                    foreach (var item in jobj.Properties())
                     {
-                        AddWord(ti.ToUpper(str));
+                        var description = item.Name;
+                        var values = item.Values();
+                        foreach (var value in values)
+                        {
+                            var word = value.Value<string>().ToUpper();
+                            AddWord(word);
+                            AddDescription(word, description);
+                        }
                     }
-                    else
+                }
+            }
+            else
+            {
+                // read text files
+                using (StreamReader reader = File.OpenText(aFileName))
+                {
+                    string str = reader.ReadLine();
+                    TextInfo ti = new CultureInfo("en-US").TextInfo;
+                    while (str != null)
                     {
-                        var word = ti.ToUpper(str.Substring(0, pos));
-                        AddWord(word);
-                        AddDescription(word, str.Substring(pos+1));
+                        int pos = str.IndexOf('|');
+                        if (pos == -1)
+                        {
+                            AddWord(ti.ToUpper(str));
+                        }
+                        else
+                        {
+                            var word = ti.ToUpper(str.Substring(0, pos));
+                            AddWord(word);
+                            AddDescription(word, str.Substring(pos + 1));
+                        }
+                        str = reader.ReadLine();
                     }
-                    str = reader.ReadLine();
                 }
             }
         }
