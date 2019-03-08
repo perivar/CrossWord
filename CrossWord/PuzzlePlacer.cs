@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace CrossWord
@@ -35,13 +36,16 @@ namespace CrossWord
             var restPuzzleLength = puzzle.Length;
             var stack = new List<int>();
             var appliedTransformations = new List<CrossTransformation>();
+
             int idx = 0;
             while (true)
             {
             continueOuterLoop:
+
                 for (; idx < patterns.Count; idx++)
                 {
                     var pattern = patterns[idx];
+
                     if (restPuzzleLength < pattern.Length) continue;
                     if (restPuzzleLength - pattern.Length == 1) continue;
                     var trans = pattern.TryFillPuzzle(puzzle.AsSpan().Slice(puzzle.Length - restPuzzleLength,
@@ -51,10 +55,15 @@ namespace CrossWord
                         trans.Transform(pattern);
                         if (restPuzzleLength == pattern.Length)
                         {
-                            // set the pattern as puzzle
+                            // ensure only one pattern is marked as a puzzle
+                            patterns.All(c => { c.IsPuzzle = false; return true; });
+
+                            // set the current pattern as puzzle
                             pattern.IsPuzzle = true;
+                            
                             var cloned = (ICrossBoard)board.Clone(); // clone before we revert the puzzle pattern
                             trans.Undo(pattern);
+
                             yield return cloned;
                             continue;
                         }

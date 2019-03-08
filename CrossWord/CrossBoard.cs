@@ -257,6 +257,20 @@ namespace CrossWord
             return _verticalPatterns[aIndex - _horizontalPatterns.Count];
         }
 
+        public IList<CrossPattern> CrossPatterns
+        {
+            get
+            {
+                var patterns = new List<CrossPattern>();
+                int cnt = this.GetPatternCount();
+                for (int i = 0; i < cnt; i++)
+                {
+                    patterns.Add(this.GetCrossPattern(i));
+                }
+                return patterns;
+            }
+        }
+
         // get pattern at given position
         public CrossPattern GetCrossPattern(int aStartX, int aStartY, Orientation aOrientation)
         {
@@ -523,18 +537,45 @@ namespace CrossWord
                         var coordinate = new Coordinate(x, y);
                         if (coordinateMap.ContainsValue(coordinate))
                         {
-                            var coordinates = coordinateMap.Where(v => v.Value == coordinate).First();
-                            model.Gridnums[(y * _sizeX) + x] = coordinates.Value.GridNumber;
-                            if (coordinates.Key.IsPuzzle) model.Circles[(y * _sizeX) + x] = 1;
+                            Coordinate foundCoordinate = null;
+                            var coordinates = coordinateMap.Where(v => v.Value == coordinate);
+                            if (coordinates.Count(a => a.Key.IsPuzzle) > 0)
+                            {
+                                var hit = coordinates.Where(a => a.Key.IsPuzzle).First();
+                                var IsHorizontal = hit.Key.IsHorizontal;
+                                var letterCount = hit.Key.Length;
+
+                                // highlight all cells covered by the word
+                                foundCoordinate = hit.Value;
+                                if (IsHorizontal)
+                                {
+                                    for (int i = 0; i < letterCount; i++)
+                                    {
+                                        model.Circles[(y * _sizeX) + x + i] = 1;
+                                    }
+                                }
+                                else
+                                {
+                                    for (int i = 0; i < letterCount; i++)
+                                    {
+                                        model.Circles[((y * _sizeX) + x) + (i * _sizeX)] = 1;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                foundCoordinate = coordinates.First().Value;
+                            }
+                            model.Gridnums[(y * _sizeX) + x] = foundCoordinate.GridNumber;
                         }
                     }
                 }
 
-                stringWriter.WriteLine("{0:00}: {1} <br>", y, row);
+                // stringWriter.WriteLine("{0:00}: {1} <br>", y, row);
             }
 
             model.Title = "Generated Crossword";
-            model.Author = "The amazing crossword generator";
+            model.Author = "the amazing crossword generator";
             model.Copyright = "Crossword Generator";
             model.Size = new Size { Cols = _sizeX, Rows = _sizeY };
             // model.Notepad = "<br>" + stringWriter.ToString();

@@ -49,11 +49,11 @@ namespace CrossWord
 
                     var cb = curCrossword as CrossBoard;
                     var crossWordModel = cb.ToCrossWordModel(dictionary);
-                    crossWordModel.Title = "Generated " + generatedCount;
+                    crossWordModel.Title = "Generated crossword number " + generatedCount;
 
                     await hubConnection.InvokeAsync("SendCrossword", "Client", crossWordModel, cancellationToken);
 
-                    await Task.Delay(200); // this makes the generation slower, can be removed
+                    await Task.Delay(100); // this makes the generation slower, can be removed
                 }
             }
             catch (OperationCanceledException)
@@ -77,7 +77,8 @@ namespace CrossWord
                     // limit
                     int generatedCount = 0;
 
-                    foreach (var solution in gen.Generate())
+                    var generated = gen.Generate();
+                    foreach (var solution in generated)
                     {
                         cancellationToken.ThrowIfCancellationRequested();
                         generatedCount++;

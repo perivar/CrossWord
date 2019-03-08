@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 
 namespace CrossWord
@@ -39,6 +40,7 @@ namespace CrossWord
         //enumerate patterns
         int GetPatternCount();
         CrossPattern GetCrossPattern(int aIndex);
+        IList<CrossPattern> CrossPatterns { get; }
 
         CrossPattern GetMostConstrainedPattern(ICrossDictionary aDict);
 
