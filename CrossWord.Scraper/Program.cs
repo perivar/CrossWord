@@ -64,24 +64,55 @@ namespace CrossWord.Scraper
                     var ready2 = wait2.Until(d => ((IJavaScriptExecutor)d).ExecuteScript("return document.readyState").Equals("complete"));
                 }
 
-                for (int i = 1; i < 200; i++)
+                // read all one letter words
+                // ReadWordsByWordPattern("1", driver, db);
+
+                // read 2 and more letter words
+                for (int i = 2; i < 200; i++)
                 {
-                    ReadWordsByWordLength(i, driver, db);
+                    ReadWordsByWordPermutations(2, i, driver, db);
+                    // ReadWordsByWordLength(i, driver, db);
                 }
             }
         }
 
-        static void ReadWordsByWordLength(int letterLength, IWebDriver driver, SynonymDbContext db)
+        static void ReadWordsByWordPermutations(int permutationSize, int letterLength, IWebDriver driver, SynonymDbContext db)
+        {
+            var alphabet = "abcdefghijklmnopqrstuvwxyzøæå";
+            var permutations = alphabet.Select(x => x.ToString());
+
+            for (int i = 0; i < permutationSize - 1; i++)
+            {
+                permutations = permutations.SelectMany(x => alphabet, (x, y) => x + y);
+            }
+
+            foreach (var permutation in permutations)
+            {
+                string wordPattern = "";
+                if (letterLength > permutationSize)
+                {
+                    // make word search pattern                    
+                    wordPattern = permutation.PadRight(letterLength, '?');
+                }
+                else
+                {
+                    wordPattern = permutation;
+                }
+                ReadWordsByWordPattern(wordPattern, driver, db);
+            }
+        }
+
+        static void ReadWordsByWordPattern(string wordPattern, IWebDriver driver, SynonymDbContext db)
         {
             // go to search result page            
             var query = "";
             int page = 0;
-            string url = string.Format("{0}?a={1}&b={2}&p={3}", "https://www.kryssord.org/search.php", query, letterLength, page);
+            string url = string.Format("{0}?a={1}&b={2}&p={3}", "https://www.kryssord.org/search.php", query, wordPattern, page);
             driver.Navigate().GoToUrl(url);
 
             while (true)
             {
-                Console.WriteLine("[Processing letter search for {0} page {1}]", letterLength, page + 1);
+                Console.WriteLine("[Processing pattern search for '{0}' page {1}]", wordPattern, page + 1);
 
                 // parse total number of words found
                 var wordCount = driver.FindElement(By.XPath("/html/body//div[@id='content']/h1/strong")).Text;
@@ -152,10 +183,10 @@ namespace CrossWord.Scraper
             chromeDriver.SwitchTo().Window(newTabInstance);
 
             // lets navigate to a web site in our new tab
-            var letterCount = "";
+            var wordPattern = "";
             var query = EscapeUrlString(word.Value);
             int page = 0;
-            string url = string.Format("{0}?a={1}&b={2}&p={3}", "https://www.kryssord.org/search.php", query, letterCount, page);
+            string url = string.Format("{0}?a={1}&b={2}&p={3}", "https://www.kryssord.org/search.php", query, wordPattern, page);
             driver.Navigate().GoToUrl(url);
 
             while (true)
@@ -235,21 +266,21 @@ namespace CrossWord.Scraper
             return driver.FindElementOrNull(By.XPath("//div[@class='pages']/ul/li/a/span[contains(., 'Neste')]"));
         }
 
-        private static Tuple<string, int, int> ExtractUrlParameters(string url)
+        private static Tuple<string, string, int> ExtractUrlParameters(string url)
         {
             // https://www.kryssord.org/search.php?a=10&b=&p=0
             string word = "";
-            int letterLength = 0;
+            string wordPattern = "";
             int page = 0;
 
-            Regex regexObj = new Regex(@"a=(.*)&b=(\d*)&p=(\d*)", RegexOptions.IgnoreCase);
+            Regex regexObj = new Regex(@"a=(.*)&b=(.*)&p=(\d*)", RegexOptions.IgnoreCase);
             Match matchResults = regexObj.Match(url);
             if (matchResults.Success)
             {
                 word = matchResults.Groups[1].Value;
-                letterLength = matchResults.Groups[2].Value == "" ? 0 : int.Parse(matchResults.Groups[2].Value);
+                wordPattern = matchResults.Groups[2].Value;
                 page = matchResults.Groups[3].Value == "" ? 0 : int.Parse(matchResults.Groups[3].Value);
-                return new Tuple<string, int, int>(word, letterLength, page);
+                return new Tuple<string, string, int>(word, wordPattern, page);
             }
 
             return null;
