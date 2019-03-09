@@ -29,8 +29,9 @@ namespace CrossWord.Scraper
                 // string userDataArgument = string.Format("--user-data-dir={0}", userDataDir);
 
                 var outPutDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                var relativePath = @"..\..\..\";
-                var chromeDriverPath = Path.GetFullPath(Path.Combine(outPutDirectory, relativePath));
+                // var relativePath = @"..\..\..\";
+                // var chromeDriverPath = Path.GetFullPath(Path.Combine(outPutDirectory, relativePath));
+                var chromeDriverPath = outPutDirectory;
 
                 ChromeOptions options = new ChromeOptions();
                 // options.AddArguments(userDataArgument);
@@ -64,14 +65,22 @@ namespace CrossWord.Scraper
                     var ready2 = wait2.Until(d => ((IJavaScriptExecutor)d).ExecuteScript("return document.readyState").Equals("complete"));
                 }
 
-                // read all one letter words
-                // ReadWordsByWordPattern("1", driver, db);
-
-                // read 2 and more letter words
-                for (int i = 2; i < 200; i++)
+                try
                 {
-                    ReadWordsByWordPermutations(2, i, driver, db);
-                    // ReadWordsByWordLength(i, driver, db);
+                    // read all one letter words
+                    // ReadWordsByWordPattern("1", driver, db);
+
+                    // read 2 and more letter words
+                    for (int i = 2; i < 200; i++)
+                    {
+                        ReadWordsByWordPermutations(2, i, driver, db);
+                        // ReadWordsByWordLength(i, driver, db);
+                    }
+                }
+                finally
+                {
+                    driver.Close();
+                    driver.Quit();
                 }
             }
         }
