@@ -8,3 +8,4 @@ packages
 /.vs/*
 out.txt
 node_modules
+*.log
