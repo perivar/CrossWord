@@ -24,7 +24,6 @@ namespace CrossWord.Scraper
 
                 string siteUsername = "kongolav";
                 string sitePassword = "kongolav";
-                var letterLength = 1;
 
                 // string userDataDir = @"C:\Users\perner\AppData\Local\Google\Chrome\User Data\Default";
                 // string userDataArgument = string.Format("--user-data-dir={0}", userDataDir);
@@ -65,58 +64,69 @@ namespace CrossWord.Scraper
                     var ready2 = wait2.Until(d => ((IJavaScriptExecutor)d).ExecuteScript("return document.readyState").Equals("complete"));
                 }
 
-                // go to search result page
-                var query = "";
-                int page = 0;
-                string url = string.Format("{0}?a={1}&b={2}&p={3}", "https://www.kryssord.org/search.php", query, letterLength, page);
-                driver.Navigate().GoToUrl(url);
-
-                while (true)
+                for (int i = 1; i < 200; i++)
                 {
-                    Console.WriteLine("[Processing letter search for {0} page {1}]", letterLength, page + 1);
+                    ReadWordsByWordLength(i, driver, db);
+                }
+            }
+        }
 
-                    // parse total number of words found
-                    var wordCount = driver.FindElement(By.XPath("/html/body//div[@id='content']/h1/strong")).Text;
+        static void ReadWordsByWordLength(int letterLength, IWebDriver driver, SynonymDbContext db)
+        {
+            // go to search result page            
+            var query = "";
+            int page = 0;
+            string url = string.Format("{0}?a={1}&b={2}&p={3}", "https://www.kryssord.org/search.php", query, letterLength, page);
+            driver.Navigate().GoToUrl(url);
 
-                    // parse all words
-                    IWebElement tableElement = driver.FindElement(By.XPath("/html/body//div[@class='results']/table/tbody"));
-                    IList<IWebElement> tableRow = tableElement.FindElements(By.TagName("tr"));
-                    IList<IWebElement> rowTD;
-                    foreach (IWebElement row in tableRow)
+            while (true)
+            {
+                Console.WriteLine("[Processing letter search for {0} page {1}]", letterLength, page + 1);
+
+                // parse total number of words found
+                var wordCount = driver.FindElement(By.XPath("/html/body//div[@id='content']/h1/strong")).Text;
+
+                // return if nothing was found
+                if (wordCount == "0") return;
+
+                // parse all words
+                IWebElement tableElement = driver.FindElement(By.XPath("/html/body//div[@class='results']/table/tbody"));
+                IList<IWebElement> tableRow = tableElement.FindElements(By.TagName("tr"));
+                IList<IWebElement> rowTD;
+                foreach (IWebElement row in tableRow)
+                {
+                    rowTD = row.FindElements(By.TagName("td"));
+                    var wordText = rowTD[0].Text;
+
+                    var word = new Word
                     {
-                        rowTD = row.FindElements(By.TagName("td"));
-                        var wordText = rowTD[0].Text;
+                        Language = "no",
+                        Value = wordText,
+                        NumberOfLetters = wordText.Count(c => c != ' '),
+                        NumberOfWords = CountNumberOfWords(wordText),
+                        UserId = 1,
+                        CreatedDate = DateTime.Now,
+                    };
 
-                        var word = new Word
-                        {
-                            Language = "no",
-                            Value = wordText,
-                            NumberOfLetters = wordText.Count(c => c != ' '),
-                            NumberOfWords = CountNumberOfWords(wordText),
-                            UserId = 1,
-                            CreatedDate = DateTime.Now,
-                        };
+                    db.Words.Add(word);
+                    db.SaveChanges();
 
-                        db.Words.Add(word);
-                        db.SaveChanges();
+                    GetWordSynonyms(word, driver, db);
+                }
 
-                        GetWordSynonyms(word, driver, db);
-                    }
-
-                    // go to next page if exist
-                    var nextPageElement = FindNextPageOrNull(driver);
-                    if (nextPageElement != null)
-                    {
-                        // nextPageElement.Click();
-                        var nextPageUrl = nextPageElement.GetParent().GetAttribute("href");
-                        var urlParams = ExtractUrlParameters(nextPageUrl);
-                        page = urlParams.Item3;
-                        driver.Navigate().GoToUrl(nextPageUrl);
-                    }
-                    else
-                    {
-                        break;
-                    }
+                // go to next page if exist
+                var nextPageElement = FindNextPageOrNull(driver);
+                if (nextPageElement != null)
+                {
+                    // nextPageElement.Click();
+                    var nextPageUrl = nextPageElement.GetParent().GetAttribute("href");
+                    var urlParams = ExtractUrlParameters(nextPageUrl);
+                    page = urlParams.Item3;
+                    driver.Navigate().GoToUrl(nextPageUrl);
+                }
+                else
+                {
+                    break;
                 }
             }
         }
