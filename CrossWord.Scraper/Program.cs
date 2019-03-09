@@ -9,13 +9,27 @@ using CrossWord.Scraper.MySQLDbService.Models;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
+using Serilog;
+using Serilog.Events;
 
 namespace CrossWord.Scraper
 {
     class Program
     {
+        const string DEFAULT_LOG_PATH = "crossword_scraper.log";
+        const string DEFAULT_ERROR_LOG_PATH = "crossword_scraper_error.log";
+
         static void Main(string[] args)
         {
+            Log.Logger = new Serilog.LoggerConfiguration()
+                // .MinimumLevel.Debug()
+                .MinimumLevel.Information()
+                .WriteTo.File(DEFAULT_LOG_PATH)
+                .WriteTo.Console()
+                // .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Information)
+                .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Error).WriteTo.File(DEFAULT_ERROR_LOG_PATH))
+                .CreateLogger();
+
             using (var db = new SynonymDbContext())
             {
                 // setup database
@@ -68,7 +82,7 @@ namespace CrossWord.Scraper
                 }
 
                 // read all one letter words
-                // ReadWordsByWordPattern("1", driver, db);
+                ReadWordsByWordPattern("1", driver, db);
 
                 // read 2 and more letter words
                 for (int i = 2; i < 200; i++)
@@ -131,7 +145,7 @@ namespace CrossWord.Scraper
 
             while (true)
             {
-                Console.WriteLine("[Processing pattern search for '{0}' page {1}]", wordPattern, page + 1);
+                Log.Information("Processing pattern search for '{0}' page {1}", wordPattern, page + 1);
 
                 // parse total number of words found
                 var wordCountElement = driver.FindElementOrNull(By.XPath("/html/body//div[@id='content']/h1/strong"));
@@ -140,7 +154,19 @@ namespace CrossWord.Scraper
                 var wordCount = wordCountElement.Text;
 
                 // return if nothing was found
-                if (wordCount == "0") return;
+                if (wordCount == "0")
+                {
+                    return;
+                }
+                else
+                {
+                    var isNumeric = int.TryParse(wordCount, out int n);
+                    if (isNumeric)
+                    {
+                        Log.Information("Found {0} words when searching for '{1}' page {2}", n, wordPattern, page + 1);
+                        if (n > 108) Log.Error("Warning! Pattern search for '{0}' page {1} has too many words: {2}", wordPattern, page + 1, n);
+                    }
+                }
 
                 // parse all words
                 IWebElement tableElement = driver.FindElement(By.XPath("/html/body//div[@class='results']/table/tbody"));
@@ -213,10 +239,25 @@ namespace CrossWord.Scraper
 
             while (true)
             {
-                Console.WriteLine("[Processing synonym search for {0} page {1}]", word.Value, page + 1);
+                Log.Information("Processing synonym search for '{0}' page {1}", word.Value, page + 1);
 
                 // parse total number of words found
                 var wordCount = driver.FindElement(By.XPath("/html/body//div[@id='content']/h1/strong")).Text;
+
+                // return if nothing was found
+                if (wordCount == "0")
+                {
+                    return;
+                }
+                else
+                {
+                    var isNumeric = int.TryParse(wordCount, out int n);
+                    if (isNumeric)
+                    {
+                        Log.Information("Found {0} synonyms when searching for '{1}' page {2}", n, word.Value, page + 1);
+                        if (n > 108) Log.Error("Warning! synonym search for '{0}' page {1} has too many words: {2}", word.Value, page + 1, n);
+                    }
+                }
 
                 // parse all words
                 IWebElement tableElement = driver.FindElement(By.XPath("/html/body//div[@class='results']/table/tbody"));
@@ -241,7 +282,7 @@ namespace CrossWord.Scraper
                     db.Words.Add(synonym);
                     db.SaveChanges();
 
-                    Console.WriteLine("Added {0} as a synonym for {1}", synonymText, word.Value);
+                    Log.Debug("Added '{0}' as a synonym for '{1}'", synonymText, word.Value);
                 }
 
                 // go to next page if exist
