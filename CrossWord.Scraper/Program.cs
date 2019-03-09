@@ -25,6 +25,8 @@ namespace CrossWord.Scraper
                 string siteUsername = "kongolav";
                 string sitePassword = "kongolav";
 
+                KillAllChromeDriverInstances();
+
                 // string userDataDir = @"C:\Users\perner\AppData\Local\Google\Chrome\User Data\Default";
                 // string userDataArgument = string.Format("--user-data-dir={0}", userDataDir);
 
@@ -65,24 +67,32 @@ namespace CrossWord.Scraper
                     var ready2 = wait2.Until(d => ((IJavaScriptExecutor)d).ExecuteScript("return document.readyState").Equals("complete"));
                 }
 
-                try
-                {
-                    // read all one letter words
-                    // ReadWordsByWordPattern("1", driver, db);
+                // read all one letter words
+                // ReadWordsByWordPattern("1", driver, db);
 
-                    // read 2 and more letter words
-                    for (int i = 2; i < 200; i++)
-                    {
-                        ReadWordsByWordPermutations(2, i, driver, db);
-                        // ReadWordsByWordLength(i, driver, db);
-                    }
-                }
-                finally
+                // read 2 and more letter words
+                for (int i = 2; i < 200; i++)
                 {
-                    driver.Close();
-                    driver.Quit();
+                    ReadWordsByWordPermutations(2, i, driver, db);
+                    // ReadWordsByWordLength(i, driver, db);
                 }
+
+                // make sure to clean the chrome driver from memory
+                driver.Close();
+                driver.Quit();
+                driver = null;
             }
+        }
+
+        static void KillAllChromeDriverInstances()
+        {
+            System.Diagnostics.ProcessStartInfo p;
+            p = new System.Diagnostics.ProcessStartInfo("cmd.exe", "/C " + "taskkill /f /im chromedriver.exe");
+            System.Diagnostics.Process proc = new System.Diagnostics.Process();
+            proc.StartInfo = p;
+            proc.Start();
+            proc.WaitForExit();
+            proc.Close();
         }
 
         static void ReadWordsByWordPermutations(int permutationSize, int letterLength, IWebDriver driver, SynonymDbContext db)
