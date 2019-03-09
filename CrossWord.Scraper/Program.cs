@@ -134,7 +134,10 @@ namespace CrossWord.Scraper
                 Console.WriteLine("[Processing pattern search for '{0}' page {1}]", wordPattern, page + 1);
 
                 // parse total number of words found
-                var wordCount = driver.FindElement(By.XPath("/html/body//div[@id='content']/h1/strong")).Text;
+                var wordCountElement = driver.FindElementOrNull(By.XPath("/html/body//div[@id='content']/h1/strong"));
+
+                if (wordCountElement == null) break;
+                var wordCount = wordCountElement.Text;
 
                 // return if nothing was found
                 if (wordCount == "0") return;
