@@ -15,18 +15,19 @@ namespace CrossWord.Scraper
         {
             string siteUsername = "kongolav";
             string sitePassword = "kongolav";
+            var letterLength = 2;
+
+            // string userDataDir = @"C:\Users\perner\AppData\Local\Google\Chrome\User Data\Default";
+            // string userDataArgument = string.Format("--user-data-dir={0}", userDataDir);
 
             var outPutDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var relativePath = @"..\..\..\";
             var chromeDriverPath = Path.GetFullPath(Path.Combine(outPutDirectory, relativePath));
 
-            string userDataDir = @"C:\Users\perner\AppData\Local\Google\Chrome\User Data\Default";
-            string userDataArgument = string.Format("--user-data-dir={0}", userDataDir);
-
             ChromeOptions options = new ChromeOptions();
             // options.AddArguments(userDataArgument);
             options.AddArguments("--start-maximized");
-            options.AddArgument("--log-level=3");
+            // options.AddArgument("--log-level=3");
             //options.AddArguments("--ignore-certificate-errors");
             //options.AddArguments("--ignore-ssl-errors");
             IWebDriver driver = new ChromeDriver(chromeDriverPath, options);
@@ -36,8 +37,8 @@ namespace CrossWord.Scraper
             var ready = wait.Until(d => ((IJavaScriptExecutor)d).ExecuteScript("return document.readyState").Equals("complete"));
 
             // login if login form is present
-            if (IsElementPresent(driver, By.XPath("//input[@name='username']"))
-                && IsElementPresent(driver, By.XPath("//input[@name='password']")))
+            if (driver.IsElementPresent(By.XPath("//input[@name='username']"))
+                && driver.IsElementPresent(By.XPath("//input[@name='password']")))
             {
                 IWebElement username = driver.FindElement(By.XPath("//input[@name='username']"));
                 IWebElement password = driver.FindElement(By.XPath("//input[@name='password']"));
@@ -56,14 +57,15 @@ namespace CrossWord.Scraper
             }
 
             // go to search result page
-            var letterCount = 2;
             var query = "";
             int page = 0;
-            string url = string.Format("{0}?a={1}&b={2}&p={3}", "https://www.kryssord.org/search.php", query, letterCount, page);
+            string url = string.Format("{0}?a={1}&b={2}&p={3}", "https://www.kryssord.org/search.php", query, letterLength, page);
             driver.Navigate().GoToUrl(url);
 
             while (true)
             {
+                Console.WriteLine("[Processing letter search for {0} page {1}]", letterLength, page + 1);
+
                 // parse total number of words found
                 var wordCount = driver.FindElement(By.XPath("/html/body//div[@id='content']/h1/strong")).Text;
 
@@ -76,16 +78,18 @@ namespace CrossWord.Scraper
                     rowTD = row.FindElements(By.TagName("td"));
                     var word = rowTD[0];
 
-                    Console.WriteLine(word);
-
                     GetWordSynonyms(word.Text, driver);
                 }
 
                 // go to next page if exist
-                var selectedPage = FindElementOrNull(driver, By.XPath("//div[@class='pages']/ul/li/a/span[contains(., 'Neste')]"));
-                if (selectedPage != null)
+                var nextPageElement = FindNextPageOrNull(driver);
+                if (nextPageElement != null)
                 {
-                    selectedPage.Click();
+                    // nextPageElement.Click();
+                    var nextPageUrl = nextPageElement.GetParent().GetAttribute("href");
+                    var urlParams = ExtractUrlParameters(nextPageUrl);
+                    page = urlParams.Item3;
+                    driver.Navigate().GoToUrl(nextPageUrl);
                 }
                 else
                 {
@@ -120,6 +124,8 @@ namespace CrossWord.Scraper
 
             while (true)
             {
+                Console.WriteLine("[Processing synonym search for {0} page {1}]", query, page + 1);
+
                 // parse total number of words found
                 var wordCount = driver.FindElement(By.XPath("/html/body//div[@id='content']/h1/strong")).Text;
 
@@ -136,11 +142,13 @@ namespace CrossWord.Scraper
                 }
 
                 // go to next page if exist
-                var selectedPage = FindElementOrNull(driver, By.XPath("//div[@class='pages']/ul/li/a/span[contains(., 'Neste')]"));
-                if (selectedPage != null)
+                var nextPageElement = FindNextPageOrNull(driver);
+                if (nextPageElement != null)
                 {
-                    var nextAnchor = GetParent(selectedPage).GetAttribute("href");
-                    driver.Navigate().GoToUrl(nextAnchor);
+                    var nextPageUrl = nextPageElement.GetParent().GetAttribute("href");
+                    var urlParams = ExtractUrlParameters(nextPageUrl);
+                    page = urlParams.Item3;
+                    driver.Navigate().GoToUrl(nextPageUrl);
                 }
                 else
                 {
@@ -158,35 +166,29 @@ namespace CrossWord.Scraper
             chromeDriver.SwitchTo().DefaultContent();
         }
 
-        private static bool IsElementPresent(IWebDriver driver, By by)
+        private static IWebElement FindNextPageOrNull(IWebDriver driver)
         {
-            try
-            {
-                driver.FindElement(by);
-                return true;
-            }
-            catch (NoSuchElementException)
-            {
-                return false;
-            }
+            return driver.FindElementOrNull(By.XPath("//div[@class='pages']/ul/li/a/span[contains(., 'Neste')]"));
         }
 
-        private static IWebElement FindElementOrNull(IWebDriver driver, By by)
+        private static Tuple<string, int, int> ExtractUrlParameters(string url)
         {
-            try
-            {
-                var webElement = driver.FindElement(by);
-                return webElement;
-            }
-            catch (NoSuchElementException)
-            {
-                return null;
-            }
-        }
+            // https://www.kryssord.org/search.php?a=10&b=&p=0
+            string word = "";
+            int letterLength = 0;
+            int page = 0;
 
-        private static IWebElement GetParent(IWebElement node)
-        {
-            return node.FindElement(By.XPath(".."));
+            Regex regexObj = new Regex(@"a=(\d*)&b=(\d*)&p=(\d*)", RegexOptions.IgnoreCase);
+            Match matchResults = regexObj.Match(url);
+            if (matchResults.Success)
+            {
+                word = matchResults.Groups[1].Value;
+                letterLength = matchResults.Groups[2].Value == "" ? 0 : int.Parse(matchResults.Groups[2].Value);
+                page = matchResults.Groups[3].Value == "" ? 0 : int.Parse(matchResults.Groups[3].Value);
+                return new Tuple<string, int, int>(word, letterLength, page);
+            }
+
+            return null;
         }
     }
 }
