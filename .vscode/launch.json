@@ -205,9 +205,23 @@
         "-d",
         "${workspaceFolder}/dict/norwegian-synonyms.json",
         "-p",
-        "MALERI"        
+        "MALERI"
       ],
       "cwd": "${workspaceFolder}/CrossWord",
+      // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
+      "console": "internalConsole",
+      "stopAtEntry": false,
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "name": "Scraper (kryssord.org)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build scraper",
+      // If you have changed target frameworks, make sure to update the program path.
+      "program": "${workspaceFolder}/CrossWord.Scraper/bin/Debug/netcoreapp2.2/CrossWord.Scraper.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/CrossWord.Scraper",
       // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
       "console": "internalConsole",
       "stopAtEntry": false,

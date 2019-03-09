@@ -19,6 +19,16 @@
       "problemMatcher": "$msCompile"
     },
     {
+      "label": "build scraper",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/CrossWord.Scraper/CrossWord.Scraper.csproj"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
       "label": "publish release win10-x64",
       "command": "dotnet",
       "args": [
