@@ -176,7 +176,9 @@ namespace CrossWord.Scraper
                         else
                         {
                             // same length so compare
-                            if (lastWord.Value.ToLower() == wordPattern)
+                            var patternRegexp = wordPattern.Replace('?', '.');
+                            Match match = Regex.Match(lastWord.Value, patternRegexp, RegexOptions.IgnoreCase);
+                            if (match.Success)
                             {
                                 // found
                                 hasFoundWord = true;
