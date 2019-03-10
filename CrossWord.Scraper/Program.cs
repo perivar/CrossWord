@@ -35,7 +35,7 @@ namespace CrossWord.Scraper
             using (var db = new WordHintDbContext())
             {
                 // setup database
-                db.Database.EnsureDeleted();
+                // db.Database.EnsureDeleted();
                 db.Database.EnsureCreated();
 
                 string siteUsername = "kongolav";
@@ -92,19 +92,26 @@ namespace CrossWord.Scraper
                     Password = "",
                     isVIP = true
                 };
-                db.Users.Add(user);
-                db.SaveChanges();
+                // db.Users.Add(user);
+                // db.SaveChanges();
 
-                // testing
+                // Testing
                 // ReadWordsByWordPattern("RV", driver, db, user);
 
+                // find out how far we have got in the processing
+                var lastWord = db.Words.OrderByDescending(p => p.WordId).FirstOrDefault();
+                var lastHint = db.Hints.OrderByDescending(p => p.HintId).FirstOrDefault();
+
                 // read all one letter words
-                ReadWordsByWordPattern("1", driver, db, user);
+                if (lastWord == null || lastWord != null && lastWord.Value.Length < 2)
+                {
+                    ReadWordsByWordPattern("1", driver, db, user, lastWord, lastHint);
+                }
 
                 // read 2 and more letter words
                 for (int i = 2; i < 200; i++)
                 {
-                    ReadWordsByWordPermutations(2, i, driver, db, user);
+                    ReadWordsByWordPermutations(2, i, driver, db, user, lastWord, lastHint);
                 }
 
                 // make sure to clean the chrome driver from memory
@@ -125,7 +132,7 @@ namespace CrossWord.Scraper
             proc.Close();
         }
 
-        static void ReadWordsByWordPermutations(int permutationSize, int letterLength, IWebDriver driver, WordHintDbContext db, User user)
+        static void ReadWordsByWordPermutations(int permutationSize, int letterLength, IWebDriver driver, WordHintDbContext db, User user, Word lastWord, Hint lastHint)
         {
             var alphabet = "abcdefghijklmnopqrstuvwxyzøæå";
             var permutations = alphabet.Select(x => x.ToString());
@@ -135,6 +142,7 @@ namespace CrossWord.Scraper
                 permutations = permutations.SelectMany(x => alphabet, (x, y) => x + y);
             }
 
+            bool hasFoundWord = false;
             foreach (var permutation in permutations)
             {
                 string wordPattern = "";
@@ -147,11 +155,52 @@ namespace CrossWord.Scraper
                 {
                     wordPattern = permutation;
                 }
-                ReadWordsByWordPattern(wordPattern, driver, db, user);
+
+                // if lastWord isn't null 
+                if (lastWord != null)
+                {
+                    // skip until lastWord is found
+                    if (!hasFoundWord)
+                    {
+                        if (lastWord.Value.Length > wordPattern.Length)
+                        {
+                            // skip until same length
+                            continue;
+                        }
+                        else if (lastWord.Value.Length < wordPattern.Length)
+                        {
+                            // this means we are continuing with longer patterns
+                            // and should process as normal
+                            hasFoundWord = true;
+                        }
+                        else
+                        {
+                            // same length so compare
+                            if (lastWord.Value.ToLower() == wordPattern)
+                            {
+                                // found
+                                hasFoundWord = true;
+                            }
+                            else
+                            {
+                                continue;
+                            }
+                        }
+                    }
+
+                    if (hasFoundWord)
+                    {
+                        ReadWordsByWordPattern(wordPattern, driver, db, user, lastWord, lastHint);
+                    }
+                }
+                else
+                {
+                    ReadWordsByWordPattern(wordPattern, driver, db, user, lastWord, lastHint);
+                }
             }
         }
 
-        static void ReadWordsByWordPattern(string wordPattern, IWebDriver driver, WordHintDbContext db, User user)
+        static void ReadWordsByWordPattern(string wordPattern, IWebDriver driver, WordHintDbContext db, User user, Word lastWord, Hint lastHint)
         {
             // go to search result page            
             var query = "";
@@ -220,10 +269,21 @@ namespace CrossWord.Scraper
                         CreatedDate = ParseDateTimeOrNow(date, "yyyy-MM-dd")
                     };
 
-                    db.Words.Add(word);
-                    db.SaveChanges();
+                    // check if word already exists
+                    var existingWord = db.Words.Where(o => o.Value == wordText).FirstOrDefault();
+                    if (existingWord != null)
+                    {
+                        // update reference to existing word (reuse the word)
+                        word = existingWord;
+                    }
+                    else
+                    {
+                        // add new word
+                        db.Words.Add(word);
+                        db.SaveChanges();
+                    }
 
-                    GetWordSynonyms(word, driver, db, user);
+                    GetWordSynonyms(word, driver, db, user, lastHint);
                 }
 
                 // go to next page if exist
@@ -243,7 +303,7 @@ namespace CrossWord.Scraper
             }
         }
 
-        static void GetWordSynonyms(Word word, IWebDriver driver, WordHintDbContext db, User user)
+        static void GetWordSynonyms(Word word, IWebDriver driver, WordHintDbContext db, User user, Hint lastHint)
         {
             // there is a bug in the website that makes a  query with "0" fail
             if (word.Value == "0") return;
@@ -330,7 +390,9 @@ namespace CrossWord.Scraper
 
                     // check if hint already exists
                     bool skipHint = false;
-                    var existingHint = db.Hints.Where(o => o.Value == hintText).FirstOrDefault();
+                    var existingHint = db.Hints
+                                        .Include(h => h.WordHints)
+                                        .Where(o => o.Value == hintText).FirstOrDefault();
                     if (existingHint != null)
                     {
                         // update reference to existing hint (reuse the hint)
