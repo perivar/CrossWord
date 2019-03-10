@@ -17,7 +17,8 @@ namespace CrossWord.Scraper.Migrations
                     LastName = table.Column<string>(nullable: true),
                     UserName = table.Column<string>(nullable: true),
                     Password = table.Column<string>(nullable: true),
-                    isVIP = table.Column<short>(nullable: false)
+                    isVIP = table.Column<short>(nullable: false),
+                    ExternalId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

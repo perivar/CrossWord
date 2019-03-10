@@ -14,5 +14,10 @@ namespace CrossWord.Scraper.MySQLDbService.Models
         public User User { get; set; }
         public DateTime CreatedDate { get; set; }
         public ICollection<WordHint> WordHints { get; } = new List<WordHint>();
+
+        public override string ToString()
+        {
+            return string.Format("Id: {0}, Language: {1}, Value: {2}, WordHints: {3}", WordId, Language, Value, WordHints.Count);
+        }
     }
 }

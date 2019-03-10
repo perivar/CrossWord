@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CrossWord.Scraper.Migrations
 {
     [DbContext(typeof(WordHintDbContext))]
-    [Migration("20190310115934_InitialCreate")]
+    [Migration("20190310133646_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,6 +47,8 @@ namespace CrossWord.Scraper.Migrations
                 {
                     b.Property<int>("UserId")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<string>("ExternalId");
 
                     b.Property<string>("FirstName");
 

@@ -12,5 +12,11 @@ namespace CrossWord.Scraper.MySQLDbService.Models
         public string UserName { get; set; }
         public string Password { get; set; }
         public bool isVIP { get; set; }
+        public string ExternalId { get; set; }
+
+        public override string ToString()
+        {
+            return string.Format("Id: {0}, ExternalId: {1}, FirstName: {2}, LastName: {3}", UserId, ExternalId, FirstName, LastName);
+        }
     }
 }

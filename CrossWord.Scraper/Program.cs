@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -191,6 +192,23 @@ namespace CrossWord.Scraper
                 {
                     rowTD = row.FindElements(By.TagName("td"));
                     var wordText = rowTD[0].Text;
+                    var userId = rowTD[3].Text;
+                    var date = rowTD[4].Text;
+
+                    // check if user already exists
+                    User wordUser = null;
+                    var existingUser = db.Users.Where(o => o.ExternalId == userId).FirstOrDefault();
+                    if (existingUser != null)
+                    {
+                        wordUser = existingUser;
+                    }
+                    else
+                    {
+                        wordUser = new User()
+                        {
+                            ExternalId = userId
+                        };
+                    }
 
                     var word = new Word
                     {
@@ -198,8 +216,8 @@ namespace CrossWord.Scraper
                         Value = wordText,
                         NumberOfLetters = wordText.Count(c => c != ' '),
                         NumberOfWords = CountNumberOfWords(wordText),
-                        User = user,
-                        CreatedDate = DateTime.Now,
+                        User = wordUser,
+                        CreatedDate = ParseDateTimeOrNow(date, "yyyy-MM-dd")
                     };
 
                     db.Words.Add(word);
@@ -282,6 +300,23 @@ namespace CrossWord.Scraper
                 {
                     rowTD = row.FindElements(By.TagName("td"));
                     var hintText = rowTD[0].Text;
+                    var userId = rowTD[3].Text;
+                    var date = rowTD[4].Text;
+
+                    // check if user already exists
+                    User hintUser = null;
+                    var existingUser = db.Users.Where(o => o.ExternalId == userId).FirstOrDefault();
+                    if (existingUser != null)
+                    {
+                        hintUser = existingUser;
+                    }
+                    else
+                    {
+                        hintUser = new User()
+                        {
+                            ExternalId = userId
+                        };
+                    }
 
                     var hint = new Hint
                     {
@@ -289,8 +324,8 @@ namespace CrossWord.Scraper
                         Value = hintText,
                         NumberOfLetters = hintText.Count(c => c != ' '),
                         NumberOfWords = CountNumberOfWords(hintText),
-                        User = user,
-                        CreatedDate = DateTime.Now,
+                        User = hintUser,
+                        CreatedDate = ParseDateTimeOrNow(date, "yyyy-MM-dd")
                     };
 
                     // check if hint already exists
@@ -354,6 +389,24 @@ namespace CrossWord.Scraper
 
             // and have our WebDriver focus on the main document in the page to send commands to 
             chromeDriver.SwitchTo().DefaultContent();
+        }
+
+        private static DateTime ParseDateTimeOrNow(string dateString, string formatString)
+        {
+            try
+            {
+                DateTime parsedDateTime = DateTime.ParseExact(dateString,
+                                                        formatString,
+                                                        CultureInfo.InvariantCulture,
+                                                        DateTimeStyles.None);
+
+                return parsedDateTime;
+            }
+            catch (FormatException)
+            {
+            }
+
+            return DateTime.Now;
         }
 
         private static string EscapeUrlString(string value)

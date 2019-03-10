@@ -46,6 +46,8 @@ namespace CrossWord.Scraper.Migrations
                     b.Property<int>("UserId")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("ExternalId");
+
                     b.Property<string>("FirstName");
 
                     b.Property<string>("LastName");
