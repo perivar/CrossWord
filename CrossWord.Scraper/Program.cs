@@ -95,7 +95,7 @@ namespace CrossWord.Scraper
                 db.SaveChanges();
 
                 // read all one letter words
-                // ReadWordsByWordPattern("1", driver, db, user);
+                ReadWordsByWordPattern("1", driver, db, user);
 
                 // read 2 and more letter words
                 for (int i = 2; i < 200; i++)
