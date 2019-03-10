@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using CrossWord.Scraper.MySQLDbService;
 using CrossWord.Scraper.MySQLDbService.Models;
+using Microsoft.EntityFrameworkCore;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
@@ -94,7 +95,7 @@ namespace CrossWord.Scraper
                 db.SaveChanges();
 
                 // read all one letter words
-                ReadWordsByWordPattern("1", driver, db, user);
+                // ReadWordsByWordPattern("1", driver, db, user);
 
                 // read 2 and more letter words
                 for (int i = 2; i < 200; i++)

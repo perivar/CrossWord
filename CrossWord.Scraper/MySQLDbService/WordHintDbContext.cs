@@ -2,6 +2,7 @@ using System;
 using CrossWord.Scraper.MySQLDbService.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using MySql.Data.EntityFrameworkCore.Extensions;
 
 namespace CrossWord.Scraper.MySQLDbService
 {
@@ -13,7 +14,7 @@ namespace CrossWord.Scraper.MySQLDbService
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseMySQL("server=localhost;database=dictionary;user=user;password=password");
+            optionsBuilder.UseMySQL("server=localhost;database=dictionary;user=user;password=password;charset=utf8;");
             base.OnConfiguring(optionsBuilder);
         }
 
@@ -38,6 +39,14 @@ namespace CrossWord.Scraper.MySQLDbService
             modelBuilder.Entity<User>()
                         .Property(u => u.isVIP)
                         .HasConversion(new BoolToZeroOneConverter<Int16>());
+
+            modelBuilder.Entity<Word>()
+                .Property(w => w.Value)
+                .ForMySQLHasCollation("utf8mb4_0900_as_cs"); // defining collation in a property as accent sensitive (as) and case sensitive (cs)
+
+            modelBuilder.Entity<Hint>()
+                .Property(h => h.Value)
+                .ForMySQLHasCollation("utf8mb4_0900_as_cs"); // defining collation in a property as accent sensitive (as) and case sensitive (cs)
         }
     }
 }

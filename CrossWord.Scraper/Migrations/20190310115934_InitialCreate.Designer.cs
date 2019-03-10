@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CrossWord.Scraper.Migrations
 {
     [DbContext(typeof(WordHintDbContext))]
-    [Migration("20190310100556_InitialCreate")]
+    [Migration("20190310115934_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,7 +33,8 @@ namespace CrossWord.Scraper.Migrations
 
                     b.Property<int?>("UserId");
 
-                    b.Property<string>("Value");
+                    b.Property<string>("Value")
+                        .HasAnnotation("MySQL:Collation", "utf8mb4_0900_as_cs");
 
                     b.HasKey("HintId");
 
@@ -77,7 +78,8 @@ namespace CrossWord.Scraper.Migrations
 
                     b.Property<int?>("UserId");
 
-                    b.Property<string>("Value");
+                    b.Property<string>("Value")
+                        .HasAnnotation("MySQL:Collation", "utf8mb4_0900_as_cs");
 
                     b.HasKey("WordId");
 
