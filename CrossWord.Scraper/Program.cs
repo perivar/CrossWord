@@ -94,6 +94,9 @@ namespace CrossWord.Scraper
                 db.Users.Add(user);
                 db.SaveChanges();
 
+                // testing
+                // ReadWordsByWordPattern("RV", driver, db, user);
+
                 // read all one letter words
                 ReadWordsByWordPattern("1", driver, db, user);
 
@@ -291,11 +294,18 @@ namespace CrossWord.Scraper
                     };
 
                     // check if hint already exists
+                    bool skipHint = false;
                     var existingHint = db.Hints.Where(o => o.Value == hintText).FirstOrDefault();
                     if (existingHint != null)
                     {
                         // update reference to existing hint (reuse the hint)
                         hint = existingHint;
+
+                        // check if the current word already has been added as a reference to this hint
+                        if (hint.WordHints.Count(h => h.WordId == word.WordId) > 0)
+                        {
+                            skipHint = true;
+                        }
                     }
                     else
                     {
@@ -303,15 +313,22 @@ namespace CrossWord.Scraper
                         db.Hints.Add(hint);
                     }
 
-                    word.WordHints.Add(new WordHint()
+                    if (!skipHint)
                     {
-                        Word = word,
-                        Hint = hint
-                    });
+                        word.WordHints.Add(new WordHint()
+                        {
+                            Word = word,
+                            Hint = hint
+                        });
 
-                    db.SaveChanges();
+                        db.SaveChanges();
 
-                    Log.Debug("Added '{0}' as a hint for '{1}'", hintText, word.Value);
+                        Log.Debug("Added '{0}' as a hint for '{1}'", hintText, word.Value);
+                    }
+                    else
+                    {
+                        Log.Error("Skipped adding '{0}' as a hint for '{1}' ...", hintText, word.Value);
+                    }
                 }
 
                 // go to next page if exist
