@@ -30,7 +30,7 @@ namespace CrossWord.Scraper
                 .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Error).WriteTo.File(DEFAULT_ERROR_LOG_PATH))
                 .CreateLogger();
 
-            using (var db = new SynonymDbContext())
+            using (var db = new WordHintDbContext())
             {
                 // setup database
                 db.Database.EnsureDeleted();
@@ -81,14 +81,25 @@ namespace CrossWord.Scraper
                     var ready2 = wait2.Until(d => ((IJavaScriptExecutor)d).ExecuteScript("return document.readyState").Equals("complete"));
                 }
 
+                // set admin user
+                var user = new User()
+                {
+                    FirstName = "Admin",
+                    LastName = "Admin",
+                    UserName = "",
+                    Password = "",
+                    isVIP = true
+                };
+                db.Users.Add(user);
+                db.SaveChanges();
+
                 // read all one letter words
-                ReadWordsByWordPattern("1", driver, db);
+                ReadWordsByWordPattern("1", driver, db, user);
 
                 // read 2 and more letter words
                 for (int i = 2; i < 200; i++)
                 {
-                    ReadWordsByWordPermutations(2, i, driver, db);
-                    // ReadWordsByWordLength(i, driver, db);
+                    ReadWordsByWordPermutations(2, i, driver, db, user);
                 }
 
                 // make sure to clean the chrome driver from memory
@@ -109,7 +120,7 @@ namespace CrossWord.Scraper
             proc.Close();
         }
 
-        static void ReadWordsByWordPermutations(int permutationSize, int letterLength, IWebDriver driver, SynonymDbContext db)
+        static void ReadWordsByWordPermutations(int permutationSize, int letterLength, IWebDriver driver, WordHintDbContext db, User user)
         {
             var alphabet = "abcdefghijklmnopqrstuvwxyzøæå";
             var permutations = alphabet.Select(x => x.ToString());
@@ -131,11 +142,11 @@ namespace CrossWord.Scraper
                 {
                     wordPattern = permutation;
                 }
-                ReadWordsByWordPattern(wordPattern, driver, db);
+                ReadWordsByWordPattern(wordPattern, driver, db, user);
             }
         }
 
-        static void ReadWordsByWordPattern(string wordPattern, IWebDriver driver, SynonymDbContext db)
+        static void ReadWordsByWordPattern(string wordPattern, IWebDriver driver, WordHintDbContext db, User user)
         {
             // go to search result page            
             var query = "";
@@ -145,7 +156,7 @@ namespace CrossWord.Scraper
 
             while (true)
             {
-                Log.Information("Processing pattern search for '{0}' page {1}", wordPattern, page + 1);
+                Log.Information("Processing pattern search for '{0}' on page {1}", wordPattern, page + 1);
 
                 // parse total number of words found
                 var wordCountElement = driver.FindElementOrNull(By.XPath("/html/body//div[@id='content']/h1/strong"));
@@ -163,8 +174,8 @@ namespace CrossWord.Scraper
                     var isNumeric = int.TryParse(wordCount, out int n);
                     if (isNumeric)
                     {
-                        Log.Information("Found {0} words when searching for '{1}' page {2}", n, wordPattern, page + 1);
-                        if (n > 108) Log.Error("Warning! Pattern search for '{0}' page {1} has too many words: {2}", wordPattern, page + 1, n);
+                        Log.Information("Found {0} words when searching for '{1}' on page {2}", n, wordPattern, page + 1);
+                        if (n > 108) Log.Error("Warning! Pattern search for '{0}' on page {1} has too many words: {2}", wordPattern, page + 1, n);
                     }
                 }
 
@@ -183,14 +194,14 @@ namespace CrossWord.Scraper
                         Value = wordText,
                         NumberOfLetters = wordText.Count(c => c != ' '),
                         NumberOfWords = CountNumberOfWords(wordText),
-                        UserId = 1,
+                        User = user,
                         CreatedDate = DateTime.Now,
                     };
 
                     db.Words.Add(word);
                     db.SaveChanges();
 
-                    GetWordSynonyms(word, driver, db);
+                    GetWordSynonyms(word, driver, db, user);
                 }
 
                 // go to next page if exist
@@ -210,7 +221,7 @@ namespace CrossWord.Scraper
             }
         }
 
-        static void GetWordSynonyms(Word word, IWebDriver driver, SynonymDbContext db)
+        static void GetWordSynonyms(Word word, IWebDriver driver, WordHintDbContext db, User user)
         {
             // there is a bug in the website that makes a  query with "0" fail
             if (word.Value == "0") return;
@@ -239,7 +250,7 @@ namespace CrossWord.Scraper
 
             while (true)
             {
-                Log.Information("Processing synonym search for '{0}' page {1}", word.Value, page + 1);
+                Log.Information("Processing synonym search for '{0}' on page {1}", word.Value, page + 1);
 
                 // parse total number of words found
                 var wordCount = driver.FindElement(By.XPath("/html/body//div[@id='content']/h1/strong")).Text;
@@ -254,8 +265,8 @@ namespace CrossWord.Scraper
                     var isNumeric = int.TryParse(wordCount, out int n);
                     if (isNumeric)
                     {
-                        Log.Information("Found {0} synonyms when searching for '{1}' page {2}", n, word.Value, page + 1);
-                        if (n > 108) Log.Error("Warning! synonym search for '{0}' page {1} has too many words: {2}", word.Value, page + 1, n);
+                        Log.Information("Found {0} synonyms when searching for '{1}' on page {2}", n, word.Value, page + 1);
+                        if (n > 108) Log.Error("Warning! synonym search for '{0}' on page {1} has too many words: {2}", word.Value, page + 1, n);
                     }
                 }
 
@@ -266,23 +277,40 @@ namespace CrossWord.Scraper
                 foreach (IWebElement row in tableRow)
                 {
                     rowTD = row.FindElements(By.TagName("td"));
-                    var synonymText = rowTD[0].Text;
+                    var hintText = rowTD[0].Text;
 
-                    var synonym = new Word
+                    var hint = new Hint
                     {
                         Language = "no",
-                        Value = synonymText,
-                        NumberOfLetters = synonymText.Count(c => c != ' '),
-                        NumberOfWords = CountNumberOfWords(synonymText),
-                        UserId = 1,
+                        Value = hintText,
+                        NumberOfLetters = hintText.Count(c => c != ' '),
+                        NumberOfWords = CountNumberOfWords(hintText),
+                        User = user,
                         CreatedDate = DateTime.Now,
-                        ParentWordId = word.WordId
                     };
 
-                    db.Words.Add(synonym);
+                    // check if hint already exists
+                    var existingHint = db.Hints.Where(o => o.Value == hintText).FirstOrDefault();
+                    if (existingHint != null)
+                    {
+                        // update reference to existing hint (reuse the hint)
+                        hint = existingHint;
+                    }
+                    else
+                    {
+                        // add new hint
+                        db.Hints.Add(hint);
+                    }
+
+                    word.WordHints.Add(new WordHint()
+                    {
+                        Word = word,
+                        Hint = hint
+                    });
+
                     db.SaveChanges();
 
-                    Log.Debug("Added '{0}' as a synonym for '{1}'", synonymText, word.Value);
+                    Log.Debug("Added '{0}' as a hint for '{1}'", hintText, word.Value);
                 }
 
                 // go to next page if exist
