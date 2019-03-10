@@ -16,7 +16,7 @@ using Serilog.Events;
 
 namespace CrossWord.Scraper
 {
-    class Program
+    public class Program
     {
         const string DEFAULT_LOG_PATH = "crossword_scraper.log";
         const string DEFAULT_ERROR_LOG_PATH = "crossword_scraper_error.log";
@@ -512,7 +512,7 @@ namespace CrossWord.Scraper
             return null;
         }
 
-        private static int CountNumberOfWords(string text)
+        public static int CountNumberOfWords(string text)
         {
             char[] delimiters = new char[] { ' ', '\r', '\n' };
             return text.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Length;

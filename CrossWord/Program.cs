@@ -4,6 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CrossWord.Scraper.MySQLDbService;
+using CrossWord.Scraper.MySQLDbService.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CrossWord
 {
@@ -65,6 +68,116 @@ namespace CrossWord
                 Console.WriteLine("Press Enter to Exit ...");
                 Console.ReadLine();
                 tokenSource.Cancel();
+            }
+            else if (outputFile.Equals("database"))
+            {
+                using (var db = new WordHintDbContext())
+                {
+                    // setup database
+                    // db.Database.EnsureDeleted();
+                    db.Database.EnsureCreated();
+
+                    // set admin user
+                    var user = new User()
+                    {
+                        FirstName = "Admin",
+                        LastName = "Admin",
+                        UserName = "",
+                        Password = "",
+                        isVIP = true
+                    };
+
+                    // check if user already exists
+                    var existingUser = db.Users.Where(o => o.FirstName == user.FirstName).FirstOrDefault();
+                    if (existingUser != null)
+                    {
+                        user = existingUser;
+                    }
+                    else
+                    {
+                        db.Users.Add(user);
+                        db.SaveChanges();
+                    }
+
+                    foreach (var dictElement in dictionary.Description)
+                    {
+                        var wordText = dictElement.Key.ToUpper();
+                        var hintText = dictElement.Value.ToUpper();
+
+                        var word = new Word
+                        {
+                            Language = "no",
+                            Value = wordText,
+                            NumberOfLetters = wordText.Count(c => c != ' '),
+                            NumberOfWords = CrossWord.Scraper.Program.CountNumberOfWords(wordText),
+                            User = user,
+                            CreatedDate = DateTime.Now
+                        };
+
+                        // check if word already exists
+                        var existingWord = db.Words.Where(o => o.Value == wordText).FirstOrDefault();
+                        if (existingWord != null)
+                        {
+                            // update reference to existing word (reuse the word)
+                            word = existingWord;
+                        }
+                        else
+                        {
+                            // add new word
+                            db.Words.Add(word);
+                            db.SaveChanges();
+                        }
+
+                        var hint = new Hint
+                        {
+                            Language = "no",
+                            Value = hintText,
+                            NumberOfLetters = hintText.Count(c => c != ' '),
+                            NumberOfWords = CrossWord.Scraper.Program.CountNumberOfWords(hintText),
+                            User = user,
+                            CreatedDate = DateTime.Now
+                        };
+
+                        // check if hint already exists
+                        bool skipHint = false;
+                        var existingHint = db.Hints
+                                            .Include(h => h.WordHints)
+                                            .Where(o => o.Value == hintText).FirstOrDefault();
+                        if (existingHint != null)
+                        {
+                            // update reference to existing hint (reuse the hint)
+                            hint = existingHint;
+
+                            // check if the current word already has been added as a reference to this hint
+                            if (hint.WordHints.Count(h => h.WordId == word.WordId) > 0)
+                            {
+                                skipHint = true;
+                            }
+                        }
+                        else
+                        {
+                            // add new hint
+                            db.Hints.Add(hint);
+                        }
+
+                        if (!skipHint)
+                        {
+                            word.WordHints.Add(new WordHint()
+                            {
+                                Word = word,
+                                Hint = hint
+                            });
+
+                            db.SaveChanges();
+
+                            Console.WriteLine("Added '{0}' as a hint for '{1}'", hintText, word.Value);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Skipped adding '{0}' as a hint for '{1}' ...", hintText, word.Value);
+                        }
+                    }
+                }
             }
             else
             {

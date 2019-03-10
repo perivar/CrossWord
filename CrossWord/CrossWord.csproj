@@ -24,8 +24,12 @@
 
   <ItemGroup>
     <PackageReference Include="System.Memory" Version="4.5.2" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="1.1.0"/>
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0"/>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CrossWord.Scraper\CrossWord.Scraper.csproj" />
   </ItemGroup>
 
 </Project>

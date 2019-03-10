@@ -14,6 +14,10 @@ namespace CrossWord
         readonly int _maxWordLength;
         readonly Dictionary<string, string> _description;
 
+        public IList<string>[] Words { get { return _words; } }
+
+        public Dictionary<string, string> Description { get { return _description; } }
+
         public Dictionary(int maxWordLength)
         {
             _maxWordLength = maxWordLength;
