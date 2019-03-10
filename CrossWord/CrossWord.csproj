@@ -4,6 +4,7 @@
     <Description>CrossWord Console Application</Description>
     <Authors>karasek</Authors>
     <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
     <DebugType>portable</DebugType>
     <AssemblyName>CrossWord</AssemblyName>
     <OutputType>Exe</OutputType>
@@ -17,10 +18,9 @@
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <!-- <OutputPath>bin\Debug\netcoreapp2.2\</OutputPath> -->
-    <DefineConstants>TRACE;DEBUG;NETCOREAPP2_0</DefineConstants>
-  </PropertyGroup>
+  <!-- <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;NETCOREAPP2_2</DefineConstants>
+  </PropertyGroup> -->
 
   <ItemGroup>
     <PackageReference Include="System.Memory" Version="4.5.2" />
