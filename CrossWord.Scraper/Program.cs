@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using CrossWord.Scraper.MySQLDbService;
 using CrossWord.Scraper.MySQLDbService.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
@@ -24,22 +25,30 @@ namespace CrossWord.Scraper
         static void Main(string[] args)
         {
             Log.Logger = new Serilog.LoggerConfiguration()
-                // .MinimumLevel.Debug()
-                .MinimumLevel.Information()
+                // .MinimumLevel.Debug() // enable ef core logging
+                .MinimumLevel.Information() // disable ef core logging
                 .WriteTo.File(DEFAULT_LOG_PATH)
                 .WriteTo.Console()
                 // .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Information)
                 .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Error).WriteTo.File(DEFAULT_ERROR_LOG_PATH))
                 .CreateLogger();
 
-            using (var db = new WordHintDbContext())
+            var configurationBuilder = new ConfigurationBuilder()
+                        .SetBasePath(Directory.GetCurrentDirectory())
+                        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                        .AddCommandLine(args)
+                        .Build();
+
+            var dbContextFactory = new DesignTimeDbContextFactory();
+            // var args = new string[] { $"ConnectionStrings:DefaultConnection=server=localhost;database=dictionary;user=user;password=password;charset=utf8;" };
+            using (var db = dbContextFactory.CreateDbContext(args, Log.Logger))
             {
                 // setup database
                 // db.Database.EnsureDeleted();
                 db.Database.EnsureCreated();
 
-                string siteUsername = "kongolav";
-                string sitePassword = "kongolav";
+                string siteUsername = configurationBuilder["kryssord.org:Username"];
+                string sitePassword = configurationBuilder["kryssord.org:Password"];
 
                 KillAllChromeDriverInstances();
 

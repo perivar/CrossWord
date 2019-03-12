@@ -12,9 +12,13 @@ namespace CrossWord.Scraper.MySQLDbService
         public DbSet<Hint> Hints { get; set; }
         public DbSet<User> Users { get; set; }
 
+        public WordHintDbContext(DbContextOptions<WordHintDbContext> options)
+            : base(options)
+        {
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseMySQL("server=localhost;database=dictionary;user=user;password=password;charset=utf8;");
             base.OnConfiguring(optionsBuilder);
         }
 
