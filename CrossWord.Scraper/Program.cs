@@ -426,7 +426,7 @@ namespace CrossWord.Scraper
                     }
                     else
                     {
-                        Log.Error("Skipped adding '{0}' as a hint for '{1}' ...", hintText, word.Value);
+                        Log.Debug("Skipped adding '{0}' as a hint for '{1}' ...", hintText, word.Value);
                     }
                 }
 
