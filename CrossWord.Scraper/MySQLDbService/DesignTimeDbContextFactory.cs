@@ -41,8 +41,7 @@ namespace CrossWord.Scraper.MySQLDbService
                     .CreateLogger();
             }
 
-            DbContextOptionsBuilder<WordHintDbContext> options =
-                        new DbContextOptionsBuilder<WordHintDbContext>();
+            var options = new DbContextOptionsBuilder<WordHintDbContext>();
 
             // since Entity Framework outputs so much information at even Information level
             // only output to serilog if log level is debug or lower
@@ -63,16 +62,26 @@ namespace CrossWord.Scraper.MySQLDbService
             Log.Information($"Using connection string {_connectionString}");
 
             options.UseMySQL(_connectionString); // default added as Scoped
+            // options.UseSqlite(_connectionString); // default added as Scoped
 
             return new WordHintDbContext(options.Options);
         }
 
+        /// <summary>
+        /// Read connection string from passed arguments or appsettings.json
+        /// </summary>
+        /// <param name="args">arguments</param>
+        /// <example>var args = new string[] { $"ConnectionStrings:DefaultConnection=server=localhost;database=dictionary;user=user;password=password;charset=utf8;" };</example>
         private void LoadConnectionString(string[] args)
         {
             Dictionary<string, string> inMemoryCollection = new Dictionary<string, string>();
 
             if (args.Any())
             {
+                // Connection strings has keys like "ConnectionStrings:DefaultConnection" 
+                // and values like "Data Source=C:\\Users\\pnerseth\\My Projects\\fingerprint.db" for Sqlite
+                // or
+                // server=localhost;database=dictionary;user=user;password=password;charset=utf8; for Mysql
                 Log.Information($"Searching for '{CONNECTION_STRING_KEY}' within passed arguments: {string.Join(", ", args)}");
                 var match = args.FirstOrDefault(s => s.Contains($"ConnectionStrings:{CONNECTION_STRING_KEY}"));
                 if (match != null)

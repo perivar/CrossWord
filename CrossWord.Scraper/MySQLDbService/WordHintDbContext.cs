@@ -12,6 +12,11 @@ namespace CrossWord.Scraper.MySQLDbService
         public DbSet<Hint> Hints { get; set; }
         public DbSet<User> Users { get; set; }
 
+        public WordHintDbContext()
+            : base()
+        {
+        }
+
         public WordHintDbContext(DbContextOptions<WordHintDbContext> options)
             : base(options)
         {

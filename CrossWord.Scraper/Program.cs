@@ -24,31 +24,34 @@ namespace CrossWord.Scraper
 
         static void Main(string[] args)
         {
-            Log.Logger = new Serilog.LoggerConfiguration()
-                // .MinimumLevel.Debug() // enable ef core logging
-                .MinimumLevel.Information() // disable ef core logging
-                .WriteTo.File(DEFAULT_LOG_PATH)
-                .WriteTo.Console()
-                // .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Information)
-                .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Error).WriteTo.File(DEFAULT_ERROR_LOG_PATH))
-                .CreateLogger();
-
-            var configurationBuilder = new ConfigurationBuilder()
+            var configuration = new ConfigurationBuilder()
                         .SetBasePath(Directory.GetCurrentDirectory())
                         .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                        .AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true)
                         .AddCommandLine(args)
                         .Build();
 
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(configuration)
+                // .MinimumLevel.Debug() // enable ef core logging
+                // .MinimumLevel.Information() // disable ef core logging
+                // .WriteTo.File(DEFAULT_LOG_PATH)
+                // .WriteTo.Console()
+                // .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Information)
+                // .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Error).WriteTo.File(DEFAULT_ERROR_LOG_PATH))
+                .CreateLogger();
+
+            Log.Warning("Starting CrossWord.Scraper ....");
+
             var dbContextFactory = new DesignTimeDbContextFactory();
-            // var args = new string[] { $"ConnectionStrings:DefaultConnection=server=localhost;database=dictionary;user=user;password=password;charset=utf8;" };
-            using (var db = dbContextFactory.CreateDbContext(args, Log.Logger))
+            using ( )
             {
                 // setup database
                 // db.Database.EnsureDeleted();
                 db.Database.EnsureCreated();
 
-                string siteUsername = configurationBuilder["kryssord.org:Username"];
-                string sitePassword = configurationBuilder["kryssord.org:Password"];
+                string siteUsername = configuration["kryssord.org:Username"];
+                string sitePassword = configuration["kryssord.org:Password"];
 
                 KillAllChromeDriverInstances();
 
