@@ -71,8 +71,12 @@ namespace CrossWord
         public CrossTransformation TryFillPuzzle(ReadOnlySpan<char> word, ICrossDictionary dict)
         {
             for (int i = 0; i < word.Length; i++)
+            {
                 if (_pattern[i] != '.')
+                {
                     return null;
+                }
+            }
             return TryFill(null, word, dict, true);
         }
 
@@ -93,9 +97,14 @@ namespace CrossWord
                     {
                         int adjIndex;
                         if (_isHorizontal)
+                        {
                             adjIndex = _startY - AdjacentPatterns[i].StartY;
+                        }
                         else
+                        {
                             adjIndex = _startX - AdjacentPatterns[i].StartX;
+                        }
+
                         char c = AdjacentPatterns[i].Pattern[adjIndex];
                         if (c == '.')
                         {
@@ -104,7 +113,10 @@ namespace CrossWord
                             int newInstCount = dict.GetMatchCount(adjacent);
                             adjacent[adjIndex] = '.';
                             if (newInstCount == 0)
+                            {
                                 return null;
+                            }
+
                             instSum += newInstCount;
                             trans.AddChangeInst(i, AdjacentPatterns[i].InstantiationCount, newInstCount);
                             trans.AddChange(i, adjIndex, word[i]);

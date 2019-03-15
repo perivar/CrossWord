@@ -59,6 +59,7 @@ namespace CrossWord
                             trans.Pattern = patt;
                         }
                     }
+                    
                     if (succTrans.Count > 0)
                     {
                         succTrans.Sort(new CrossTransformationComparer());

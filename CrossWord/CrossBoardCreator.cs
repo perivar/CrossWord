@@ -29,10 +29,14 @@ namespace CrossWord
             for (int i = 0; i < lines.Count; i++)
             {
                 if (lineLength == -1)
+                {
                     lineLength = lines[i].Length;
+                }
                 else if (lines[i].Length != lineLength)
+                {
                     throw new Exception(string.Format("Line {0} has different length ({1}) then previous lines ({2})",
                         i, lines[i], lineLength));
+                }
             }
             var board = new CrossBoard();
             board.SetBoardSize(lineLength, lines.Count);
@@ -41,8 +45,10 @@ namespace CrossWord
                 var line = lines[row];
                 for (int col = 0; col < lineLength; col++)
                 {
-                    if (line[col]=='-')
+                    if (line[col] == '-')
+                    {
                         board.AddStartWord(col, row);
+                    }
                 }
             }
             return board;

@@ -40,9 +40,13 @@ namespace CrossWord
                 var newChar = (char)_changes[i + 2];
                 char[] pattern;
                 if (adjIdx == -1)
+                {
                     pattern = aCrossPattern.Pattern;
+                }
                 else
+                {
                     pattern = aCrossPattern.AdjacentPatterns[adjIdx].Pattern;
+                }
                 pattern[pos] = newChar;
             }
             for (int i = 0; i < _instChanges.Count; i += 3)
@@ -70,9 +74,13 @@ namespace CrossWord
                 var pos = _changes[i + 1];
                 char[] pattern;
                 if (adjIdx == -1)
+                {
                     pattern = aCrossPattern.Pattern;
+                }
                 else
+                {
                     pattern = aCrossPattern.AdjacentPatterns[adjIdx].Pattern;
+                }
                 pattern[pos] = '.';
             }
             for (int i = 0; i < _instChanges.Count; i += 3)
@@ -80,9 +88,13 @@ namespace CrossWord
                 var adjIdx = _instChanges[i];
                 var old = _instChanges[i + 1];
                 if (adjIdx != -1)
+                {
                     aCrossPattern.AdjacentPatterns[adjIdx].InstantiationCount = old;
+                }
                 else
+                {
                     aCrossPattern.InstantiationCount = old;
+                }
             }
         }
 
