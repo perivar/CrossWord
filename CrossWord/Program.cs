@@ -71,7 +71,10 @@ namespace CrossWord
             }
             else if (outputFile.Equals("database"))
             {
-                using (var db = new WordHintDbContext())
+                var dbContextFactory = new DesignTimeDbContextFactory();
+                using (var db = dbContextFactory.CreateDbContext(
+                    new string[] { $"ConnectionStrings:DefaultConnection=server=localhost;database=dictionary;user=user;password=password;charset=utf8;"
+                }))
                 {
                     // setup database
                     // db.Database.EnsureDeleted();
