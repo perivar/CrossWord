@@ -102,10 +102,16 @@ namespace CrossWord
                         db.SaveChanges();
                     }
 
+                    int totalCount = dictionary.Description.Count;
+                    Console.WriteLine("Found '{0}' words to add", totalCount);
+
+                    int wordCount = 0;
                     foreach (var dictElement in dictionary.Description)
                     {
-                        var wordText = dictElement.Key.ToUpper();
-                        var hintText = dictElement.Value.ToUpper();
+                        wordCount++;
+
+                        var wordText = dictElement.Value.ToUpper();
+                        var hintText = dictElement.Key.ToUpper();
 
                         var word = new Word
                         {
@@ -173,12 +179,14 @@ namespace CrossWord
 
                             db.SaveChanges();
 
-                            Console.WriteLine("Added '{0}' as a hint for '{1}'", hintText, word.Value);
+                            Console.WriteLine("[{2}/{3}] Added '{0}' as a hint for '{1}'", hintText, word.Value, wordCount, totalCount);
                         }
                         else
                         {
-                            Console.WriteLine("Skipped adding '{0}' as a hint for '{1}' ...", hintText, word.Value);
+                            Console.WriteLine("[{2}/{3}] Skipped adding '{0}' as a hint for '{1}' ...", hintText, word.Value, wordCount, totalCount);
                         }
+
+                        // Console.WriteLine("[{2}/{3}] Skipped adding '{0}' as a hint for '{1}' ...", hintText, wordText, wordCount, totalCount);
                     }
                 }
             }
