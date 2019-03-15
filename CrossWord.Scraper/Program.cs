@@ -64,11 +64,18 @@ namespace CrossWord.Scraper
                 var chromeDriverPath = outPutDirectory;
 
                 ChromeOptions options = new ChromeOptions();
-                // options.AddArguments(userDataArgument);
-                options.AddArguments("--start-maximized");
-                // options.AddArgument("--log-level=3");
+                //options.AddArguments(userDataArgument);
+                //options.AddArguments("--start-maximized");
+                //options.AddArgument("--log-level=3");
                 //options.AddArguments("--ignore-certificate-errors");
                 //options.AddArguments("--ignore-ssl-errors");
+
+                // headless options
+                // options.AddArguments("--disable-gpu");
+                options.AddArguments("--headless");
+                options.AddArguments("--window-size=1920,1080");
+                options.AddArguments("--no-sandbox"); // seem to be needed on ubuntu?
+
                 IWebDriver driver = new ChromeDriver(chromeDriverPath, options);
                 driver.Navigate().GoToUrl("https://www.kryssord.org/login.php");
 
