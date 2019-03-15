@@ -41,10 +41,10 @@ namespace CrossWord.Scraper
                 // .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Error).WriteTo.File(DEFAULT_ERROR_LOG_PATH))
                 .CreateLogger();
 
-            Log.Warning("Starting CrossWord.Scraper ....");
+            Log.Error("Starting CrossWord.Scraper ....");
 
             var dbContextFactory = new DesignTimeDbContextFactory();
-            using ( )
+            using (var db = dbContextFactory.CreateDbContext(args, Log.Logger))
             {
                 // setup database
                 // db.Database.EnsureDeleted();
