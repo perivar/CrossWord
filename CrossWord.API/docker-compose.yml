@@ -1,0 +1,52 @@
+version: '3'
+
+volumes:
+  datafiles:
+
+networks:
+  crosswordapi-net:
+    driver: bridge
+
+services:
+  db:
+    container_name: crosswordapi.db
+    image: mysql:8.0.15
+    volumes:
+      - datafiles:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_TCP_PORT: 3360
+    networks:
+      - crosswordapi-net
+
+  web:
+    container_name: crosswordapi.web
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    ports:
+      - "5000:80"
+    restart: always
+    environment:
+      - DBHOST=db
+      - DBPORT=3360
+      - DBPASSWORD=secret
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - crosswordapi-net      
+
+  reverse-proxy:
+    container_name: crosswordapi.proxy
+    image: nginx
+    depends_on:
+      - web
+    ports:
+      - "9090:8080"
+    volumes:
+      - ./proxy.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - crosswordapi-net
+  

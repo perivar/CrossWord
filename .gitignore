@@ -9,3 +9,4 @@ packages
 out.txt
 node_modules
 *.log
+*/dist

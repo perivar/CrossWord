@@ -19,6 +19,16 @@
       "problemMatcher": "$msCompile"
     },
     {
+      "label": "build api",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/CrossWord.API/CrossWord.API.csproj"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
       "label": "build scraper",
       "command": "dotnet",
       "type": "process",
