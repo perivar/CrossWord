@@ -23,12 +23,10 @@ services:
   web:
     container_name: crosswordapi.web
     build:
-      context: .
+      context: ./
       dockerfile: Dockerfile
     depends_on:
       - db
-    ports:
-      - "5000:80"
     restart: always
     environment:
       - DBHOST=db
@@ -38,15 +36,21 @@ services:
     networks:
       - crosswordapi-net      
 
-  reverse-proxy:
-    container_name: crosswordapi.proxy
-    image: nginx
-    depends_on:
-      - web
+  https-portal:
+    image: steveltn/https-portal:1
     ports:
-      - "9090:8080"
-    volumes:
-      - ./proxy.conf:/etc/nginx/conf.d/default.conf
+      - '80:80'
+      - '443:443'
+    links:
+      - web
+    restart: always
+    environment:
+      #DOMAINS: 'alpacatracker.com -> http://web:5000'
+      #STAGE: 'production'    
+      DOMAINS: 'example.com -> http://web:5000'
+      STAGE: local # self signed certificate, note modify your hosts file to have example.com resolving to your docker host 
+      # c:\Windows\System32\Drivers\etc\hosts => 127.0.0.1           example.com 
+      # FORCE_RENEW: 'true'
     networks:
       - crosswordapi-net
   
