@@ -20,8 +20,8 @@ services:
     networks:
       - crosswordapi-net
 
-  web:
-    container_name: crosswordapi.web
+  api:
+    container_name: crosswordapi.api
     build:
       context: ./
       dockerfile: Dockerfile
@@ -42,12 +42,12 @@ services:
       - '80:80'
       - '443:443'
     links:
-      - web
+      - api
     restart: always
     environment:
-      #DOMAINS: 'alpacatracker.com -> http://web:5000'
+      #DOMAINS: 'alpacatracker.com -> http://api:5000'
       #STAGE: 'production'    
-      DOMAINS: 'example.com -> http://web:5000'
+      DOMAINS: 'example.com -> http://api:5000'
       STAGE: local # self signed certificate, note modify your hosts file to have example.com resolving to your docker host 
       # c:\Windows\System32\Drivers\etc\hosts => 127.0.0.1           example.com 
       # FORCE_RENEW: 'true'
