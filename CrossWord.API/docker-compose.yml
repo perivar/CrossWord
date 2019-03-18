@@ -31,7 +31,9 @@ services:
     environment:
       - DBHOST=db
       - DBPORT=3360
+      - DBUSER=root
       - DBPASSWORD=secret
+      - DATABASE=products      
       - ASPNETCORE_ENVIRONMENT=Development
     networks:
       - crosswordapi-net      

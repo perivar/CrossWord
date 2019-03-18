@@ -46,14 +46,17 @@ namespace CrossWord.API
             // start DOCKER on port 3360
             // docker run -p 3360:3306 --name mysqldb -e MYSQL_ROOT_PASSWORD=secret -d mysql:8.0.15
 
-            var host = Configuration["DBHOST"] ?? "localhost";
-            var port = Configuration["DBPORT"] ?? "3360"; // originally 3306
-            var password = Configuration["DBPASSWORD"] ?? "secret";
+            // Build database connection string
+            var dbhost = Configuration["DBHOST"] ?? "localhost";
+            var dbport = Configuration["DBPORT"] ?? "3360"; // originally 3306
+            var dbuser = Configuration["DBUSER"] ?? "root";
+            var dbpassword = Configuration["DBPASSWORD"] ?? "secret";
+            var database = Configuration["DATABASE"] ?? "products";
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseMySql($"server={host}; userid=root; pwd={password};"
-                    + $"port={port}; database=products;charset=utf8;");
+                options.UseMySql($"server={dbhost}; user={dbuser}; pwd={dbpassword}; "
+                    + $"port={dbport}; database={database}; charset=utf8;");
             });
 
             services.AddDefaultIdentity<IdentityUser>()

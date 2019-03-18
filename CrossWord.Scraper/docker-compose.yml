@@ -1,0 +1,38 @@
+version: '3'
+
+volumes:
+  datafiles:
+
+networks:
+  crosswordapi-net:
+    driver: bridge
+
+services:
+  db:
+    container_name: crosswordapi.db
+    image: mysql:8.0.15
+    volumes:
+      - datafiles:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_TCP_PORT: 3360
+    networks:
+      - crosswordapi-net
+
+  scraper:
+    container_name: crosswordapi.scraper
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    restart: always
+    environment:
+      - DBHOST=db
+      - DBPORT=3360
+      - DBUSER=root
+      - DBPASSWORD=secret
+      - DATABASE=dictionary
+    networks:
+      - crosswordapi-net

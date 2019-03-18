@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using CrossWord.Scraper.MySQLDbService;
 using CrossWord.Scraper.MySQLDbService.Models;
@@ -29,6 +31,7 @@ namespace CrossWord.Scraper
                         .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                         .AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true)
                         .AddCommandLine(args)
+                        .AddEnvironmentVariables()
                         .Build();
 
             Log.Logger = new LoggerConfiguration()
@@ -43,8 +46,21 @@ namespace CrossWord.Scraper
 
             Log.Error("Starting CrossWord.Scraper ....");
 
+            // start DOCKER on port 3360
+            // docker run -p 3360:3306 --name mysqldb -e MYSQL_ROOT_PASSWORD=password -d mysql:8.0.15            
+
+            // Build database connection string
+            var dbhost = configuration["DBHOST"] ?? "localhost";
+            var dbport = configuration["DBPORT"] ?? "3306";
+            var dbuser = configuration["DBUSER"] ?? "user";
+            var dbpassword = configuration["DBPASSWORD"] ?? "password";
+            var database = configuration["DATABASE"] ?? "dictionary";
+
+            string connectionString = $"server={dbhost}; user={dbuser}; pwd={dbpassword}; "
+                    + $"port={dbport}; database={database}; charset=utf8;";
+
             var dbContextFactory = new DesignTimeDbContextFactory();
-            using (var db = dbContextFactory.CreateDbContext(args, Log.Logger))
+            using (var db = dbContextFactory.CreateDbContext(connectionString, Log.Logger))
             {
                 // setup database
                 // db.Database.EnsureDeleted();
@@ -59,9 +75,12 @@ namespace CrossWord.Scraper
                 // string userDataArgument = string.Format("--user-data-dir={0}", userDataDir);
 
                 var outPutDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                // var relativePath = @"..\..\..\";
-                // var chromeDriverPath = Path.GetFullPath(Path.Combine(outPutDirectory, relativePath));
                 var chromeDriverPath = outPutDirectory;
+
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    chromeDriverPath = "/usr/local/bin/";
+                }
 
                 ChromeOptions options = new ChromeOptions();
                 //options.AddArguments(userDataArgument);
@@ -71,10 +90,12 @@ namespace CrossWord.Scraper
                 //options.AddArguments("--ignore-ssl-errors");
 
                 // headless options
-                // options.AddArguments("--disable-gpu");
+                options.AddArguments("--disable-gpu"); // seem to be needed on ubuntu
+                options.AddArguments("--no-sandbox"); // seem to be needed on ubuntu
                 options.AddArguments("--headless");
                 options.AddArguments("--window-size=1920,1080");
-                options.AddArguments("--no-sandbox"); // seem to be needed on ubuntu?
+
+                Log.Information("Using chromedriver path: '{0}'", chromeDriverPath);
 
                 IWebDriver driver = new ChromeDriver(chromeDriverPath, options);
                 driver.Navigate().GoToUrl("https://www.kryssord.org/login.php");
@@ -143,12 +164,29 @@ namespace CrossWord.Scraper
         static void KillAllChromeDriverInstances()
         {
             System.Diagnostics.ProcessStartInfo p;
-            p = new System.Diagnostics.ProcessStartInfo("cmd.exe", "/C " + "taskkill /f /im chromedriver.exe");
             System.Diagnostics.Process proc = new System.Diagnostics.Process();
-            proc.StartInfo = p;
-            proc.Start();
-            proc.WaitForExit();
-            proc.Close();
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                p = new ProcessStartInfo("cmd.exe", "/C " + "taskkill /f /im chromedriver.exe");
+                Log.Information("Killing Chromedriver on Windows: '{0}'", "cmd.exe " + "/C " + "taskkill /f /im chromedriver.exe");
+                proc.StartInfo = p;
+                proc.Start();
+                proc.WaitForExit();
+                proc.Close();
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                p = new ProcessStartInfo("/bin/sh", @"kill $(ps aux | grep 'chromedrive[r]' | awk '{print $2}')");
+                Log.Information("Killing Chromedriver on Linux: '{0}'", "/bin/sh " + "-c " + @"kill $(ps aux | grep 'chromedrive[r]' | awk '{print $2}')");
+                proc.StartInfo = p;
+                proc.Start();
+                proc.WaitForExit();
+                proc.Close();
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+
+            }
         }
 
         static void ReadWordsByWordPermutations(int permutationSize, int letterLength, IWebDriver driver, WordHintDbContext db, User user, Word lastWord, Hint lastHint)

@@ -27,6 +27,12 @@ namespace CrossWord.Scraper.MySQLDbService
             return CreateDbContext(args, Log.Logger);
         }
 
+        public WordHintDbContext CreateDbContext(string connectionString, Serilog.ILogger log)
+        {
+            this._connectionString = connectionString;
+            return CreateDbContext(new string[0], Log.Logger);
+        }
+
         public WordHintDbContext CreateDbContext(string[] args, Serilog.ILogger log)
         {
             // set logging
