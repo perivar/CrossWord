@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 volumes:
   datafiles:
@@ -36,3 +36,6 @@ services:
       - DATABASE=dictionary
     networks:
       - crosswordapi-net
+    # see https://github.com/SeleniumHQ/docker-selenium/issues/79
+    volumes:
+      - /dev/shm:/dev/shm

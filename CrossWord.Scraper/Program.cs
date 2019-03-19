@@ -85,19 +85,28 @@ namespace CrossWord.Scraper
                 ChromeOptions options = new ChromeOptions();
                 //options.AddArguments(userDataArgument);
                 //options.AddArguments("--start-maximized");
-                //options.AddArgument("--log-level=3");
+                options.AddArgument("--log-level=3");
                 //options.AddArguments("--ignore-certificate-errors");
                 //options.AddArguments("--ignore-ssl-errors");
 
                 // headless options
-                options.AddArguments("--disable-gpu"); // seem to be needed on ubuntu
-                options.AddArguments("--no-sandbox"); // seem to be needed on ubuntu
-                options.AddArguments("--headless");
-                options.AddArguments("--window-size=1920,1080");
+                // options.AddArguments("--disable-gpu"); // seem to be needed on ubuntu
+                // options.AddArguments("--no-sandbox"); // seem to be needed on ubuntu
+                // options.AddArguments("--headless");
+                // options.AddArguments("--window-size=1920,1080");
+                // options.AddArguments("--whitelisted-ips");
+
+                options.AddArgument("--headless");
+                options.AddArgument("--whitelisted-ips");
+                options.AddArgument("--no-sandbox");
+                options.AddArgument("--disable-extensions");
 
                 Log.Information("Using chromedriver path: '{0}'", chromeDriverPath);
 
-                IWebDriver driver = new ChromeDriver(chromeDriverPath, options);
+                ChromeDriverService service = ChromeDriverService.CreateDefaultService(chromeDriverPath);
+                service.Port = 9515;
+                IWebDriver driver = new ChromeDriver(service, options);
+                // IWebDriver driver = new ChromeDriver(chromeDriverPath, options);
                 driver.Navigate().GoToUrl("https://www.kryssord.org/login.php");
 
                 var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
@@ -176,12 +185,12 @@ namespace CrossWord.Scraper
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                p = new ProcessStartInfo("/bin/sh", @"kill $(ps aux | grep 'chromedrive[r]' | awk '{print $2}')");
-                Log.Information("Killing Chromedriver on Linux: '{0}'", "/bin/sh " + "-c " + @"kill $(ps aux | grep 'chromedrive[r]' | awk '{print $2}')");
-                proc.StartInfo = p;
-                proc.Start();
-                proc.WaitForExit();
-                proc.Close();
+                // p = new ProcessStartInfo("/bin/sh", @"kill $(ps aux | grep 'chromedrive[r]' | awk '{print $2}')");
+                // Log.Information("Killing Chromedriver on Linux: '{0}'", "/bin/sh " + "-c " + @"kill $(ps aux | grep 'chromedrive[r]' | awk '{print $2}')");
+                // proc.StartInfo = p;
+                // proc.Start();
+                // proc.WaitForExit();
+                // proc.Close();
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
