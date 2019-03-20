@@ -34,8 +34,16 @@ services:
       - DBUSER=root
       - DBPASSWORD=secret
       - DATABASE=dictionary
+      - CHROMEDRIVER_WHITELISTED_IPS=
+      - CHROMEDRIVER_PORT=4444
+    ports:
+      - 4444:4444
+    cap_add:
+      - "SYS_ADMIN"
     networks:
       - crosswordapi-net
+
     # see https://github.com/SeleniumHQ/docker-selenium/issues/79
-    volumes:
-      - /dev/shm:/dev/shm
+    # volumes:
+    #   - /dev/shm:/dev/shm
+

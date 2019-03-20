@@ -76,36 +76,43 @@ namespace CrossWord.Scraper
 
                 var outPutDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                 var chromeDriverPath = outPutDirectory;
+                string driverExecutableFileName = null;
 
+                ChromeOptions options = new ChromeOptions();
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {
                     chromeDriverPath = "/usr/local/bin/";
+                    driverExecutableFileName = "chromedriver";
+
+                    // options.AddArguments("--disable-gpu"); // seem to be needed on ubuntu
+                    // options.AddArguments("--headless");
+                    // options.AddArguments("--no-sandbox");
+                    // options.AddArguments("--whitelisted-ips=");
+                    // options.AddArguments("--disable-extensions");
+
+                    // options.BinaryLocation = "/opt/google/chrome/chrome";
+                    //options.AddArguments(userDataArgument);
+                    //options.AddArguments("--start-maximized");
+                    //options.AddArgument("--log-level=3");
+                    //options.AddArguments("--ignore-certificate-errors");
+                    //options.AddArguments("--ignore-ssl-errors");
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    driverExecutableFileName = "chromedriver.exe";
+                    options.AddArguments("window-size=1920,1080");
                 }
 
-                ChromeOptions options = new ChromeOptions();
-                //options.AddArguments(userDataArgument);
-                //options.AddArguments("--start-maximized");
-                options.AddArgument("--log-level=3");
-                //options.AddArguments("--ignore-certificate-errors");
-                //options.AddArguments("--ignore-ssl-errors");
+                ChromeDriverService service = ChromeDriverService.CreateDefaultService(chromeDriverPath, driverExecutableFileName);
+                // service.Port = 9515;
+                // service.WhitelistedIPAddresses = "";
 
-                // headless options
-                // options.AddArguments("--disable-gpu"); // seem to be needed on ubuntu
-                // options.AddArguments("--no-sandbox"); // seem to be needed on ubuntu
-                // options.AddArguments("--headless");
-                // options.AddArguments("--window-size=1920,1080");
-                // options.AddArguments("--whitelisted-ips");
-
-                options.AddArgument("--headless");
-                options.AddArgument("--whitelisted-ips");
-                options.AddArgument("--no-sandbox");
-                options.AddArgument("--disable-extensions");
+                IWebDriver driver = new ChromeDriver(service, options, TimeSpan.FromSeconds(30));
+                driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(40);
+                driver.Manage().Window.Maximize();
 
                 Log.Information("Using chromedriver path: '{0}'", chromeDriverPath);
 
-                ChromeDriverService service = ChromeDriverService.CreateDefaultService(chromeDriverPath);
-                service.Port = 9515;
-                IWebDriver driver = new ChromeDriver(service, options);
                 // IWebDriver driver = new ChromeDriver(chromeDriverPath, options);
                 driver.Navigate().GoToUrl("https://www.kryssord.org/login.php");
 
