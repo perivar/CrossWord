@@ -85,10 +85,10 @@ namespace CrossWord.Scraper
                     driverExecutableFileName = "chromedriver";
 
                     // options.AddArguments("--disable-gpu"); // seem to be needed on ubuntu
-                    // options.AddArguments("--headless");
-                    // options.AddArguments("--no-sandbox");
-                    // options.AddArguments("--whitelisted-ips=");
-                    // options.AddArguments("--disable-extensions");
+                    options.AddArguments("--headless");
+                    options.AddArguments("--no-sandbox");
+                    options.AddArguments("--whitelisted-ips=''");
+                    options.AddArguments("--disable-extensions");
 
                     // options.BinaryLocation = "/opt/google/chrome/chrome";
                     //options.AddArguments(userDataArgument);
@@ -104,14 +104,15 @@ namespace CrossWord.Scraper
                 }
 
                 ChromeDriverService service = ChromeDriverService.CreateDefaultService(chromeDriverPath, driverExecutableFileName);
-                // service.Port = 9515;
-                // service.WhitelistedIPAddresses = "";
+                service.Port = 9515;
+                service.WhitelistedIPAddresses = "";
+                // service.EnableVerboseLogging = true;
 
                 IWebDriver driver = new ChromeDriver(service, options, TimeSpan.FromSeconds(30));
                 driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(40);
                 driver.Manage().Window.Maximize();
 
-                Log.Information("Using chromedriver path: '{0}'", chromeDriverPath);
+                Log.Information("Using chromedriver path: '{0}', options: {1}", chromeDriverPath, options);
 
                 // IWebDriver driver = new ChromeDriver(chromeDriverPath, options);
                 driver.Navigate().GoToUrl("https://www.kryssord.org/login.php");
