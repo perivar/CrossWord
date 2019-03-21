@@ -90,7 +90,6 @@ namespace CrossWord.Scraper
                     options.AddArguments("--whitelisted-ips=''");
                     options.AddArguments("--disable-extensions");
 
-                    // options.BinaryLocation = "/opt/google/chrome/chrome";
                     //options.AddArguments(userDataArgument);
                     //options.AddArguments("--start-maximized");
                     //options.AddArgument("--log-level=3");
@@ -109,8 +108,8 @@ namespace CrossWord.Scraper
                 // service.EnableVerboseLogging = true;
 
                 IWebDriver driver = new ChromeDriver(service, options, TimeSpan.FromSeconds(30));
-                driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(40);
-                driver.Manage().Window.Maximize();
+                // driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(40);
+                // driver.Manage().Window.Maximize();
 
                 Log.Information("Using chromedriver path: '{0}', options: {1}", chromeDriverPath, options);
 

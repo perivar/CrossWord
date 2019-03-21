@@ -32,6 +32,7 @@ RUN useradd automation --shell /bin/bash --create-home
 # Install XVFB and TinyWM
 # Install fonts
 # Install Python
+# Install VIM Tiny
 RUN apt-get -yqq update && \
     apt-get -yqq install curl unzip && \
     apt-get -yqq install xvfb tinywm && \
@@ -80,9 +81,8 @@ CMD ["/usr/local/bin/supervisord", "-c", "/etc/supervisord.conf"]
 
 ######
 
-# WORKDIR /.
-# COPY --from=build-env /app/out .
 COPY --from=build-env /app/ /app
+WORKDIR /app/out
 
 # Change name of dll for your application 
 ENTRYPOINT ["dotnet", "CrossWord.Scraper.dll"]
