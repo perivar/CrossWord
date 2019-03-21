@@ -14,72 +14,24 @@ RUN dotnet publish -c Release -o out
 
 # Build runtime image
 # FROM mcr.microsoft.com/dotnet/core/runtime:2.2
-
-######
-# Copied from https://github.com/RobCherry/docker-chromedriver
-
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2
 
-# Set timezone
-RUN echo "US/Eastern" > /etc/timezone && \
-    dpkg-reconfigure --frontend noninteractive tzdata
+######
 
-# Create a default user
-RUN useradd automation --shell /bin/bash --create-home
+# Install Chrome and dependencies.
+RUN curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+RUN echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
+RUN apt-get -y update && \
+apt-get install -y unzip openjdk-8-jre-headless xvfb libxi6 libgconf-2-4 google-chrome-stable coreutils && \
+rm -rf /var/lib/apt/lists/*
 
-# Update the repositories
-# Install utilities
-# Install XVFB and TinyWM
-# Install fonts
-# Install Python
-# Install VIM Tiny
-RUN apt-get -yqq update && \
-    apt-get -yqq install curl unzip && \
-    apt-get -yqq install xvfb tinywm && \
-    apt-get -yqq install fonts-ipafont-gothic xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic && \
-    apt-get -yqq install python && \
-    apt-get -yqq install vim-tiny && \
-    rm -rf /var/lib/apt/lists/*
-
-# Install Supervisor
-RUN curl -sS -o - https://bootstrap.pypa.io/ez_setup.py | python && \
-    easy_install -q supervisor
-
-# Install Chrome WebDriver
-RUN CHROMEDRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE` && \
-    mkdir -p /opt/chromedriver-$CHROMEDRIVER_VERSION && \
-    curl -sS -o /tmp/chromedriver_linux64.zip http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip && \
-    unzip -qq /tmp/chromedriver_linux64.zip -d /opt/chromedriver-$CHROMEDRIVER_VERSION && \
-    rm /tmp/chromedriver_linux64.zip && \
-    chmod +x /opt/chromedriver-$CHROMEDRIVER_VERSION/chromedriver && \
-    ln -fs /opt/chromedriver-$CHROMEDRIVER_VERSION/chromedriver /usr/local/bin/chromedriver
-
-# Install Google Chrome
-RUN curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-    echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list && \
-    apt-get -yqq update && \
-    apt-get -yqq install google-chrome-stable && \
-    rm -rf /var/lib/apt/lists/*
-
-# Configure Supervisor
-ADD ./etc/supervisord.conf /etc/
-ADD ./etc/supervisor /etc/supervisor
-
-# Default configuration
-ENV DISPLAY :20.0
-ENV SCREEN_GEOMETRY "1440x900x24"
-# ENV CHROMEDRIVER_PORT 4444
-# ENV CHROMEDRIVER_WHITELISTED_IPS "127.0.0.1"
-# ENV CHROMEDRIVER_URL_BASE ''
-# ENV CHROMEDRIVER_EXTRA_ARGS ''
-
-# EXPOSE 4444
-
-VOLUME [ "/var/log/supervisor" ]
-
-CMD ["/usr/local/bin/supervisord", "-c", "/etc/supervisord.conf"]
-
-# VOLUME [ "/app/out/crossword_scraper_error.log" ]
+# Install ChromeDriver.
+RUN wget -N http://chromedriver.storage.googleapis.com/$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip -P ~/
+RUN unzip ~/chromedriver_linux64.zip -d ~/
+RUN rm ~/chromedriver_linux64.zip
+RUN mv -f ~/chromedriver /usr/local/bin/chromedriver
+RUN chown root:root /usr/local/bin/chromedriver
+RUN chmod 0755 /usr/local/bin/chromedriver
 
 ######
 
