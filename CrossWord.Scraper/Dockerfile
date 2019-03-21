@@ -79,7 +79,7 @@ VOLUME [ "/var/log/supervisor" ]
 
 CMD ["/usr/local/bin/supervisord", "-c", "/etc/supervisord.conf"]
 
-VOLUME [ "/app/out/crossword_scraper_error.log" ]
+# VOLUME [ "/app/out/crossword_scraper_error.log" ]
 
 ######
 
