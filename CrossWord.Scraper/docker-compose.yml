@@ -34,18 +34,20 @@ services:
       - DBUSER=root
       - DBPASSWORD=secret
       - DATABASE=dictionary
-      - CHROMEDRIVER_WHITELISTED_IPS=
-      - CHROMEDRIVER_PORT=4444
+      # - CHROMEDRIVER_WHITELISTED_IPS=
+      # - CHROMEDRIVER_PORT=4444
     expose:
-      - "4444"
+    #   - "4444"
       - "9515"
     ports:
-      - "4444:4444"
+    #   - "4444:4444"
       - "9515:9515"
     shm_size: 2G
     privileged: true
     cap_add:
       - "SYS_ADMIN"
+    # volumes:
+    #   - datafiles:/app/out/crossword_scraper_error.log
     networks:
       - crosswordapi-net
 

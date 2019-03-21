@@ -68,16 +68,18 @@ ADD ./etc/supervisor /etc/supervisor
 # Default configuration
 ENV DISPLAY :20.0
 ENV SCREEN_GEOMETRY "1440x900x24"
-ENV CHROMEDRIVER_PORT 4444
-ENV CHROMEDRIVER_WHITELISTED_IPS "127.0.0.1"
-ENV CHROMEDRIVER_URL_BASE ''
-ENV CHROMEDRIVER_EXTRA_ARGS ''
+# ENV CHROMEDRIVER_PORT 4444
+# ENV CHROMEDRIVER_WHITELISTED_IPS "127.0.0.1"
+# ENV CHROMEDRIVER_URL_BASE ''
+# ENV CHROMEDRIVER_EXTRA_ARGS ''
 
-EXPOSE 4444
+# EXPOSE 4444
 
 VOLUME [ "/var/log/supervisor" ]
 
 CMD ["/usr/local/bin/supervisord", "-c", "/etc/supervisord.conf"]
+
+VOLUME [ "/app/out/crossword_scraper_error.log" ]
 
 ######
 
