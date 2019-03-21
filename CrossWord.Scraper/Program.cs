@@ -87,7 +87,7 @@ namespace CrossWord.Scraper
                     // options.AddArguments("--disable-gpu"); // seem to be needed on ubuntu
                     options.AddArguments("--headless");
                     options.AddArguments("--no-sandbox");
-                    options.AddArguments("--whitelisted-ips=''");
+                    options.AddArguments("--whitelisted-ips='127.0.0.1'");
                     options.AddArguments("--disable-extensions");
 
                     //options.AddArguments(userDataArgument);
@@ -104,7 +104,7 @@ namespace CrossWord.Scraper
 
                 ChromeDriverService service = ChromeDriverService.CreateDefaultService(chromeDriverPath, driverExecutableFileName);
                 service.Port = 9515;
-                service.WhitelistedIPAddresses = "";
+                service.WhitelistedIPAddresses = "127.0.0.1";
                 // service.EnableVerboseLogging = true;
 
                 IWebDriver driver = new ChromeDriver(service, options, TimeSpan.FromSeconds(30));

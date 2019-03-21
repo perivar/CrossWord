@@ -1,4 +1,4 @@
-version: "3"
+version: "2"
 
 volumes:
   datafiles:
@@ -12,6 +12,7 @@ services:
     container_name: crosswordapi.db
     image: mysql:8.0.15
     volumes:
+      - ./init-db-scripts:/docker-entrypoint-initdb.d/
       - datafiles:/var/lib/mysql
     restart: always
     environment:
