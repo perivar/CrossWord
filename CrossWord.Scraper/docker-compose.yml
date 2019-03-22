@@ -18,6 +18,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: secret
       MYSQL_TCP_PORT: 3360
+    security_opt: # to fix the mbind: Operation not permitted log error
+      - seccomp:unconfined
     networks:
       - crosswordapi-net
 
@@ -39,15 +41,15 @@ services:
       - "9515"
     ports:
       - "9515:9515"
-    shm_size: 2G
     privileged: true
     cap_add:
       - "SYS_ADMIN"
     volumes:
       # note: make sure the log file exists on the host - otherwise docker creates it as a directory
       - "/opt/crossword_scraper_error.log:/app/out/crossword_scraper_error.log"
+      # see https://github.com/SeleniumHQ/docker-selenium/issues/79
+      - /dev/shm:/dev/shm
+    shm_size: 2G
     networks:
       - crosswordapi-net
-    # see https://github.com/SeleniumHQ/docker-selenium/issues/79
-    # volumes:
-    #   - /dev/shm:/dev/shm
+    
