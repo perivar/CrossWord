@@ -108,7 +108,7 @@ namespace CrossWord.Scraper
                 // service.EnableVerboseLogging = true;
 
                 IWebDriver driver = new ChromeDriver(service, options, TimeSpan.FromSeconds(20));
-                driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+                driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
                 driver.Manage().Window.Maximize();
 
                 Log.Information("Using chromedriver path: '{0}', options: {1}", chromeDriverPath, options);
