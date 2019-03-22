@@ -107,9 +107,9 @@ namespace CrossWord.Scraper
                 service.WhitelistedIPAddresses = "127.0.0.1";
                 // service.EnableVerboseLogging = true;
 
-                IWebDriver driver = new ChromeDriver(service, options, TimeSpan.FromSeconds(20));
-                driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
-                driver.Manage().Window.Maximize();
+                IWebDriver driver = new ChromeDriver(service, options, TimeSpan.FromSeconds(30));
+                // driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(30); // this make findelement throw a timeout error if it doesn't exist 
+                // driver.Manage().Window.Maximize();
 
                 Log.Information("Using chromedriver path: '{0}', options: {1}", chromeDriverPath, options);
 
