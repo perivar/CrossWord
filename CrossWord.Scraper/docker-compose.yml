@@ -20,6 +20,8 @@ services:
       MYSQL_TCP_PORT: 3360
     security_opt: # to fix the mbind: Operation not permitted log error
       - seccomp:unconfined
+    ports:
+      - "3360:3360"
     networks:
       - crosswordapi-net
 
