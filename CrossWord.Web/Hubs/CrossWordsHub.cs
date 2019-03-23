@@ -18,6 +18,11 @@ namespace CrossWord.Web.Hubs
                .SendAsync("Broadcast", name, message);
         }
 
+        public async Task BroadcastAll(string user, string message)
+        {
+            await Clients.All.SendAsync("Broadcast", user, message);
+        }
+
         public async Task SendCrossword(string name, CrossWordModel json)
         {
             await Clients

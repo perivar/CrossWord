@@ -24,6 +24,8 @@ namespace CrossWord.Scraper
         const string DEFAULT_LOG_PATH = "crossword_scraper.log";
         const string DEFAULT_ERROR_LOG_PATH = "crossword_scraper_error.log";
 
+        static TextWriter _writer;
+
         static void Main(string[] args)
         {
             var configuration = new ConfigurationBuilder()
@@ -44,7 +46,11 @@ namespace CrossWord.Scraper
                 // .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Error).WriteTo.File(DEFAULT_ERROR_LOG_PATH))
                 .CreateLogger();
 
+            var signalRClientUrl = configuration["SignalRClientURL"] ?? "http://localhost:5000/crosswords";
+            _writer = new SignalRClientWriter(signalRClientUrl);
+
             Log.Error("Starting CrossWord.Scraper ....");
+            _writer.WriteLine("Starting CrossWord.Scraper ....");
 
             // start DOCKER on port 3360
             // docker run -p 3360:3306 --name mysqldb -e MYSQL_ROOT_PASSWORD=password -d mysql:8.0.15            
@@ -286,6 +292,7 @@ namespace CrossWord.Scraper
             while (true)
             {
                 Log.Information("Processing pattern search for '{0}' on page {1}", wordPattern, page + 1);
+                _writer.WriteLine("Processing pattern search for '{0}' on page {1}", wordPattern, page + 1);
 
                 // parse total number of words found
                 var wordCountElement = driver.FindElementOrNull(By.XPath("/html/body//div[@id='content']/h1/strong"));
@@ -304,6 +311,8 @@ namespace CrossWord.Scraper
                     if (isNumeric)
                     {
                         Log.Information("Found {0} words when searching for '{1}' on page {2}", n, wordPattern, page + 1);
+                        _writer.WriteLine("Found {0} words when searching for '{1}' on page {2}", n, wordPattern, page + 1);
+
                         if (n > 108) Log.Error("Warning! Pattern search for '{0}' on page {1} has too many words: {2}", wordPattern, page + 1, n);
                     }
                 }
@@ -408,6 +417,7 @@ namespace CrossWord.Scraper
             while (true)
             {
                 Log.Information("Processing synonym search for '{0}' on page {1}", word.Value, page + 1);
+                _writer.WriteLine("Processing synonym search for '{0}' on page {1}", word.Value, page + 1);
 
                 // parse total number of words found
                 var wordCount = driver.FindElement(By.XPath("/html/body//div[@id='content']/h1/strong")).Text;
@@ -423,6 +433,9 @@ namespace CrossWord.Scraper
                     if (isNumeric)
                     {
                         Log.Information("Found {0} synonyms when searching for '{1}' on page {2}", n, word.Value, page + 1);
+                        _writer.WriteLine("Found {0} synonyms when searching for '{1}' on page {2}", n, word.Value, page + 1);
+
+
                         if (n > 108) Log.Error("Warning! synonym search for '{0}' on page {1} has too many words: {2}", word.Value, page + 1, n);
                     }
                 }
@@ -496,10 +509,12 @@ namespace CrossWord.Scraper
                         db.SaveChanges();
 
                         Log.Debug("Added '{0}' as a hint for '{1}'", hintText, word.Value);
+                        _writer.WriteLine("Added '{0}' as a hint for '{1}'", hintText, word.Value);
                     }
                     else
                     {
                         Log.Debug("Skipped adding '{0}' as a hint for '{1}' ...", hintText, word.Value);
+                        _writer.WriteLine("Skipped adding '{0}' as a hint for '{1}' ...", hintText, word.Value);
                     }
                 }
 

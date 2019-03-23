@@ -39,6 +39,7 @@ services:
       - DBUSER=root
       - DBPASSWORD=secret
       - DATABASE=dictionary
+      - SignalRClientURL=http://web:5000/crosswords
     expose:
       - "9515"
     ports:
@@ -54,4 +55,16 @@ services:
     shm_size: 2G
     networks:
       - crosswordapi-net
-    
+
+  web:
+    container_name: crosswordapi.web
+    build:
+      context: ./../
+      dockerfile: CrossWord.Web/Dockerfile
+    restart: always
+    expose:
+      - "5000"
+    ports:
+      - "5000:5000"
+    networks:
+      - crosswordapi-net

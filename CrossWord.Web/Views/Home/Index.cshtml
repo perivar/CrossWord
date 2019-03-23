@@ -1,8 +1,56 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Index";
 }
+<h2>@ViewData["Title"]</h2>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container">
+    <div class="form-group row">
+        <label for="userInput" class="col-form-label">User</label>
+        <div class="col-sm-2">
+            <input type="text" class="form-control" id="userInput" />
+        </div>
+        <label for="messageInput" class="col-form-label">Message</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control" id="messageInput" />            
+        </div>
+        <input type="button" class="btn btn-primary mb-2" id="sendButton" value="Send Message" />
+    </div>
 </div>
+
+<div id="messageContainer" class="container mt-2" style="max-height:350px;min-height:350px;overflow-y:scroll;overflow-x:hidden;">
+    <code><ul id="messagesList"></ul></code>
+</div>
+
+@section Scripts
+{
+     @* 
+    Javascripts section
+    *@
+    <script src="~/lib/signalr/signalr.js"></script>
+    <script>
+        var connection = new signalR.HubConnectionBuilder()
+            .withUrl("/crosswords")
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+        
+        // listen to Broadcast events
+        connection.on("Broadcast", (user, message) => {
+            const msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            $('#messagesList').append('<li><strong>' + user + '</strong>: ' + msg + '</li>');
+            $('div#messageContainer').scrollTop($('div#messageContainer')[0].scrollHeight);
+        });
+
+        connection.start()
+            .then(_ => connection.invoke("BroadcastAll", "WebClient", "Started Connection"))
+            .catch(err => console.error(err.toString()));
+
+
+        document.getElementById("sendButton").addEventListener("click", event => {
+            const user = document.getElementById("userInput").value;
+            const message = document.getElementById("messageInput").value;
+            connection.invoke("BroadcastAll", user, message).catch(err => console.error(err.toString()));
+            event.preventDefault();
+        });
+            
+    </script>
+}
