@@ -19,10 +19,7 @@ COPY  . .
 WORKDIR /src/CrossWord.Web
 RUN curl --silent --location https://deb.nodesource.com/setup_11.x |  bash -
 RUN apt-get install --yes nodejs
-# fix npm - not the latest version installed by apt-get
-# RUN npm install -g npm
 RUN npm install
-# RUN dotnet build "CrossWord.Web.csproj" -c Release -o /app
 
 FROM build AS publish
 RUN dotnet publish "CrossWord.Web.csproj" -c Release -o /app
