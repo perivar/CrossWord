@@ -62,9 +62,27 @@ services:
       context: ./../
       dockerfile: CrossWord.Web/Dockerfile
     restart: always
-    expose:
-      - "5000"
+    # expose:
+    #   - "5000"
+    # ports:
+    #   - "5000:5000"
+    networks:
+      - crosswordapi-net
+
+  https-portal:
+    image: steveltn/https-portal:1
     ports:
-      - "5000:5000"
+      - '80:80'
+      - '443:443'
+    links:
+      - web
+    restart: always
+    environment:
+      DOMAINS: 'order.wazalo.com -> http://web:5000'
+      STAGE: 'production'    
+      # DOMAINS: 'example.com -> http://web:5000'
+      # STAGE: local # self signed certificate, note modify your hosts file to have example.com resolving to your docker host 
+      # c:\Windows\System32\Drivers\etc\hosts => 127.0.0.1           example.com 
+      # FORCE_RENEW: 'true'
     networks:
       - crosswordapi-net
