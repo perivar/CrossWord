@@ -1,5 +1,5 @@
 
-# Rmember to invoke this from the parent directory
+# Remember to invoke this from the parent directory
 # see https://stackoverflow.com/questions/51918919/how-to-integrate-npm-install-into-asp-net-core-2-1-docker-build
 
 # Set runtime image
@@ -17,11 +17,12 @@ RUN dotnet restore CrossWord.Web/CrossWord.Web.csproj
 
 COPY  . .
 WORKDIR /src/CrossWord.Web
-RUN curl -sL https://deb.nodesource.com/setup_10.x |  bash -
-RUN apt-get install -y nodejs
-RUN npm install -g npm
+RUN curl --silent --location https://deb.nodesource.com/setup_11.x |  bash -
+RUN apt-get install --yes nodejs
+# fix npm - not the latest version installed by apt-get
+# RUN npm install -g npm
 RUN npm install
-RUN dotnet build "CrossWord.Web.csproj" -c Release -o /app
+# RUN dotnet build "CrossWord.Web.csproj" -c Release -o /app
 
 FROM build AS publish
 RUN dotnet publish "CrossWord.Web.csproj" -c Release -o /app
