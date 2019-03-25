@@ -16,24 +16,39 @@ RUN dotnet publish -c Release -o out
 # FROM mcr.microsoft.com/dotnet/core/runtime:2.2
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2
 
-######
-
-# Install Chrome and dependencies.
-RUN curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
-RUN echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
-RUN apt-get -y update && \
-apt-get install -y unzip openjdk-8-jre-headless xvfb libxi6 libgconf-2-4 google-chrome-stable coreutils && \
-rm -rf /var/lib/apt/lists/*
+# Install deps + add Chrome Stable
+RUN apt-get update && apt-get install -y \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg \
+    --no-install-recommends \
+    && curl -sSL https://dl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && echo "deb https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
+    && apt-get update && apt-get install -y \
+    google-chrome-stable \
+    unzip \
+    --no-install-recommends
 
 # Install ChromeDriver.
 RUN wget -N http://chromedriver.storage.googleapis.com/$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip -P ~/
 RUN unzip ~/chromedriver_linux64.zip -d ~/
 RUN rm ~/chromedriver_linux64.zip
 RUN mv -f ~/chromedriver /usr/local/bin/chromedriver
-RUN chown root:root /usr/local/bin/chromedriver
+RUN chown chrome:chrome /usr/local/bin/chromedriver
 RUN chmod 0755 /usr/local/bin/chromedriver
 
-######
+# Purge all the things to keep the container as small as possible
+RUN apt-get purge --auto-remove -y curl gnupg unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Add chrome as a user so we don't need --no-sandbox.
+RUN groupadd -r chrome && useradd -r -g chrome -G audio,video chrome \
+    && mkdir -p /home/chrome && chown -R chrome:chrome /home/chrome \
+    && mkdir -p /opt/google/chrome && chown -R chrome:chrome /opt/google/chrome
+
+# Run Chrome non-privileged
+USER chrome
 
 COPY --from=build-env /app/ /app
 WORKDIR /app/out

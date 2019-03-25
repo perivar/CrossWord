@@ -77,9 +77,6 @@ namespace CrossWord.Scraper
 
                 KillAllChromeDriverInstances();
 
-                // string userDataDir = @"C:\Users\perner\AppData\Local\Google\Chrome\User Data\Default";
-                // string userDataArgument = string.Format("--user-data-dir={0}", userDataDir);
-
                 var outPutDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                 var chromeDriverPath = outPutDirectory;
                 string driverExecutableFileName = null;
@@ -90,27 +87,22 @@ namespace CrossWord.Scraper
                     chromeDriverPath = "/usr/local/bin/";
                     driverExecutableFileName = "chromedriver";
 
-                    // options.AddArguments("--disable-gpu"); // seem to be needed on ubuntu
                     options.AddArguments("--headless");
-                    options.AddArguments("--no-sandbox");
-                    options.AddArguments("--whitelisted-ips='127.0.0.1'");
+                    // options.AddArguments("--disable-gpu"); // used to be required for headless on Windows but not anylonger, see crbug.com/737678.
+                    // options.AddArguments("--no-sandbox"); // no-sandbox is not needed if you properly setup a user in the Linux container. See https://github.com/ebidel/lighthouse-ci/blob/master/builder/Dockerfile#L35-L40
+                    options.AddArguments("--whitelisted-ips='127.0.0.1'"); // to remove error messages "[SEVERE]: bind() returned an error, errno=99: Cannot assign requested address (99)"
                     options.AddArguments("--disable-extensions");
-
-                    //options.AddArguments(userDataArgument);
-                    //options.AddArguments("--start-maximized");
-                    //options.AddArgument("--log-level=3");
-                    //options.AddArguments("--ignore-certificate-errors");
-                    //options.AddArguments("--ignore-ssl-errors");
+                    options.AddArguments("--window-size=1920,1080");
                 }
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
                     driverExecutableFileName = "chromedriver.exe";
-                    options.AddArguments("window-size=1920,1080");
+                    options.AddArguments("--window-size=1920,1080");
                 }
 
                 ChromeDriverService service = ChromeDriverService.CreateDefaultService(chromeDriverPath, driverExecutableFileName);
                 service.Port = 9515;
-                service.WhitelistedIPAddresses = "127.0.0.1";
+                service.WhitelistedIPAddresses = "127.0.0.1"; // to remove error messages "[SEVERE]: bind() -- see above
                 // service.EnableVerboseLogging = true;
 
                 IWebDriver driver = new ChromeDriver(service, options, TimeSpan.FromSeconds(30));
