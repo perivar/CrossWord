@@ -13,8 +13,8 @@ COPY . ./
 RUN dotnet publish -c Release -o out
 
 # Build runtime image
-# FROM mcr.microsoft.com/dotnet/core/runtime:2.2
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2
+FROM mcr.microsoft.com/dotnet/core/runtime:2.2
+# FROM mcr.microsoft.com/dotnet/core/sdk:2.2
 
 # Install deps + add Chrome Stable
 RUN apt-get update && apt-get install -y \
