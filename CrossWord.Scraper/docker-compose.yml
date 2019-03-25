@@ -39,7 +39,7 @@ services:
       - DBUSER=root
       - DBPASSWORD=secret
       - DATABASE=dictionary
-      - SignalRClientURL=https://order.wazalo.com/crosswords
+      - SignalRClientURL=https://accounting.wazalo.com/crosswords
     expose:
       - "9515"
     ports:
@@ -78,7 +78,7 @@ services:
       - web
     restart: always
     environment:
-      DOMAINS: 'order.wazalo.com -> http://web:5000'
+      DOMAINS: 'accounting.wazalo.com -> http://web:5000'
       STAGE: 'production'    
       # DOMAINS: 'example.com -> http://web:5000'
       # STAGE: local # self signed certificate, note modify your hosts file to have example.com resolving to your docker host 
