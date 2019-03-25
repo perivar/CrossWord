@@ -30,6 +30,11 @@ RUN apt-get update && apt-get install -y \
     unzip \
     --no-install-recommends
 
+# Add chrome as a user so we don't need --no-sandbox.
+RUN groupadd -r chrome && useradd -r -g chrome -G audio,video chrome \
+    && mkdir -p /home/chrome && chown -R chrome:chrome /home/chrome \
+    && mkdir -p /opt/google/chrome && chown -R chrome:chrome /opt/google/chrome
+
 # Install ChromeDriver.
 RUN wget -N http://chromedriver.storage.googleapis.com/$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip -P ~/
 RUN unzip ~/chromedriver_linux64.zip -d ~/
@@ -41,11 +46,6 @@ RUN chmod 0755 /usr/local/bin/chromedriver
 # Purge all the things to keep the container as small as possible
 RUN apt-get purge --auto-remove -y curl gnupg unzip \
     && rm -rf /var/lib/apt/lists/*
-
-# Add chrome as a user so we don't need --no-sandbox.
-RUN groupadd -r chrome && useradd -r -g chrome -G audio,video chrome \
-    && mkdir -p /home/chrome && chown -R chrome:chrome /home/chrome \
-    && mkdir -p /opt/google/chrome && chown -R chrome:chrome /opt/google/chrome
 
 # Run Chrome non-privileged
 USER chrome
