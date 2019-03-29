@@ -50,8 +50,12 @@ RUN apt-get purge --auto-remove -y curl gnupg unzip \
 # Run Chrome non-privileged
 USER chrome
 
-COPY --from=build-env /app/ /app
+# Copy and ensure the app directory is owned by the chrome user 
+COPY --chown=chrome:chrome --from=build-env /app/ /app
 WORKDIR /app/out
+
+# Make sure the log file exist
+RUN touch crossword_scraper_error.log
 
 # Change name of dll for your application 
 ENTRYPOINT ["dotnet", "CrossWord.Scraper.dll"]

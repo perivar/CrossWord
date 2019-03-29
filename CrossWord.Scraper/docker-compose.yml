@@ -48,7 +48,7 @@ services:
     cap_add:
       - "SYS_ADMIN"
     volumes:
-      # note: make sure the log file exists on the host - otherwise docker creates it as a directory
+      # note: make sure the log file exists on the host - otherwise docker creates it as a directory, this is done in the Dockerfile
       - "/opt/crossword_scraper_error.log:/app/out/crossword_scraper_error.log"
       # see https://github.com/SeleniumHQ/docker-selenium/issues/79
       - /dev/shm:/dev/shm
