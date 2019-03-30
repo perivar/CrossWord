@@ -9,6 +9,14 @@ ENV ASPNETCORE_URLS http://+:5000
 EXPOSE 5000
 
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
+
+# Install node-js and npm
+RUN apt-get update -yq \
+    && apt-get install curl gnupg -yq \
+    && curl -sL https://deb.nodesource.com/setup_11.x |  bash - \
+    && apt-get install nodejs -yq \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /src
 COPY CrossWord.Web/CrossWord.Web.csproj CrossWord.Web/
 COPY CrossWord.Scraper/CrossWord.Scraper.csproj CrossWord.Scraper/
@@ -17,8 +25,8 @@ RUN dotnet restore CrossWord.Web/CrossWord.Web.csproj
 
 COPY  . .
 WORKDIR /src/CrossWord.Web
-RUN curl --silent --location https://deb.nodesource.com/setup_11.x |  bash -
-RUN apt-get install --yes nodejs
+
+# Install dependicies for node
 RUN npm install
 
 FROM build AS publish

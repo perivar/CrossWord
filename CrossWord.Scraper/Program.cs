@@ -7,6 +7,8 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using CrossWord.Scraper.MySQLDbService;
 using CrossWord.Scraper.MySQLDbService.Models;
 using Microsoft.EntityFrameworkCore;
@@ -65,6 +67,9 @@ namespace CrossWord.Scraper
             string connectionString = $"server={dbhost}; user={dbuser}; pwd={dbpassword}; "
                     + $"port={dbport}; database={database}; charset=utf8;";
 
+            string siteUsername = configuration["kryssord.org:Username"];
+            string sitePassword = configuration["kryssord.org:Password"];
+
             var dbContextFactory = new DesignTimeDbContextFactory();
             using (var db = dbContextFactory.CreateDbContext(connectionString, Log.Logger))
             {
@@ -72,107 +77,116 @@ namespace CrossWord.Scraper
                 // db.Database.EnsureDeleted();
                 db.Database.EnsureCreated();
 
-                string siteUsername = configuration["kryssord.org:Username"];
-                string sitePassword = configuration["kryssord.org:Password"];
-
                 KillAllChromeDriverInstances();
-
-                var outPutDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                var chromeDriverPath = outPutDirectory;
-                string driverExecutableFileName = null;
-
-                ChromeOptions options = new ChromeOptions();
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                {
-                    chromeDriverPath = "/usr/local/bin/";
-                    driverExecutableFileName = "chromedriver";
-
-                    options.AddArguments("--headless");
-                    // options.AddArguments("--disable-gpu"); // used to be required for headless on Windows but not anylonger, see crbug.com/737678.
-                    // options.AddArguments("--no-sandbox"); // no-sandbox is not needed if you properly setup a user in the Linux container. See https://github.com/ebidel/lighthouse-ci/blob/master/builder/Dockerfile#L35-L40
-                    options.AddArguments("--whitelisted-ips='127.0.0.1'"); // to remove error messages "[SEVERE]: bind() returned an error, errno=99: Cannot assign requested address (99)"
-                    options.AddArguments("--disable-extensions");
-                    options.AddArguments("--window-size=1920,1080");
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    driverExecutableFileName = "chromedriver.exe";
-                    options.AddArguments("--window-size=1920,1080");
-                }
-
-                ChromeDriverService service = ChromeDriverService.CreateDefaultService(chromeDriverPath, driverExecutableFileName);
-                service.Port = 9515;
-                service.WhitelistedIPAddresses = "127.0.0.1"; // to remove error messages "[SEVERE]: bind() -- see above
-                // service.EnableVerboseLogging = true;
-
-                IWebDriver driver = new ChromeDriver(service, options, TimeSpan.FromSeconds(30));
-                // driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(30); // this make findelement throw a timeout error if it doesn't exist 
-                // driver.Manage().Window.Maximize();
-
-                Log.Information("Using chromedriver path: '{0}', options: {1}", chromeDriverPath, options);
-
-                // IWebDriver driver = new ChromeDriver(chromeDriverPath, options);
-                driver.Navigate().GoToUrl("https://www.kryssord.org/login.php");
-
-                var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
-                var ready = wait.Until(d => ((IJavaScriptExecutor)d).ExecuteScript("return document.readyState").Equals("complete"));
-
-                // login if login form is present
-                if (driver.IsElementPresent(By.XPath("//input[@name='username']"))
-                    && driver.IsElementPresent(By.XPath("//input[@name='password']")))
-                {
-                    IWebElement username = driver.FindElement(By.XPath("//input[@name='username']"));
-                    IWebElement password = driver.FindElement(By.XPath("//input[@name='password']"));
-
-                    username.Clear();
-                    username.SendKeys(siteUsername);
-
-                    password.Clear();
-                    password.SendKeys(sitePassword);
-
-                    // use password field to submit form
-                    password.Submit();
-
-                    var wait2 = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
-                    var ready2 = wait2.Until(d => ((IJavaScriptExecutor)d).ExecuteScript("return document.readyState").Equals("complete"));
-                }
-
-                // set admin user
-                var user = new User()
-                {
-                    FirstName = "Admin",
-                    LastName = "Admin",
-                    UserName = "",
-                    Password = "",
-                    isVIP = true
-                };
-                // db.Users.Add(user);
-                // db.SaveChanges();
-
-                // Testing
-                // ReadWordsByWordPattern("RV", driver, db, user);
 
                 // find out how far we have got in the processing
                 var lastWord = db.Words.OrderByDescending(p => p.WordId).FirstOrDefault();
-                var lastHint = db.Hints.OrderByDescending(p => p.HintId).FirstOrDefault();
 
-                // read all one letter words
-                if (lastWord == null || lastWord != null && lastWord.Value.Length < 2)
-                {
-                    ReadWordsByWordPattern("1", driver, db, user, lastWord, lastHint);
-                }
-
-                // read 2 and more letter words
-                for (int i = 2; i < 200; i++)
-                {
-                    ReadWordsByWordPermutations(2, i, driver, db, user, lastWord, lastHint);
-                }
-
-                // make sure to clean the chrome driver from memory
-                driver.Close();
-                driver.Quit();
-                driver = null;
+                DoScrape(connectionString, siteUsername, sitePassword, db, lastWord != null ? lastWord.Value : null);
             }
+        }
+
+        static void DoScrape(string connectionString, string siteUsername, string sitePassword, WordHintDbContext db, string lastWord)
+        {
+            var outPutDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var chromeDriverPath = outPutDirectory;
+            string driverExecutableFileName = null;
+
+            ChromeOptions options = new ChromeOptions();
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                chromeDriverPath = "/usr/local/bin/";
+                driverExecutableFileName = "chromedriver";
+
+                options.AddArguments("--headless");
+                // options.AddArguments("--disable-gpu"); // used to be required for headless on Windows but not anylonger, see crbug.com/737678.
+                // options.AddArguments("--no-sandbox"); // no-sandbox is not needed if you properly setup a user in the Linux container. See https://github.com/ebidel/lighthouse-ci/blob/master/builder/Dockerfile#L35-L40
+                options.AddArguments("--whitelisted-ips='127.0.0.1'"); // to remove error messages "[SEVERE]: bind() returned an error, errno=99: Cannot assign requested address (99)"
+                options.AddArguments("--disable-extensions");
+                options.AddArguments("--window-size=1920,1080");
+                options.AddArguments("--blink-settings=imagesEnabled=false"); // disable images
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                driverExecutableFileName = "chromedriver.exe";
+                options.AddArguments("--window-size=1920,1080");
+                options.AddArguments("--blink-settings=imagesEnabled=false"); // disable images
+            }
+
+            ChromeDriverService service = ChromeDriverService.CreateDefaultService(chromeDriverPath, driverExecutableFileName);
+            service.Port = 9515;
+            service.WhitelistedIPAddresses = "127.0.0.1"; // to remove error messages "[SEVERE]: bind() -- see above
+                                                          // service.EnableVerboseLogging = true;
+
+            IWebDriver driver = new ChromeDriver(service, options, TimeSpan.FromSeconds(30));
+            // driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(30); // this make findelement throw a timeout error if it doesn't exist 
+            // driver.Manage().Window.Maximize();
+
+            Log.Information("Using chromedriver path: '{0}', options: {1}", chromeDriverPath, options);
+
+            // IWebDriver driver = new ChromeDriver(chromeDriverPath, options);
+            driver.Navigate().GoToUrl("https://www.kryssord.org/login.php");
+
+            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
+            var ready = wait.Until(d => ((IJavaScriptExecutor)d).ExecuteScript("return document.readyState").Equals("complete"));
+
+            // login if login form is present
+            if (driver.IsElementPresent(By.XPath("//input[@name='username']"))
+                && driver.IsElementPresent(By.XPath("//input[@name='password']")))
+            {
+                IWebElement username = driver.FindElement(By.XPath("//input[@name='username']"));
+                IWebElement password = driver.FindElement(By.XPath("//input[@name='password']"));
+
+                username.Clear();
+                username.SendKeys(siteUsername);
+
+                password.Clear();
+                password.SendKeys(sitePassword);
+
+                // use password field to submit form
+                password.Submit();
+
+                var wait2 = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
+                var ready2 = wait2.Until(d => ((IJavaScriptExecutor)d).ExecuteScript("return document.readyState").Equals("complete"));
+            }
+
+            // set admin user
+            var user = new User()
+            {
+                FirstName = "Admin",
+                LastName = "Admin",
+                UserName = "",
+                Password = "",
+                isVIP = true
+            };
+            // db.Users.Add(user);
+            // db.SaveChanges();
+
+            // Testing
+            // ReadWordsByWordPattern("RV", driver, db, user);
+
+            // read all one letter words
+            if (lastWord == null || lastWord != null && lastWord.Length < 2)
+            {
+                ReadWordsByWordPattern("1", driver, db, user);
+            }
+
+            // read all two letter words
+            if (lastWord == null || lastWord != null && lastWord.Length < 3)
+            {
+                ReadWordsByWordPermutations(2, 2, driver, db, user, lastWord);
+            }
+
+            // read 3 and more letter words
+            for (int i = 3; i < 200; i++)
+            {
+                ReadWordsByWordPermutations(3, i, driver, db, user, lastWord);
+            }
+
+            // make sure to clean the chrome driver from memory
+            driver.Close();
+            driver.Quit();
+            driver = null;
         }
 
         static void KillAllChromeDriverInstances()
@@ -181,21 +195,57 @@ namespace CrossWord.Scraper
             System.Diagnostics.Process proc = new System.Diagnostics.Process();
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                p = new ProcessStartInfo("cmd.exe", "/C " + "taskkill /f /im chromedriver.exe");
-                Log.Information("Killing Chromedriver on Windows: '{0}'", "cmd.exe " + "/C " + "taskkill /f /im chromedriver.exe");
-                proc.StartInfo = p;
-                proc.Start();
-                proc.WaitForExit();
-                proc.Close();
+                var cmd = "taskkill /f /im chromedriver.exe";
+                var escapedArgs = cmd.Replace("\"", "\\\"");
+
+                var process = new Process()
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "cmd.exe",
+                        Arguments = $"/C \"{escapedArgs}\"",
+                        RedirectStandardOutput = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                    }
+                };
+
+                Log.Information("Killing Chromedriver on Windows: '{0} {1}'", process.StartInfo.FileName, process.StartInfo.Arguments);
+
+                process.Start();
+                string result = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+
+                Log.Debug("Killing Chromedriver on Windows: '{0}'", result);
+
+                process.Close();
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                // p = new ProcessStartInfo("/bin/sh", @"kill $(ps aux | grep 'chromedrive[r]' | awk '{print $2}')");
-                // Log.Information("Killing Chromedriver on Linux: '{0}'", "/bin/sh " + "-c " + @"kill $(ps aux | grep 'chromedrive[r]' | awk '{print $2}')");
-                // proc.StartInfo = p;
-                // proc.Start();
-                // proc.WaitForExit();
-                // proc.Close();
+                var cmd = "kill $(ps aux | grep 'chromedrive[r]' | awk '{print $2}')";
+                var escapedArgs = cmd.Replace("\"", "\\\"");
+
+                var process = new Process()
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "/bin/bash",
+                        Arguments = $"-c \"{escapedArgs}\"",
+                        RedirectStandardOutput = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                    }
+                };
+
+                Log.Information("Killing Chromedriver on Linux: '{0} {1}'", process.StartInfo.FileName, process.StartInfo.Arguments);
+
+                process.Start();
+                string result = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+
+                Log.Debug("Killing Chromedriver on Linux: '{0}'", result);
+
+                process.Close();
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
@@ -203,7 +253,7 @@ namespace CrossWord.Scraper
             }
         }
 
-        static void ReadWordsByWordPermutations(int permutationSize, int letterLength, IWebDriver driver, WordHintDbContext db, User user, Word lastWord, Hint lastHint)
+        static void ReadWordsByWordPermutations(int permutationSize, int letterLength, IWebDriver driver, WordHintDbContext db, User user, string lastWord)
         {
             var alphabet = "abcdefghijklmnopqrstuvwxyzøæå";
             var permutations = alphabet.Select(x => x.ToString());
@@ -233,12 +283,12 @@ namespace CrossWord.Scraper
                     // skip until lastWord is found
                     if (!hasFoundWord)
                     {
-                        if (lastWord.Value.Length > wordPattern.Length)
+                        if (lastWord.Length > wordPattern.Length)
                         {
                             // skip until same length
                             continue;
                         }
-                        else if (lastWord.Value.Length < wordPattern.Length)
+                        else if (lastWord.Length < wordPattern.Length)
                         {
                             // this means we are continuing with longer patterns
                             // and should process as normal
@@ -248,7 +298,7 @@ namespace CrossWord.Scraper
                         {
                             // same length so compare
                             var patternRegexp = wordPattern.Replace('?', '.');
-                            Match match = Regex.Match(lastWord.Value, patternRegexp, RegexOptions.IgnoreCase);
+                            Match match = Regex.Match(lastWord, patternRegexp, RegexOptions.IgnoreCase);
                             if (match.Success)
                             {
                                 // found
@@ -263,17 +313,17 @@ namespace CrossWord.Scraper
 
                     if (hasFoundWord)
                     {
-                        ReadWordsByWordPattern(wordPattern, driver, db, user, lastWord, lastHint);
+                        ReadWordsByWordPattern(wordPattern, driver, db, user);
                     }
                 }
                 else
                 {
-                    ReadWordsByWordPattern(wordPattern, driver, db, user, lastWord, lastHint);
+                    ReadWordsByWordPattern(wordPattern, driver, db, user);
                 }
             }
         }
 
-        static void ReadWordsByWordPattern(string wordPattern, IWebDriver driver, WordHintDbContext db, User user, Word lastWord, Hint lastHint)
+        static void ReadWordsByWordPattern(string wordPattern, IWebDriver driver, WordHintDbContext db, User user)
         {
             // go to search result page            
             var query = "";
@@ -359,7 +409,7 @@ namespace CrossWord.Scraper
                         db.SaveChanges();
                     }
 
-                    GetWordSynonyms(word, driver, db, user, lastHint);
+                    GetWordSynonyms(word, driver, db, user);
                 }
 
                 // go to next page if exist
@@ -379,7 +429,7 @@ namespace CrossWord.Scraper
             }
         }
 
-        static void GetWordSynonyms(Word word, IWebDriver driver, WordHintDbContext db, User user, Hint lastHint)
+        static void GetWordSynonyms(Word word, IWebDriver driver, WordHintDbContext db, User user)
         {
             // there is a bug in the website that makes a  query with "0" fail
             if (word.Value == "0") return;
