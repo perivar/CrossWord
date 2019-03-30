@@ -78,10 +78,10 @@ services:
       - web
     restart: always
     environment:
-      # DOMAINS: 'accounting.wazalo.com -> http://web:5000'
-      # STAGE: 'production'    
-      DOMAINS: 'example.com -> http://web:5000'
-      STAGE: local # self signed certificate, note modify your hosts file to have example.com resolving to your docker host 
+      DOMAINS: 'accounting.wazalo.com -> http://web:5000'
+      STAGE: 'production'    
+      # DOMAINS: 'example.com -> http://web:5000'
+      # STAGE: local # self signed certificate, note modify your hosts file to have example.com resolving to your docker host 
       # c:\Windows\System32\Drivers\etc\hosts => 127.0.0.1           example.com 
       # FORCE_RENEW: 'true' # only force renew if certificates are not chained correctly. Run the container again with the force_renew setting ONCE
       WEBSOCKET: 'true'
