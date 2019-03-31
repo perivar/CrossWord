@@ -222,7 +222,8 @@ namespace CrossWord.Scraper
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                var cmd = "kill $(ps aux | grep 'chromedrive[r]' | awk '{print $2}')";
+                var cmd = "pkill chrome";
+
                 var escapedArgs = cmd.Replace("\"", "\\\"");
 
                 var process = new Process()
