@@ -16,7 +16,7 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/core/runtime:2.2
 # FROM mcr.microsoft.com/dotnet/core/sdk:2.2
 
-# Install deps + add Chrome Stable
+# Install deps + add Chrome Stable + procps for the ps command
 RUN apt-get update && apt-get install -y \
     apt-transport-https \
     ca-certificates \
@@ -28,6 +28,7 @@ RUN apt-get update && apt-get install -y \
     && apt-get update && apt-get install -y \
     google-chrome-stable \
     unzip \
+    procps \ 
     --no-install-recommends
 
 # Add chrome as a user so we don't need --no-sandbox.
