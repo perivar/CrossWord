@@ -20,11 +20,11 @@ namespace CrossWord.API.Controllers
     public class AccountController : Controller
     {
         IConfiguration config;
-        UserManager<User> userManager;
+        UserManager<IdentityUser> userManager;
 
         WordHintDbContext db;
 
-        public AccountController(IConfiguration config, UserManager<User> userManager, WordHintDbContext db)
+        public AccountController(IConfiguration config, UserManager<IdentityUser> userManager, WordHintDbContext db)
         {
             this.config = config;
             this.userManager = userManager;
@@ -34,9 +34,7 @@ namespace CrossWord.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(string email, string password)
         {
-            var userIdentity = new User(email) {
-                UserId = 9999
-            };
+            var userIdentity = new IdentityUser(email);
             var result = await userManager.CreateAsync(userIdentity, password);
 
             if (result == IdentityResult.Success)
@@ -49,7 +47,7 @@ namespace CrossWord.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string email, string password)
         {
-            // get the user to verify
+            // get the IdentityUser to verify
             var userToVerify = await userManager.FindByNameAsync(email);
 
             if (userToVerify == null) return BadRequest();

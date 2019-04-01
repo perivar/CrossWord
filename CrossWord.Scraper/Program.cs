@@ -159,7 +159,6 @@ namespace CrossWord.Scraper
             // set admin user
             var user = new User()
             {
-                UserId = 9999,
                 FirstName = "Admin",
                 LastName = "Admin",
                 UserName = "",
@@ -387,7 +386,6 @@ namespace CrossWord.Scraper
                     {
                         wordUser = new User()
                         {
-                            UserId = 9999,
                             ExternalId = userId
                         };
                     }
@@ -511,7 +509,6 @@ namespace CrossWord.Scraper
                     {
                         hintUser = new User()
                         {
-                            UserId = 9999,
                             ExternalId = userId
                         };
                     }

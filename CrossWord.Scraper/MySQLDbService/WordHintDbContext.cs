@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace CrossWord.Scraper.MySQLDbService
 {
-    public class WordHintDbContext : IdentityDbContext<User>
+    public class WordHintDbContext : IdentityDbContext
     {
         public DbSet<Word> Words { get; set; }
         public DbSet<Hint> Hints { get; set; }

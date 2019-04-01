@@ -19,7 +19,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Swashbuckle.AspNetCore.Swagger;
 using CrossWord.Scraper.MySQLDbService;
-using CrossWord.Scraper.MySQLDbService.Models;
 
 namespace CrossWord.API
 {
@@ -58,7 +57,7 @@ namespace CrossWord.API
                     + $"port={dbport}; database={database}; charset=utf8;");
             });
 
-            services.AddDefaultIdentity<User>()
+            services.AddDefaultIdentity<IdentityUser>()
                     .AddEntityFrameworkStores<WordHintDbContext>()
                     .AddDefaultUI(UIFramework.Bootstrap4);
 

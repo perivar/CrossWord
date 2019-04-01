@@ -1,20 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Identity;
 
 namespace CrossWord.Scraper.MySQLDbService.Models
 {
-    public class User : IdentityUser
+    public class User
     {
-        public User() : base()
-        {
-        }
-
-        public User(string userName) : base(userName)
-        {
-        }
-
         public int UserId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -22,10 +13,10 @@ namespace CrossWord.Scraper.MySQLDbService.Models
         public string Password { get; set; }
         public bool isVIP { get; set; }
         public string ExternalId { get; set; }
-        
+
         public override string ToString()
         {
-            return string.Format("Id: {0}, ExternalId: {1}, FirstName: {2}, LastName: {3}", Id, ExternalId, FirstName, LastName);
+            return string.Format("Id: {0}, ExternalId: {1}, FirstName: {2}, LastName: {3}", UserId, ExternalId, FirstName, LastName);
         }
     }
 }
