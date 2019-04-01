@@ -27,11 +27,6 @@ namespace CrossWord.Scraper.Migrations
                 name: "Users",
                 newName: "AspNetUsers");
 
-            migrationBuilder.RenameColumn(
-                name: "Password",
-                table: "AspNetUsers",
-                newName: "SecurityStamp");
-
             migrationBuilder.AlterColumn<string>(
                 name: "UserId",
                 table: "Words",
@@ -121,6 +116,11 @@ namespace CrossWord.Scraper.Migrations
                 table: "AspNetUsers",
                 nullable: false,
                 defaultValue: (short)0);
+
+            migrationBuilder.AddColumn<string>(
+                name: "SecurityStamp",
+                table: "AspNetUsers",
+                nullable: true);
 
             migrationBuilder.AddColumn<short>(
                 name: "TwoFactorEnabled",
@@ -396,17 +396,16 @@ namespace CrossWord.Scraper.Migrations
                 table: "AspNetUsers");
 
             migrationBuilder.DropColumn(
+                name: "SecurityStamp",
+                table: "AspNetUsers");
+
+            migrationBuilder.DropColumn(
                 name: "TwoFactorEnabled",
                 table: "AspNetUsers");
 
             migrationBuilder.RenameTable(
                 name: "AspNetUsers",
                 newName: "Users");
-
-            migrationBuilder.RenameColumn(
-                name: "SecurityStamp",
-                table: "Users",
-                newName: "Password");
 
             migrationBuilder.AlterColumn<int>(
                 name: "UserId",

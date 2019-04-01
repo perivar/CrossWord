@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CrossWord.Scraper.Migrations
 {
     [DbContext(typeof(WordHintDbContext))]
-    [Migration("20190401015727_AddedIdentity")]
+    [Migration("20190401023912_AddedIdentity")]
     partial class AddedIdentity
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -73,6 +73,8 @@ namespace CrossWord.Scraper.Migrations
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256);
+
+                    b.Property<string>("Password");
 
                     b.Property<string>("PasswordHash");
 
