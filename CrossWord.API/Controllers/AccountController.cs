@@ -34,7 +34,9 @@ namespace CrossWord.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(string email, string password)
         {
-            var userIdentity = new User(email);
+            var userIdentity = new User(email) {
+                UserId = 9999
+            };
             var result = await userManager.CreateAsync(userIdentity, password);
 
             if (result == IdentityResult.Success)

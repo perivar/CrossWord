@@ -20,18 +20,9 @@ namespace CrossWord.Scraper.Migrations
                 name: "PK_Users",
                 table: "Users");
 
-            migrationBuilder.DropColumn(
-                name: "UserId",
-                table: "Users");
-
             migrationBuilder.RenameTable(
                 name: "Users",
                 newName: "AspNetUsers");
-
-            migrationBuilder.RenameColumn(
-                name: "Password",
-                table: "AspNetUsers",
-                newName: "SecurityStamp");
 
             migrationBuilder.AlterColumn<string>(
                 name: "UserId",
@@ -54,6 +45,13 @@ namespace CrossWord.Scraper.Migrations
                 nullable: true,
                 oldClrType: typeof(string),
                 oldNullable: true);
+
+            migrationBuilder.AlterColumn<int>(
+                name: "UserId",
+                table: "AspNetUsers",
+                nullable: false,
+                oldClrType: typeof(int))
+                .OldAnnotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn);
 
             migrationBuilder.AddColumn<string>(
                 name: "Id",
@@ -122,6 +120,11 @@ namespace CrossWord.Scraper.Migrations
                 table: "AspNetUsers",
                 nullable: false,
                 defaultValue: false);
+
+            migrationBuilder.AddColumn<string>(
+                name: "SecurityStamp",
+                table: "AspNetUsers",
+                nullable: true);
 
             migrationBuilder.AddColumn<bool>(
                 name: "TwoFactorEnabled",
@@ -397,17 +400,16 @@ namespace CrossWord.Scraper.Migrations
                 table: "AspNetUsers");
 
             migrationBuilder.DropColumn(
+                name: "SecurityStamp",
+                table: "AspNetUsers");
+
+            migrationBuilder.DropColumn(
                 name: "TwoFactorEnabled",
                 table: "AspNetUsers");
 
             migrationBuilder.RenameTable(
                 name: "AspNetUsers",
                 newName: "Users");
-
-            migrationBuilder.RenameColumn(
-                name: "SecurityStamp",
-                table: "Users",
-                newName: "Password");
 
             migrationBuilder.AlterColumn<int>(
                 name: "UserId",
@@ -431,11 +433,11 @@ namespace CrossWord.Scraper.Migrations
                 oldMaxLength: 256,
                 oldNullable: true);
 
-            migrationBuilder.AddColumn<int>(
+            migrationBuilder.AlterColumn<int>(
                 name: "UserId",
                 table: "Users",
                 nullable: false,
-                defaultValue: 0)
+                oldClrType: typeof(int))
                 .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn);
 
             migrationBuilder.AddPrimaryKey(

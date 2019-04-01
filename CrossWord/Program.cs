@@ -83,6 +83,7 @@ namespace CrossWord
                     // set admin user
                     var user = new User()
                     {
+                        UserId = 9999,
                         FirstName = "Admin",
                         LastName = "Admin",
                         UserName = "",
