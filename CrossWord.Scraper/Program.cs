@@ -197,7 +197,6 @@ namespace CrossWord.Scraper
 
         static void KillAllChromeDriverInstances()
         {
-            System.Diagnostics.ProcessStartInfo p;
             System.Diagnostics.Process proc = new System.Diagnostics.Process();
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
