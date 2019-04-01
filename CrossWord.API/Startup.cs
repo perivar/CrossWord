@@ -19,6 +19,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Swashbuckle.AspNetCore.Swagger;
 using CrossWord.Scraper.MySQLDbService;
+using CrossWord.Scraper.MySQLDbService.Models;
 
 namespace CrossWord.API
 {
@@ -49,7 +50,7 @@ namespace CrossWord.API
             var dbport = Configuration["DBPORT"] ?? "3360"; // originally 3306
             var dbuser = Configuration["DBUSER"] ?? "root";
             var dbpassword = Configuration["DBPASSWORD"] ?? "secret";
-            var database = Configuration["DATABASE"] ?? "products";
+            var database = Configuration["DATABASE"] ?? "dictionary";
 
             services.AddDbContext<WordHintDbContext>(options =>
             {
@@ -57,9 +58,10 @@ namespace CrossWord.API
                     + $"port={dbport}; database={database}; charset=utf8;");
             });
 
-            services.AddDefaultIdentity<IdentityUser>()
-                .AddDefaultUI(UIFramework.Bootstrap4)
-                .AddEntityFrameworkStores<WordHintDbContext>();
+            services.AddDefaultIdentity<User>()
+                    .AddEntityFrameworkStores<WordHintDbContext>()
+                    .AddDefaultUI(UIFramework.Bootstrap4);
+
 
             // ===== Add Jwt Authentication ========
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims

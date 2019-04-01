@@ -162,7 +162,6 @@ namespace CrossWord.Scraper
                 FirstName = "Admin",
                 LastName = "Admin",
                 UserName = "",
-                Password = "",
                 isVIP = true
             };
             // db.Users.Add(user);

@@ -86,7 +86,6 @@ namespace CrossWord
                         FirstName = "Admin",
                         LastName = "Admin",
                         UserName = "",
-                        Password = "",
                         isVIP = true
                     };
 

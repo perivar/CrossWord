@@ -9,6 +9,9 @@ using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
+using CrossWord.Scraper.MySQLDbService;
+using CrossWord.Scraper.MySQLDbService.Models;
+using System.Linq;
 
 namespace CrossWord.API.Controllers
 {
@@ -17,18 +20,21 @@ namespace CrossWord.API.Controllers
     public class AccountController : Controller
     {
         IConfiguration config;
-        UserManager<IdentityUser> userManager;
+        UserManager<User> userManager;
 
-        public AccountController(IConfiguration config, UserManager<IdentityUser> userManager)
+        WordHintDbContext db;
+
+        public AccountController(IConfiguration config, UserManager<User> userManager, WordHintDbContext db)
         {
             this.config = config;
             this.userManager = userManager;
+            this.db = db;
         }
 
         [HttpPost]
         public async Task<IActionResult> Register(string email, string password)
         {
-            var userIdentity = new IdentityUser(email);
+            var userIdentity = new User(email);
             var result = await userManager.CreateAsync(userIdentity, password);
 
             if (result == IdentityResult.Success)
@@ -76,16 +82,8 @@ namespace CrossWord.API.Controllers
         [HttpGet]
         public IActionResult GetData()
         {
-            var products = new List<Product>();
-            products.Add(new Product { Id = 1, Name = "iPhone" });
-            products.Add(new Product { Id = 2, Name = "Android" });
-            return Json(products);
-        }
-
-        public class Product
-        {
-            public int Id { get; set; }
-            public string Name { get; set; }
+            var words = db.Words.OrderByDescending(p => p.WordId).Take(20);
+            return Json(words);
         }
     }
 }

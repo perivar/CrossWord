@@ -2,11 +2,12 @@ using System;
 using CrossWord.Scraper.MySQLDbService.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using MySql.Data.EntityFrameworkCore.Extensions;
 
 namespace CrossWord.Scraper.MySQLDbService
 {
-    public class WordHintDbContext : DbContext
+    public class WordHintDbContext : IdentityDbContext<User>
     {
         public DbSet<Word> Words { get; set; }
         public DbSet<Hint> Hints { get; set; }
