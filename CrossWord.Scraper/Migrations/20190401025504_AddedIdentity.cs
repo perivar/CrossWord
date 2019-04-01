@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CrossWord.Scraper.Migrations
@@ -26,6 +27,11 @@ namespace CrossWord.Scraper.Migrations
             migrationBuilder.RenameTable(
                 name: "Users",
                 newName: "AspNetUsers");
+
+            migrationBuilder.RenameColumn(
+                name: "Password",
+                table: "AspNetUsers",
+                newName: "SecurityStamp");
 
             migrationBuilder.AlterColumn<string>(
                 name: "UserId",
@@ -72,17 +78,17 @@ namespace CrossWord.Scraper.Migrations
                 maxLength: 256,
                 nullable: true);
 
-            migrationBuilder.AddColumn<short>(
+            migrationBuilder.AddColumn<bool>(
                 name: "EmailConfirmed",
                 table: "AspNetUsers",
                 nullable: false,
-                defaultValue: (short)0);
+                defaultValue: false);
 
-            migrationBuilder.AddColumn<short>(
+            migrationBuilder.AddColumn<bool>(
                 name: "LockoutEnabled",
                 table: "AspNetUsers",
                 nullable: false,
-                defaultValue: (short)0);
+                defaultValue: false);
 
             migrationBuilder.AddColumn<DateTimeOffset>(
                 name: "LockoutEnd",
@@ -111,22 +117,17 @@ namespace CrossWord.Scraper.Migrations
                 table: "AspNetUsers",
                 nullable: true);
 
-            migrationBuilder.AddColumn<short>(
+            migrationBuilder.AddColumn<bool>(
                 name: "PhoneNumberConfirmed",
                 table: "AspNetUsers",
                 nullable: false,
-                defaultValue: (short)0);
+                defaultValue: false);
 
-            migrationBuilder.AddColumn<string>(
-                name: "SecurityStamp",
-                table: "AspNetUsers",
-                nullable: true);
-
-            migrationBuilder.AddColumn<short>(
+            migrationBuilder.AddColumn<bool>(
                 name: "TwoFactorEnabled",
                 table: "AspNetUsers",
                 nullable: false,
-                defaultValue: (short)0);
+                defaultValue: false);
 
             migrationBuilder.AddPrimaryKey(
                 name: "PK_AspNetUsers",
@@ -152,7 +153,7 @@ namespace CrossWord.Scraper.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:AutoIncrement", true),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<string>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)
@@ -213,7 +214,7 @@ namespace CrossWord.Scraper.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:AutoIncrement", true),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     RoleId = table.Column<string>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)
@@ -396,16 +397,17 @@ namespace CrossWord.Scraper.Migrations
                 table: "AspNetUsers");
 
             migrationBuilder.DropColumn(
-                name: "SecurityStamp",
-                table: "AspNetUsers");
-
-            migrationBuilder.DropColumn(
                 name: "TwoFactorEnabled",
                 table: "AspNetUsers");
 
             migrationBuilder.RenameTable(
                 name: "AspNetUsers",
                 newName: "Users");
+
+            migrationBuilder.RenameColumn(
+                name: "SecurityStamp",
+                table: "Users",
+                newName: "Password");
 
             migrationBuilder.AlterColumn<int>(
                 name: "UserId",
@@ -434,7 +436,7 @@ namespace CrossWord.Scraper.Migrations
                 table: "Users",
                 nullable: false,
                 defaultValue: 0)
-                .Annotation("MySQL:AutoIncrement", true);
+                .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn);
 
             migrationBuilder.AddPrimaryKey(
                 name: "PK_Users",

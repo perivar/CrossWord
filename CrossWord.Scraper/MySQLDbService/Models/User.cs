@@ -17,7 +17,7 @@ namespace CrossWord.Scraper.MySQLDbService.Models
 
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string Password { get; set; } // should try to remove, but the oracle driver doesn't support renaming columns during migrations
+        // public string Password { get; set; } // should try to remove, but the oracle driver doesn't support renaming columns during migrations
         public bool isVIP { get; set; }
         public string ExternalId { get; set; }
 

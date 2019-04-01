@@ -67,7 +67,7 @@ namespace CrossWord.Scraper.MySQLDbService
 
             Log.Information($"Using connection string {_connectionString}");
 
-            options.UseMySQL(_connectionString); // default added as Scoped
+            options.UseMySql(_connectionString); // default added as Scoped
             // options.UseSqlite(_connectionString); // default added as Scoped
 
             return new WordHintDbContext(options.Options);
