@@ -3,6 +3,7 @@ using CrossWord.Scraper.MySQLDbService.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CrossWord.Scraper.MySQLDbService
 {
@@ -25,6 +26,7 @@ namespace CrossWord.Scraper.MySQLDbService
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
+            optionsBuilder.ReplaceService<IMigrationsSqlGenerator, CustomMySqlMigrationsSqlGenerator>();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -49,13 +51,15 @@ namespace CrossWord.Scraper.MySQLDbService
                         .Property(u => u.isVIP)
                         .HasConversion(new BoolToZeroOneConverter<Int16>());
 
-            // modelBuilder.Entity<Word>()
-            //     .Property(w => w.Value)
-            //     .ForMySQLHasCollation("utf8mb4_0900_as_cs"); // defining collation in a property as accent sensitive (as) and case sensitive (cs)
+            modelBuilder.Entity<Word>()
+                .Property(w => w.Value)
+                .HasAnnotation("MySQL:Collation", "utf8mb4_0900_as_cs");
+            // .ForMySQLHasCollation("utf8mb4_0900_as_cs"); // defining collation in a property as accent sensitive (as) and case sensitive (cs)
 
-            // modelBuilder.Entity<Hint>()
-            //     .Property(h => h.Value)
-            //     .ForMySQLHasCollation("utf8mb4_0900_as_cs"); // defining collation in a property as accent sensitive (as) and case sensitive (cs)
+            modelBuilder.Entity<Hint>()
+                .Property(h => h.Value)
+                .HasAnnotation("MySQL:Collation", "utf8mb4_0900_as_cs");
+            // .ForMySQLHasCollation("utf8mb4_0900_as_cs"); // defining collation in a property as accent sensitive (as) and case sensitive (cs)
         }
     }
 }

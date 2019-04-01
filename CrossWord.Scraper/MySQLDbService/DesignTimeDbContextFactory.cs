@@ -24,7 +24,7 @@ namespace CrossWord.Scraper.MySQLDbService
 
         public WordHintDbContext CreateDbContext(string[] args)
         {
-            return CreateDbContext(args, Log.Logger);
+            return CreateDbContext(args, null);
         }
 
         public WordHintDbContext CreateDbContext(string connectionString, Serilog.ILogger log)
