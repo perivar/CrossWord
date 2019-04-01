@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Swashbuckle.AspNetCore.Swagger;
+using CrossWord.Scraper.MySQLDbService;
 
 namespace CrossWord.API
 {
@@ -40,10 +41,6 @@ namespace CrossWord.API
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            // services.AddDbContext<ApplicationDbContext>(options =>
-            //     options.UseSqlite(
-            //         Configuration.GetConnectionString("DefaultConnection")));
-
             // start DOCKER on port 3360
             // docker run -p 3360:3306 --name mysqldb -e MYSQL_ROOT_PASSWORD=secret -d mysql:8.0.15
 
@@ -54,15 +51,15 @@ namespace CrossWord.API
             var dbpassword = Configuration["DBPASSWORD"] ?? "secret";
             var database = Configuration["DATABASE"] ?? "products";
 
-            services.AddDbContext<ApplicationDbContext>(options =>
+            services.AddDbContext<WordHintDbContext>(options =>
             {
                 options.UseMySql($"server={dbhost}; user={dbuser}; pwd={dbpassword}; "
                     + $"port={dbport}; database={database}; charset=utf8;");
             });
 
             services.AddDefaultIdentity<IdentityUser>()
-                // .AddDefaultUI(UIFramework.Bootstrap4)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+                .AddDefaultUI(UIFramework.Bootstrap4)
+                .AddEntityFrameworkStores<WordHintDbContext>();
 
             // ===== Add Jwt Authentication ========
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
@@ -94,7 +91,7 @@ namespace CrossWord.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ApplicationDbContext context)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, WordHintDbContext db)
         {
             if (env.IsDevelopment())
             {
@@ -113,7 +110,14 @@ namespace CrossWord.API
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
-            context.Database.Migrate();
+            // You would either call EnsureCreated() or Migrate(). 
+            // EnsureCreated() is an alternative that completely skips the migrations pipeline and just creates a database that matches you current model. 
+            // It's good for unit testing or very early prototyping, when you are happy just to delete and re-create the database when the model changes.
+            // db.Database.EnsureDeleted();
+            // db.Database.EnsureCreated();
+
+            // Note! Therefore don't use EnsureDeleted() and EnsureCreated() but Migrate();
+            db.Database.Migrate();
 
             app.UseAuthentication();
 

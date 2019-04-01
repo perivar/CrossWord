@@ -74,8 +74,14 @@ namespace CrossWord.Scraper
             using (var db = dbContextFactory.CreateDbContext(connectionString, Log.Logger))
             {
                 // setup database
+                // You would either call EnsureCreated() or Migrate(). 
+                // EnsureCreated() is an alternative that completely skips the migrations pipeline and just creates a database that matches you current model. 
+                // It's good for unit testing or very early prototyping, when you are happy just to delete and re-create the database when the model changes.
                 // db.Database.EnsureDeleted();
-                db.Database.EnsureCreated();
+                // db.Database.EnsureCreated();
+
+                // Note! Therefore don't use EnsureDeleted() and EnsureCreated() but Migrate();
+                db.Database.Migrate();
 
                 KillAllChromeDriverInstances();
 
