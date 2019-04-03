@@ -377,7 +377,7 @@ namespace CrossWord.Scraper
 
                     // check if user already exists
                     User wordUser = null;
-                    var existingUser = db.Users.Where(o => o.ExternalId == userId).FirstOrDefault();
+                    var existingUser = db.DictionaryUsers.Where(o => o.ExternalId == userId).FirstOrDefault();
                     if (existingUser != null)
                     {
                         wordUser = existingUser;
@@ -500,7 +500,7 @@ namespace CrossWord.Scraper
 
                     // check if user already exists
                     User hintUser = null;
-                    var existingUser = db.Users.Where(o => o.ExternalId == userId).FirstOrDefault();
+                    var existingUser = db.DictionaryUsers.Where(o => o.ExternalId == userId).FirstOrDefault();
                     if (existingUser != null)
                     {
                         hintUser = existingUser;

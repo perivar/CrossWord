@@ -90,14 +90,14 @@ namespace CrossWord
                     };
 
                     // check if user already exists
-                    var existingUser = db.Users.Where(o => o.FirstName == user.FirstName).FirstOrDefault();
+                    var existingUser = db.DictionaryUsers.Where(o => o.FirstName == user.FirstName).FirstOrDefault();
                     if (existingUser != null)
                     {
                         user = existingUser;
                     }
                     else
                     {
-                        db.Users.Add(user);
+                        db.DictionaryUsers.Add(user);
                         db.SaveChanges();
                     }
 
