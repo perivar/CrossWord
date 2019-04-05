@@ -33,7 +33,7 @@ namespace CrossWord.Scraper.Migrations
                     b.Property<int?>("UserId");
 
                     b.Property<string>("Value")
-                        .HasAnnotation("MySQL:Collation", "utf8mb4_0900_as_cs");
+                        .HasAnnotation("MySql:Collation", "utf8mb4_0900_as_cs");
 
                     b.HasKey("HintId");
 
@@ -80,7 +80,7 @@ namespace CrossWord.Scraper.Migrations
                     b.Property<int?>("UserId");
 
                     b.Property<string>("Value")
-                        .HasAnnotation("MySQL:Collation", "utf8mb4_0900_as_cs");
+                        .HasAnnotation("MySql:Collation", "utf8mb4_0900_as_cs");
 
                     b.HasKey("WordId");
 

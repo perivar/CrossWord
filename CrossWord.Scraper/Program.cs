@@ -48,8 +48,8 @@ namespace CrossWord.Scraper
                 // .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Error).WriteTo.File(DEFAULT_ERROR_LOG_PATH))
                 .CreateLogger();
 
-            var signalRClientUrl = configuration["SignalRClientURL"] ?? "http://localhost:5000/crosswords";
-            _writer = new SignalRClientWriter(signalRClientUrl);
+            var signalRHubURL = configuration["SignalRHubURL"] ?? "http://localhost:5000/crosswords";
+            _writer = new SignalRClientWriter(signalRHubURL);
 
             Log.Error("Starting CrossWord.Scraper ....");
             _writer.WriteLine("Starting CrossWord.Scraper ....");
@@ -70,6 +70,8 @@ namespace CrossWord.Scraper
             string siteUsername = configuration["kryssord.org:Username"];
             string sitePassword = configuration["kryssord.org:Password"];
 
+            var pattern = configuration["PATTERN"] ?? null;
+
             var dbContextFactory = new DesignTimeDbContextFactory();
             using (var db = dbContextFactory.CreateDbContext(connectionString, Log.Logger))
             {
@@ -87,8 +89,54 @@ namespace CrossWord.Scraper
 
                 // find out how far we have got in the processing
                 var lastWord = db.Words.OrderByDescending(p => p.WordId).FirstOrDefault();
+                if (lastWord != null)
+                {
+                    Log.Information("Last word '{0}'", lastWord);
 
-                DoScrape(connectionString, siteUsername, sitePassword, db, lastWord != null ? lastWord.Value : null);
+                }
+
+                // if pattern is not null, then try to find the last word with same length
+                if (pattern != null)
+                {
+                    Log.Information("Scraping using pattern '{0}'", pattern);
+
+                    var lastWordWithPatternLength = db.Words.Where(w => w.NumberOfLetters == pattern.Length).OrderByDescending(p => p.WordId).FirstOrDefault();
+                    if (lastWordWithPatternLength != null)
+                    {
+                        Log.Information("Using the last word with pattern letter length '{0}'", pattern, lastWordWithPatternLength);
+                        lastWord = lastWordWithPatternLength;
+                    }
+                }
+
+                if (lastWord != null && pattern != null)
+                {
+                    // if the pattern length is the same, use last word
+                    if (lastWord.Value.Length == pattern.Length)
+                    {
+                        Log.Information("Scraping using last word '{0}'", lastWord);
+                        DoScrape(connectionString, siteUsername, sitePassword, db, lastWord != null ? lastWord.Value : null);
+                    }
+                    else
+                    {
+                        // if not use the pattern
+                        Log.Information("Scraping using pattern '{0}'", pattern);
+                        DoScrape(connectionString, siteUsername, sitePassword, db, pattern);
+                    }
+                }
+                else
+                {
+                    if (pattern != null)
+                    {
+                        Log.Information("Scraping using pattern '{0}'", pattern);
+                        DoScrape(connectionString, siteUsername, sitePassword, db, pattern);
+                    }
+                    else
+                    {
+                        // use normal method
+                        Log.Information("Scraping using last word '{0}'", lastWord);
+                        DoScrape(connectionString, siteUsername, sitePassword, db, lastWord != null ? lastWord.Value : null);
+                    }
+                }
             }
         }
 
@@ -185,6 +233,9 @@ namespace CrossWord.Scraper
             // read 3 and more letter words
             for (int i = 3; i < 200; i++)
             {
+                // ADDED BREAK TO SUPPORT SEVERAL DOCKER INSTANCES SCRAPING IN SWARMS
+                if (i > lastWord.Length) break;
+
                 ReadWordsByWordPermutations(3, i, driver, db, user, lastWord);
             }
 
@@ -555,7 +606,7 @@ namespace CrossWord.Scraper
 
                         db.SaveChanges();
 
-                        Log.Debug("Added '{0}' as a hint for '{1}'", hintText, word.Value);
+                        Log.Information("Added '{0}' as a hint for '{1}'", hintText, word.Value);
                         _writer.WriteLine("Added '{0}' as a hint for '{1}'", hintText, word.Value);
                     }
                     else

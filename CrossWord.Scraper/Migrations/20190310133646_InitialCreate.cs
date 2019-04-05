@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CrossWord.Scraper.Migrations
@@ -12,7 +13,7 @@ namespace CrossWord.Scraper.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:AutoIncrement", true),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     FirstName = table.Column<string>(nullable: true),
                     LastName = table.Column<string>(nullable: true),
                     UserName = table.Column<string>(nullable: true),
@@ -30,9 +31,10 @@ namespace CrossWord.Scraper.Migrations
                 columns: table => new
                 {
                     HintId = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:AutoIncrement", true),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Language = table.Column<string>(nullable: true),
-                    Value = table.Column<string>(nullable: true),
+                    Value = table.Column<string>(nullable: true)
+                        .Annotation("MySql:Collation", "utf8mb4_0900_as_cs"),
                     NumberOfLetters = table.Column<int>(nullable: false),
                     NumberOfWords = table.Column<int>(nullable: false),
                     UserId = table.Column<int>(nullable: true),
@@ -54,9 +56,10 @@ namespace CrossWord.Scraper.Migrations
                 columns: table => new
                 {
                     WordId = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:AutoIncrement", true),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Language = table.Column<string>(nullable: true),
-                    Value = table.Column<string>(nullable: true),
+                    Value = table.Column<string>(nullable: true)
+                        .Annotation("MySql:Collation", "utf8mb4_0900_as_cs"),
                     NumberOfLetters = table.Column<int>(nullable: false),
                     NumberOfWords = table.Column<int>(nullable: false),
                     UserId = table.Column<int>(nullable: true),

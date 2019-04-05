@@ -34,17 +34,17 @@ namespace CrossWord.Scraper.MySQLDbService
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<WordHint>()
-                .HasKey(wh => new { wh.WordId, wh.HintId });
+                        .HasKey(wh => new { wh.WordId, wh.HintId });
 
             modelBuilder.Entity<WordHint>()
-                .HasOne(wh => wh.Word)
-                .WithMany(w => w.WordHints)
-                .HasForeignKey(wh => wh.WordId);
+                        .HasOne(wh => wh.Word)
+                        .WithMany(w => w.WordHints)
+                        .HasForeignKey(wh => wh.WordId);
 
             modelBuilder.Entity<WordHint>()
-                .HasOne(wh => wh.Hint)
-                .WithMany(h => h.WordHints)
-                .HasForeignKey(wh => wh.HintId);
+                        .HasOne(wh => wh.Hint)
+                        .WithMany(h => h.WordHints)
+                        .HasForeignKey(wh => wh.HintId);
 
             // have to manually ensure bools are converted to 1 and 0 due to a bug in the mysql driver
             modelBuilder.Entity<User>()
@@ -52,13 +52,13 @@ namespace CrossWord.Scraper.MySQLDbService
                         .HasConversion(new BoolToZeroOneConverter<Int16>());
 
             modelBuilder.Entity<Word>()
-                .Property(w => w.Value)
-                .HasAnnotation("MySQL:Collation", "utf8mb4_0900_as_cs");
+                        .Property(w => w.Value)
+                        .HasAnnotation("MySql:Collation", "utf8mb4_0900_as_cs"); // only works with the Pomelo driver if overriding MySqlMigrationsSqlGenerator
             // .ForMySQLHasCollation("utf8mb4_0900_as_cs"); // defining collation in a property as accent sensitive (as) and case sensitive (cs)
 
             modelBuilder.Entity<Hint>()
-                .Property(h => h.Value)
-                .HasAnnotation("MySQL:Collation", "utf8mb4_0900_as_cs");
+                        .Property(h => h.Value)
+                        .HasAnnotation("MySql:Collation", "utf8mb4_0900_as_cs"); // only works with the Pomelo driver if overriding MySqlMigrationsSqlGenerator
             // .ForMySQLHasCollation("utf8mb4_0900_as_cs"); // defining collation in a property as accent sensitive (as) and case sensitive (cs)
         }
     }

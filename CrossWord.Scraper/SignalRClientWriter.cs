@@ -24,14 +24,14 @@ namespace CrossWord.Scraper
             .WithUrl(url)
             .ConfigureLogging(logging =>
             {
-                logging.SetMinimumLevel(LogLevel.Information);
+                logging.SetMinimumLevel(LogLevel.Critical);
                 logging.AddConsole();
             })
             .Build();
 
-            // support self-signed SSL certificates
-            ServicePointManager.ServerCertificateValidationCallback +=
-                  (sender, certificate, chain, sslPolicyErrors) => true;
+            // support self-signed SSL certificates - not working therefore disabled
+            // ServicePointManager.ServerCertificateValidationCallback +=
+            //       (sender, certificate, chain, sslPolicyErrors) => true;
 
             // open connection
             CheckOrOpenConnection().Wait();
@@ -128,7 +128,7 @@ namespace CrossWord.Scraper
                 }
             }
 
-            Console.WriteLine(message);
+            // Console.WriteLine(message);
         }
     }
 }

@@ -3,9 +3,19 @@ version: "2"
 volumes:
   datafiles:
 
+# Remember to start the network before running this file:
+# $ docker network create crosswordapi-net
+#
+# Then you can start each of the docker-compose.yml files like this:
+# $ docker-compose -f project_one/docker-compose.yml up -d
+# $ docker-compose -f project_two/docker-compose.yml up -d
 networks:
-  crosswordapi-net:
-    driver: bridge
+  default:
+    external:
+      name: crosswordapi-net
+# networks:
+#   crosswordapi-net:
+#     driver: bridge
 
 services:
   db:
@@ -22,16 +32,16 @@ services:
       - seccomp:unconfined
     ports:
       - "3360:3360"
-    networks:
-      - crosswordapi-net
+    # networks:
+    #   - crosswordapi-net
 
   scraper:
     container_name: crosswordapi.scraper
     build:
       context: ./
       dockerfile: Dockerfile
-    depends_on:
-      - db
+    # depends_on:
+    #   - db
     restart: always
     environment:
       - DBHOST=db
@@ -39,22 +49,73 @@ services:
       - DBUSER=root
       - DBPASSWORD=secret
       - DATABASE=dictionary
-      - SignalRClientURL=http://order.wazalo.com:5000/crosswords
-    expose:
-      - "9515"
-    ports:
-      - "9515:9515"
+      - SignalRHubURL=http://order.wazalo.com:5000/crosswords
+      - PATTERN=AAA???
     privileged: true
     cap_add:
       - "SYS_ADMIN"
     volumes:
       # note: make sure the log file exists on the host - otherwise docker creates it as a directory, this is done in the Dockerfile
-      - "/opt/crossword_scraper_error.log:/app/out/crossword_scraper_error.log"
+      # - "/opt/crossword_scraper_error.log:/app/out/crossword_scraper_error.log"
       # see https://github.com/SeleniumHQ/docker-selenium/issues/79
       - /dev/shm:/dev/shm
     shm_size: 2G
-    networks:
-      - crosswordapi-net
+    # networks:
+    #   - crosswordapi-net
+
+  scraper2:
+    container_name: crosswordapi.scraper2
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    # depends_on:
+    #   - db
+    restart: always
+    environment:
+      - DBHOST=db
+      - DBPORT=3360
+      - DBUSER=root
+      - DBPASSWORD=secret
+      - DATABASE=dictionary
+      - SignalRHubURL=http://order.wazalo.com:5000/crosswords
+      - PATTERN=AAA????
+    privileged: true
+    cap_add:
+      - "SYS_ADMIN"
+    volumes:
+      # note: make sure the log file exists on the host - otherwise docker creates it as a directory, this is done in the Dockerfile
+      # - "/opt/crossword_scraper_error.log:/app/out/crossword_scraper_error.log"
+      # see https://github.com/SeleniumHQ/docker-selenium/issues/79
+      - /dev/shm:/dev/shm
+    shm_size: 2G
+    # networks:
+
+  scraper3:
+    container_name: crosswordapi.scraper3
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    # depends_on:
+    #   - db
+    restart: always
+    environment:
+      - DBHOST=db
+      - DBPORT=3360
+      - DBUSER=root
+      - DBPASSWORD=secret
+      - DATABASE=dictionary
+      - SignalRHubURL=http://order.wazalo.com:5000/crosswords
+      - PATTERN=AAA?????
+    privileged: true
+    cap_add:
+      - "SYS_ADMIN"
+    volumes:
+      # note: make sure the log file exists on the host - otherwise docker creates it as a directory, this is done in the Dockerfile
+      # - "/opt/crossword_scraper_error.log:/app/out/crossword_scraper_error.log"
+      # see https://github.com/SeleniumHQ/docker-selenium/issues/79
+      - /dev/shm:/dev/shm
+    shm_size: 2G
+    # networks:
 
   web:
     container_name: crosswordapi.web
@@ -63,27 +124,27 @@ services:
       dockerfile: CrossWord.Web/Dockerfile
     restart: always
     expose:
-       - "5000"
+      - "5000"
     ports:
-       - "5000:5000"
-    networks:
-      - crosswordapi-net
+      - "5000:5000"
+    # networks:
+    #   - crosswordapi-net
 
   https-portal:
     image: steveltn/https-portal:1
     ports:
-      - '80:80'
-      - '443:443'
+      - "80:80"
+      - "443:443"
     links:
       - web
     restart: always
     environment:
-      DOMAINS: 'order.wazalo.com -> http://web:5000'
-      # STAGE: 'production'    
+      DOMAINS: "order.wazalo.com -> http://web:5000"
+      # STAGE: 'production'
       # DOMAINS: 'example.com -> http://web:5000'
-      # STAGE: local # self signed certificate, note modify your hosts file to have example.com resolving to your docker host 
-      # c:\Windows\System32\Drivers\etc\hosts => 127.0.0.1           example.com 
+      # STAGE: local # self signed certificate, note modify your hosts file to have example.com resolving to your docker host
+      # c:\Windows\System32\Drivers\etc\hosts => 127.0.0.1           example.com
       # FORCE_RENEW: 'true' # only force renew if certificates are not chained correctly. Run the container again with the force_renew setting ONCE
-      WEBSOCKET: 'true'
-    networks:
-      - crosswordapi-net
+      WEBSOCKET: "true"
+    # networks:
+    #   - crosswordapi-net
