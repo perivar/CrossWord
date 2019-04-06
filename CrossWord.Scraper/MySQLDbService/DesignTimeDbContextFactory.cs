@@ -15,7 +15,6 @@ namespace CrossWord.Scraper.MySQLDbService
     public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<WordHintDbContext>
     {
         const string CONNECTION_STRING_KEY = "DefaultConnection";
-        private string _connectionString;
 
         public WordHintDbContext CreateDbContext()
         {
@@ -29,8 +28,8 @@ namespace CrossWord.Scraper.MySQLDbService
 
         public WordHintDbContext CreateDbContext(string connectionString, Serilog.ILogger log)
         {
-            this._connectionString = connectionString;
-            return CreateDbContext(new string[0], Log.Logger);
+            var args = new string[] { $"ConnectionStrings:DefaultConnection={connectionString}" };
+            return CreateDbContext(args, Log.Logger);
         }
 
         public WordHintDbContext CreateDbContext(string[] args, Serilog.ILogger log)
@@ -60,15 +59,11 @@ namespace CrossWord.Scraper.MySQLDbService
                 loggerFactory.AddSerilog(log);
             }
 
-            if (string.IsNullOrEmpty(_connectionString))
-            {
-                LoadConnectionString(args);
-            }
+            string connectionString = GetConnectionString(args);
+            Log.Information($"Using connection string {connectionString}");
 
-            Log.Information($"Using connection string {_connectionString}");
-
-            options.UseMySql(_connectionString); // default added as Scoped
-            // options.UseSqlite(_connectionString); // default added as Scoped
+            options.UseMySql(connectionString); // default added as Scoped
+            // options.UseSqlite(connectionString); // default added as Scoped
 
             return new WordHintDbContext(options.Options);
         }
@@ -78,7 +73,7 @@ namespace CrossWord.Scraper.MySQLDbService
         /// </summary>
         /// <param name="args">arguments</param>
         /// <example>var args = new string[] { $"ConnectionStrings:DefaultConnection=server=localhost;database=dictionary;user=user;password=password;charset=utf8;" };</example>
-        private void LoadConnectionString(string[] args)
+        private static string GetConnectionString(string[] args)
         {
             Dictionary<string, string> inMemoryCollection = new Dictionary<string, string>();
 
@@ -111,7 +106,8 @@ namespace CrossWord.Scraper.MySQLDbService
                         .AddInMemoryCollection(inMemoryCollection);
 
             IConfigurationRoot configuration = configurationBuilder.Build();
-            _connectionString = configuration.GetConnectionString(CONNECTION_STRING_KEY);
+
+            return configuration.GetConnectionString(CONNECTION_STRING_KEY);
         }
     }
 }

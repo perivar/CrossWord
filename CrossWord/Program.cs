@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CrossWord.Scraper;
 using CrossWord.Scraper.MySQLDbService;
 using CrossWord.Scraper.MySQLDbService.Models;
 using Microsoft.EntityFrameworkCore;
@@ -117,7 +118,7 @@ namespace CrossWord
                             Language = "no",
                             Value = wordText,
                             NumberOfLetters = wordText.Count(c => c != ' '),
-                            NumberOfWords = CrossWord.Scraper.Program.CountNumberOfWords(wordText),
+                            NumberOfWords = KryssordScraper.CountNumberOfWords(wordText),
                             User = user,
                             CreatedDate = DateTime.Now
                         };
@@ -141,7 +142,7 @@ namespace CrossWord
                             Language = "no",
                             Value = hintText,
                             NumberOfLetters = hintText.Count(c => c != ' '),
-                            NumberOfWords = CrossWord.Scraper.Program.CountNumberOfWords(hintText),
+                            NumberOfWords = KryssordScraper.CountNumberOfWords(hintText),
                             User = user,
                             CreatedDate = DateTime.Now
                         };
