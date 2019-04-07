@@ -36,10 +36,6 @@ namespace CrossWord.Scraper
                 .CreateLogger();
 
             var signalRHubURL = configuration["SignalRHubURL"] ?? "http://localhost:5000/crosswords";
-            var writer = new SignalRClientWriter(signalRHubURL);
-
-            Log.Error("Starting CrossWord.Scraper ....");
-            writer.WriteLine("Starting CrossWord.Scraper ....");
 
             // start DOCKER on port 3360
             // docker run -p 3360:3306 --name mysqldb -e MYSQL_ROOT_PASSWORD=password -d mysql:8.0.15            
@@ -57,6 +53,8 @@ namespace CrossWord.Scraper
             string siteUsername = configuration["kryssord.org:Username"];
             string sitePassword = configuration["kryssord.org:Password"];
 
+            Log.Error("Starting CrossWord.Scraper - retrieving database ....");
+
             var dbContextFactory = new DesignTimeDbContextFactory();
             using (var db = dbContextFactory.CreateDbContext(connectionString, Log.Logger))
             {
@@ -71,24 +69,24 @@ namespace CrossWord.Scraper
                 db.Database.Migrate();
             }
 
-            // get scraper
-            var scraper = new KryssordScraper(connectionString, writer);
+            // make sure that no chrome and chrome drivers are running
+            KryssordScraper.KillAllChromeDriverInstances();
 
             // start several scrapers in parallell
             var options = new ParallelOptions();
-            options.MaxDegreeOfParallelism = 10;
+            options.MaxDegreeOfParallelism = 50;
 
             Parallel.Invoke(options,
-              () => scraper.DoScrape(siteUsername, sitePassword, "aaa???"),
-              () => scraper.DoScrape(siteUsername, sitePassword, "aaa????"),
-              () => scraper.DoScrape(siteUsername, sitePassword, "aaa?????"),
-              () => scraper.DoScrape(siteUsername, sitePassword, "aaa??????"),
-              () => scraper.DoScrape(siteUsername, sitePassword, "aaa???????"),
-              () => scraper.DoScrape(siteUsername, sitePassword, "aaa????????"),
-              () => scraper.DoScrape(siteUsername, sitePassword, "aaa?????????"),
-              () => scraper.DoScrape(siteUsername, sitePassword, "aaa??????????"),
-              () => scraper.DoScrape(siteUsername, sitePassword, "aaa???????????"),
-              () => scraper.DoScrape(siteUsername, sitePassword, "aaa????????????")
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa???"),
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa????"),
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa?????"),
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa??????"),
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa???????"),
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa????????"),
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa?????????"),
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa??????????"),
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa???????????"),
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa????????????")
             );
         }
     }

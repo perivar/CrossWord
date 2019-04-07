@@ -21,16 +21,24 @@ namespace CrossWord.Scraper
     {
         TextWriter writer = null;
         string connectionString = null;
+        string signalRHubURL = null;
 
-        public KryssordScraper(string connectionString, TextWriter writer)
+        public KryssordScraper(string connectionString, string signalRHubURL, string siteUsername, string sitePassword, string pattern)
         {
-            this.writer = writer;
             this.connectionString = connectionString;
+            this.signalRHubURL = signalRHubURL;
 
-            KillAllChromeDriverInstances();
+            // set writer identifier as pattern            
+            this.writer = new SignalRClientWriter(signalRHubURL, pattern);
+            writer.WriteLine("Starting Kryssord Scraper ....");
+
+            // make sure that no chrome and chrome drivers are running
+            // KillAllChromeDriverInstances();
+
+            DoScrape(siteUsername, sitePassword, pattern);
         }
 
-        public void DoScrape(string siteUsername, string sitePassword, string pattern)
+        private void DoScrape(string siteUsername, string sitePassword, string pattern)
         {
             var dbContextFactory = new DesignTimeDbContextFactory();
             using (var db = dbContextFactory.CreateDbContext(connectionString, Log.Logger))
@@ -187,7 +195,7 @@ namespace CrossWord.Scraper
             }
         }
 
-        private void KillAllChromeDriverInstances()
+        public static void KillAllChromeDriverInstances()
         {
             System.Diagnostics.Process proc = new System.Diagnostics.Process();
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))

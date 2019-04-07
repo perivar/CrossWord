@@ -10,14 +10,20 @@ namespace CrossWord.Scraper
 {
     public class SignalRClientWriter : TextWriter
     {
-        HubConnection HubConnection { get; set; }
-        bool HubConnectionStarted { get; set; }
-        bool FlushAfterEveryWrite { get; set; }
+        private HubConnection HubConnection { get; set; }
+        private bool HubConnectionStarted { get; set; }
+        private bool FlushAfterEveryWrite { get; set; }
+        private string Identifier { get; set; }
 
-        public SignalRClientWriter(string url)
+        public SignalRClientWriter(string url) : this(url, null)
         {
-            HubConnectionStarted = false;
-            FlushAfterEveryWrite = false;
+        }
+
+        public SignalRClientWriter(string url, string identifier)
+        {
+            this.HubConnectionStarted = false;
+            this.FlushAfterEveryWrite = false;
+            this.Identifier = identifier != null ? identifier : "Robot";
 
             // https://docs.microsoft.com/en-us/aspnet/core/signalr/configuration?view=aspnetcore-2.1
             HubConnection = new HubConnectionBuilder()
@@ -92,6 +98,7 @@ namespace CrossWord.Scraper
 
         public override void Flush()
         {
+            // do nothing
         }
 
         public override Encoding Encoding => throw new System.NotImplementedException();
@@ -120,7 +127,7 @@ namespace CrossWord.Scraper
             {
                 try
                 {
-                    await HubConnection.InvokeAsync("Broadcast", "Robot", message);
+                    await HubConnection.InvokeAsync("Broadcast", Identifier, message);
                 }
                 catch (Exception ex)
                 {
