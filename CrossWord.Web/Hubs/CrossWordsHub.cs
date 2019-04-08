@@ -23,6 +23,15 @@ namespace CrossWord.Web.Hubs
             await Clients.All.SendAsync("Broadcast", user, message);
         }
 
+        public async Task SendStatus()
+        {
+            await Clients
+               // Do not send to Caller:
+               .AllExcept(new[] { Context.ConnectionId })
+               // Send to all connected clients:
+               .SendAsync("SendStatus");
+        }
+
         public async Task SendCrossword(string name, CrossWordModel json)
         {
             await Clients
@@ -30,16 +39,6 @@ namespace CrossWord.Web.Hubs
                .AllExcept(new[] { Context.ConnectionId })
                // Send to all connected clients:
                .SendAsync("SendCrossword", name, json);
-        }
-
-        public async Task StartTask()
-        {
-            await Clients.All.SendAsync("Broadcast", "HUB", "Starting Task...");
-        }
-
-        public async Task CancelTask()
-        {
-            await Clients.All.SendAsync("Broadcast", "HUB", "Cancelling Task...");
         }
     }
 }

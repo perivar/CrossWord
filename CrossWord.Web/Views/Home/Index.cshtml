@@ -52,5 +52,11 @@
             event.preventDefault();
         });
             
+        function SendStatus() {
+           connection.invoke("SendStatus").catch(err => console.error(err.toString()));        
+        }
+
     </script>
 }
+
+<button id="sendStatus" onclick="SendStatus()">Send Status</button>

@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
@@ -34,6 +35,15 @@ namespace CrossWord.Scraper
                 logging.AddConsole();
             })
             .Build();
+
+            HubConnection.On("SendStatus", () =>
+            {
+                var id = Thread.CurrentThread.ManagedThreadId;
+                var state = Thread.CurrentThread.ThreadState;
+                var priority = Thread.CurrentThread.Priority;
+
+                HubConnection.InvokeAsync("Broadcast", Identifier, $"Thread: {id}, state: {state}, priority: {priority}");
+            });
 
             // support self-signed SSL certificates - not working therefore disabled
             // ServicePointManager.ServerCertificateValidationCallback +=

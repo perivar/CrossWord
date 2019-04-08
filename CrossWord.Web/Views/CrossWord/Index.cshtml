@@ -68,15 +68,6 @@
 
         connection.start().catch(err => console.error(err.toString()));                
 
-        function StartCrosswordGeneration() {
-            
-           connection.invoke("StartTask").catch(err => console.error(err.toString()));        
-        }
-
-        function CancelCrosswordGeneration() {
-            connection.invoke("CancelTask").catch(err => console.error(err.toString()));
-        }
-
         function RandomDate(start, end) {
             var d = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())),
                 month = '' + (d.getMonth() + 1),
@@ -191,9 +182,7 @@
 }    
 
 <button id="recent" onclick="LoadPuzzle('current')">Current Puzzle</button> &nbsp;
-<button id="random" onclick="LoadPuzzle('random')">Random Puzzle</button> &nbsp;
-<button id="startgeneration" onclick="StartCrosswordGeneration()">Start Crossword Generation</button> &nbsp;
-<button id="cancelgeneration" onclick="CancelCrosswordGeneration()">Cancel Crossword Generation</button>
+<button id="random" onclick="LoadPuzzle('random')">Random Puzzle</button>
 
 <h2 id="puzTitle"></h2>
 <p id="puzAuthor"></p>

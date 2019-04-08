@@ -74,7 +74,7 @@ namespace CrossWord.Scraper
 
             // start several scrapers in parallell
             var options = new ParallelOptions();
-            options.MaxDegreeOfParallelism = 50;
+            // options.MaxDegreeOfParallelism = 50;
 
             Parallel.Invoke(options,
               () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa???"),
