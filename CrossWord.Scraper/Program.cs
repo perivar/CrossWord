@@ -70,24 +70,26 @@ namespace CrossWord.Scraper
             }
 
             // make sure that no chrome and chrome drivers are running
-            KryssordScraper.KillAllChromeDriverInstances();
+            ChromeDriverUtils.KillAllChromeDriverInstances();
 
-            // start several scrapers in parallell
-            var options = new ParallelOptions();
-            // options.MaxDegreeOfParallelism = 50;
+            // // start several scrapers in parallell
+            // var options = new ParallelOptions();
+            // // options.MaxDegreeOfParallelism = 50;
 
-            Parallel.Invoke(options,
-              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa???"),
-              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa????"),
-              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa?????"),
-              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa??????"),
-              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa???????"),
-              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa????????"),
-              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa?????????"),
-              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa??????????"),
-              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa???????????"),
-              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa????????????")
-            );
+            // Parallel.Invoke(options,
+            //   () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa???"),
+            //   () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa????"),
+            //   () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa?????"),
+            //   () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa??????"),
+            //   () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa???????"),
+            //   () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa????????"),
+            //   () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa?????????"),
+            //   () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa??????????"),
+            //   () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa???????????"),
+            //   () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa????????????")
+            // );
+
+            new KryssordHjelpScraper(connectionString, signalRHubURL, 2);
         }
     }
 }

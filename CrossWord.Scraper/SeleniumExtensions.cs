@@ -1,4 +1,6 @@
+using System;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
 
 namespace CrossWord.Scraper
 {
@@ -33,6 +35,16 @@ namespace CrossWord.Scraper
         public static IWebElement GetParent(this IWebElement node)
         {
             return node.FindElement(By.XPath(".."));
+        }
+
+        // example WaitForElementLoad(By.CssSelector("div#div1 div strong a"), 10);
+        public static void WaitForElementLoad(this IWebDriver driver, By by, int timeoutInSeconds)
+        {
+            if (timeoutInSeconds > 0)
+            {
+                WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(timeoutInSeconds));
+                wait.Until(ExpectedConditions.ElementIsVisible(by));
+            }
         }
     }
 }
