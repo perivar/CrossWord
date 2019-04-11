@@ -105,89 +105,89 @@ namespace CrossWord
                     int totalCount = dictionary.Description.Count;
                     Console.WriteLine("Found '{0}' words to add", totalCount);
 
-                    int wordCount = 0;
-                    foreach (var dictElement in dictionary.Description)
-                    {
-                        wordCount++;
+                    // int wordCount = 0;
+                    // foreach (var dictElement in dictionary.Description)
+                    // {
+                    //     wordCount++;
 
-                        var wordText = dictElement.Value.ToUpper();
-                        var hintText = dictElement.Key.ToUpper();
+                    //     var wordText = dictElement.Value.ToUpper();
+                    //     var hintText = dictElement.Key.ToUpper();
 
-                        var word = new Word
-                        {
-                            Language = "no",
-                            Value = wordText,
-                            NumberOfLetters = wordText.Count(c => c != ' '),
-                            NumberOfWords = KryssordScraper.CountNumberOfWords(wordText),
-                            User = user,
-                            CreatedDate = DateTime.Now
-                        };
+                    //     var word = new Word
+                    //     {
+                    //         Language = "no",
+                    //         Value = wordText,
+                    //         NumberOfLetters = wordText.Count(c => c != ' '),
+                    //         NumberOfWords = KryssordScraper.CountNumberOfWords(wordText),
+                    //         User = user,
+                    //         CreatedDate = DateTime.Now
+                    //     };
 
-                        // check if word already exists
-                        var existingWord = db.Words.Where(o => o.Value == wordText).FirstOrDefault();
-                        if (existingWord != null)
-                        {
-                            // update reference to existing word (reuse the word)
-                            word = existingWord;
-                        }
-                        else
-                        {
-                            // add new word
-                            db.Words.Add(word);
-                            db.SaveChanges();
-                        }
+                    //     // check if word already exists
+                    //     var existingWord = db.Words.Where(o => o.Value == wordText).FirstOrDefault();
+                    //     if (existingWord != null)
+                    //     {
+                    //         // update reference to existing word (reuse the word)
+                    //         word = existingWord;
+                    //     }
+                    //     else
+                    //     {
+                    //         // add new word
+                    //         db.Words.Add(word);
+                    //         db.SaveChanges();
+                    //     }
 
-                        var hint = new Hint
-                        {
-                            Language = "no",
-                            Value = hintText,
-                            NumberOfLetters = hintText.Count(c => c != ' '),
-                            NumberOfWords = KryssordScraper.CountNumberOfWords(hintText),
-                            User = user,
-                            CreatedDate = DateTime.Now
-                        };
+                    //     var hint = new Hint
+                    //     {
+                    //         Language = "no",
+                    //         Value = hintText,
+                    //         NumberOfLetters = hintText.Count(c => c != ' '),
+                    //         NumberOfWords = KryssordScraper.CountNumberOfWords(hintText),
+                    //         User = user,
+                    //         CreatedDate = DateTime.Now
+                    //     };
 
-                        // check if hint already exists
-                        bool skipHint = false;
-                        var existingHint = db.Hints
-                                            .Include(h => h.WordHints)
-                                            .Where(o => o.Value == hintText).FirstOrDefault();
-                        if (existingHint != null)
-                        {
-                            // update reference to existing hint (reuse the hint)
-                            hint = existingHint;
+                    //     // check if hint already exists
+                    //     bool skipHint = false;
+                    //     var existingHint = db.Hints
+                    //                         .Include(h => h.WordHints)
+                    //                         .Where(o => o.Value == hintText).FirstOrDefault();
+                    //     if (existingHint != null)
+                    //     {
+                    //         // update reference to existing hint (reuse the hint)
+                    //         hint = existingHint;
 
-                            // check if the current word already has been added as a reference to this hint
-                            if (hint.WordHints.Count(h => h.WordId == word.WordId) > 0)
-                            {
-                                skipHint = true;
-                            }
-                        }
-                        else
-                        {
-                            // add new hint
-                            db.Hints.Add(hint);
-                        }
+                    //         // check if the current word already has been added as a reference to this hint
+                    //         if (hint.WordHints.Count(h => h.FromId == word.WordId) > 0)
+                    //         {
+                    //             skipHint = true;
+                    //         }
+                    //     }
+                    //     else
+                    //     {
+                    //         // add new hint
+                    //         db.Hints.Add(hint);
+                    //     }
 
-                        if (!skipHint)
-                        {
-                            word.WordHints.Add(new WordHint()
-                            {
-                                Word = word,
-                                Hint = hint
-                            });
+                    //     if (!skipHint)
+                    //     {
+                    //         word.WordHints.Add(new WordRelation()
+                    //         {
+                    //             Word = word,
+                    //             Hint = hint
+                    //         });
 
-                            db.SaveChanges();
+                    //         db.SaveChanges();
 
-                            Console.WriteLine("[{2}/{3}] Added '{0}' as a hint for '{1}'", hintText, word.Value, wordCount, totalCount);
-                        }
-                        else
-                        {
-                            Console.WriteLine("[{2}/{3}] Skipped adding '{0}' as a hint for '{1}' ...", hintText, word.Value, wordCount, totalCount);
-                        }
+                    //         Console.WriteLine("[{2}/{3}] Added '{0}' as a hint for '{1}'", hintText, word.Value, wordCount, totalCount);
+                    //     }
+                    //     else
+                    //     {
+                    //         Console.WriteLine("[{2}/{3}] Skipped adding '{0}' as a hint for '{1}' ...", hintText, word.Value, wordCount, totalCount);
+                    //     }
 
-                        // Console.WriteLine("[{2}/{3}] Skipped adding '{0}' as a hint for '{1}' ...", hintText, wordText, wordCount, totalCount);
-                    }
+                    //     // Console.WriteLine("[{2}/{3}] Skipped adding '{0}' as a hint for '{1}' ...", hintText, wordText, wordCount, totalCount);
+                    // }
                 }
             }
             else

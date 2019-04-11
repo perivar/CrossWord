@@ -13,11 +13,20 @@ namespace CrossWord.Scraper.MySQLDbService.Models
         public int NumberOfWords { get; set; }
         public User User { get; set; }
         public DateTime CreatedDate { get; set; }
-        public ICollection<WordHint> WordHints { get; } = new List<WordHint>();
+
+        public virtual ICollection<WordRelation> RelatedTo { get; set; }
+        public virtual ICollection<WordRelation> RelatedFrom { get; set; }
+
+        public Word()
+        {
+            RelatedTo = new List<WordRelation>();
+            RelatedFrom = new List<WordRelation>();
+        }
+
 
         public override string ToString()
         {
-            return string.Format("Id: {0}, Language: {1}, Value: {2}, WordHints: {3}", WordId, Language, Value, WordHints.Count);
+            return string.Format("Id: {0}, Language: {1}, Value: {2}, From: {3}, To: {4}", WordId, Language, Value, RelatedFrom.Count, RelatedTo.Count);
         }
     }
 }

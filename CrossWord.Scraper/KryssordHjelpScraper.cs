@@ -289,56 +289,56 @@ namespace CrossWord.Scraper
                 var hintText = ahref.Text;
                 var href = ahref.GetAttribute("href");
 
-                var hint = new Hint
-                {
-                    Language = "no",
-                    Value = hintText,
-                    NumberOfLetters = hintText.Count(c => c != ' '),
-                    NumberOfWords = CountNumberOfWords(hintText),
-                    User = user,
-                    CreatedDate = DateTime.Now
-                };
+                // var hint = new Hint
+                // {
+                //     Language = "no",
+                //     Value = hintText,
+                //     NumberOfLetters = hintText.Count(c => c != ' '),
+                //     NumberOfWords = CountNumberOfWords(hintText),
+                //     User = user,
+                //     CreatedDate = DateTime.Now
+                // };
 
-                // check if hint already exists
-                bool skipHint = false;
-                var existingHint = db.Hints
-                                    .Include(h => h.WordHints)
-                                    .Where(o => o.Value == hintText).FirstOrDefault();
-                if (existingHint != null)
-                {
-                    // update reference to existing hint (reuse the hint)
-                    hint = existingHint;
+                // // check if hint already exists
+                // bool skipHint = false;
+                // var existingHint = db.Hints
+                //                     .Include(h => h.WordHints)
+                //                     .Where(o => o.Value == hintText).FirstOrDefault();
+                // if (existingHint != null)
+                // {
+                //     // update reference to existing hint (reuse the hint)
+                //     hint = existingHint;
 
-                    // check if the current word already has been added as a reference to this hint
-                    if (hint.WordHints.Count(h => h.WordId == word.WordId) > 0)
-                    {
-                        skipHint = true;
-                    }
-                }
-                else
-                {
-                    // add new hint
-                    db.Hints.Add(hint);
-                }
+                //     // check if the current word already has been added as a reference to this hint
+                //     if (hint.WordHints.Count(h => h.WordId == word.WordId) > 0)
+                //     {
+                //         skipHint = true;
+                //     }
+                // }
+                // else
+                // {
+                //     // add new hint
+                //     db.Hints.Add(hint);
+                // }
 
-                if (!skipHint)
-                {
-                    word.WordHints.Add(new WordHint()
-                    {
-                        Word = word,
-                        Hint = hint
-                    });
+                // if (!skipHint)
+                // {
+                //     word.WordHints.Add(new WordHint()
+                //     {
+                //         Word = word,
+                //         Hint = hint
+                //     });
 
-                    db.SaveChanges();
+                //     db.SaveChanges();
 
-                    Log.Debug("Added '{0}' as a hint for '{1}'", hintText, word.Value);
-                    writer.WriteLine("Added '{0}' as a hint for '{1}'", hintText, word.Value);
-                }
-                else
-                {
-                    Log.Debug("Skipped adding '{0}' as a hint for '{1}' ...", hintText, word.Value);
-                    writer.WriteLine("Skipped adding '{0}' as a hint for '{1}' ...", hintText, word.Value);
-                }
+                //     Log.Debug("Added '{0}' as a hint for '{1}'", hintText, word.Value);
+                //     writer.WriteLine("Added '{0}' as a hint for '{1}'", hintText, word.Value);
+                // }
+                // else
+                // {
+                //     Log.Debug("Skipped adding '{0}' as a hint for '{1}' ...", hintText, word.Value);
+                //     writer.WriteLine("Skipped adding '{0}' as a hint for '{1}' ...", hintText, word.Value);
+                // }
             }
 
             // now lets close our new tab
