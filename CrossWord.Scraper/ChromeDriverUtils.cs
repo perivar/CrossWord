@@ -52,7 +52,7 @@ namespace CrossWord.Scraper
             service.WhitelistedIPAddresses = "127.0.0.1"; // to remove error messages "[SEVERE]: bind() -- see above
                                                           // service.EnableVerboseLogging = true;
 
-            IWebDriver driver = new ChromeDriver(service, options, TimeSpan.FromSeconds(30));
+            IWebDriver driver = new ChromeDriver(service, options, TimeSpan.FromSeconds(60));
             // driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(30); // this make findelement throw a timeout error if it doesn't exist 
             // driver.Manage().Window.Maximize();
 

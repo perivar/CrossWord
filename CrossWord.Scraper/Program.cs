@@ -72,24 +72,39 @@ namespace CrossWord.Scraper
             // make sure that no chrome and chrome drivers are running
             ChromeDriverUtils.KillAllChromeDriverInstances();
 
-            // // start several scrapers in parallell
-            // var options = new ParallelOptions();
+            // start several scrapers in parallell
+            var options = new ParallelOptions();
             // // options.MaxDegreeOfParallelism = 50;
 
-            // Parallel.Invoke(options,
-            //   () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa???"),
-            //   () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa????"),
-            //   () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa?????"),
-            //   () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa??????"),
-            //   () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa???????"),
-            //   () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa????????"),
-            //   () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa?????????"),
-            //   () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa??????????"),
-            //   () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa???????????"),
-            //   () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa????????????")
-            // );
+            Parallel.Invoke(options,
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa???"),
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa????"),
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa?????"),
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa??????"),
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa???????"),
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa????????"),
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa?????????"),
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa??????????"),
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa???????????"),
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa????????????")
 
-            new KryssordHjelpScraper(connectionString, signalRHubURL, 2);
+            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 1),
+            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 2),
+            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 3),
+            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 4),
+            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 5),
+            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 6),
+            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 7),
+            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 8),
+            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 9),
+            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 10),
+            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 11),
+            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 12),
+            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 13),
+            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 14),
+            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 15)
+
+            );
         }
     }
 }

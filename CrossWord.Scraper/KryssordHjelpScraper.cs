@@ -46,7 +46,7 @@ namespace CrossWord.Scraper
                 Word lastWord = GetLastWordFromLetterCount(db, letterCount);
                 string lastWordString = lastWord != null ? lastWord.Value : null;
 
-                using (var driver = ChromeDriverUtils.GetChromeDriver())
+                using (var driver = ChromeDriverUtils.GetChromeDriver(true))
                 {
                     // get first user
                     var user = db.DictionaryUsers.OrderBy(u => u.UserId).FirstOrDefault();
@@ -76,7 +76,7 @@ namespace CrossWord.Scraper
 
         private void ReadWordsByWordPermutations(int letterCount, IWebDriver driver, WordHintDbContext db, User user, string lastWord)
         {
-            int permutationSize = 1;
+            int permutationSize = 2;
 
             var alphabet = "abcdefghijklmnopqrstuvwxyzøæå";
             var permutations = alphabet.Select(x => x.ToString());
@@ -182,19 +182,39 @@ namespace CrossWord.Scraper
             // select the letter fields
             var letter1 = driver.FindElement(By.Name("letter[1]"));
             letter1.SendKeys(wordPattern[0].ToString());
+            var letter2 = driver.FindElement(By.Name("letter[2]"));
+            letter2.SendKeys(wordPattern[1].ToString());
 
             // find submit button
             var login = driver.FindElement(By.Id("submitsearch"));
             login.Click();
 
-            driver.WaitForElementLoad(By.Id("wordlist"), 20);
+            // wait until the word list has loaded
+            try
+            {
+                driver.WaitForElementLoad(By.XPath("//div[@id='wordlist']/ul[@class='word']/li"), 20);
+            }
+            catch (System.Exception)
+            {
+                Log.Error("Timeout searching for '{0}'", wordPattern);
+                writer.WriteLine("Timeout searching for '{0}'", wordPattern);
+                return;
+            }
 
             // parse all words
-            IList<IWebElement> listElements = driver.FindElements(By.XPath("//ul[@class='word']/li"));
+            IList<IWebElement> listElements = driver.FindElements(By.XPath("//div[@id='wordlist']/ul[@class='word']/li"));
             IWebElement ahref = null;
             foreach (IWebElement listElement in listElements)
             {
-                ahref = listElement.FindElement(By.TagName("a"));
+                try
+                {
+                    ahref = listElement.FindElement(By.TagName("a"));
+                }
+                catch (NoSuchElementException)
+                {
+                    break;
+                }
+
                 var wordText = ahref.Text;
                 var href = ahref.GetAttribute("href");
 
@@ -253,12 +273,19 @@ namespace CrossWord.Scraper
             writer.WriteLine("Processing synonym search for '{0}'", word.Value);
 
             // parse all synonyms
-            // parse all words
-            IList<IWebElement> listElements = driver.FindElements(By.XPath("//ul[@class='word']/li"));
+            IList<IWebElement> listElements = driver.FindElements(By.XPath("//div[@id='wordlist']/ul[@class='word']/li"));
             IWebElement ahref = null;
             foreach (IWebElement listElement in listElements)
             {
-                ahref = listElement.FindElement(By.TagName("a"));
+                try
+                {
+                    ahref = listElement.FindElement(By.TagName("a"));
+                }
+                catch (NoSuchElementException)
+                {
+                    break;
+                }
+
                 var hintText = ahref.Text;
                 var href = ahref.GetAttribute("href");
 

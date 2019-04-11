@@ -29,7 +29,7 @@ namespace CrossWord.Scraper
             this.signalRHubURL = signalRHubURL;
 
             // set writer identifier as pattern            
-            this.writer = new SignalRClientWriter(signalRHubURL, pattern);
+            this.writer = new SignalRClientWriter(signalRHubURL, pattern.Length.ToString());
             writer.WriteLine("Starting Kryssord Scraper ....");
 
             // make sure that no chrome and chrome drivers are running
@@ -46,7 +46,7 @@ namespace CrossWord.Scraper
                 Word lastWord = GetLastWordFromPattern(db, pattern);
                 string lastWordString = lastWord != null ? lastWord.Value : null;
 
-                using (var driver = ChromeDriverUtils.GetChromeDriver())
+                using (var driver = ChromeDriverUtils.GetChromeDriver(true))
                 {
                     DoLogon(driver, siteUsername, sitePassword);
 
