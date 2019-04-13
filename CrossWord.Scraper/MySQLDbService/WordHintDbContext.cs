@@ -38,7 +38,7 @@ namespace CrossWord.Scraper.MySQLDbService
 
             modelBuilder.Entity<WordRelation>()
                         .HasOne(wh => wh.WordFrom)
-                        .WithMany(w => w.RelatedTo)
+                        .WithMany(w => w.RelatedFrom)
                         .HasForeignKey(wh => wh.WordFromId)
                         .OnDelete(DeleteBehavior.Restrict);
             // https://stackoverflow.com/questions/49214748/many-to-many-self-referencing-relationship
@@ -47,14 +47,20 @@ namespace CrossWord.Scraper.MySQLDbService
 
             modelBuilder.Entity<WordRelation>()
                         .HasOne(wh => wh.WordTo)
-                        .WithMany(h => h.RelatedFrom)
+                        .WithMany(w => w.RelatedTo) // Unidirectional Many-to-Many Relationship has no reverse mapping but using bi-directional because the include only includes the first mapping
                         .HasForeignKey(wh => wh.WordToId);
 
-            // have to manually ensure bools are converted to 1 and 0 due to a bug in the mysql driver
+            // have to manually ensure booleans are converted to 1 and 0 due to a bug in the mysql driver
             modelBuilder.Entity<User>()
                         .Property(u => u.isVIP)
                         .HasConversion(new BoolToZeroOneConverter<Int16>());
 
+            // ensure the value field is unique
+            modelBuilder.Entity<Word>()
+                        .HasIndex(w => w.Value)
+                        .IsUnique();
+
+            // ensure the value field is accent sensitive and case sensitive
             modelBuilder.Entity<Word>()
                         .Property(w => w.Value)
                         .HasAnnotation("MySql:Collation", "utf8mb4_0900_as_cs"); // only works with the Pomelo driver if overriding MySqlMigrationsSqlGenerator

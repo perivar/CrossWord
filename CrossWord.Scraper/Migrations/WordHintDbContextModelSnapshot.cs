@@ -61,6 +61,9 @@ namespace CrossWord.Scraper.Migrations
 
                     b.HasIndex("UserId");
 
+                    b.HasIndex("Value")
+                        .IsUnique();
+
                     b.ToTable("Words");
                 });
 
@@ -244,12 +247,12 @@ namespace CrossWord.Scraper.Migrations
             modelBuilder.Entity("CrossWord.Scraper.MySQLDbService.Models.WordRelation", b =>
                 {
                     b.HasOne("CrossWord.Scraper.MySQLDbService.Models.Word", "WordFrom")
-                        .WithMany("RelatedTo")
+                        .WithMany("RelatedFrom")
                         .HasForeignKey("WordFromId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("CrossWord.Scraper.MySQLDbService.Models.Word", "WordTo")
-                        .WithMany("RelatedFrom")
+                        .WithMany("RelatedTo")
                         .HasForeignKey("WordToId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

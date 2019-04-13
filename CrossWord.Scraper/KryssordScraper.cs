@@ -285,7 +285,6 @@ namespace CrossWord.Scraper
                     // check if word already exists
                     var existingWord = db.Words
                                 .Where(o => o.Value == wordText)
-                                .Include(m => m.RelatedTo)
                                 .FirstOrDefault();
 
                     if (existingWord != null)
@@ -410,49 +409,37 @@ namespace CrossWord.Scraper
                     };
 
                     // check if hint already exists
-                    // bool skipHint = false;
                     var existingHint = db.Words
                         .Where(o => o.Value == hintText)
-                        // .Include(o => o.RelatedFrom)
                         .FirstOrDefault();
 
                     if (existingHint != null)
                     {
                         // update reference to existing hint (reuse the hint)
 
-                        // check if the current word already has been added as a reference to this hint
-                        if (word.RelatedTo.Count(h => h.WordToId == existingHint.WordId) == 0)
+                        // check if the current hint already has been added as a reference to this word
+                        if (db.WordRelations.Any(a => (a.WordFromId == word.WordId && a.WordToId == existingHint.WordId)
+                                                   || (a.WordFromId == existingHint.WordId && a.WordToId == word.WordId)))
                         {
-                            // skipHint = true;
-                            word.RelatedTo.Add(new WordRelation { WordFrom = word, WordTo = existingHint });
+                            Log.Debug("Skipped adding '{0}' as a hint for '{1}' ...", hintText, word.Value);
+                            writer.WriteLine("Skipped adding '{0}' as a hint for '{1}' ...", hintText, word.Value);
+                        }
+                        else
+                        {
+                            word.RelatedFrom.Add(new WordRelation { WordFrom = word, WordTo = existingHint });
                         }
                     }
                     else
                     {
                         // add new hint
                         db.Words.Add(hint);
-                        word.RelatedTo.Add(new WordRelation { WordFrom = word, WordTo = hint });
+                        word.RelatedFrom.Add(new WordRelation { WordFrom = word, WordTo = hint });
+
+                        Log.Debug("Added '{0}' as a hint for '{1}'", hintText, word.Value);
+                        writer.WriteLine("Added '{0}' as a hint for '{1}'", hintText, word.Value);
                     }
+
                     db.SaveChanges();
-
-                    // if (!skipHint)
-                    // {
-                    //     word.WordHints.Add(new WordHint()
-                    //     {
-                    //         Word = word,
-                    //         Hint = hint
-                    //     });
-
-                    //     db.SaveChanges();
-
-                    //     Log.Debug("Added '{0}' as a hint for '{1}'", hintText, word.Value);
-                    //     writer.WriteLine("Added '{0}' as a hint for '{1}'", hintText, word.Value);
-                    // }
-                    // else
-                    // {
-                    //     Log.Debug("Skipped adding '{0}' as a hint for '{1}' ...", hintText, word.Value);
-                    //     writer.WriteLine("Skipped adding '{0}' as a hint for '{1}' ...", hintText, word.Value);
-                    // }
                 }
 
                 // go to next page if exist

@@ -14,6 +14,13 @@ namespace CrossWord.Scraper.Migrations
             migrationBuilder.DropTable(
                 name: "Hints");
 
+            migrationBuilder.AlterColumn<string>(
+                name: "Value",
+                table: "Words",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldNullable: true);
+
             migrationBuilder.CreateTable(
                 name: "WordRelations",
                 columns: table => new
@@ -39,6 +46,12 @@ namespace CrossWord.Scraper.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Words_Value",
+                table: "Words",
+                column: "Value",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_WordRelations_WordToId",
                 table: "WordRelations",
                 column: "WordToId");
@@ -48,6 +61,17 @@ namespace CrossWord.Scraper.Migrations
         {
             migrationBuilder.DropTable(
                 name: "WordRelations");
+
+            migrationBuilder.DropIndex(
+                name: "IX_Words_Value",
+                table: "Words");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Value",
+                table: "Words",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldNullable: true);
 
             migrationBuilder.CreateTable(
                 name: "Hints",

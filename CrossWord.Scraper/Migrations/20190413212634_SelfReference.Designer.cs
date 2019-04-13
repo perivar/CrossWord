@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CrossWord.Scraper.Migrations
 {
     [DbContext(typeof(WordHintDbContext))]
-    [Migration("20190411212416_SelfReference")]
+    [Migration("20190413212634_SelfReference")]
     partial class SelfReference
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -62,6 +62,9 @@ namespace CrossWord.Scraper.Migrations
                     b.HasKey("WordId");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("Value")
+                        .IsUnique();
 
                     b.ToTable("Words");
                 });
@@ -246,12 +249,12 @@ namespace CrossWord.Scraper.Migrations
             modelBuilder.Entity("CrossWord.Scraper.MySQLDbService.Models.WordRelation", b =>
                 {
                     b.HasOne("CrossWord.Scraper.MySQLDbService.Models.Word", "WordFrom")
-                        .WithMany("RelatedTo")
+                        .WithMany("RelatedFrom")
                         .HasForeignKey("WordFromId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("CrossWord.Scraper.MySQLDbService.Models.Word", "WordTo")
-                        .WithMany("RelatedFrom")
+                        .WithMany("RelatedTo")
                         .HasForeignKey("WordToId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
