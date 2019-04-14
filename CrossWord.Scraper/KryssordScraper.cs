@@ -277,9 +277,9 @@ namespace CrossWord.Scraper
                         Language = "no",
                         Value = wordText,
                         NumberOfLetters = wordText.Count(c => c != ' '),
-                        NumberOfWords = CountNumberOfWords(wordText),
+                        NumberOfWords = ScraperUtils.CountNumberOfWords(wordText),
                         User = wordUser,
-                        CreatedDate = ParseDateTimeOrNow(date, "yyyy-MM-dd")
+                        CreatedDate = ScraperUtils.ParseDateTimeOrNow(date, "yyyy-MM-dd")
                     };
 
                     // check if word already exists
@@ -341,7 +341,7 @@ namespace CrossWord.Scraper
 
             // lets navigate to a web site in our new tab
             var wordPattern = "";
-            var query = EscapeUrlString(word.Value);
+            var query = ScraperUtils.EscapeUrlString(word.Value);
             int page = 0;
             string url = string.Format("{0}?a={1}&b={2}&p={3}", "https://www.kryssord.org/search.php", query, wordPattern, page);
             driver.Navigate().GoToUrl(url);
@@ -403,9 +403,9 @@ namespace CrossWord.Scraper
                         Language = "no",
                         Value = hintText,
                         NumberOfLetters = hintText.Count(c => c != ' '),
-                        NumberOfWords = CountNumberOfWords(hintText),
+                        NumberOfWords = ScraperUtils.CountNumberOfWords(hintText),
                         User = hintUser,
-                        CreatedDate = ParseDateTimeOrNow(date, "yyyy-MM-dd")
+                        CreatedDate = ScraperUtils.ParseDateTimeOrNow(date, "yyyy-MM-dd")
                     };
 
                     // check if hint already exists
@@ -467,38 +467,6 @@ namespace CrossWord.Scraper
             chromeDriver.SwitchTo().DefaultContent();
         }
 
-        private static DateTime ParseDateTimeOrNow(string dateString, string formatString)
-        {
-            try
-            {
-                DateTime parsedDateTime = DateTime.ParseExact(dateString,
-                                                        formatString,
-                                                        CultureInfo.InvariantCulture,
-                                                        DateTimeStyles.None);
-
-                return parsedDateTime;
-            }
-            catch (FormatException)
-            {
-            }
-
-            return DateTime.Now;
-        }
-
-        private static string EscapeUrlString(string value)
-        {
-
-            var isNumeric = int.TryParse(value, out int n);
-            if (!isNumeric)
-            {
-                return Uri.EscapeDataString(value);
-            }
-            else
-            {
-                return value;
-            }
-        }
-
         private static IWebElement FindNextPageOrNull(IWebDriver driver)
         {
             return driver.FindElementOrNull(By.XPath("//div[@class='pages']/ul/li/a/span[contains(., 'Neste')]"));
@@ -523,12 +491,5 @@ namespace CrossWord.Scraper
 
             return null;
         }
-
-        public static int CountNumberOfWords(string text)
-        {
-            char[] delimiters = new char[] { ' ', '\r', '\n' };
-            return text.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Length;
-        }
-
     }
 }

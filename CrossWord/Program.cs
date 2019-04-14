@@ -168,6 +168,8 @@ namespace CrossWord
 
         static void doAddToDatabase(WordHintDbContext db, User user, string wordText, IEnumerable<string> relatedValues)
         {
+            // disable tracking to speed things up
+            // note that this doesn't load the virtual properties, but loads the object ids after a save
             db.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
             // ensure uppercase
@@ -177,8 +179,8 @@ namespace CrossWord
             {
                 Language = "no",
                 Value = wordText,
-                NumberOfLetters = wordText.Count(c => c != ' '),
-                NumberOfWords = KryssordScraper.CountNumberOfWords(wordText),
+                NumberOfLetters = ScraperUtils.CountNumberOfLetters(wordText),
+                NumberOfWords = ScraperUtils.CountNumberOfWords(wordText),
                 User = user,
                 CreatedDate = DateTime.Now
             };
@@ -187,7 +189,7 @@ namespace CrossWord
             var existingWord = db.Words.Where(w => w.Value == wordText).FirstOrDefault();
             if (existingWord != null)
             {
-                // update reference to existing word (reuse the word)
+                // update reference to existing word (i.e. reuse the word)
                 word = existingWord;
             }
             else
@@ -197,74 +199,79 @@ namespace CrossWord
                 db.SaveChanges();
             }
 
-            // ensure related are all uppercase
-            var relatedValuesUpperCase = relatedValues.Select(a => a.ToUpper());
+            // ensure related are all uppercase and distinct
+            var relatedValuesUpperCase = relatedValues.Select(x => x.ToUpper()).Distinct();
+
+            // get all related words (hints) as Word objects
             var relatedWords = relatedValuesUpperCase.Select(hintText => new Word
             {
                 Language = "no",
                 Value = hintText,
-                NumberOfLetters = hintText.Count(c => c != ' '),
-                NumberOfWords = KryssordScraper.CountNumberOfWords(hintText),
+                NumberOfLetters = ScraperUtils.CountNumberOfLetters(hintText),
+                NumberOfWords = ScraperUtils.CountNumberOfWords(hintText),
                 User = user,
                 CreatedDate = DateTime.Now
             });
 
-            // find out which words already exist in the database
-            var existingHints = db.Words.Where(x => relatedValuesUpperCase.Contains(x.Value)).ToList();
+            // find out which relatedwords already exist in the database
+            var existingRelatedWords = db.Words.Where(x => relatedValuesUpperCase.Contains(x.Value)).ToList();
 
             // which words need to be added?
-            var newHints = relatedWords.Where(x => !existingHints.Any(a => a.Value == x.Value)).ToList();
+            var newRelatedWords = relatedWords.Where(x => !existingRelatedWords.Any(a => a.Value == x.Value)).ToList();
 
-            if (newHints.Count > 0)
+            if (newRelatedWords.Count > 0)
             {
-                db.Words.AddRange(newHints);
+                db.Words.AddRange(newRelatedWords);
                 db.SaveChanges();
-                // Console.WriteLine("Added '{0}' ...", string.Join(",", newHints.Select(i => i.Value).ToArray()));
+                // Console.WriteLine("Added '{0}' ...", string.Join(",", newRelatedWords.Select(i => i.Value).ToArray()));
             }
             else
             {
-                // Console.WriteLine("Skipped adding '{0}' ...", string.Join(",", existingHints.Select(i => i.Value).ToArray()));
+                // Console.WriteLine("Skipped adding '{0}' ...", string.Join(",", existingRelatedWords.Select(i => i.Value).ToArray()));
             }
 
             // what relations needs to be added?
-            var allHints = existingHints.Concat(newHints);
-            var allWordRelations = allHints.Select(hint =>
-                // new WordRelation { WordFromId = word.WordId, WordFrom = word, WordToId = hint.WordId, WordTo = hint }
+            var allRelatedWords = existingRelatedWords.Concat(newRelatedWords);
+            var allWordRelations = allRelatedWords.Select(hint =>
+                // only use the ids to speed things up
                 new WordRelation { WordFromId = word.WordId, WordToId = hint.WordId }
             );
 
             // find out which relations already exist in the database
-            var allHintsWordIds = allHints.Select(a => a.WordId).ToList();
-            var existingRelations = db.WordRelations.Where(a =>
-                (a.WordFromId == word.WordId && allHintsWordIds.Contains(a.WordToId))
+            // check both directions in the Many-to-Many Relationship 
+            var allRelatedWordsIds = allRelatedWords.Select(a => a.WordId).ToList();
+            var existingWordRelations = db.WordRelations.Where(a =>
+                (a.WordFromId == word.WordId && allRelatedWordsIds.Contains(a.WordToId))
                 ||
-                (a.WordToId == word.WordId && allHintsWordIds.Contains(a.WordFromId))
+                (a.WordToId == word.WordId && allRelatedWordsIds.Contains(a.WordFromId))
             ).ToList();
 
             // which relations need to be added?
-            var newRelations = allWordRelations.Where(x => !existingRelations.Any(a =>
-            (a.WordFromId == x.WordFromId && a.WordToId == x.WordToId)
-            ||
-            (a.WordFromId == x.WordToId && a.WordToId == x.WordFromId)
+            // check both directions in the Many-to-Many Relationship             
+            var newWordRelations = allWordRelations.Where(wr => !existingWordRelations.Any
+            (a =>
+                (a.WordFromId == wr.WordFromId && a.WordToId == wr.WordToId)
+                ||
+                (a.WordFromId == wr.WordToId && a.WordToId == wr.WordFromId)
             )).ToList();
 
-            if (newRelations.Count > 0)
+            if (newWordRelations.Count > 0)
             {
-                db.WordRelations.AddRange(newRelations);
+                db.WordRelations.AddRange(newWordRelations);
                 db.SaveChanges();
 
-                // with tracking
+                // with tracking we can output the actual words
                 // Console.WriteLine("Added '{0}' to '{1}' ...", string.Join(",", newRelations.Select(i => i.WordTo.Value).ToArray()), wordText);
 
-                // without tracking
+                // without tracking we don't have the word value, so use only the wordids
                 // Console.WriteLine("Added '{0}' to '{1}' ...", string.Join(",", newRelations.Select(i => i.WordToId).ToArray()), wordText);
             }
             else
             {
-                // with tracking
+                // with tracking we can output the actual words
                 // Console.WriteLine("Skipped relating '{0}' to '{1}' ...", string.Join(",", existingRelations.Select(i => i.WordTo.Value).ToArray()), wordText);
 
-                // without tracking
+                // without tracking we don't have the word value, so use only the wordids
                 // Console.WriteLine("Skipped relating '{0}' to '{1}' ...", string.Join(",", existingRelations.Select(i => i.WordToId).ToArray()), wordText);
             }
         }

@@ -223,7 +223,7 @@ namespace CrossWord.Scraper
                     Language = "no",
                     Value = wordText,
                     NumberOfLetters = wordText.Count(c => c != ' '),
-                    NumberOfWords = CountNumberOfWords(wordText),
+                    NumberOfWords = ScraperUtils.CountNumberOfWords(wordText),
                     User = user,
                     CreatedDate = DateTime.Now
                 };
@@ -349,12 +349,6 @@ namespace CrossWord.Scraper
 
             // and have our WebDriver focus on the main document in the page to send commands to 
             chromeDriver.SwitchTo().DefaultContent();
-        }
-
-        public static int CountNumberOfWords(string text)
-        {
-            char[] delimiters = new char[] { ' ', '\r', '\n' };
-            return text.Split(delimiters, StringSplitOptions.RemoveEmptyEntries).Length;
         }
     }
 }
