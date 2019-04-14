@@ -213,11 +213,11 @@ namespace CrossWord
             {
                 db.Words.AddRange(newHints);
                 db.SaveChanges();
-                Console.WriteLine("Added '{0}' ...", string.Join(",", newHints.Select(i => i.Value).ToArray()));
+                // Console.WriteLine("Added '{0}' ...", string.Join(",", newHints.Select(i => i.Value).ToArray()));
             }
             else
             {
-                Console.WriteLine("Skipped adding '{0}' ...", string.Join(",", existingHints.Select(i => i.Value).ToArray()));
+                // Console.WriteLine("Skipped adding '{0}' ...", string.Join(",", existingHints.Select(i => i.Value).ToArray()));
             }
 
             // what relations needs to be added?
