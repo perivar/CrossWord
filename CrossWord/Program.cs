@@ -205,7 +205,6 @@ namespace CrossWord
 
             // find out which words already exist in the database
             var existingHints = db.Words.Where(x => relatedValuesUpperCase.Contains(x.Value)).ToList();
-            var existingHintsWordIds = existingHints.Select(a => a.WordId).ToList();
 
             // which words need to be added?
             var newHints = relatedWords.Where(x => !existingHints.Any(a => a.Value == x.Value)).ToList();
@@ -214,6 +213,7 @@ namespace CrossWord
             {
                 db.Words.AddRange(newHints);
                 db.SaveChanges();
+                Console.WriteLine("Added '{0}' ...", string.Join(",", newHints.Select(i => i.Value).ToArray()));
             }
             else
             {
@@ -236,15 +236,16 @@ namespace CrossWord
 
             // which relations need to be added?
             var newRelations = allWordRelations.Where(x => !existingRelations.Any(a =>
-            (a.WordToId == x.WordToId)
+            (a.WordFromId == x.WordFromId && a.WordToId == x.WordToId)
             ||
-            (a.WordFromId == x.WordFromId)
+            (a.WordFromId == x.WordToId && a.WordToId == x.WordFromId)
             )).ToList();
 
             if (newRelations.Count > 0)
             {
                 db.WordRelations.AddRange(newRelations);
                 db.SaveChanges();
+                Console.WriteLine("Added '{0}' to '{1}' ...", string.Join(",", newRelations.Select(i => i.WordTo.Value).ToArray()), wordText);
             }
             else
             {
