@@ -56,6 +56,8 @@ namespace CrossWord.Scraper.MySQLDbService
                         .HasConversion(new BoolToZeroOneConverter<Int16>());
 
             // ensure the value field is unique
+            // Note! this screws up the sql generations for the collation - see below. 
+            // See Generate(AlterColumnOperation alterColumnOperation, IModel model, MigrationCommandListBuilder builder) in CustomMySqlMigrationsSqlGenerator            
             modelBuilder.Entity<Word>()
                         .HasIndex(w => w.Value)
                         .IsUnique();
@@ -63,7 +65,7 @@ namespace CrossWord.Scraper.MySQLDbService
             // ensure the value field is accent sensitive and case sensitive
             modelBuilder.Entity<Word>()
                         .Property(w => w.Value)
-                        .HasAnnotation("MySql:Collation", "utf8mb4_0900_as_cs"); // only works with the Pomelo driver if overriding MySqlMigrationsSqlGenerator
+                        .HasAnnotation("MySql:Collation", "utf8mb4_0900_as_cs"); // Note! this only works with the Pomelo driver if overriding MySqlMigrationsSqlGenerator
         }
     }
 }

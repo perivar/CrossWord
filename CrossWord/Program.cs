@@ -76,7 +76,7 @@ namespace CrossWord
             else if (outputFile.Equals("database"))
             {
                 var dbContextFactory = new DesignTimeDbContextFactory();
-                using (var db = dbContextFactory.CreateDbContext("server=localhost;database=dictionary;user=user;password=password;charset=utf8;", null)) // null instead of Log.Logger enables debugging
+                using (var db = dbContextFactory.CreateDbContext("server=localhost;database=dictionary;user=user;password=password;charset=utf8;", Log.Logger)) // null instead of Log.Logger enables debugging
                 {
                     // setup database
                     // You would either call EnsureCreated() or Migrate(). 
@@ -162,7 +162,7 @@ namespace CrossWord
             return 0;
         }
 
-        static void doAddToDatabase(WordHintDbContext db, User user, string wordText, IEnumerable<string> related)
+        static void doAddToDatabase(WordHintDbContext db, User user, string wordText, IEnumerable<string> relatedValues)
         {
             // ensure uppercase
             wordText = wordText.ToUpper();
@@ -191,53 +191,64 @@ namespace CrossWord
                 db.SaveChanges();
             }
 
-            foreach (var value in related)
+            // ensure related are all uppercase
+            var relatedValuesUpperCase = relatedValues.Select(a => a.ToUpper());
+            var relatedWords = relatedValuesUpperCase.Select(hintText => new Word
             {
-                var hintText = value.ToUpper();
+                Language = "no",
+                Value = hintText,
+                NumberOfLetters = hintText.Count(c => c != ' '),
+                NumberOfWords = KryssordScraper.CountNumberOfWords(hintText),
+                User = user,
+                CreatedDate = DateTime.Now
+            });
 
-                var hint = new Word
-                {
-                    Language = "no",
-                    Value = hintText,
-                    NumberOfLetters = hintText.Count(c => c != ' '),
-                    NumberOfWords = KryssordScraper.CountNumberOfWords(hintText),
-                    User = user,
-                    CreatedDate = DateTime.Now
-                };
+            // find out which words already exist in the database
+            var existingHints = db.Words.Where(x => relatedValuesUpperCase.Contains(x.Value)).ToList();
+            var existingHintsWordIds = existingHints.Select(a => a.WordId).ToList();
 
-                // check if hint already exists
-                bool doSaveChanges = false;
-                var existingHint = db.Words.Where(h => h.Value == hintText).FirstOrDefault();
-                if (existingHint != null)
-                {
-                    // update reference to existing hint (reuse the hint)
+            // which words need to be added?
+            var newHints = relatedWords.Where(x => !existingHints.Any(a => a.Value == x.Value)).ToList();
 
-                    // check if the current hint already has been added as a reference to this word
-                    if (db.WordRelations.Any(a => (a.WordFromId == word.WordId && a.WordToId == existingHint.WordId)
-                                               || (a.WordFromId == existingHint.WordId && a.WordToId == word.WordId)))
-                    {
-                        Console.WriteLine("Skipped adding '{0}' as a hint for '{1}' ...", hintText, word.Value);
-                    }
-                    else
-                    {
-                        // add relation
-                        db.WordRelations.Add(new WordRelation { WordFrom = word, WordTo = existingHint });
-                        doSaveChanges = true;
-                    }
-                }
-                else
-                {
-                    // add new hint
-                    db.Words.Add(hint);
+            if (newHints.Count > 0)
+            {
+                db.Words.AddRange(newHints);
+                db.SaveChanges();
+            }
+            else
+            {
+                Console.WriteLine("Skipped adding '{0}' ...", string.Join(",", existingHints.Select(i => i.Value).ToArray()));
+            }
 
-                    // add relation
-                    db.WordRelations.Add(new WordRelation { WordFrom = word, WordTo = hint });
-                    doSaveChanges = true;
+            // what relations needs to be added?
+            var allHints = existingHints.Concat(newHints);
+            var allWordRelations = allHints.Select(hint =>
+                new WordRelation { WordFromId = word.WordId, WordFrom = word, WordToId = hint.WordId, WordTo = hint }
+            );
 
-                    Console.WriteLine("Added '{0}' as a hint for '{1}'", hintText, word.Value);
-                }
+            // find out which relations already exist in the database
+            var allHintsWordIds = allHints.Select(a => a.WordId).ToList();
+            var existingRelations = db.WordRelations.Where(a =>
+                (a.WordFromId == word.WordId && allHintsWordIds.Contains(a.WordToId))
+                ||
+                (a.WordToId == word.WordId && allHintsWordIds.Contains(a.WordFromId))
+            ).ToList();
 
-                if (doSaveChanges) db.SaveChanges();
+            // which relations need to be added?
+            var newRelations = allWordRelations.Where(x => !existingRelations.Any(a =>
+            (a.WordToId == x.WordToId)
+            ||
+            (a.WordFromId == x.WordFromId)
+            )).ToList();
+
+            if (newRelations.Count > 0)
+            {
+                db.WordRelations.AddRange(newRelations);
+                db.SaveChanges();
+            }
+            else
+            {
+                Console.WriteLine("Skipped relating '{0}' to '{1}' ...", string.Join(",", existingRelations.Select(i => i.WordTo.Value).ToArray()), wordText);
             }
         }
 

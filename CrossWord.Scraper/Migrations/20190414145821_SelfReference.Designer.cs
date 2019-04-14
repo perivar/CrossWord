@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CrossWord.Scraper.Migrations
 {
     [DbContext(typeof(WordHintDbContext))]
-    [Migration("20190413212634_SelfReference")]
+    [Migration("20190414145821_SelfReference")]
     partial class SelfReference
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
