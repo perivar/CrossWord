@@ -47,6 +47,7 @@ namespace CrossWord.Scraper.MySQLDbService
             {
                 log = new Serilog.LoggerConfiguration()
                     .MinimumLevel.Debug()
+                    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                     .WriteTo.Console()
                     .CreateLogger();
             }
