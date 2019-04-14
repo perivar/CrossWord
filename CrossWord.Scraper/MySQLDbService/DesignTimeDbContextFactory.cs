@@ -18,7 +18,7 @@ namespace CrossWord.Scraper.MySQLDbService
 
         public WordHintDbContext CreateDbContext()
         {
-            return CreateDbContext(null);
+            return CreateDbContext(new string[0]);
         }
 
         public WordHintDbContext CreateDbContext(string[] args)
@@ -26,10 +26,15 @@ namespace CrossWord.Scraper.MySQLDbService
             return CreateDbContext(args, null);
         }
 
+        public WordHintDbContext CreateDbContext(string connectionString)
+        {
+            return CreateDbContext(connectionString, null);
+        }
+
         public WordHintDbContext CreateDbContext(string connectionString, Serilog.ILogger log)
         {
             var args = new string[] { $"ConnectionStrings:DefaultConnection={connectionString}" };
-            return CreateDbContext(args, Log.Logger);
+            return CreateDbContext(args, log);
         }
 
         public WordHintDbContext CreateDbContext(string[] args, Serilog.ILogger log)
@@ -42,6 +47,7 @@ namespace CrossWord.Scraper.MySQLDbService
             {
                 log = new Serilog.LoggerConfiguration()
                     .MinimumLevel.Debug()
+                    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                     .WriteTo.Console()
                     .CreateLogger();
             }

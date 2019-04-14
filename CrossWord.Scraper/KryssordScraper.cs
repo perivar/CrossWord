@@ -283,7 +283,10 @@ namespace CrossWord.Scraper
                     };
 
                     // check if word already exists
-                    var existingWord = db.Words.Where(o => o.Value == wordText).FirstOrDefault();
+                    var existingWord = db.Words
+                                .Where(o => o.Value == wordText)
+                                .FirstOrDefault();
+
                     if (existingWord != null)
                     {
                         // update reference to existing word (reuse the word)
@@ -395,7 +398,7 @@ namespace CrossWord.Scraper
                         };
                     }
 
-                    var hint = new Hint
+                    var hint = new Word
                     {
                         Language = "no",
                         Value = hintText,
@@ -406,45 +409,37 @@ namespace CrossWord.Scraper
                     };
 
                     // check if hint already exists
-                    bool skipHint = false;
-                    var existingHint = db.Hints
-                                        .Include(h => h.WordHints)
-                                        .Where(o => o.Value == hintText).FirstOrDefault();
+                    var existingHint = db.Words
+                        .Where(o => o.Value == hintText)
+                        .FirstOrDefault();
+
                     if (existingHint != null)
                     {
                         // update reference to existing hint (reuse the hint)
-                        hint = existingHint;
 
-                        // check if the current word already has been added as a reference to this hint
-                        if (hint.WordHints.Count(h => h.WordId == word.WordId) > 0)
+                        // check if the current hint already has been added as a reference to this word
+                        if (db.WordRelations.Any(a => (a.WordFromId == word.WordId && a.WordToId == existingHint.WordId)
+                                                   || (a.WordFromId == existingHint.WordId && a.WordToId == word.WordId)))
                         {
-                            skipHint = true;
+                            Log.Debug("Skipped adding '{0}' as a hint for '{1}' ...", hintText, word.Value);
+                            writer.WriteLine("Skipped adding '{0}' as a hint for '{1}' ...", hintText, word.Value);
+                        }
+                        else
+                        {
+                            word.RelatedFrom.Add(new WordRelation { WordFrom = word, WordTo = existingHint });
                         }
                     }
                     else
                     {
                         // add new hint
-                        db.Hints.Add(hint);
-                    }
-
-                    if (!skipHint)
-                    {
-                        word.WordHints.Add(new WordHint()
-                        {
-                            Word = word,
-                            Hint = hint
-                        });
-
-                        db.SaveChanges();
+                        db.Words.Add(hint);
+                        word.RelatedFrom.Add(new WordRelation { WordFrom = word, WordTo = hint });
 
                         Log.Debug("Added '{0}' as a hint for '{1}'", hintText, word.Value);
                         writer.WriteLine("Added '{0}' as a hint for '{1}'", hintText, word.Value);
                     }
-                    else
-                    {
-                        Log.Debug("Skipped adding '{0}' as a hint for '{1}' ...", hintText, word.Value);
-                        writer.WriteLine("Skipped adding '{0}' as a hint for '{1}' ...", hintText, word.Value);
-                    }
+
+                    db.SaveChanges();
                 }
 
                 // go to next page if exist
