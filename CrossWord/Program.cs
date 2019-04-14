@@ -117,13 +117,18 @@ namespace CrossWord
                             var json = r.ReadToEnd();
                             var jobj = JObject.Parse(json);
 
-                            var totalCount = jobj.Count;
+                            var totalCount = jobj.Properties().Count();
+                            int count = 0;
                             foreach (var item in jobj.Properties())
                             {
+                                count++;
+
                                 var wordText = item.Name;
                                 var relatedArray = item.Values().Select(a => a.Value<string>());
 
                                 doAddToDatabase(db, user, wordText, relatedArray);
+
+                                Console.WriteLine("[{0}] / [{1}]", count, totalCount);
                             }
                         }
                     }
@@ -131,7 +136,6 @@ namespace CrossWord
             }
             else
             {
-
                 ICrossBoard resultBoard;
                 try
                 {
