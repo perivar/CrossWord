@@ -168,6 +168,8 @@ namespace CrossWord
 
         static void doAddToDatabase(WordHintDbContext db, User user, string wordText, IEnumerable<string> relatedValues)
         {
+            db.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+
             // ensure uppercase
             wordText = wordText.ToUpper();
 
@@ -227,7 +229,8 @@ namespace CrossWord
             // what relations needs to be added?
             var allHints = existingHints.Concat(newHints);
             var allWordRelations = allHints.Select(hint =>
-                new WordRelation { WordFromId = word.WordId, WordFrom = word, WordToId = hint.WordId, WordTo = hint }
+                // new WordRelation { WordFromId = word.WordId, WordFrom = word, WordToId = hint.WordId, WordTo = hint }
+                new WordRelation { WordFromId = word.WordId, WordToId = hint.WordId }
             );
 
             // find out which relations already exist in the database
@@ -249,11 +252,20 @@ namespace CrossWord
             {
                 db.WordRelations.AddRange(newRelations);
                 db.SaveChanges();
-                Console.WriteLine("Added '{0}' to '{1}' ...", string.Join(",", newRelations.Select(i => i.WordTo.Value).ToArray()), wordText);
+
+                // with tracking
+                // Console.WriteLine("Added '{0}' to '{1}' ...", string.Join(",", newRelations.Select(i => i.WordTo.Value).ToArray()), wordText);
+
+                // without tracking
+                // Console.WriteLine("Added '{0}' to '{1}' ...", string.Join(",", newRelations.Select(i => i.WordToId).ToArray()), wordText);
             }
             else
             {
-                Console.WriteLine("Skipped relating '{0}' to '{1}' ...", string.Join(",", existingRelations.Select(i => i.WordTo.Value).ToArray()), wordText);
+                // with tracking
+                // Console.WriteLine("Skipped relating '{0}' to '{1}' ...", string.Join(",", existingRelations.Select(i => i.WordTo.Value).ToArray()), wordText);
+
+                // without tracking
+                // Console.WriteLine("Skipped relating '{0}' to '{1}' ...", string.Join(",", existingRelations.Select(i => i.WordToId).ToArray()), wordText);
             }
         }
 
