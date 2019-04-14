@@ -164,6 +164,7 @@ namespace CrossWord
                                     };
 
                                     // check if hint already exists
+                                    bool doSaveChanges = false;
                                     var existingHint = db.Words.Where(h => h.Value == hintText).FirstOrDefault();
                                     if (existingHint != null)
                                     {
@@ -177,22 +178,27 @@ namespace CrossWord
                                         }
                                         else
                                         {
-                                            word.RelatedFrom.Add(new WordRelation { WordFrom = word, WordTo = existingHint });
+                                            // add relation
+                                            db.WordRelations.Add(new WordRelation { WordFrom = word, WordTo = existingHint });
+                                            doSaveChanges = true;
                                         }
                                     }
                                     else
                                     {
                                         // add new hint
                                         db.Words.Add(hint);
-                                        word.RelatedFrom.Add(new WordRelation { WordFrom = word, WordTo = hint });
+
+                                        // add relation
+                                        db.WordRelations.Add(new WordRelation { WordFrom = word, WordTo = hint });
+                                        doSaveChanges = true;
 
                                         Console.WriteLine("[{2}/{3}] Added '{0}' as a hint for '{1}'", hintText, word.Value, wordCount, totalCount);
                                     }
 
-                                    db.SaveChanges();
+                                    if (doSaveChanges) db.SaveChanges();
                                 }
                             }
-                        }
+                        } 
                     }
                 }
             }
