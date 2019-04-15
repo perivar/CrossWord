@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrossWord.Scraper", "CrossW
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrossWord.API", "CrossWord.API\CrossWord.API.csproj", "{AF8E4F14-00E1-4E3B-B7EB-1D7DE32E2747}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrossWord.DbMigrate", "CrossWord.DbMigrate\CrossWord.DbMigrate.csproj", "{75329F57-9C53-48CD-A7FE-75A80EB6EA8F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{AF8E4F14-00E1-4E3B-B7EB-1D7DE32E2747}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF8E4F14-00E1-4E3B-B7EB-1D7DE32E2747}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF8E4F14-00E1-4E3B-B7EB-1D7DE32E2747}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75329F57-9C53-48CD-A7FE-75A80EB6EA8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75329F57-9C53-48CD-A7FE-75A80EB6EA8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75329F57-9C53-48CD-A7FE-75A80EB6EA8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75329F57-9C53-48CD-A7FE-75A80EB6EA8F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
