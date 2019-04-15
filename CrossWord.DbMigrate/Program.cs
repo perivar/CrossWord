@@ -25,6 +25,13 @@ namespace CrossWord.DbMigrate
                 // Note! Therefore don't use EnsureDeleted() and EnsureCreated() but Migrate();
                 dbOrig.Database.Migrate();
 
+                // disable tracking to speed things up
+                // note that this doesn't load the virtual properties, but loads the object ids after a save
+                dbOrig.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+
+                // this works when using the same user for all words.
+                dbOrig.ChangeTracker.AutoDetectChangesEnabled = false;
+
                 var dbContextFactory = new Scraper.MySQLDbService.DesignTimeDbContextFactory();
                 using (var db = dbContextFactory.CreateDbContext("server=localhost;database=dictionary;user=user;password=password;charset=utf8;", Log.Logger)) // null instead of Log.Logger enables debugging
                 {
