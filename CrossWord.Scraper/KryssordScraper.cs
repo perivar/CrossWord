@@ -46,6 +46,13 @@ namespace CrossWord.Scraper
                 Word lastWord = GetLastWordFromPattern(db, pattern);
                 string lastWordString = lastWord != null ? lastWord.Value : null;
 
+                // disable tracking to speed things up
+                // note that this doesn't load the virtual properties, but loads the object ids after a save
+                // db.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+
+                // this doesn't seem to work when adding new users all the time
+                // db.ChangeTracker.AutoDetectChangesEnabled = false;
+
                 using (var driver = ChromeDriverUtils.GetChromeDriver(true))
                 {
                     DoLogon(driver, siteUsername, sitePassword);
@@ -270,34 +277,21 @@ namespace CrossWord.Scraper
                         {
                             ExternalId = userId
                         };
+
+                        // make sure the user exist
+                        db.DictionaryUsers.Add(wordUser);
+                        db.SaveChanges();
                     }
 
                     var word = new Word
                     {
                         Language = "no",
                         Value = wordText,
-                        NumberOfLetters = wordText.Count(c => c != ' '),
+                        NumberOfLetters = ScraperUtils.CountNumberOfLetters(wordText),
                         NumberOfWords = ScraperUtils.CountNumberOfWords(wordText),
                         User = wordUser,
                         CreatedDate = ScraperUtils.ParseDateTimeOrNow(date, "yyyy-MM-dd")
                     };
-
-                    // check if word already exists
-                    var existingWord = db.Words
-                                .Where(o => o.Value == wordText)
-                                .FirstOrDefault();
-
-                    if (existingWord != null)
-                    {
-                        // update reference to existing word (reuse the word)
-                        word = existingWord;
-                    }
-                    else
-                    {
-                        // add new word
-                        db.Words.Add(word);
-                        db.SaveChanges();
-                    }
 
                     GetWordSynonyms(word, driver, db);
                 }
@@ -357,7 +351,7 @@ namespace CrossWord.Scraper
                 // return if nothing was found
                 if (wordCount == "0")
                 {
-                    return;
+                    break;
                 }
                 else
                 {
@@ -376,6 +370,8 @@ namespace CrossWord.Scraper
                 IWebElement tableElement = driver.FindElement(By.XPath("/html/body//div[@class='results']/table/tbody"));
                 IList<IWebElement> tableRow = tableElement.FindElements(By.TagName("tr"));
                 IList<IWebElement> rowTD;
+
+                var relatedWords = new List<Word>();
                 foreach (IWebElement row in tableRow)
                 {
                     rowTD = row.FindElements(By.TagName("td"));
@@ -396,51 +392,27 @@ namespace CrossWord.Scraper
                         {
                             ExternalId = userId
                         };
+
+                        // make sure the user exist
+                        db.DictionaryUsers.Add(hintUser);
+                        db.SaveChanges();
                     }
 
                     var hint = new Word
                     {
                         Language = "no",
                         Value = hintText,
-                        NumberOfLetters = hintText.Count(c => c != ' '),
+                        NumberOfLetters = ScraperUtils.CountNumberOfLetters(hintText),
                         NumberOfWords = ScraperUtils.CountNumberOfWords(hintText),
                         User = hintUser,
                         CreatedDate = ScraperUtils.ParseDateTimeOrNow(date, "yyyy-MM-dd")
                     };
 
-                    // check if hint already exists
-                    var existingHint = db.Words
-                        .Where(o => o.Value == hintText)
-                        .FirstOrDefault();
-
-                    if (existingHint != null)
-                    {
-                        // update reference to existing hint (reuse the hint)
-
-                        // check if the current hint already has been added as a reference to this word
-                        if (db.WordRelations.Any(a => (a.WordFromId == word.WordId && a.WordToId == existingHint.WordId)
-                                                   || (a.WordFromId == existingHint.WordId && a.WordToId == word.WordId)))
-                        {
-                            Log.Debug("Skipped adding '{0}' as a hint for '{1}' ...", hintText, word.Value);
-                            writer.WriteLine("Skipped adding '{0}' as a hint for '{1}' ...", hintText, word.Value);
-                        }
-                        else
-                        {
-                            word.RelatedFrom.Add(new WordRelation { WordFrom = word, WordTo = existingHint });
-                        }
-                    }
-                    else
-                    {
-                        // add new hint
-                        db.Words.Add(hint);
-                        word.RelatedFrom.Add(new WordRelation { WordFrom = word, WordTo = hint });
-
-                        Log.Debug("Added '{0}' as a hint for '{1}'", hintText, word.Value);
-                        writer.WriteLine("Added '{0}' as a hint for '{1}'", hintText, word.Value);
-                    }
-
-                    db.SaveChanges();
+                    relatedWords.Add(hint);
                 }
+
+                // and add to database
+                WordDatabaseService.AddToDatabase(db, word, relatedWords, writer);
 
                 // go to next page if exist
                 var nextPageElement = FindNextPageOrNull(driver);

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using CrossWord.Scraper.MySQLDbService.Models;
 using Microsoft.EntityFrameworkCore;
@@ -44,7 +45,7 @@ namespace CrossWord.Scraper.MySQLDbService
             AddToDatabase(db, word, relatedWords);
         }
 
-        public static void AddToDatabase(WordHintDbContext db, Word word, IEnumerable<Word> relatedWords)
+        public static void AddToDatabase(WordHintDbContext db, Word word, IEnumerable<Word> relatedWords, TextWriter writer = null)
         {
             // Note that  tracking should be disabled to speed things up
             // note that this doesn't load the virtual properties, but loads the object ids after a save
@@ -80,11 +81,12 @@ namespace CrossWord.Scraper.MySQLDbService
             {
                 db.Words.AddRange(newRelatedWords);
                 db.SaveChanges();
-                // Console.WriteLine("Added '{0}' ...", string.Join(",", newRelatedWords.Select(i => i.Value).ToArray()));
+
+                if (writer != null) writer.WriteLine("Added '{0}'", string.Join(",", newRelatedWords.Select(i => i.Value).ToArray()));
             }
             else
             {
-                // Console.WriteLine("Skipped adding '{0}' ...", string.Join(",", existingRelatedWords.Select(i => i.Value).ToArray()));
+                if (writer != null) writer.WriteLine("Skipped adding '{0}'", string.Join(",", existingRelatedWords.Select(i => i.Value).ToArray()));
             }
 
             // what relations needs to be added?
@@ -117,19 +119,29 @@ namespace CrossWord.Scraper.MySQLDbService
                 db.WordRelations.AddRange(newWordRelations);
                 db.SaveChanges();
 
-                // with tracking we can output the actual words
-                // Console.WriteLine("Added '{0}' to '{1}' ...", string.Join(",", newRelations.Select(i => i.WordTo.Value).ToArray()), wordText);
-
-                // without tracking we don't have the word value, so use only the wordids
-                // Console.WriteLine("Added '{0}' to '{1}' ...", string.Join(",", newRelations.Select(i => i.WordToId).ToArray()), wordText);
+                if (db.ChangeTracker.QueryTrackingBehavior == QueryTrackingBehavior.NoTracking)
+                {
+                    // without tracking we don't have the word value, so use only the wordids
+                    if (writer != null) writer.WriteLine("Related '{0}' to '{1}'", string.Join(",", newWordRelations.Select(i => i.WordToId).ToArray()), word.Value);
+                }
+                else
+                {
+                    // with tracking we can output the actual words
+                    if (writer != null) writer.WriteLine("Related '{0}' to '{1}'", string.Join(",", newWordRelations.Select(i => i.WordTo.Value).ToArray()), word.Value);
+                }
             }
             else
             {
-                // with tracking we can output the actual words
-                // Console.WriteLine("Skipped relating '{0}' to '{1}' ...", string.Join(",", existingRelations.Select(i => i.WordTo.Value).ToArray()), wordText);
-
-                // without tracking we don't have the word value, so use only the wordids
-                // Console.WriteLine("Skipped relating '{0}' to '{1}' ...", string.Join(",", existingRelations.Select(i => i.WordToId).ToArray()), wordText);
+                if (db.ChangeTracker.QueryTrackingBehavior == QueryTrackingBehavior.NoTracking)
+                {
+                    // without tracking we don't have the word value, so use only the wordids
+                    if (writer != null) writer.WriteLine("Skipped relating '{0}' to '{1}'", string.Join(",", existingWordRelations.Select(i => i.WordToId).ToArray()), word.Value);
+                }
+                else
+                {
+                    // with tracking we can output the actual words
+                    if (writer != null) writer.WriteLine("Skipped relating '{0}' to '{1}'", string.Join(",", existingWordRelations.Select(i => i.WordTo.Value).ToArray()), word.Value);
+                }
             }
         }
     }

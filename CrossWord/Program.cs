@@ -113,6 +113,9 @@ namespace CrossWord
                     // note that this doesn't load the virtual properties, but loads the object ids after a save
                     db.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
+                    // this could work when using the same user for all words.
+                    db.ChangeTracker.AutoDetectChangesEnabled = false;
+
                     bool isDebugging = false;
 #if DEBUG
                     isDebugging = true;
