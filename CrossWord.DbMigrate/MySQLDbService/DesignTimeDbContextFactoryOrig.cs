@@ -12,7 +12,7 @@ using Serilog.Events;
 
 namespace CrossWord.DbMigrate.MySQLDbService
 {
-    public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<WordHintDbContextOrig>
+    public class DesignTimeDbContextFactoryOrig : IDesignTimeDbContextFactory<WordHintDbContextOrig>
     {
         const string CONNECTION_STRING_KEY = "DefaultConnection";
 

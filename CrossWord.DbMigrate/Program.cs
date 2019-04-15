@@ -9,7 +9,7 @@ namespace CrossWord.DbMigrate
     {
         static void Main(string[] args)
         {
-            var dbContextFactory = new DesignTimeDbContextFactory();
+            var dbContextFactory = new DesignTimeDbContextFactoryOrig();
             using (var db = dbContextFactory.CreateDbContext("server=localhost;database=dictionaryold;user=user;password=password;charset=utf8;", null)) // null instead of Log.Logger enables debugging
             {
                 // setup database
