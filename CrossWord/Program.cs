@@ -91,10 +91,9 @@ namespace CrossWord
                     // set admin user
                     var user = new User()
                     {
-                        FirstName = "Admin",
-                        LastName = "Admin",
-                        UserName = "",
-                        isVIP = true
+                        FirstName = "",
+                        LastName = "Norwegian Synonyms json",
+                        UserName = "norwegian-synonyms.json"
                     };
 
                     // check if user already exists

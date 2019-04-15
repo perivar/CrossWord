@@ -50,11 +50,6 @@ namespace CrossWord.Scraper.MySQLDbService
                         .WithMany(w => w.RelatedTo) // Unidirectional Many-to-Many Relationship has no reverse mapping but using bi-directional because the include only includes the first mapping
                         .HasForeignKey(wh => wh.WordToId);
 
-            // have to manually ensure booleans are converted to 1 and 0 due to a bug in the mysql driver
-            modelBuilder.Entity<User>()
-                        .Property(u => u.isVIP)
-                        .HasConversion(new BoolToZeroOneConverter<Int16>());
-
             // ensure the value field is unique
             // Note! this screws up the sql generations for the collation - see below. 
             // See Generate(AlterColumnOperation alterColumnOperation, IModel model, MigrationCommandListBuilder builder) in CustomMySqlMigrationsSqlGenerator            

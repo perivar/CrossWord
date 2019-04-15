@@ -159,8 +159,7 @@ namespace CrossWord.Scraper
                 {
                     FirstName = "",
                     LastName = "Kryssordhjelp",
-                    UserName = "kryssordhjelp",
-                    isVIP = true
+                    UserName = "kryssordhjelp"
                 };
 
                 db.DictionaryUsers.Add(user);

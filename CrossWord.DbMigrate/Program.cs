@@ -48,10 +48,9 @@ namespace CrossWord.DbMigrate
                     // set admin user
                     var user = new Scraper.MySQLDbService.Models.User()
                     {
-                        FirstName = "Admin",
+                        FirstName = "",
                         LastName = "Admin",
-                        UserName = "",
-                        isVIP = true
+                        UserName = "admin"
                     };
 
                     // check if user already exists
