@@ -1,7 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using CrossWord.DbMigrate.MySQLDbService;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Serilog;
 
 namespace CrossWord.DbMigrate
@@ -40,7 +42,23 @@ namespace CrossWord.DbMigrate
 
         static void Main(string[] args)
         {
-            Console.WriteLine("CrossWord DbMigrate ver. {0} ", "1.0");
+            var configuration = new ConfigurationBuilder()
+                        .SetBasePath(Directory.GetCurrentDirectory())
+                        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                        .AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true)
+                        .AddCommandLine(args)
+                        .AddEnvironmentVariables()
+                        .Build();
+
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(configuration)
+                .CreateLogger();
+
+            Log.Information("Starting CrossWord DbMigrate ver. {0} ", "1.0");
+
+            // read in the start word index
+            // e.g. an argument like "STARTWORDINDEX=65000"
+            var startWordIndex = configuration.GetValue<int>("STARTWORDINDEX");
 
             // Setup the two databases
             const string dbConnectionString = "server=localhost;database=dictionary;user=user;password=password;charset=utf8;";
@@ -54,14 +72,6 @@ namespace CrossWord.DbMigrate
 #if DEBUG
             isDebugging = true;
 #endif
-
-            // set admin user
-            var adminUser = new Scraper.MySQLDbService.Models.User()
-            {
-                FirstName = "",
-                LastName = "Admin",
-                UserName = "admin"
-            };
 
             // last inserted word id
             int lastWordId = 0;
@@ -93,24 +103,12 @@ namespace CrossWord.DbMigrate
 
                 // Note! Therefore don't use EnsureDeleted() and EnsureCreated() but Migrate();
                 db.Database.Migrate();
-
-                // check if user already exists
-                var existingUser = db.DictionaryUsers.Where(u => u.FirstName == adminUser.FirstName).FirstOrDefault();
-                if (existingUser != null)
-                {
-                    adminUser = existingUser;
-                }
-                else
-                {
-                    db.DictionaryUsers.Add(adminUser);
-                    db.SaveChanges();
-                }
             }
 
             // Chunk reading the database
             int takeSize = 1000;
-            int skipPos = 0;
-            int loopCounter = 0;
+            int loopCounter = startWordIndex != 0 ? startWordIndex / takeSize : 0;
+            int skipPos = loopCounter * takeSize;
 
             while (true)
             {
@@ -128,6 +126,30 @@ namespace CrossWord.DbMigrate
                     // re-open the new context for each main loop
                     using (var db = CreateDbContext(dbConnectionString, doSQLDebug))
                     {
+                        // Note! 
+                        // the user needs to be added before we disable tracking and disable AutoDetectChanges
+                        // otherwise this will crash
+
+                        // set admin user
+                        var adminUser = new Scraper.MySQLDbService.Models.User()
+                        {
+                            FirstName = "",
+                            LastName = "Admin",
+                            UserName = "admin"
+                        };
+
+                        // check if user already exists
+                        var existingUser = db.DictionaryUsers.Where(u => u.FirstName == adminUser.FirstName).FirstOrDefault();
+                        if (existingUser != null)
+                        {
+                            adminUser = existingUser;
+                        }
+                        else
+                        {
+                            db.DictionaryUsers.Add(adminUser);
+                            db.SaveChanges();
+                        }
+
                         // disable tracking to speed things up
                         // note that this doesn't load the virtual properties, but loads the object ids after a save
                         db.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
@@ -136,7 +158,7 @@ namespace CrossWord.DbMigrate
                         db.ChangeTracker.AutoDetectChangesEnabled = false;
 
 
-                        // read in from the original database
+                        // read in from the original database in chunks
                         var words = dbOrig.Words
                             .Include(u => u.User)
                             .Include(wh => wh.WordHints)

@@ -2,6 +2,6 @@
 
 cd "C:\Users\perner\My Projects\CrossWord\CrossWord.DbMigrate\bin\Release\netcoreapp2.2\win10-x64\publish"
 
-CrossWord.DbMigrate.exe
+CrossWord.DbMigrate.exe "STARTWORDINDEX=70000"
 
 pause
