@@ -228,11 +228,11 @@ namespace CrossWord.DbMigrate
                                     if (isDebugging)
                                     {
                                         // in debug mode the Console.Write \r isn't shown in the output console
-                                        if ((wordCounter % 100) == 0) Console.WriteLine("[{0}] / [{1}]", wordCounter + (loopCounter * takeSize), lastWordId);
+                                        if ((wordCounter % 10) == 0) Console.WriteLine("[{0}] / [{1}]", wordCounter + (loopCounter * takeSize), lastWordId);
                                     }
                                     else
                                     {
-                                        if ((wordCounter % 100) == 0) Console.Write("\r[{0}] / [{1}]", wordCounter + (loopCounter * takeSize), lastWordId);
+                                        if ((wordCounter % 10) == 0) Console.Write("\r[{0}] / [{1}]", wordCounter + (loopCounter * takeSize), lastWordId);
                                     }
                                 }
                             }
