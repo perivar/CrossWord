@@ -74,6 +74,9 @@ namespace CrossWord.DbMigrate
             string dbConnectionString = $"server={dbhost}; user={dbuser}; pwd={dbpassword}; "
                     + $"port={dbport}; database={newDatabase}; charset=utf8;";
 
+            Log.Information("Connection string to original database: {0} ", dbOrigConnectionString);
+            Log.Information("Connection string to new database: {0} ", dbConnectionString);
+
             // SQL debugging?
             const bool doSQLDebug = false;
 
