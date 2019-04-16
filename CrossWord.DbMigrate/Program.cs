@@ -209,7 +209,7 @@ namespace CrossWord.DbMigrate
                                             Source = "kryssord.org",
                                             Comment = "User " + origWord.User.ExternalId
                                         }
-                                    ).Distinct();
+                                    ).Distinct(); // Note that this requires the object to implement IEquatable<Word> 
 
                                     // add to database
                                     Scraper.MySQLDbService.WordDatabaseService.AddToDatabase(db, word, relatedWords);
@@ -217,11 +217,11 @@ namespace CrossWord.DbMigrate
                                     if (isDebugging)
                                     {
                                         // in debug mode the Console.Write \r isn't shown in the output console
-                                        if((wordCounter % 100) == 0) Console.WriteLine("[{0}] / [{1}]", wordCounter + (loopCounter * takeSize), lastWordId);
+                                        if ((wordCounter % 100) == 0) Console.WriteLine("[{0}] / [{1}]", wordCounter + (loopCounter * takeSize), lastWordId);
                                     }
                                     else
                                     {
-                                        if((wordCounter % 100) == 0) Console.Write("\r[{0}] / [{1}]", wordCounter + (loopCounter * takeSize), lastWordId);
+                                        if ((wordCounter % 100) == 0) Console.Write("\r[{0}] / [{1}]", wordCounter + (loopCounter * takeSize), lastWordId);
                                     }
                                 }
                             }
