@@ -61,8 +61,18 @@ namespace CrossWord.DbMigrate
             var startWordIndex = configuration.GetValue<int>("STARTWORDINDEX");
 
             // Setup the two databases
-            const string dbConnectionString = "server=localhost;database=dictionary;user=user;password=password;charset=utf8;";
-            const string dbOrigConnectionString = "server=localhost;database=dictionaryold;user=user;password=password;charset=utf8;";
+            // Build database connection string
+            var dbhost = configuration["DBHOST"] ?? "localhost";
+            var dbport = configuration["DBPORT"] ?? "3306";
+            var dbuser = configuration["DBUSER"] ?? "user";
+            var dbpassword = configuration["DBPASSWORD"] ?? "password";
+            var origDatabase = configuration["ORIGDATABASE"] ?? "dictionaryold";
+            var newDatabase = configuration["NEWDATABASE"] ?? "dictionary";
+
+            string dbOrigConnectionString = $"server={dbhost}; user={dbuser}; pwd={dbpassword}; "
+                    + $"port={dbport}; database={origDatabase}; charset=utf8;";
+            string dbConnectionString = $"server={dbhost}; user={dbuser}; pwd={dbpassword}; "
+                    + $"port={dbport}; database={newDatabase}; charset=utf8;";
 
             // SQL debugging?
             const bool doSQLDebug = false;
@@ -163,6 +173,7 @@ namespace CrossWord.DbMigrate
                             .Include(u => u.User)
                             .Include(wh => wh.WordHints)
                             .ThenInclude(h => h.Hint)
+                            .ThenInclude(u => u.User)
                             .OrderBy(x => x.WordId)
                             .Skip(skipPos).Take(takeSize)
                             .AsEnumerable();
@@ -207,7 +218,7 @@ namespace CrossWord.DbMigrate
                                             User = adminUser,
                                             CreatedDate = a.Hint.CreatedDate,
                                             Source = "kryssord.org",
-                                            Comment = "User " + origWord.User.ExternalId
+                                            Comment = "User " + a.Hint.User.ExternalId
                                         }
                                     ).Distinct(); // Note that this requires the object to implement IEquatable<Word> 
 
