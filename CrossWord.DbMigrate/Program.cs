@@ -159,7 +159,7 @@ namespace CrossWord.DbMigrate
 
 
                         // read in from the original database in chunks
-                        var words = dbOrig.Words
+                        var origWords = dbOrig.Words
                             .Include(u => u.User)
                             .Include(wh => wh.WordHints)
                             .ThenInclude(h => h.Hint)
@@ -170,30 +170,58 @@ namespace CrossWord.DbMigrate
                         // update chunk parameters
                         skipPos += takeSize;
 
-                        var totalCount = words.Count();
+                        var totalCount = origWords.Count();
                         if (totalCount > 0)
                         {
-                            // word loop
-                            int count = 0;
-                            foreach (var word in words)
+                            // original word loop
+                            int wordCounter = 0;
+                            foreach (var origWord in origWords)
                             {
-                                if (word.WordHints.Count > 0)
+                                if (origWord.WordHints.Count > 0)
                                 {
-                                    count++;
+                                    wordCounter++;
 
-                                    var relatedWords = word.WordHints.Select(a => a.Hint.Value).ToList();
+                                    // build word object
+                                    string wordText = origWord.Value;
+                                    var word = new Scraper.MySQLDbService.Models.Word
+                                    {
+                                        Language = "no",
+                                        Value = wordText.ToUpper(),
+                                        NumberOfLetters = Scraper.ScraperUtils.CountNumberOfLetters(wordText),
+                                        NumberOfWords = Scraper.ScraperUtils.CountNumberOfWords(wordText),
+                                        User = adminUser,
+                                        CreatedDate = origWord.CreatedDate,
+                                        Source = "kryssord.org",
+                                        Comment = "User " + origWord.User.ExternalId
+                                    };
+
+                                    // get all related words (hints) as Word objects
+                                    // ensure related are all uppercase and distinct
+                                    var relatedWords = origWord.WordHints.Select(a =>
+                                        new Scraper.MySQLDbService.Models.Word
+                                        {
+                                            Language = "no",
+                                            Value = a.Hint.Value.ToUpper(),
+                                            NumberOfLetters = Scraper.ScraperUtils.CountNumberOfLetters(a.Hint.Value),
+                                            NumberOfWords = Scraper.ScraperUtils.CountNumberOfWords(a.Hint.Value),
+                                            User = adminUser,
+                                            CreatedDate = a.Hint.CreatedDate,
+                                            Source = "kryssord.org",
+                                            Comment = "User " + origWord.User.ExternalId
+                                        }
+                                    ).Distinct();
 
                                     // add to database
-                                    Scraper.MySQLDbService.WordDatabaseService.AddToDatabase(db, adminUser, word.Value, relatedWords);
+                                    Scraper.MySQLDbService.WordDatabaseService.AddToDatabase(db, word, relatedWords);
 
                                     if (isDebugging)
                                     {
                                         // in debug mode the Console.Write \r isn't shown in the output console
-                                        Console.WriteLine("[{0}] / [{1}]", count + (loopCounter * takeSize), lastWordId);
+                                        Console.WriteLine("[{0}] / [{1}]", wordCounter + (loopCounter * takeSize), lastWordId);
                                     }
                                     else
                                     {
-                                        Console.Write("\r[{0}] / [{1}]", count + (loopCounter * takeSize), lastWordId);
+                                        Console.Write("\r[{0}] / [{1}]", wordCounter + (loopCounter * takeSize), lastWordId);
                                     }
                                 }
                             }
