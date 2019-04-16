@@ -207,6 +207,9 @@ namespace CrossWord.DbMigrate
                     }
                 }
             }
+
+            Console.WriteLine();
+            Log.Information("CrossWord DbMigrate Completed");
         }
     }
 }
