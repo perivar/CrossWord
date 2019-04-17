@@ -40,6 +40,8 @@ namespace CrossWord.DbMigrate
             }
         }
 
+        private static bool InDocker { get { return Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true"; } }
+
         static void Main(string[] args)
         {
             var configuration = new ConfigurationBuilder()
@@ -55,6 +57,11 @@ namespace CrossWord.DbMigrate
                 .CreateLogger();
 
             Log.Information("Starting CrossWord DbMigrate ver. {0} ", "1.0");
+
+            if (InDocker)
+            {
+                Log.Information("Running in docker container!");
+            }
 
             // read in the start word index
             // e.g. an argument like "STARTWORDINDEX=65000"
@@ -235,7 +242,14 @@ namespace CrossWord.DbMigrate
                                     }
                                     else
                                     {
-                                        if ((wordCounter % 10) == 0) Console.Write("\r[{0}] / [{1}]", wordCounter + (loopCounter * takeSize), lastWordId);
+                                        if (InDocker)
+                                        {
+                                            if ((wordCounter % 100) == 0) Log.Information("[{0}] / [{1}]", wordCounter + (loopCounter * takeSize), lastWordId);
+                                        }
+                                        else
+                                        {
+                                            if ((wordCounter % 10) == 0) Console.Write("\r[{0}] / [{1}]", wordCounter + (loopCounter * takeSize), lastWordId);
+                                        }
                                     }
                                 }
                             }

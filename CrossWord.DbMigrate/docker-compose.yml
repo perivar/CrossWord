@@ -1,0 +1,49 @@
+version: "2"
+
+# access the mysql db volume created by a different docker-compose.yml file by using external and the name
+# see CrossWord.Scraper/docker-compose-yml
+volumes:
+  datafiles:
+    external:
+      name: crosswordscraper_datafiles
+
+# Remember to start the network before running this file:
+# $ docker network create crosswordapi-net
+#
+# Then you can start each of the docker-compose.yml files like this:
+# $ docker-compose -f project_one/docker-compose.yml up -d
+# $ docker-compose -f project_two/docker-compose.yml up -d
+networks:
+  default:
+    external:
+      name: crosswordapi-net
+
+services:
+  db:
+    container_name: crosswordapi.db
+    image: mysql:8.0.15
+    volumes:
+      - ./init-db-scripts/:/docker-entrypoint-initdb.d/ # reload using docker-compose down -v      
+      - datafiles:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_TCP_PORT: 3360
+    security_opt: # to fix the mbind: Operation not permitted log error
+      - seccomp:unconfined
+    ports:
+      - "3360:3360"
+
+  dbmigrate:
+    container_name: crosswordapi.dbmigrate
+    build:
+      context: ./../
+      dockerfile: CrossWord.DbMigrate/Dockerfile
+    restart: always
+    environment:
+      - DBHOST=db
+      - DBPORT=3360
+      - DBUSER=root
+      - DBPASSWORD=secret
+      - ORIGDATABASE=dictionaryold
+      - NEWDATABASE=dictionary

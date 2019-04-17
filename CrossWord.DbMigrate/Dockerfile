@@ -1,6 +1,7 @@
 # Remember to invoke this from the parent directory
-# see https://stackoverflow.com/questions/51918919/how-to-integrate-npm-install-into-asp-net-core-2-1-docker-build
 # docker build -t dbmigrate . -f .\CrossWord.DbMigrate\Dockerfile
+# OR use docker-compose
+# see CrossWord.DbMigrate/docker-compose-yml
 
 # Set build image
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
@@ -19,5 +20,6 @@ RUN dotnet publish "CrossWord.DbMigrate.csproj" -c Release -o /app
 FROM mcr.microsoft.com/dotnet/core/runtime:2.2 AS base
 WORKDIR /app
 COPY --from=publish /app .
-# ENTRYPOINT ["dotnet", "CrossWord.DbMigrate.dll"]
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["dotnet", "CrossWord.DbMigrate.dll"]
+
+# ENTRYPOINT ["/bin/bash"]

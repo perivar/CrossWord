@@ -1,5 +1,10 @@
 version: "2"
 
+# to access this volume from another docker-compose, use external and the name
+# datafiles:
+#     external:
+#       name: crosswordscraper_datafiles
+# see CrossWord.DbMigrate/docker-compose-yml
 volumes:
   datafiles:
 
@@ -13,16 +18,13 @@ networks:
   default:
     external:
       name: crosswordapi-net
-# networks:
-#   crosswordapi-net:
-#     driver: bridge
 
 services:
   db:
     container_name: crosswordapi.db
     image: mysql:8.0.15
     volumes:
-      - ./init-db-scripts:/docker-entrypoint-initdb.d/
+      - ./init-db-scripts/:/docker-entrypoint-initdb.d/
       - datafiles:/var/lib/mysql
     restart: always
     environment:
@@ -32,16 +34,12 @@ services:
       - seccomp:unconfined
     ports:
       - "3360:3360"
-    # networks:
-    #   - crosswordapi-net
 
   scraper:
     container_name: crosswordapi.scraper
     build:
       context: ./
       dockerfile: Dockerfile
-    # depends_on:
-    #   - db
     restart: always
     environment:
       - DBHOST=db
@@ -59,8 +57,6 @@ services:
       # see https://github.com/SeleniumHQ/docker-selenium/issues/79
       - /dev/shm:/dev/shm
     shm_size: 2G
-    # networks:
-    #   - crosswordapi-net
 
   web:
     container_name: crosswordapi.web
@@ -72,8 +68,6 @@ services:
       - "5000"
     ports:
       - "5000:5000"
-    # networks:
-    #   - crosswordapi-net
   #
   # https-portal:
   #   image: steveltn/https-portal:1
@@ -91,5 +85,3 @@ services:
   #     # c:\Windows\System32\Drivers\etc\hosts => 127.0.0.1           example.com
   #     # FORCE_RENEW: 'true' # only force renew if certificates are not chained correctly. Run the container again with the force_renew setting ONCE
   #     WEBSOCKET: "true"
-  #   # networks:
-  #   #   - crosswordapi-net
