@@ -23,28 +23,30 @@ namespace CrossWord.Scraper
         string connectionString = null;
         string signalRHubURL = null;
 
-        public KryssordScraper(string connectionString, string signalRHubURL, string siteUsername, string sitePassword, string pattern)
+        public KryssordScraper(string connectionString, string signalRHubURL, string siteUsername, string sitePassword, int letterCount)
         {
             this.connectionString = connectionString;
             this.signalRHubURL = signalRHubURL;
 
             // set writer identifier as pattern            
-            this.writer = new SignalRClientWriter(signalRHubURL, pattern.Length.ToString());
+            this.writer = new SignalRClientWriter(signalRHubURL, letterCount.ToString());
             writer.WriteLine("Starting Kryssord Scraper ....");
 
             // make sure that no chrome and chrome drivers are running
             // KillAllChromeDriverInstances();
 
-            DoScrape(siteUsername, sitePassword, pattern);
+            DoScrape(siteUsername, sitePassword, letterCount);
         }
 
-        private void DoScrape(string siteUsername, string sitePassword, string pattern)
+        private void DoScrape(string siteUsername, string sitePassword, int letterCount)
         {
             var dbContextFactory = new DesignTimeDbContextFactory();
             using (var db = dbContextFactory.CreateDbContext(connectionString, Log.Logger))
             {
-                Word lastWord = GetLastWordFromPattern(db, pattern);
-                string lastWordString = lastWord != null ? lastWord.Value : null;
+                string lastWordString = GetLastWordFromLetterCount(db, letterCount);
+
+                // if we didn't get back a word, use a pattern instead
+                if (lastWordString == null) lastWordString = new string('?', letterCount);
 
                 // Note! 
                 // the user needs to be added before we disable tracking and disable AutoDetectChanges
@@ -81,12 +83,6 @@ namespace CrossWord.Scraper
                 {
                     DoLogon(driver, siteUsername, sitePassword);
 
-                    // Testing
-                    // ReadWordsByWordPattern("RV", driver, db, user);
-
-                    // if we didn't get back a word - use the pattern
-                    if (lastWordString == null) lastWordString = pattern;
-
                     // read all one letter words
                     if (lastWordString == null || lastWordString != null && lastWordString.Length < 2)
                     {
@@ -111,36 +107,29 @@ namespace CrossWord.Scraper
             }
         }
 
-        private Word GetLastWordFromPattern(WordHintDbContext db, string pattern)
+        private string GetLastWordFromLetterCount(WordHintDbContext db, int letterCount)
         {
-            // if pattern is not null, then try to find the last word with same length
-            if (pattern != null)
+            if (letterCount > 0)
             {
-                Log.Information("Looking for last word using pattern '{0}'", pattern);
+                Log.Information("Looking for last word using letter count '{0}'", letterCount);
 
-                var lastWordWithPatternLength = db.Words.Where(w => w.NumberOfLetters == pattern.Length).OrderByDescending(p => p.WordId).FirstOrDefault();
+                var pattern = new string('_', letterCount); // underscore is the any character in SQL
+
+                var lastWordWithPatternLength = db.WordRelations
+                    .Include(w => w.WordFrom)
+                    .Where(c => EF.Functions.Like(c.WordFrom.Value, pattern))
+                    .OrderByDescending(p => p.WordFromId).FirstOrDefault();
+
                 if (lastWordWithPatternLength != null)
                 {
-                    Log.Information("Using the last word with pattern '{0}', last word '{1}'", pattern, lastWordWithPatternLength);
-                    return lastWordWithPatternLength;
-                }
-                else
-                {
-                    // we received a pattern but didn't find any words matching this number of characters 
-                    return null;
-                }
-            }
-            else
-            {
-                // otherwise use last word
-                var lastWord = db.Words.OrderByDescending(p => p.WordId).FirstOrDefault();
-                if (lastWord != null)
-                {
-                    Log.Information("Using last word '{0}'", lastWord);
-                }
+                    Log.Information("Using the last word with letter count '{0}', last word '{1}'", letterCount, lastWordWithPatternLength);
+                    writer.WriteLine("Using the last word with letter count '{0}', last word '{1}'", letterCount, lastWordWithPatternLength);
 
-                return lastWord;
+                    return lastWordWithPatternLength.WordFrom.Value;
+                }
             }
+
+            return null;
         }
 
         private void DoLogon(IWebDriver driver, string siteUsername, string sitePassword)

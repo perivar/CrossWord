@@ -77,16 +77,16 @@ namespace CrossWord.Scraper
             // // options.MaxDegreeOfParallelism = 50;
 
             Parallel.Invoke(options,
-              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa???"),
-              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa????"),
-              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa?????"),
-              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa??????"),
-              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa???????"),
-              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa????????"),
-              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa?????????"),
-              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa??????????"),
-              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa???????????"),
-              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, "aaa????????????")
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 6),
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 7),
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 8),
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 9),
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 10),
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 11),
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 12),
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 13),
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 14),
+              () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 15)
 
             //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 1),
             //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 2),
