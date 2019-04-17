@@ -7144,3 +7144,6 @@
 2019-04-17 12:45:10.556 +00:00 [ERR] Warning! synonym search for 'BESATTE' on page 4 has too many words: 134
 2019-04-17 12:45:19.342 +00:00 [ERR] Warning! synonym search for 'BESATTE' on page 5 has too many words: 134
 2019-04-17 12:45:27.104 +00:00 [ERR] Warning! synonym search for 'BESATTE' on page 6 has too many words: 134
+2019-04-17 15:19:48.703 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-17 15:21:09.322 +00:00 [ERR] Warning! Pattern search for 'nav???????????' on page 1 has too many words: 385
+2019-04-17 15:21:09.720 +00:00 [ERR] Warning! Pattern search for 'tro???????' on page 1 has too many words: 176
