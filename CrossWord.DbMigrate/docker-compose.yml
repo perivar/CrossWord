@@ -23,7 +23,7 @@ services:
     container_name: crosswordapi.db
     image: mysql:8.0.15
     volumes:
-      - ./init-db-scripts/:/docker-entrypoint-initdb.d/ # reload using docker-compose down -v      
+      - ./init-db-scripts/:/docker-entrypoint-initdb.d/ # reload using docker-compose down -v (Note that this deletes the volumes!)
       - datafiles:/var/lib/mysql
     restart: always
     environment:
