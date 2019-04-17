@@ -39,6 +39,16 @@
       "problemMatcher": "$msCompile"
     },
     {
+      "label": "build dbmigrate",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/CrossWord.DbMigrate/CrossWord.DbMigrate.csproj"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
       "label": "publish release win10-x64",
       "command": "dotnet",
       "args": [

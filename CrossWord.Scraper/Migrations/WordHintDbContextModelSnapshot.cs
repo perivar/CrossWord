@@ -14,7 +14,7 @@ namespace CrossWord.Scraper.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.2-servicing-10034")
+                .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("CrossWord.Scraper.MySQLDbService.Models.User", b =>
@@ -28,11 +28,7 @@ namespace CrossWord.Scraper.Migrations
 
                     b.Property<string>("LastName");
 
-                    b.Property<string>("Password");
-
                     b.Property<string>("UserName");
-
-                    b.Property<short>("isVIP");
 
                     b.HasKey("UserId");
 
@@ -44,6 +40,8 @@ namespace CrossWord.Scraper.Migrations
                     b.Property<int>("WordId")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("Comment");
+
                     b.Property<DateTime>("CreatedDate");
 
                     b.Property<string>("Language");
@@ -51,6 +49,8 @@ namespace CrossWord.Scraper.Migrations
                     b.Property<int>("NumberOfLetters");
 
                     b.Property<int>("NumberOfWords");
+
+                    b.Property<string>("Source");
 
                     b.Property<int?>("UserId");
 
