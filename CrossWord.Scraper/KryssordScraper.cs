@@ -46,7 +46,11 @@ namespace CrossWord.Scraper
                 string lastWordString = GetLastWordFromLetterCount(db, letterCount);
 
                 // if we didn't get back a word, use a pattern instead
-                if (lastWordString == null) lastWordString = new string('?', letterCount);
+                if (lastWordString == null)
+                {
+                    lastWordString = new string('?', letterCount);
+                    Log.Information("Could not find any words using letter count '{0}'. Therefore using last word pattern '{1}'", letterCount, lastWordString);
+                }
 
                 // Note! 
                 // the user needs to be added before we disable tracking and disable AutoDetectChanges
@@ -123,8 +127,6 @@ namespace CrossWord.Scraper
                 if (lastWordWithPatternLength != null)
                 {
                     Log.Information("Using the last word with letter count '{0}', last word '{1}'", letterCount, lastWordWithPatternLength);
-                    writer.WriteLine("Using the last word with letter count '{0}', last word '{1}'", letterCount, lastWordWithPatternLength);
-
                     return lastWordWithPatternLength.WordFrom.Value;
                 }
             }
