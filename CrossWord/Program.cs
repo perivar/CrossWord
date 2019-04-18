@@ -35,7 +35,8 @@ namespace CrossWord
                 Console.WriteLine(string.Format("Cannot load crossword layout from file {0}.", inputFile), e);
                 return 2;
             }
-            Dictionary dictionary;
+
+            ICrossDictionary dictionary;
             try
             {
                 dictionary = new Dictionary(dictionaryFile, board.MaxWordLength);
@@ -48,6 +49,9 @@ namespace CrossWord
 
             if (outputFile.Equals("signalr"))
             {
+                // generate database dictionary
+                dictionary = new DatabaseDictionary("server=localhost;database=dictionary;user=user;password=password;charset=utf8;", board.MaxWordLength);
+
                 // generate and send to signalr hub
                 // var tokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(10));
                 var tokenSource = new CancellationTokenSource();

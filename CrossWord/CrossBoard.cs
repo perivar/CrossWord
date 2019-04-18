@@ -487,6 +487,10 @@ namespace CrossWord
             int gridNumber = 0;
             CrossPattern lastPattern = null;
             var coordinateMap = new Dictionary<CrossPattern, Coordinate>();
+
+            // when using a database - read in all descriptions once
+            dictionary.AddAllDescriptions(patterns.Select(a => a.GetWord()).ToList());
+
             foreach (var p in sortedPatterns)
             {
                 if (lastPattern != null && lastPattern.StartX == p.StartX && lastPattern.StartY == p.StartY)
