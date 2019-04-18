@@ -28,7 +28,14 @@ namespace CrossWord
             ICrossBoard board;
             try
             {
-                board = CrossBoardCreator.CreateFromFile(inputFile);
+                if (inputFile.StartsWith("http"))
+                {
+                    board = CrossBoardCreator.CreateFromUrl(inputFile);
+                }
+                else
+                {
+                    board = CrossBoardCreator.CreateFromFile(inputFile);
+                }
             }
             catch (Exception e)
             {
@@ -39,7 +46,14 @@ namespace CrossWord
             ICrossDictionary dictionary;
             try
             {
-                dictionary = new Dictionary(dictionaryFile, board.MaxWordLength);
+                if (dictionaryFile.Equals("database"))
+                {
+                    dictionary = new DatabaseDictionary("server=localhost;database=dictionary;user=user;password=password;charset=utf8;", board.MaxWordLength);
+                }
+                else
+                {
+                    dictionary = new Dictionary(dictionaryFile, board.MaxWordLength);
+                }
             }
             catch (Exception e)
             {
@@ -49,12 +63,9 @@ namespace CrossWord
 
             if (outputFile.Equals("signalr"))
             {
-                // generate database dictionary
-                dictionary = new DatabaseDictionary("server=localhost;database=dictionary;user=user;password=password;charset=utf8;", board.MaxWordLength);
-
                 // generate and send to signalr hub
-                // var tokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-                var tokenSource = new CancellationTokenSource();
+                var tokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(20));
+                // var tokenSource = new CancellationTokenSource();
                 Task workerTask = Task.Run(
                             async () =>
                             {
@@ -69,13 +80,13 @@ namespace CrossWord
                                 }
                             });
 
-                // wait untill the task is done
-                //Task.WaitAll(workerTask);
+                // wait until the task is done
+                Task.WaitAll(workerTask);
 
                 // or wait until the user presses a key
-                Console.WriteLine("Press Enter to Exit ...");
-                Console.ReadLine();
-                tokenSource.Cancel();
+                // Console.WriteLine("Press Enter to Exit ...");
+                // Console.ReadLine();
+                // tokenSource.Cancel();
             }
             else if (outputFile.Equals("database"))
             {

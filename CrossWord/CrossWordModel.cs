@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 
 using System.Globalization;
+using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -133,6 +134,39 @@ namespace CrossWord.Models
     public static class Serialize
     {
         public static string ToJson(this CrossWordModel self) => JsonConvert.SerializeObject(self, Converter.Settings);
+
+        public static CrossBoard ToCrossBoard(this CrossWordModel self)
+        {
+            var board = new CrossBoard();
+
+            int cols = (int)self.Size.Cols;
+            int rows = (int)self.Size.Rows;
+
+            board.SetBoardSize(cols, rows);
+
+            int n = 0;
+            for (int row = 0; row < rows; row++)
+            {
+                for (int col = 0; col < cols; col++)
+                {
+                    var val = self.Grid[n];
+                    if (val == ".")
+                    {
+                        board.AddStartWord(col, row);
+                    }
+
+                    n += 1;
+                }
+            }
+
+            // debug the generated template
+            // using (StreamWriter writer = new StreamWriter("template.txt"))
+            // {
+            //     board.WriteTemplateTo(writer);
+            // }
+
+            return board;
+        }
     }
 
     internal static class Converter

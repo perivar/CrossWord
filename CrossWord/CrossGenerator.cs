@@ -42,7 +42,7 @@ namespace CrossWord
             var usedWords = new HashSet<string>();
             CrossPattern patt = _board.GetMostConstrainedPattern(_dict);
 
-            Random rnd = new Random();
+            // Random rnd = new Random();
 
             while (true)
             {

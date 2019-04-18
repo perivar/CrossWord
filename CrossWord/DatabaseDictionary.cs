@@ -25,7 +25,7 @@ namespace CrossWord
         }
 
         string ConnectionString { get; set; }
-        readonly bool _doSQLDebug;
+        readonly bool _doSQLDebug = false;
 
         readonly WordFilter _filter;
         readonly IList<string>[] _words; // different array list for each word length
@@ -62,31 +62,17 @@ namespace CrossWord
 
             using (var db = CreateDbContext(ConnectionString, _doSQLDebug))
             {
-                // var words = db.WordRelations
-                //     .Include(w => w.WordFrom)
-                //     .Include(w => w.WordTo)
-                //     .Where((w => w.WordFrom.NumberOfLetters <= maxWordLength))
-                //     .GroupBy(wr => wr.WordFromId)
-                //     .Select(w => new { WordFromId = w.Key, WordRelation = w.First() })
-                // // ;
-                // .Take(200000);
-
-                // foreach (var word in words)
-                // {
-                //     string wordText = word.WordRelation.WordFrom.Value;
-                //     string hintText = word.WordRelation.WordTo.Value;
-
-                //     if (wordText.All(Char.IsLetter))
-                //     {
-                //         AddWord(wordText);
-                //         AddDescription(wordText, hintText);
-                //     }
-                // }
-
                 // search for all words
-                var words = db.Words
-                    .Where((w => w.NumberOfLetters <= maxWordLength))
-                    .Select(w => w.Value);
+                // var words = db.Words
+                //     .Where((w => (w.NumberOfWords == 1) && (w.NumberOfLetters <= maxWordLength)))
+                //     .OrderBy(w => w.Value)
+                //     .Select(w => w.Value);
+
+                // in order to sort with Collation we need to use raw SQL
+                var words = db.Words.FromSql(
+                    $"SELECT * FROM Words AS w WHERE w.NumberOfWords = 1 AND w.NumberOfLetters <= {_maxWordLength} ORDER BY w.Value COLLATE utf8mb4_da_0900_as_cs")
+                    .Select(w => w.Value)
+                    .AsNoTracking();
 
                 foreach (var word in words)
                 {
@@ -96,40 +82,6 @@ namespace CrossWord
                         AddWord(wordText);
                     }
                 }
-
-                // for (int wordLength = 1; wordLength <= maxWordLength; wordLength++)
-                // {
-                //     // search for letters for each length
-                //     var words = db.Words
-                //         // .Include(w => w.RelatedFrom)
-                //         // .ThenInclude(w => w.WordTo)
-                //         // .Include(w => w.RelatedTo)
-                //         // .ThenInclude(w => w.WordFrom)
-                //         .Where((w => w.NumberOfLetters == wordLength))
-                //         // .OrderByDescending(w => w.CreatedDate)
-                //         // .Take(5000);
-                //         ;
-
-                //     foreach (var word in words)
-                //     {
-                //         string wordText = word.Value;
-                //         if (wordText.All(Char.IsLetter))
-                //         {
-                //             // if (word.RelatedFrom.Count > 0)
-                //             // {
-                //             //     string hintText = word.RelatedFrom.Last().WordTo.Value;
-                //             //     AddWord(wordText);
-                //             //     AddDescription(wordText, hintText);
-                //             // }
-                //             // else if (word.RelatedTo.Count > 0)
-                //             // {
-                //             //     string hintText = word.RelatedTo.Last().WordFrom.Value;
-                //             //     AddWord(wordText);
-                //             //     AddDescription(wordText, hintText);
-                //             // }
-                //         }
-                //     }
-                // }
             }
         }
 
@@ -140,6 +92,8 @@ namespace CrossWord
 
         public void AddAllDescriptions(List<string> words)
         {
+            Random rnd = new Random();
+
             using (var db = CreateDbContext(ConnectionString, _doSQLDebug))
             {
                 // find out which words have already a description
@@ -151,7 +105,8 @@ namespace CrossWord
                     .ThenInclude(w => w.WordTo)
                     .Include(w => w.RelatedTo)
                     .ThenInclude(w => w.WordFrom)
-                    .Where(x => newWords.Contains(x.Value));
+                    .Where(x => newWords.Contains(x.Value))
+                    .AsNoTracking();
 
                 foreach (var word in existingWords)
                 {
@@ -159,12 +114,22 @@ namespace CrossWord
 
                     if (word.RelatedFrom.Count > 0)
                     {
-                        string hintText = word.RelatedFrom.Last().WordTo.Value;
+                        // string hintText = word.RelatedFrom.Last().WordTo.Value
+
+                        // randomize the word descriptions
+                        int indexFrom = rnd.Next(0, word.RelatedFrom.Count - 1);
+                        string hintText = word.RelatedFrom.ToArray()[indexFrom].WordTo.Value;
+
                         AddDescription(wordText, hintText);
                     }
                     else if (word.RelatedTo.Count > 0)
                     {
-                        string hintText = word.RelatedTo.Last().WordFrom.Value;
+                        // string hintText = word.RelatedTo.Last().WordFrom.Value;
+
+                        // randomize the word descriptions
+                        int indexTo = rnd.Next(0, word.RelatedTo.Count - 1);
+                        string hintText = word.RelatedTo.ToArray()[indexTo].WordFrom.Value;
+
                         AddDescription(wordText, hintText);
                     }
                 }

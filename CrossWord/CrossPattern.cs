@@ -136,7 +136,7 @@ namespace CrossWord
 
         public override string ToString()
         {
-            return (_isHorizontal ? "-" : "|") + string.Format(",{0},{1},", _startX, _startY) + new string(_pattern);
+            return string.Format("{0},{1},{2},'{3}',[{4}]", (_isHorizontal ? "-" : "|"),  _startX, _startY, new string(_pattern), _pattern.Length);
         }
 
         public object Clone()

@@ -16,7 +16,7 @@ namespace CrossWord
 
     public struct StartWord
     {
-        string[] _label; //one for each Orientation
+        string[] _label; // one for each Orientation
         public int StartX { get; set; }
 
         public int StartY { get; set; }
@@ -24,6 +24,11 @@ namespace CrossWord
         public string[] Label
         {
             get { return _label ?? (_label = new string[2]); }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("X: {0}, Y: {1}, Label: {2}", StartX, StartY, Label);
         }
     }
 

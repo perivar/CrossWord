@@ -35,6 +35,10 @@
     *@
     <script src="~/lib/signalr/signalr.js"></script>
     <script>
+
+        // save the new york crossword url
+        var nytUrl = "";
+
         const connection = new signalR.HubConnectionBuilder()
                 .withUrl("/crosswords")
                 .configureLogging(signalR.LogLevel.Information)
@@ -67,6 +71,15 @@
         });
 
         connection.start().catch(err => console.error(err.toString()));                
+
+        function CopyNYUrlToClipboard() {
+            const el = document.createElement('textarea');
+            el.value = nytUrl;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+        }
 
         function RandomDate(start, end) {
             var d = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())),
@@ -129,11 +142,19 @@
             $(".clue").show();
 
             for (i in puzzle.clues.across) {
-                $("#across").append(puzzle.clues.across[i] + "<br />");
+                if (puzzle.clues.across[i].endsWith("[PUZZLE]")) {
+                    $("#across").append("<b>" + puzzle.clues.across[i] + "</b><br />");
+                } else {
+                    $("#across").append(puzzle.clues.across[i] + "<br />");
+                }
             }
 
             for (i in puzzle.clues.down) {
-                $("#down").append(puzzle.clues.down[i] + "<br />");
+                if (puzzle.clues.down[i].endsWith("[PUZZLE]")) {
+                    $("#down").append("<b>" + puzzle.clues.down[i] + "</b><br />");
+                } else {
+                    $("#down").append(puzzle.clues.down[i] + "<br />");
+                }
             }
         }
 
@@ -161,16 +182,20 @@
             if(date == "random") {
                 var start = new Date("1976-01-01");
                 var end = new Date("2017-05-29");
-                var randomDateString = RandomDate(start, end)
-			    $.getJSON("https://raw.githubusercontent.com/doshea/nyt_crosswords/master/" + randomDateString + ".json", function( json ) {
+                var randomDateString = RandomDate(start, end);
+                var nytRandomUrl = "https://raw.githubusercontent.com/doshea/nyt_crosswords/master/" + randomDateString + ".json";
+                nytUrl = nytRandomUrl;
+			    $.getJSON(nytRandomUrl, function( json ) {
                     ShowPuzzle(json);
                 })
                 .fail(function() {
                     $("#puzTitle").html("Could not find a crossword for this date, please try again ...");
                 });
             } else {
-                var currentDateString = '@dateStringFormatted';
-			    $.getJSON("https://raw.githubusercontent.com/doshea/nyt_crosswords/master/" + currentDateString + ".json", function( json ) {
+                var passedDateString = '@dateStringFormatted';
+                var nytPassedDateUrl = "https://raw.githubusercontent.com/doshea/nyt_crosswords/master/" + passedDateString + ".json";
+                nytUrl = nytPassedDateUrl;
+			    $.getJSON(nytPassedDateUrl, function( json ) {
                     ShowPuzzle(json);
                 })
                 .fail(function() {
@@ -182,7 +207,8 @@
 }    
 
 <button id="recent" onclick="LoadPuzzle('current')">Current Puzzle</button> &nbsp;
-<button id="random" onclick="LoadPuzzle('random')">Random Puzzle</button>
+<button id="random" onclick="LoadPuzzle('random')">Random Puzzle</button> &nbsp;
+<button id="random" onclick="CopyNYUrlToClipboard()">Copy NY Puzzle Url to Clipboard</button>
 
 <h2 id="puzTitle"></h2>
 <p id="puzAuthor"></p>

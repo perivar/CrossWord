@@ -146,7 +146,7 @@ namespace CrossWord
 
         public void AddAllDescriptions(List<string> words)
         {
-            throw new System.NotImplementedException();
+            // this can safely be ignored since all the descriptions has already been loaded at load time
         }
     }
 }

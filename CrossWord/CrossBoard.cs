@@ -94,7 +94,7 @@ namespace CrossWord
     {
         int _sizeX;
         int _sizeY;
-        List<StartWord> _startWords; // StartWord
+        List<StartWord> _startWords;
 
         List<CrossPattern> _horizontalPatterns;
         List<CrossPattern> _verticalPatterns;
@@ -362,6 +362,27 @@ namespace CrossWord
                 var description = GetDescription(dictionary, word);
 
                 writer.WriteLine(string.Format("{0},{1}", pattern, description));
+            }
+        }
+
+        public void WriteTemplateTo(StreamWriter writer)
+        {
+            for (int row = 0; row < _sizeY; row++)
+            {
+                for (int col = 0; col < _sizeX; col++)
+                {
+                    // check if we have a start word at this xy coordinate
+                    if (_startWords.Any(a => a.StartX == col && a.StartY == row))
+                    {
+                        writer.Write("-");
+                    }
+                    else
+                    {
+                        writer.Write(" ");
+                    }
+                }
+
+                if (row != _sizeY - 1) writer.WriteLine();
             }
         }
 
