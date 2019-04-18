@@ -41,6 +41,9 @@ namespace CrossWord
             var matchingWords = new List<string>();
             var usedWords = new HashSet<string>();
             CrossPattern patt = _board.GetMostConstrainedPattern(_dict);
+
+            // Random rnd = new Random();
+
             while (true)
             {
                 DoCommands();
@@ -51,7 +54,7 @@ namespace CrossWord
                     var succTrans = new List<CrossTransformation>();
                     foreach (string t in matchingWords)
                     {
-                        if (usedWords.Contains(t)) continue;
+                        if (usedWords.Count > 0 && usedWords.Contains(t)) continue;
                         var trans = patt.TryFill(t, t.AsSpan(), _dict);
                         if (trans != null)
                         {
@@ -59,11 +62,16 @@ namespace CrossWord
                             trans.Pattern = patt;
                         }
                     }
-                    
+
                     if (succTrans.Count > 0)
                     {
-                        succTrans.Sort(new CrossTransformationComparer());
+                        succTrans.Sort(new CrossTransformationComparer()); // using the successfull transform with most ?!
+
+                        // not always use the "best" match ?!
+                        // int index = succTrans.Count == 1 ? 0 : rnd.Next(1, succTrans.Count);
+                        // var trans = succTrans[index];
                         var trans = succTrans[0];
+
                         usedWords.Add(trans.Word);
                         trans.Transform(patt);
                         historyTrans.Add(succTrans);

@@ -11,5 +11,11 @@ namespace CrossWord
         int MaxWordLength { get; }
         void AddDescription(string word, string description);
         bool TryGetDescription(string word, out string description);
+
+        /// <summary>
+        /// Make sure all the words have descriptions 
+        /// </summary>
+        /// <param name="words">a list of words</param>
+        void AddAllDescriptions(List<string> words);
     }
 }

@@ -35,7 +35,7 @@ namespace CrossWord
                 }
                 catch (Exception)
                 {
-                    await Task.Delay(500);
+                    await Task.Delay(1000);
                 }
             }
 

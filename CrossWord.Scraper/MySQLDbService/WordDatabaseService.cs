@@ -4,11 +4,35 @@ using System.IO;
 using System.Linq;
 using CrossWord.Scraper.MySQLDbService.Models;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace CrossWord.Scraper.MySQLDbService
 {
     public static class WordDatabaseService
     {
+        public static string GetLastWordFromLetterCount(WordHintDbContext db, int letterCount)
+        {
+            if (letterCount > 0)
+            {
+                Log.Information("Looking for last word using letter count '{0}'", letterCount);
+
+                var pattern = new string('_', letterCount); // underscore is the any character in SQL
+
+                var lastWordWithPatternLength = db.WordRelations
+                    .Include(w => w.WordFrom)
+                    .Where(c => EF.Functions.Like(c.WordFrom.Value, pattern))
+                    .OrderByDescending(p => p.WordFromId).FirstOrDefault();
+
+                if (lastWordWithPatternLength != null)
+                {
+                    Log.Information("Using the last word with letter count '{0}', last word '{1}'", letterCount, lastWordWithPatternLength);
+                    return lastWordWithPatternLength.WordFrom.Value;
+                }
+            }
+
+            return null;
+        }
+
         public static void AddToDatabase(WordHintDbContext db, User user, string wordText, IEnumerable<string> relatedValues)
         {
             // Note that  tracking should be disabled to speed things up

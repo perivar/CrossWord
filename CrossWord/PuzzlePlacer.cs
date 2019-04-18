@@ -46,8 +46,15 @@ namespace CrossWord
                 {
                     var pattern = patterns[idx];
 
-                    if (restPuzzleLength < pattern.Length) continue;
-                    if (restPuzzleLength - pattern.Length == 1) continue;
+                    if (restPuzzleLength < pattern.Length)
+                    {
+                        continue;
+                    }
+                    if (restPuzzleLength - pattern.Length == 1)
+                    {
+                        break; // PIN was continue - which I think is a bug
+                    }
+
                     var trans = pattern.TryFillPuzzle(puzzle.AsSpan().Slice(puzzle.Length - restPuzzleLength,
                                                    pattern.Length), dictionary);
                     if (trans != null)
@@ -60,7 +67,7 @@ namespace CrossWord
 
                             // set the current pattern as puzzle
                             pattern.IsPuzzle = true;
-                            
+
                             var cloned = (ICrossBoard)board.Clone(); // clone before we revert the puzzle pattern
                             trans.Undo(pattern);
 

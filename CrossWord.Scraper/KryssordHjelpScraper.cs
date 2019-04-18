@@ -33,6 +33,8 @@ namespace CrossWord.Scraper
             writer.WriteLine("Starting KryssordHjelp Scraper ....");
 
             // make sure that no chrome and chrome drivers are running
+            // cannot do this here, since several instances of the scraper might be running in parallel
+            // do this before this class is called instead
             // KillAllChromeDriverInstances();
 
             DoScrape(letterCount);
@@ -43,40 +45,50 @@ namespace CrossWord.Scraper
             var dbContextFactory = new DesignTimeDbContextFactory();
             using (var db = dbContextFactory.CreateDbContext(connectionString, Log.Logger))
             {
-                Word lastWord = GetLastWordFromLetterCount(db, letterCount);
-                string lastWordString = lastWord != null ? lastWord.Value : null;
+                string lastWordString = WordDatabaseService.GetLastWordFromLetterCount(db, letterCount);
+
+                // Note! 
+                // the user needs to be added before we disable tracking and disable AutoDetectChanges
+                // otherwise this will crash
+
+                // set admin user
+                var adminUser = new User()
+                {
+                    FirstName = "",
+                    LastName = "Admin",
+                    UserName = "admin"
+                };
+
+                // check if user already exists
+                var existingUser = db.DictionaryUsers.Where(u => u.FirstName == adminUser.FirstName).FirstOrDefault();
+                if (existingUser != null)
+                {
+                    adminUser = existingUser;
+                }
+                else
+                {
+                    db.DictionaryUsers.Add(adminUser);
+                    db.SaveChanges();
+                }
+
+                // disable tracking to speed things up
+                // note that this doesn't load the virtual properties, but loads the object ids after a save
+                db.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+
+                // this doesn't seem to work when adding new users all the time
+                db.ChangeTracker.AutoDetectChangesEnabled = false;
 
                 using (var driver = ChromeDriverUtils.GetChromeDriver(true))
                 {
-                    // get first user
-                    var user = db.DictionaryUsers.OrderBy(u => u.UserId).FirstOrDefault();
-
                     // read all words with the letter count
-                    ReadWordsByWordPermutations(letterCount, driver, db, user, lastWordString);
+                    ReadWordsByWordPermutations(letterCount, driver, db, adminUser, lastWordString);
                 }
             }
         }
 
-        private Word GetLastWordFromLetterCount(WordHintDbContext db, int letterCount)
+        private void ReadWordsByWordPermutations(int letterCount, IWebDriver driver, WordHintDbContext db, User adminUser, string lastWord)
         {
-            if (letterCount > 0)
-            {
-                Log.Information("Looking for last word using letter count '{0}'", letterCount);
-
-                var lastWordWithPatternLength = db.Words.Where(w => w.NumberOfLetters == letterCount).OrderByDescending(p => p.WordId).FirstOrDefault();
-                if (lastWordWithPatternLength != null)
-                {
-                    Log.Information("Using the last word with letter count '{0}', last word '{1}'", letterCount, lastWordWithPatternLength);
-                    return lastWordWithPatternLength;
-                }
-            }
-
-            return null;
-        }
-
-        private void ReadWordsByWordPermutations(int letterCount, IWebDriver driver, WordHintDbContext db, User user, string lastWord)
-        {
-            int permutationSize = 2;
+            int permutationSize = letterCount > 1 ? 2 : 1;
 
             var alphabet = "abcdefghijklmnopqrstuvwxyzøæå";
             var permutations = alphabet.Select(x => x.ToString());
@@ -136,35 +148,21 @@ namespace CrossWord.Scraper
 
                     if (hasFoundWord)
                     {
-                        ReadWordsByWordPattern(wordPattern, driver, db, user);
+                        ReadWordsByWordPattern(wordPattern, driver, db, adminUser);
                     }
                 }
                 else
                 {
-                    ReadWordsByWordPattern(wordPattern, driver, db, user);
+                    ReadWordsByWordPattern(wordPattern, driver, db, adminUser);
                 }
             }
         }
 
-        private void ReadWordsByWordPattern(string wordPattern, IWebDriver driver, WordHintDbContext db, User user)
+        private void ReadWordsByWordPattern(string wordPattern, IWebDriver driver, WordHintDbContext db, User adminUser)
         {
             // go to search page            
             string url = "https://kryssordhjelp.no/";
             driver.Navigate().GoToUrl(url);
-
-            if (user == null)
-            {
-                // set admin user
-                user = new User()
-                {
-                    FirstName = "",
-                    LastName = "Kryssordhjelp",
-                    UserName = "kryssordhjelp"
-                };
-
-                db.DictionaryUsers.Add(user);
-                db.SaveChanges();
-            }
 
             Log.Information("Processing pattern search for '{0}'", wordPattern);
             writer.WriteLine("Processing pattern search for '{0}'", wordPattern);
@@ -223,29 +221,16 @@ namespace CrossWord.Scraper
                     Value = wordText,
                     NumberOfLetters = wordText.Count(c => c != ' '),
                     NumberOfWords = ScraperUtils.CountNumberOfWords(wordText),
-                    User = user,
-                    CreatedDate = DateTime.Now
+                    User = adminUser,
+                    CreatedDate = DateTime.Now,
+                    Source = "kryssordhjelp.no"
                 };
 
-                // check if word already exists
-                var existingWord = db.Words.Where(o => o.Value == wordText).FirstOrDefault();
-                if (existingWord != null)
-                {
-                    // update reference to existing word (reuse the word)
-                    word = existingWord;
-                }
-                else
-                {
-                    // add new word
-                    db.Words.Add(word);
-                    db.SaveChanges();
-                }
-
-                GetWordSynonyms(word, driver, db, user, href);
+                GetWordSynonyms(word, driver, db, adminUser, href);
             }
         }
 
-        private void GetWordSynonyms(Word word, IWebDriver driver, WordHintDbContext db, User user, string url)
+        private void GetWordSynonyms(Word word, IWebDriver driver, WordHintDbContext db, User adminUser, string url)
         {
             // there is a bug in the website that makes a  query with "0" fail
             if (word.Value == "0") return;
@@ -274,6 +259,8 @@ namespace CrossWord.Scraper
             // parse all synonyms
             IList<IWebElement> listElements = driver.FindElements(By.XPath("//div[@id='wordlist']/ul[@class='word']/li"));
             IWebElement ahref = null;
+
+            var relatedWords = new List<Word>();
             foreach (IWebElement listElement in listElements)
             {
                 try
@@ -288,57 +275,24 @@ namespace CrossWord.Scraper
                 var hintText = ahref.Text;
                 var href = ahref.GetAttribute("href");
 
-                // var hint = new Hint
-                // {
-                //     Language = "no",
-                //     Value = hintText,
-                //     NumberOfLetters = hintText.Count(c => c != ' '),
-                //     NumberOfWords = CountNumberOfWords(hintText),
-                //     User = user,
-                //     CreatedDate = DateTime.Now
-                // };
+                var hint = new Word
+                {
+                    Language = "no",
+                    Value = hintText,
+                    NumberOfLetters = hintText.Count(c => c != ' '),
+                    NumberOfWords = ScraperUtils.CountNumberOfWords(hintText),
+                    User = adminUser,
+                    CreatedDate = DateTime.Now,
+                    Source = "kryssordhjelp.no"
+                };
 
-                // // check if hint already exists
-                // bool skipHint = false;
-                // var existingHint = db.Hints
-                //                     .Include(h => h.WordHints)
-                //                     .Where(o => o.Value == hintText).FirstOrDefault();
-                // if (existingHint != null)
-                // {
-                //     // update reference to existing hint (reuse the hint)
-                //     hint = existingHint;
-
-                //     // check if the current word already has been added as a reference to this hint
-                //     if (hint.WordHints.Count(h => h.WordId == word.WordId) > 0)
-                //     {
-                //         skipHint = true;
-                //     }
-                // }
-                // else
-                // {
-                //     // add new hint
-                //     db.Hints.Add(hint);
-                // }
-
-                // if (!skipHint)
-                // {
-                //     word.WordHints.Add(new WordHint()
-                //     {
-                //         Word = word,
-                //         Hint = hint
-                //     });
-
-                //     db.SaveChanges();
-
-                //     Log.Debug("Added '{0}' as a hint for '{1}'", hintText, word.Value);
-                //     writer.WriteLine("Added '{0}' as a hint for '{1}'", hintText, word.Value);
-                // }
-                // else
-                // {
-                //     Log.Debug("Skipped adding '{0}' as a hint for '{1}' ...", hintText, word.Value);
-                //     writer.WriteLine("Skipped adding '{0}' as a hint for '{1}' ...", hintText, word.Value);
-                // }
+                relatedWords.Add(hint);
             }
+
+            relatedWords = relatedWords.Distinct().ToList(); // Note that this requires the object to implement IEquatable<Word> 
+
+            // and add to database
+            WordDatabaseService.AddToDatabase(db, word, relatedWords, writer);
 
             // now lets close our new tab
             chromeDriver.ExecuteScript("window.close();");

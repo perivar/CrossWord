@@ -33,6 +33,8 @@ namespace CrossWord.Scraper
             writer.WriteLine("Starting Kryssord Scraper ....");
 
             // make sure that no chrome and chrome drivers are running
+            // cannot do this here, since several instances of the scraper might be running in parallel
+            // do this before this class is called instead
             // KillAllChromeDriverInstances();
 
             DoScrape(siteUsername, sitePassword, letterCount);
@@ -43,12 +45,12 @@ namespace CrossWord.Scraper
             var dbContextFactory = new DesignTimeDbContextFactory();
             using (var db = dbContextFactory.CreateDbContext(connectionString, Log.Logger))
             {
-                string lastWordString = GetLastWordFromLetterCount(db, letterCount);
+                string lastWordString = WordDatabaseService.GetLastWordFromLetterCount(db, letterCount);
 
                 // if we didn't get back a word, use a pattern instead
                 if (lastWordString == null)
                 {
-                    lastWordString = new string('?', letterCount);
+                    lastWordString = letterCount > 1 ? "a" + new string('?', letterCount - 1) : "a";
                     Log.Information("Could not find any words using letter count '{0}'. Therefore using last word pattern '{1}'", letterCount, lastWordString);
                 }
 
@@ -102,36 +104,17 @@ namespace CrossWord.Scraper
                     // read 3 and more letter words
                     for (int i = 3; i < 200; i++)
                     {
-                        // ADDED BREAK TO SUPPORT SEVERAL DOCKER INSTANCES SCRAPING IN SWARMS
-                        if (i > lastWordString.Length) break;
+                        // added break to support several docker instances scraping in swarms
+                        if (i > lastWordString.Length)
+                        {
+                            Log.Error("Warning! Quitting since the letter length > last word length: {0} / {1}", i, lastWordString.Length);
+                            break;
+                        }
 
                         ReadWordsByWordPermutations(3, i, driver, db, adminUser, lastWordString);
                     }
                 }
             }
-        }
-
-        private string GetLastWordFromLetterCount(WordHintDbContext db, int letterCount)
-        {
-            if (letterCount > 0)
-            {
-                Log.Information("Looking for last word using letter count '{0}'", letterCount);
-
-                var pattern = new string('_', letterCount); // underscore is the any character in SQL
-
-                var lastWordWithPatternLength = db.WordRelations
-                    .Include(w => w.WordFrom)
-                    .Where(c => EF.Functions.Like(c.WordFrom.Value, pattern))
-                    .OrderByDescending(p => p.WordFromId).FirstOrDefault();
-
-                if (lastWordWithPatternLength != null)
-                {
-                    Log.Information("Using the last word with letter count '{0}', last word '{1}'", letterCount, lastWordWithPatternLength);
-                    return lastWordWithPatternLength.WordFrom.Value;
-                }
-            }
-
-            return null;
         }
 
         private void DoLogon(IWebDriver driver, string siteUsername, string sitePassword)

@@ -244,6 +244,98 @@
       "internalConsoleOptions": "openOnSessionStart"
     },
     {
+      "name": "CrossWord (generator Norsk db Maleri)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      // If you have changed target frameworks, make sure to update the program path.
+      "program": "${workspaceFolder}/CrossWord/bin/Debug/netcoreapp2.2/CrossWord.dll",
+      "args": [
+        "-i",
+        "${workspaceFolder}/templates/british.txt",
+        "-o",
+        "signalr",
+        "-d",
+        "database",
+        "-p",
+        "MALERI"
+      ],
+      "cwd": "${workspaceFolder}/CrossWord",
+      // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
+      "console": "internalConsole",
+      "stopAtEntry": false,
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "name": "CrossWord (generator Norsk db Norway)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      // If you have changed target frameworks, make sure to update the program path.
+      "program": "${workspaceFolder}/CrossWord/bin/Debug/netcoreapp2.2/CrossWord.dll",
+      "args": [
+        "-i",
+        "${workspaceFolder}/templates/american.txt",
+        "-o",
+        "signalr",
+        "-d",
+        "database",
+        "-p",
+        "NORWAY"
+      ],
+      "cwd": "${workspaceFolder}/CrossWord",
+      // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
+      "console": "internalConsole",
+      "stopAtEntry": false,
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "name": "CrossWord (generator NO DB NY RND POTET)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      // If you have changed target frameworks, make sure to update the program path.
+      "program": "${workspaceFolder}/CrossWord/bin/Debug/netcoreapp2.2/CrossWord.dll",
+      "args": [
+        "-i",
+        "http-random",
+        "-o",
+        "signalr",
+        "-d",
+        "database",
+        "-p",
+        "POTET"
+      ],
+      "cwd": "${workspaceFolder}/CrossWord",
+      // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
+      "console": "internalConsole",
+      "stopAtEntry": false,
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "name": "CrossWord (generator NO DB NY 2002 POTET)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      // If you have changed target frameworks, make sure to update the program path.
+      "program": "${workspaceFolder}/CrossWord/bin/Debug/netcoreapp2.2/CrossWord.dll",
+      "args": [
+        "-i",
+        "https://raw.githubusercontent.com/doshea/nyt_crosswords/master/2002/12/08.json",
+        "-o",
+        "signalr",
+        "-d",
+        "database",
+        "-p",
+        "POTET"
+      ],
+      "cwd": "${workspaceFolder}/CrossWord",
+      // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
+      "console": "internalConsole",
+      "stopAtEntry": false,
+      "internalConsoleOptions": "openOnSessionStart"
+    },    
+    {
       "name": "CrossWord (importer Norsk)",
       "type": "coreclr",
       "request": "launch",

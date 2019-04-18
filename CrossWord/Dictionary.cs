@@ -143,5 +143,10 @@ namespace CrossWord
                 matched.Add(_words[aPattern.Length][idx]);
             }
         }
+
+        public void AddAllDescriptions(List<string> words)
+        {
+            // this can safely be ignored since all the descriptions has already been loaded at load time
+        }
     }
 }
