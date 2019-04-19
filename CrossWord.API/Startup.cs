@@ -63,8 +63,10 @@ namespace CrossWord.API
             (
                 o =>
                 {
-                    // options e.g 
+                    // password policy options e.g 
                     // o.Password.RequireDigit = true;
+                    // see defaults here:
+                    // https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity-configuration?view=aspnetcore-2.2
                 }
             )
             .AddEntityFrameworkStores<WordHintDbContext>();
