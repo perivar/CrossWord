@@ -19,10 +19,10 @@ namespace CrossWord.API.Controllers
     [Route("api/[controller]/[action]")]
     public class AccountController : Controller
     {
-        IConfiguration config;
-        UserManager<IdentityUser> userManager;
+        private readonly IConfiguration config;
+        private readonly UserManager<IdentityUser> userManager;
 
-        WordHintDbContext db;
+        private readonly WordHintDbContext db;
 
         public AccountController(IConfiguration config, UserManager<IdentityUser> userManager, WordHintDbContext db)
         {
@@ -76,14 +76,6 @@ namespace CrossWord.API.Controllers
                 return Ok(new JwtSecurityTokenHandler().WriteToken(token));
             }
             else return BadRequest();
-        }
-
-        [Authorize]
-        [HttpGet]
-        public IActionResult GetData()
-        {
-            var words = db.Words.OrderByDescending(p => p.WordId).Take(20);
-            return Json(words);
         }
     }
 }

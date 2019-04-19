@@ -46,9 +46,9 @@ namespace CrossWord.API
 
             // Build database connection string
             var dbhost = Configuration["DBHOST"] ?? "localhost";
-            var dbport = Configuration["DBPORT"] ?? "3360"; // originally 3306
-            var dbuser = Configuration["DBUSER"] ?? "root";
-            var dbpassword = Configuration["DBPASSWORD"] ?? "secret";
+            var dbport = Configuration["DBPORT"] ?? "3306";
+            var dbuser = Configuration["DBUSER"] ?? "user";
+            var dbpassword = Configuration["DBPASSWORD"] ?? "password";
             var database = Configuration["DATABASE"] ?? "dictionary";
 
             services.AddDbContext<WordHintDbContext>(options =>
