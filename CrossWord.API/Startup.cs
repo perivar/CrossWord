@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using CrossWord.API.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.IdentityModel.Tokens.Jwt;
@@ -57,10 +56,18 @@ namespace CrossWord.API
                     + $"port={dbport}; database={database}; charset=utf8;");
             });
 
-            services.AddDefaultIdentity<IdentityUser>()
-                    .AddEntityFrameworkStores<WordHintDbContext>()
-                    .AddDefaultUI(UIFramework.Bootstrap4);
-
+            // You cannot use AddDefaultIdentity, since internally, this calls AddDefaultUI, which contains the Razor Pages "endpoints" you don't want. 
+            // You'll need to use AddIdentity<TUser, TRole> or AddIdentityCore<TUser> instead.
+            // https://github.com/aspnet/Identity/blob/master/src/UI/IdentityServiceCollectionUIExtensions.cs#L47
+            services.AddCustomDefaultIdentity<IdentityUser>
+            (
+                o =>
+                {
+                    // options e.g 
+                    // o.Password.RequireDigit = true;
+                }
+            )
+            .AddEntityFrameworkStores<WordHintDbContext>();
 
             // ===== Add Jwt Authentication ========
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims

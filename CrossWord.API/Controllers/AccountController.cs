@@ -32,6 +32,9 @@ namespace CrossWord.API.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
+        // ValidateAntiForgeryToken won't work unless we are using the default Identity UI via AddDefaultUI()
+        // [ValidateAntiForgeryToken] 
         public async Task<IActionResult> Register(string email, string password)
         {
             var userIdentity = new IdentityUser(email);
@@ -45,6 +48,9 @@ namespace CrossWord.API.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
+        // ValidateAntiForgeryToken won't work unless we are using the default Identity UI via AddDefaultUI()
+        // [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string email, string password)
         {
             // get the IdentityUser to verify
@@ -74,6 +80,42 @@ namespace CrossWord.API.Controllers
                 );
 
                 return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+            }
+            else return BadRequest();
+        }
+
+        // GET: /Account/GenerateForgotPasswordToken
+        [HttpGet]
+        [AllowAnonymous]
+        [ActionName("GenerateForgotPasswordToken")]
+        public async Task<ActionResult> GenerateForgotPasswordToken(string email)
+        {
+            var user = await userManager.FindByNameAsync(email);
+            if (user == null)
+            {
+                // Don't reveal that the user does not exist
+                return BadRequest();
+            }
+            return Ok(await userManager.GeneratePasswordResetTokenAsync(user));
+        }
+
+        // POST: /Account/ResetPassword
+        [HttpPost]
+        [AllowAnonymous]
+        // ValidateAntiForgeryToken won't work unless we are using the default Identity UI via AddDefaultUI()
+        // [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ResetPassword(string email, string password, string code)
+        {
+            var user = await userManager.FindByNameAsync(email);
+            if (user == null)
+            {
+                // Don't reveal that the user does not exist
+                return BadRequest();
+            }
+            var result = await userManager.ResetPasswordAsync(user, code, password);
+            if (result.Succeeded)
+            {
+                return Ok();
             }
             else return BadRequest();
         }
