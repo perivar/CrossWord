@@ -9148,3 +9148,14 @@
 2019-04-18 21:33:54.956 +00:00 [ERR] Warning! synonym search for 'ÅPNING' on page 8 has too many words: 454
 2019-04-18 21:33:58.226 +00:00 [ERR] Warning! synonym search for 'ÅPNING' on page 9 has too many words: 454
 2019-04-18 21:45:58.416 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-20 12:21:43.962 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-20 12:22:30.368 +00:00 [ERR] Warning! Quitting since the letter length > last word length: 6 / 5
+2019-04-20 12:22:32.395 +00:00 [ERR] Warning! Quitting since the letter length > last word length: 16 / 15
+2019-04-20 12:22:32.901 +00:00 [ERR] Warning! Quitting since the letter length > last word length: 11 / 10
+2019-04-20 12:22:34.303 +00:00 [ERR] Warning! Pattern search for 'var????????' on page 1 has too many words: 191
+2019-04-20 12:22:48.577 +00:00 [ERR] Warning! synonym search for 'BESATTE' on page 1 has too many words: 134
+2019-04-20 12:26:29.437 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-20 12:27:01.015 +00:00 [ERR] Warning! Quitting since the letter length > last word length: 11 / 10
+2019-04-20 12:27:05.909 +00:00 [ERR] Warning! Quitting since the letter length > last word length: 16 / 15
+2019-04-20 12:27:09.597 +00:00 [ERR] Warning! Pattern search for 'var????????' on page 1 has too many words: 191
+2019-04-20 12:27:16.982 +00:00 [ERR] Warning! synonym search for 'BESATTE' on page 1 has too many words: 134

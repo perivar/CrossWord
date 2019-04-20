@@ -68,6 +68,23 @@ services:
       - "5000"
     ports:
       - "5000:5000"
+
+  api:
+    container_name: crosswordapi.api
+    build:
+      context: ./../
+      dockerfile: CrossWord.API/Dockerfile
+    restart: always
+    environment:
+      - DBHOST=db
+      - DBPORT=3360
+      - DBUSER=root
+      - DBPASSWORD=secret
+      - DATABASE=dictionary
+    expose:
+      - "8000"
+    ports:
+      - "8000:8000"
   #
   # https-portal:
   #   image: steveltn/https-portal:1

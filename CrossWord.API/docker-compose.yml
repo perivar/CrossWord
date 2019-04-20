@@ -40,9 +40,9 @@ services:
       dockerfile: Dockerfile
     restart: always
     expose:
-      - "5000"
+      - "8000"
     ports:
-      - "5000:5000"
+      - "8000:8000"
     environment:
       - DBHOST=db
       - DBPORT=3360

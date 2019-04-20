@@ -23,6 +23,9 @@ namespace CrossWord.Scraper.MySQLDbService
         {
         }
 
+        // models for raw sql queries, i.e. FromSql queries
+        public DbQuery<WordRelationQueryModel> WordRelationQueryModels { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
