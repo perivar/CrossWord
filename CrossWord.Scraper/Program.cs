@@ -77,6 +77,8 @@ namespace CrossWord.Scraper
             // // options.MaxDegreeOfParallelism = 50; // seems to work better without a MaxDegreeOfParallelism number
 
             Parallel.Invoke(options,
+            //   () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 1)//,
+            //   () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 2)//,
               () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 3),
               () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 4),
               () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 5),

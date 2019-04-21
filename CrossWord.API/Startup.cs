@@ -18,6 +18,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Swashbuckle.AspNetCore.Swagger;
 using CrossWord.Scraper.MySQLDbService;
+using Serilog;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace CrossWord.API
 {
@@ -33,6 +35,21 @@ namespace CrossWord.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(Configuration)
+                .CreateLogger();
+
+            // output Config parameters to try to find out why it doesn't work in Docker
+            foreach (var config in Configuration.AsEnumerable())
+            {
+                Log.Information("{0}", config);
+            }
+
+            // had to add this to get the error on startup away (since the _LoginPartial.cshtml is using SignInManager)
+            // todo: should probably just remove all that stuff from _LoginPartial.cshtml
+            services.AddScoped<SignInManager<IdentityUser>, SignInManager<IdentityUser>>();
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.

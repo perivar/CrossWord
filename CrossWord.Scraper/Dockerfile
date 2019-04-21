@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build-env
+FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
 WORKDIR /app
 
 # Copy csproj and restore as distinct layers
@@ -52,7 +52,7 @@ RUN apt-get purge --auto-remove -y curl gnupg unzip \
 USER chrome
 
 # Copy and ensure the app directory is owned by the chrome user 
-COPY --chown=chrome:chrome --from=build-env /app/ /app
+COPY --chown=chrome:chrome --from=build /app/ /app
 WORKDIR /app/out
 
 # Make sure the log file exist

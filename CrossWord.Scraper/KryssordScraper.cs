@@ -50,8 +50,23 @@ namespace CrossWord.Scraper
                 // if we didn't get back a word, use a pattern instead
                 if (lastWordString == null)
                 {
-                    lastWordString = letterCount > 1 ? "a" + new string('?', letterCount - 1) : "a";
-                    Log.Information("Could not find any words using letter count '{0}'. Therefore using last word pattern '{1}'", letterCount, lastWordString);
+                    switch (letterCount)
+                    {
+                        case 1:
+                            lastWordString = "a";
+                            break;
+                        case 2:
+                            lastWordString = "aa";
+                            break;
+                        case 3:
+                            lastWordString = "aaa";
+                            break;
+                        default:
+                            lastWordString = "aaa" + new string('?', letterCount - 3);
+                            break;
+                    }
+
+                    Log.Information("Could not find any words having '{0}' letters. Therefore using last word pattern '{1}'.", letterCount, lastWordString);
                 }
 
                 // Note! 
@@ -90,13 +105,13 @@ namespace CrossWord.Scraper
                     DoLogon(driver, siteUsername, sitePassword);
 
                     // read all one letter words
-                    if (lastWordString == null || lastWordString != null && lastWordString.Length < 2)
+                    if (lastWordString == null || lastWordString != null && letterCount == 1)
                     {
                         ReadWordsByWordPattern("1", driver, db, adminUser);
                     }
 
                     // read all two letter words
-                    if (lastWordString == null || lastWordString != null && lastWordString.Length < 3)
+                    if (lastWordString == null || lastWordString != null && letterCount == 2)
                     {
                         ReadWordsByWordPermutations(2, 2, driver, db, adminUser, lastWordString);
                     }
@@ -107,7 +122,7 @@ namespace CrossWord.Scraper
                         // added break to support several docker instances scraping in swarms
                         if (i > lastWordString.Length)
                         {
-                            Log.Error("Warning! Quitting since the letter length > last word length: {0} / {1}", i, lastWordString.Length);
+                            Log.Error("Warning! Quitting since the current letter length > letter count: {0} / {1}", i, letterCount);
                             break;
                         }
 
