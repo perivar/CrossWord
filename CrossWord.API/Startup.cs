@@ -115,6 +115,16 @@ namespace CrossWord.API
 
             // Register the Swagger generator
             services.AddSwaggerDocumentation();
+
+            services.AddCors(o =>
+            {
+                o.AddPolicy("Everything", p =>
+                {
+                    p.AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowAnyOrigin();
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -150,6 +160,8 @@ namespace CrossWord.API
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
             app.UseSwaggerDocumentation();
+
+            app.UseCors("Everything");
 
             app.UseMvc(routes =>
             {

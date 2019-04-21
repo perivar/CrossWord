@@ -1,0 +1,193 @@
+﻿@{
+    ViewData["Title"] = "Kryssordhjelp";
+}
+<h2>@ViewData["Title"]</h2>
+
+<form>
+    <div class="form-group">
+        <label for="word">Spørreord</label>
+        <input type="text" class="form-control" id="word" aria-describedby="wordHelp" placeholder="Spørreord" autocapitalize="none" autocomplete="off">
+        <small id="wordHelp" class="form-text text-muted">Skriv inn ordet du søker etter her</small>
+    </div>
+    <div class="form-group">
+        <label for="letter-buttons">Mønster</label>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <button class="btn btn-outline-secondary" type="button" id="letter-less"><i class="fas fa-chevron-left"></i></button>
+            </div>
+            <div id="letter-buttons"></div>                
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" id="letter-more"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>                
+        <small id="patternHelp" class="form-text text-muted">Mønster eller antall bokstaver, se hjelp</small>
+    </div>
+    <br />
+    <button type="button" id="submit-search" class="btn btn-primary">Søk</button>
+</form>
+<br />
+<p class="lead" id="search-header"></p>
+<div class="table-responsive">
+    <table class="table table-hover">
+    <thead class="thead-light">
+        <tr>
+        <th scope="col">Ord 1</th>
+        <th scope="col">Ord 1</th>
+        <th scope="col">Ant. Ord</th>
+        <th scope="col">Lengde</th>
+        <th scope="col">Bruker</th>
+        <th scope="col">Dato</th>
+        </tr>
+    </thead>
+    <tbody id="word-list">
+    </tbody>
+  </table>
+</div>
+
+@section Scripts
+{
+     @* 
+    Javascripts section
+    *@
+    <script>
+        $(function() {
+            var baseUrl = "http://order.wazalo.com:8000/api/synonyms/";
+            //var baseUrl = "http://localhost:8000/api/synonyms/";
+
+            var letterCount = 6;
+            for (var i = 1; i <= letterCount; i++) {
+                $('#letter-buttons').append('<input type="text" class="letter-input" autocomplete="off" id="letter['+ i +']" name="letter[' + i + ']" maxlength="1">');
+            }
+            
+            function isNullOrWhitespace(input) {
+                if (typeof input === 'undefined' || input == null) return true;
+                
+                return input.replace(/\s/g, '').length < 1;
+            }
+
+            function displaySearchResults(data) {
+                //console.log(data);
+
+                $("#search-header").html('Fant <b>' + data.length + '</b> synonym til ' + $("#word").val());                
+
+                $("#word-list").html('');            
+                $.each( data, function( index, element ) {
+                    //console.log(index + ' ' + element.wordFrom.value + ' - ' + element.wordTo.value);                    
+                    var date = $.date(element.wordTo.createdDate);
+                    $("#word-list").append('<tr><th scope="row">' + element.wordFrom.value + '</th><td>' + element.wordTo.value + '</td><td>' + element.wordTo.numberOfWords + '</td><td>' + element.wordTo.numberOfLetters + '</td><td>' + element.wordTo.comment + '</td><td>' + date + '</td></tr>');
+                });              
+            };
+
+            $.date = function(dateObject) {
+                var d = new Date(dateObject);
+                var day = d.getDate();
+                var month = d.getMonth() + 1;
+                var year = d.getFullYear();
+                if (day < 10) {
+                    day = "0" + day;
+                }
+                if (month < 10) {
+                    month = "0" + month;
+                }
+                var date = day + "/" + month + "/" + year;
+
+                return date;
+            };
+
+			$("#submit-search").click(function() {
+
+                if ($("#word").val() === '') {
+                    return;
+                }
+                
+                // get pattern
+                var pattern = '';
+                var isEmptyPattern = true;
+                $('#letter-buttons :input').each(function( index, element ) {
+                    var input = $(element);
+                    var value = input.val();
+                    //console.log(index + ': ' + element.id + ' - "' + value + '"');                    
+                    if (isNullOrWhitespace(value)) {
+                        pattern += '_';
+                    } else {
+                        pattern += value;
+                        isEmptyPattern = false;
+                    }
+                });          
+                
+                var wordValue = $("#word").val();
+                var url = baseUrl + wordValue;
+
+                if (!isEmptyPattern) {
+                    console.log('using search pattern: ' + pattern);
+                    url += "/" + pattern;
+                } else {
+                    console.log('pattern is empty!');
+                }
+
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    dataType: "json",
+                    success: function(data){
+                        displaySearchResults(data);
+                    },
+                    error: function(error){
+                        console.log(error);
+                        $("#search-header").html('');
+                        $("#word-list").html('<tr><th scope="row">' + error.statusText + '</th>');
+                    }
+                });
+
+                return false; // avoid to execute the actual submit of the form.
+            });
+
+            $('#letter-more').click(function(e) { // user click on add
+                e.preventDefault();
+                if (letterCount == 20) return;
+                letterCount++;
+                $('#letter-buttons').append('<input type="text" class="letter-input" autocomplete="off" id="letter['+ letterCount +']" name="letter[' + letterCount + ']" maxlength="1">');
+                //$('#letter-buttons').children('input:last-child').focus();
+                $('#letter-more').focus();
+            });        
+
+            $('#letter-less').click(function(e) { // user click on remove
+                e.preventDefault();
+                if (letterCount == 1) return;
+                $('#letter-buttons').children('input:last-child').remove();
+                //$('#letter-buttons').children('input:last-child').focus();
+                $('#letter-less').focus();
+                letterCount--;
+            });        
+
+            // For on() to be able to delegate you have to call it on a static element that you know is always going to be there and then you pass the dynamic element 
+            $('#letter-buttons').on('keyup', '.letter-input', function(e) {
+                //alert(e.target.id);
+                if (e.which == 37 ) { // left arrow
+                    jQuery(this).prev().focus();
+                }
+                else if (e.which == 39 ) { // right arrow
+                    jQuery(this).next().focus();
+                }
+                else if ((e.which == 8 || e.which == 46) && jQuery(this).val() === '' ) {
+                    // backspace = 8
+                    // delete = 46
+                    jQuery(this).prev('input').focus();
+                }
+                else
+                {
+                    jQuery(this).next().focus();
+                }
+            });
+
+            $('#word').on('keypress', function(e) {
+                var code = e.keyCode || e.which;
+                if(code==13){
+                    $("#submit-search").click();
+                }
+            });
+
+
+        }); // document ready        
+    </script>
+}
