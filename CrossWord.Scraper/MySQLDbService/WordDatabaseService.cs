@@ -18,15 +18,20 @@ namespace CrossWord.Scraper.MySQLDbService
 
                 var pattern = new string('_', letterCount); // underscore is the any character in SQL
 
-                var lastWordWithPatternLength = db.WordRelations
-                    .Include(w => w.WordFrom)
-                    .Where(c => EF.Functions.Like(c.WordFrom.Value, pattern))
-                    .OrderByDescending(p => p.WordFromId).FirstOrDefault();
+                // SELECT  wr.WordFromId, w1.Value, wr.WordToId, w2.Value FROM WordRelations wr INNER JOIN Words w1 ON wr.WordFromId = w1.WordId INNER JOIN Words w2 ON wr.WordToId = w2.WordId WHERE w1.Value LIKE '______' ORDER BY wr.WordFromId DESC LIMIT 1;
+                // var lastWordWithPatternLength = db.WordRelations
+                //     .Include(w => w.WordFrom)
+                //     .Where(c => EF.Functions.Like(c.WordFrom.Value, pattern))
+                //     .OrderByDescending(p => p.WordFromId).FirstOrDefault();
 
-                if (lastWordWithPatternLength != null)
+                // SELECT wr.WordFromId, w1.Value AS WordFrom, wr.WordToId, w2.Value AS WordTo FROM WordRelations wr INNER JOIN Words w1 ON wr.WordFromId = w1.WordId INNER JOIN Words w2 ON wr.WordToId = w2.WordId WHERE w1.Value LIKE '______' ORDER BY w1.Value COLLATE utf8mb4_sv_0900_as_cs DESC LIMIT 1;
+                string rawSQL = $"SELECT wr.WordFromId, w1.Value AS WordFrom, wr.WordToId, w2.Value AS WordTo FROM WordRelations wr INNER JOIN Words w1 ON wr.WordFromId = w1.WordId INNER JOIN Words w2 ON wr.WordToId = w2.WordId WHERE w1.Value LIKE '{pattern}' ORDER BY w1.Value COLLATE utf8mb4_sv_0900_as_cs DESC LIMIT 1";
+                var lastWordWithPatternLength = db.WordRelationQueryModels.FromSql(rawSQL);
+
+                if (lastWordWithPatternLength.Any())
                 {
                     Log.Information("Using the last word with letter count '{0}', last word '{1}'", letterCount, lastWordWithPatternLength);
-                    return lastWordWithPatternLength.WordFrom.Value;
+                    return lastWordWithPatternLength.First().WordFrom;
                 }
             }
 
@@ -125,8 +130,8 @@ namespace CrossWord.Scraper.MySQLDbService
             var allRelatedWordsIds = allRelatedWords.Select(a => a.WordId).ToList();
             var existingWordRelations = db.WordRelations.Where(a =>
                 (a.WordFromId == word.WordId && allRelatedWordsIds.Contains(a.WordToId))
-                ||
-                (a.WordToId == word.WordId && allRelatedWordsIds.Contains(a.WordFromId))
+            // ||
+            // (a.WordToId == word.WordId && allRelatedWordsIds.Contains(a.WordFromId))
             ).ToList();
 
             // which relations need to be added?
@@ -134,8 +139,8 @@ namespace CrossWord.Scraper.MySQLDbService
             var newWordRelations = allWordRelations.Where(wr => !existingWordRelations.Any
             (a =>
                 (a.WordFromId == wr.WordFromId && a.WordToId == wr.WordToId)
-                ||
-                (a.WordFromId == wr.WordToId && a.WordToId == wr.WordFromId)
+            // ||
+            // (a.WordFromId == wr.WordToId && a.WordToId == wr.WordFromId)
             )).ToList();
 
             if (newWordRelations.Count > 0)

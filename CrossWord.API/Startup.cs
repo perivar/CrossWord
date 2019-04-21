@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using CrossWord.API.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.IdentityModel.Tokens.Jwt;
@@ -19,6 +18,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Swashbuckle.AspNetCore.Swagger;
 using CrossWord.Scraper.MySQLDbService;
+using Serilog;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace CrossWord.API
 {
@@ -34,6 +35,21 @@ namespace CrossWord.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(Configuration)
+                .CreateLogger();
+
+            // output Config parameters to try to find out why it doesn't work in Docker
+            foreach (var config in Configuration.AsEnumerable())
+            {
+                Log.Information("{0}", config);
+            }
+
+            // had to add this to get the error on startup away (since the _LoginPartial.cshtml is using SignInManager)
+            // todo: should probably just remove all that stuff from _LoginPartial.cshtml
+            services.AddScoped<SignInManager<IdentityUser>, SignInManager<IdentityUser>>();
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -46,9 +62,9 @@ namespace CrossWord.API
 
             // Build database connection string
             var dbhost = Configuration["DBHOST"] ?? "localhost";
-            var dbport = Configuration["DBPORT"] ?? "3360"; // originally 3306
-            var dbuser = Configuration["DBUSER"] ?? "root";
-            var dbpassword = Configuration["DBPASSWORD"] ?? "secret";
+            var dbport = Configuration["DBPORT"] ?? "3306";
+            var dbuser = Configuration["DBUSER"] ?? "user";
+            var dbpassword = Configuration["DBPASSWORD"] ?? "password";
             var database = Configuration["DATABASE"] ?? "dictionary";
 
             services.AddDbContext<WordHintDbContext>(options =>
@@ -57,10 +73,20 @@ namespace CrossWord.API
                     + $"port={dbport}; database={database}; charset=utf8;");
             });
 
-            services.AddDefaultIdentity<IdentityUser>()
-                    .AddEntityFrameworkStores<WordHintDbContext>()
-                    .AddDefaultUI(UIFramework.Bootstrap4);
-
+            // You cannot use AddDefaultIdentity, since internally, this calls AddDefaultUI, which contains the Razor Pages "endpoints" you don't want. 
+            // You'll need to use AddIdentity<TUser, TRole> or AddIdentityCore<TUser> instead.
+            // https://github.com/aspnet/Identity/blob/master/src/UI/IdentityServiceCollectionUIExtensions.cs#L47
+            services.AddCustomDefaultIdentity<IdentityUser>
+            (
+                o =>
+                {
+                    // password policy options e.g 
+                    // o.Password.RequireDigit = true;
+                    // see defaults here:
+                    // https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity-configuration?view=aspnetcore-2.2
+                }
+            )
+            .AddEntityFrameworkStores<WordHintDbContext>();
 
             // ===== Add Jwt Authentication ========
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
@@ -107,7 +133,7 @@ namespace CrossWord.API
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection(); // disable to use within docker behind a proxy
             app.UseStaticFiles();
             app.UseCookiePolicy();
 

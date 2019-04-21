@@ -1,6 +1,6 @@
-
 # Remember to invoke this from the parent directory
-# see https://stackoverflow.com/questions/51918919/how-to-integrate-npm-install-into-asp-net-core-2-1-docker-build
+# docker build -t web . -f .\CrossWord.Web\Dockerfile
+# OR use docker-compose
 
 # Set runtime image
 FROM mcr.microsoft.com/dotnet/core/aspnet:2.2 AS base

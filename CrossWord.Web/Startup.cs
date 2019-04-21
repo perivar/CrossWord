@@ -69,7 +69,7 @@ namespace CrossWord.Web
                 routes.MapHub<CrossWordsHub>("/crosswords");
             });
 
-            // app.UseHttpsRedirection();
+            // app.UseHttpsRedirection(); // disable to use within docker behind a proxy
             app.UseStaticFiles();
             app.UseCookiePolicy();
 

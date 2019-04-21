@@ -9148,6 +9148,7 @@
 2019-04-18 21:33:54.956 +00:00 [ERR] Warning! synonym search for 'ÅPNING' on page 8 has too many words: 454
 2019-04-18 21:33:58.226 +00:00 [ERR] Warning! synonym search for 'ÅPNING' on page 9 has too many words: 454
 2019-04-18 21:45:58.416 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+<<<<<<< HEAD
 2019-04-18 21:58:22.164 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
 2019-04-18 21:58:28.768 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
 2019-04-18 22:01:22.647 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
@@ -13751,3 +13752,5 @@
 2019-04-21 11:00:28.876 +00:00 [ERR] Warning! synonym search for 'SELSKAPS' on page 7 has too many words: 150
 2019-04-21 11:00:31.854 +00:00 [ERR] Warning! synonym search for 'SELSKAPS' on page 8 has too many words: 150
 2019-04-21 11:00:34.731 +00:00 [ERR] Warning! synonym search for 'SELSKAPS' on page 9 has too many words: 150
+2019-04-20 12:22:34.303 +00:00 [ERR] Warning! Pattern search for 'var????????' on page 1 has too many words: 191
+2019-04-20 12:22:48.577 +00:00 [ERR] Warning! synonym search for 'BESATTE' on page 1 has too many words: 134

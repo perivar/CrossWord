@@ -19,10 +19,10 @@ namespace CrossWord.API.Controllers
     [Route("api/[controller]/[action]")]
     public class AccountController : Controller
     {
-        IConfiguration config;
-        UserManager<IdentityUser> userManager;
+        private readonly IConfiguration config;
+        private readonly UserManager<IdentityUser> userManager;
 
-        WordHintDbContext db;
+        private readonly WordHintDbContext db;
 
         public AccountController(IConfiguration config, UserManager<IdentityUser> userManager, WordHintDbContext db)
         {
@@ -32,6 +32,9 @@ namespace CrossWord.API.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
+        // ValidateAntiForgeryToken won't work unless we are using the default Identity UI via AddDefaultUI()
+        // [ValidateAntiForgeryToken] 
         public async Task<IActionResult> Register(string email, string password)
         {
             var userIdentity = new IdentityUser(email);
@@ -45,6 +48,9 @@ namespace CrossWord.API.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
+        // ValidateAntiForgeryToken won't work unless we are using the default Identity UI via AddDefaultUI()
+        // [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string email, string password)
         {
             // get the IdentityUser to verify
@@ -78,12 +84,40 @@ namespace CrossWord.API.Controllers
             else return BadRequest();
         }
 
-        [Authorize]
+        // GET: /Account/GenerateForgotPasswordToken
         [HttpGet]
-        public IActionResult GetData()
+        [AllowAnonymous]
+        [ActionName("GenerateForgotPasswordToken")]
+        public async Task<ActionResult> GenerateForgotPasswordToken(string email)
         {
-            var words = db.Words.OrderByDescending(p => p.WordId).Take(20);
-            return Json(words);
+            var user = await userManager.FindByNameAsync(email);
+            if (user == null)
+            {
+                // Don't reveal that the user does not exist
+                return BadRequest();
+            }
+            return Ok(await userManager.GeneratePasswordResetTokenAsync(user));
+        }
+
+        // POST: /Account/ResetPassword
+        [HttpPost]
+        [AllowAnonymous]
+        // ValidateAntiForgeryToken won't work unless we are using the default Identity UI via AddDefaultUI()
+        // [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ResetPassword(string email, string password, string code)
+        {
+            var user = await userManager.FindByNameAsync(email);
+            if (user == null)
+            {
+                // Don't reveal that the user does not exist
+                return BadRequest();
+            }
+            var result = await userManager.ResetPasswordAsync(user, code, password);
+            if (result.Succeeded)
+            {
+                return Ok();
+            }
+            else return BadRequest();
         }
     }
 }
