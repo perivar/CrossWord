@@ -64,6 +64,10 @@ services:
       context: ./../
       dockerfile: CrossWord.Web/Dockerfile
     restart: always
+    environment:
+      - ApiBaseUrl=http://order.wazalo.com:8000/api/
+      - ApiUserEmail=server@wazalo.com
+      - ApiPassword=123ABCabc!
     expose:
       - "5000"
     ports:
