@@ -139,8 +139,8 @@ namespace CrossWord.Scraper.MySQLDbService
             var allRelatedWordsIds = allRelatedWords.Select(a => a.WordId).ToList();
             var existingWordRelations = db.WordRelations.Where(a =>
                 (a.WordFromId == word.WordId && allRelatedWordsIds.Contains(a.WordToId))
-            // ||
-            // (a.WordToId == word.WordId && allRelatedWordsIds.Contains(a.WordFromId))
+                ||
+                (a.WordToId == word.WordId && allRelatedWordsIds.Contains(a.WordFromId))
             ).ToList();
 
             // which relations need to be added?
