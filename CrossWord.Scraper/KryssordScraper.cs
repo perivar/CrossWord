@@ -23,7 +23,7 @@ namespace CrossWord.Scraper
         string connectionString = null;
         string signalRHubURL = null;
 
-        public KryssordScraper(string connectionString, string signalRHubURL, string siteUsername, string sitePassword, int letterCount)
+        public KryssordScraper(string connectionString, string signalRHubURL, string siteUsername, string sitePassword, int letterCount, bool doContinueWithLastWord = true)
         {
             this.connectionString = connectionString;
             this.signalRHubURL = signalRHubURL;
@@ -37,15 +37,19 @@ namespace CrossWord.Scraper
             // do this before this class is called instead
             // KillAllChromeDriverInstances();
 
-            DoScrape(siteUsername, sitePassword, letterCount);
+            DoScrape(siteUsername, sitePassword, letterCount, doContinueWithLastWord);
         }
 
-        private void DoScrape(string siteUsername, string sitePassword, int letterCount)
+        private void DoScrape(string siteUsername, string sitePassword, int letterCount, bool doContinueWithLastWord)
         {
             var dbContextFactory = new DesignTimeDbContextFactory();
             using (var db = dbContextFactory.CreateDbContext(connectionString, Log.Logger))
             {
-                string lastWordString = WordDatabaseService.GetLastWordFromLetterCount(db, letterCount);
+                string lastWordString = null;
+                if (doContinueWithLastWord)
+                {
+                    lastWordString = WordDatabaseService.GetLastWordFromLetterCount(db, letterCount);
+                }
 
                 // if we didn't get back a word, use a pattern instead
                 if (lastWordString == null)

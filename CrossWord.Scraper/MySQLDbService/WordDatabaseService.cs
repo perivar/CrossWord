@@ -120,10 +120,19 @@ namespace CrossWord.Scraper.MySQLDbService
 
             // what relations needs to be added?
             var allRelatedWords = existingRelatedWords.Concat(newRelatedWords);
-            var allWordRelations = allRelatedWords.Select(hint =>
+            var allWordRelationsFrom = allRelatedWords.Select(hint =>
                 // only use the ids to speed things up
                 new WordRelation { WordFromId = word.WordId, WordToId = hint.WordId }
             );
+
+            // add relation from each hint to word as well
+            var allWordRelationsTo = allRelatedWords.Select(hint =>
+                // only use the ids to speed things up
+                new WordRelation { WordFromId = hint.WordId, WordToId = word.WordId }
+            );
+
+            // all relations
+            var allWordRelations = allWordRelationsFrom.Concat(allWordRelationsTo);
 
             // find out which relations already exist in the database
             // check both directions in the Many-to-Many Relationship 
