@@ -31,8 +31,7 @@
     <table class="table table-hover">
     <thead class="thead-light">
         <tr>
-        <th scope="col">Ord 1</th>
-        <th scope="col">Ord 1</th>
+        <th scope="col">Synonym</th>
         <th scope="col">Ant. Ord</th>
         <th scope="col">Lengde</th>
         <th scope="col">Bruker</th>
@@ -51,14 +50,35 @@
     *@
     <script>
         $(function() {
-            var baseUrl = "http://order.wazalo.com:8000/api/synonyms/";
-            //var baseUrl = "http://localhost:8000/api/synonyms/";
+            
+            var baseUrl = "@ViewData["ApiBaseUrl"]" + "synonyms/";
+            var authUrl = "@ViewData["ApiBaseUrl"]" + "Account/Login";
+            var apiUserEmail = "@ViewData["ApiUserEmail"]";
+            var apiPassword = "@ViewData["ApiPassword"]";
 
             var letterCount = 6;
             for (var i = 1; i <= letterCount; i++) {
                 $('#letter-buttons').append('<input type="text" class="letter-input" autocomplete="off" id="letter['+ i +']" name="letter[' + i + ']" maxlength="1">');
             }
             
+            // setup client JWT authentication
+            $.post(authUrl, $.param({email: apiUserEmail, password: apiPassword})).done(function(token){
+                // save the token in local storage
+                localStorage.setItem("token", token);
+            }).fail(function() {
+                $("#search-header").html('');
+                $("#word-list").html('<tr><th scope="row">Cannot access API (not authenticated)</th>');
+            });
+            
+            // ensure the Authorization header is added to every request
+            $.ajaxSetup({
+                beforeSend: function(xhr) {
+                    if (localStorage.getItem("token") !== null) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem("token"));                      
+                    }
+                }
+            });  
+
             function isNullOrWhitespace(input) {
                 if (typeof input === 'undefined' || input == null) return true;
                 
@@ -73,8 +93,8 @@
                 $("#word-list").html('');            
                 $.each( data, function( index, element ) {
                     //console.log(index + ' ' + element.wordFrom.value + ' - ' + element.wordTo.value);                    
-                    var date = $.date(element.wordTo.createdDate);
-                    $("#word-list").append('<tr><th scope="row">' + element.wordFrom.value + '</th><td>' + element.wordTo.value + '</td><td>' + element.wordTo.numberOfWords + '</td><td>' + element.wordTo.numberOfLetters + '</td><td>' + element.wordTo.comment + '</td><td>' + date + '</td></tr>');
+                    var date = $.date(element.createdDate);
+                    $("#word-list").append('<tr><th scope="row">' + element.value + '</th><td>' + element.numberOfWords + '</td><td>' + element.numberOfLetters + '</td><td>' + element.comment + '</td><td>' + date + '</td></tr>');
                 });              
             };
 
@@ -119,10 +139,10 @@
                 var url = baseUrl + wordValue;
 
                 if (!isEmptyPattern) {
-                    console.log('using search pattern: ' + pattern);
+                    //console.log('using search pattern: ' + pattern);
                     url += "/" + pattern;
                 } else {
-                    console.log('pattern is empty!');
+                    //console.log('pattern is empty!');
                 }
 
                 $.ajax({
@@ -133,7 +153,7 @@
                         displaySearchResults(data);
                     },
                     error: function(error){
-                        console.log(error);
+                        //console.log(error);
                         $("#search-header").html('');
                         $("#word-list").html('<tr><th scope="row">' + error.statusText + '</th>');
                     }
