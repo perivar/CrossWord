@@ -35,6 +35,7 @@ namespace CrossWord.Web.Controllers
             _hubContext = hubContext;
         }
 
+        [Route("synonyms")]
         public IActionResult Index()
         {
             // var apiBaseUrl = _appConfig["ApiBaseUrl"] ?? "http://order.wazalo.com:8000/api/";
@@ -45,6 +46,22 @@ namespace CrossWord.Web.Controllers
             ViewData["ApiBaseUrl"] = apiBaseUrl;
             ViewData["ApiUserEmail"] = apiUserEmail;
             ViewData["ApiPassword"] = apiPassword;
+
+            return View();
+        }
+
+        [Route("synonyms/{word}")]
+        public IActionResult Index(string word)
+        {
+            // var apiBaseUrl = _appConfig["ApiBaseUrl"] ?? "http://order.wazalo.com:8000/api/";
+            var apiBaseUrl = _appConfig["ApiBaseUrl"] ?? "http://localhost:8000/api/";
+            var apiUserEmail = _appConfig["ApiUserEmail"] ?? "server@wazalo.com";
+            var apiPassword = _appConfig["ApiPassword"] ?? "123ABCabc!";
+
+            ViewData["ApiBaseUrl"] = apiBaseUrl;
+            ViewData["ApiUserEmail"] = apiUserEmail;
+            ViewData["ApiPassword"] = apiPassword;
+            ViewData["Word"] = word;
 
             return View();
         }

@@ -106,7 +106,7 @@ namespace CrossWord.API.Controllers
                     if (!returnList.Contains(relation.WordFrom)) returnList.Add(relation.WordFrom);
                 }
             }
-            var sortedReturnList = returnList.OrderBy(w => w.NumberOfLetters);
+            var sortedReturnList = returnList.OrderBy(w => w.NumberOfLetters).ThenBy(w => w.Value);
 
             return Json(sortedReturnList);
         }
@@ -155,7 +155,7 @@ namespace CrossWord.API.Controllers
                     if (!returnList.Contains(relation.WordFrom)) returnList.Add(relation.WordFrom);
                 }
             }
-            var sortedReturnList = returnList.OrderBy(w => w.NumberOfLetters);
+            var sortedReturnList = returnList.OrderBy(w => w.NumberOfLetters).ThenBy(w => w.Value);
 
             return Json(sortedReturnList);
         }

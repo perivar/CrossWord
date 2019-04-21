@@ -55,6 +55,7 @@
             var authUrl = "@ViewData["ApiBaseUrl"]" + "Account/Login";
             var apiUserEmail = "@ViewData["ApiUserEmail"]";
             var apiPassword = "@ViewData["ApiPassword"]";
+            var word = "@ViewData["Word"]";
 
             var letterCount = 6;
             for (var i = 1; i <= letterCount; i++) {
@@ -79,6 +80,7 @@
                 }
             });  
 
+            // useful methods
             function isNullOrWhitespace(input) {
                 if (typeof input === 'undefined' || input == null) return true;
                 
@@ -94,7 +96,7 @@
                 $.each( data, function( index, element ) {
                     //console.log(index + ' ' + element.wordFrom.value + ' - ' + element.wordTo.value);                    
                     var date = $.date(element.createdDate);
-                    $("#word-list").append('<tr><th scope="row">' + element.value + '</th><td>' + element.numberOfWords + '</td><td>' + element.numberOfLetters + '</td><td>' + element.comment + '</td><td>' + date + '</td></tr>');
+                    $("#word-list").append('<tr class="table-row" data-value="' + element.value + '"><th scope="row">' + element.value + '</th><td>' + element.numberOfWords + '</td><td>' + element.numberOfLetters + '</td><td>' + element.comment + '</td><td>' + date + '</td></tr>');
                 });              
             };
 
@@ -113,6 +115,28 @@
 
                 return date;
             };
+
+            // if we have a search word, perform search
+            if (!isNullOrWhitespace(word)) {
+                
+                $("#word").val(word);            
+
+                var url = baseUrl + word;
+
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    dataType: "json",
+                    success: function(data){
+                        displaySearchResults(data);
+                    },
+                    error: function(error){
+                        //console.log(error);
+                        $("#search-header").html('');
+                        $("#word-list").html('<tr><th scope="row">' + error.statusText + '</th>');
+                    }
+                });
+            }
 
 			$("#submit-search").click(function() {
 
@@ -181,7 +205,7 @@
             });        
 
             // For on() to be able to delegate you have to call it on a static element that you know is always going to be there and then you pass the dynamic element 
-            $('#letter-buttons').on('keyup', '.letter-input', function(e) {
+            $(document).on('keyup', '.letter-input', function(e) {
                 //alert(e.target.id);
                 if (e.which == 37 ) { // left arrow
                     jQuery(this).prev().focus();
@@ -200,13 +224,18 @@
                 }
             });
 
+            $(document).on("click", ".table-row", function() {
+                var value = $(this).data("value");
+                value = encodeURIComponent(value.toLowerCase());
+                window.document.location = '/synonyms/' + value;
+            });
+
             $('#word').on('keypress', function(e) {
                 var code = e.keyCode || e.which;
                 if(code==13){
                     $("#submit-search").click();
                 }
             });
-
 
         }); // document ready        
     </script>
