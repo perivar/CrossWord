@@ -110,7 +110,7 @@ namespace CrossWord.API.Controllers
                                             // .Include(w => w.WordTo)
                                             .AsNoTracking()
                                             .Select(w => new { w.WordFrom, w.WordTo })
-                                            .Take(200);
+                                            .Take(300);
 
             if (!wordRelations.Any())
             {
@@ -160,7 +160,7 @@ namespace CrossWord.API.Controllers
                                                 // .Include(w => w.WordTo)
                                                 .AsNoTracking()
                                                 .Select(w => new { w.WordFrom, w.WordTo })
-                                                .Take(200);
+                                                .Take(300);
 
             if (!wordRelations.Any())
             {
@@ -174,11 +174,11 @@ namespace CrossWord.API.Controllers
             {
                 if (relation.WordFrom.WordId == wordId)
                 {
-                    if (!returnList.Contains(relation.WordTo)) returnList.Add(relation.WordTo);
+                    if (!returnList.Contains(relation.WordTo) && relation.WordTo.NumberOfLetters == pattern.Length) returnList.Add(relation.WordTo);
                 }
                 else if (relation.WordTo.WordId == wordId)
                 {
-                    if (!returnList.Contains(relation.WordFrom)) returnList.Add(relation.WordFrom);
+                    if (!returnList.Contains(relation.WordFrom) && relation.WordFrom.NumberOfLetters == pattern.Length) returnList.Add(relation.WordFrom);
                 }
             }
             var sortedReturnList = returnList.OrderBy(w => w.NumberOfLetters).ThenBy(w => w.Value);

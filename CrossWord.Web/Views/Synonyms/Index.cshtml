@@ -9,7 +9,43 @@
         <input type="text" class="form-control typeahead twitter-typeahead" data-provide="typeahead" id="word" aria-describedby="wordHelp" placeholder="Spørreord" autocapitalize="none" autocomplete="off">
         <small id="wordHelp" class="form-text text-muted">Skriv inn ordet du søker etter her</small>
     </div>
-    <div class="form-group">
+    <div class="form-group" id="letter-length-group">
+        <label for="letter-length">Hvor mange bokstaver inneholder ordet? </label>
+        <select class="form-control" id="letter-length">
+            <option>0</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
+            <option>8</option>
+            <option>9</option>
+            <option>10</option>
+            <option>11</option>
+            <option>12</option>
+            <option>13</option>
+            <option>14</option>
+            <option>15</option>
+            <option>16</option>
+            <option>17</option>
+            <option>18</option>
+            <option>19</option>
+            <option>20</option>
+            <option>21</option>
+            <option>22</option>
+            <option>23</option>
+            <option>24</option>
+            <option>25</option>
+            <option>26</option>
+            <option>27</option>
+            <option>28</option>
+            <option>29</option>
+            <option>30</option>
+        </select>              
+    </div>
+    <div class="form-group" id="letter-button-group">
         <label for="letter-buttons">Skriv inn bokstavene du har</label>
         <div class="input-group">
             <div class="input-group-prepend">
@@ -21,9 +57,9 @@
             </div>
         </div>                
         <small id="patternHelp" class="form-text text-muted">Mønster eller antall bokstaver, se hjelp</small>
+        <button type="button" id="submit-show-all" class="btn btn-secondary btn-sm">Vis alle synonymer</button>
     </div>
-    <br />
-    <button type="button" id="submit-search" class="btn btn-primary">Søk</button>
+    <button type="button" id="submit-search" class="btn btn-primary btn-lg">Søk</button>
 </form>
 <br />
 <p class="lead" id="search-header"></p>
@@ -58,11 +94,10 @@
             var apiUserEmail = "@ViewData["ApiUserEmail"]";
             var apiPassword = "@ViewData["ApiPassword"]";
             var word = "@ViewData["Word"]";
+            var letterCount = 0;
 
-            var letterCount = 6;
-            for (var i = 1; i <= letterCount; i++) {
-                $('#letter-buttons').append('<input type="text" class="letter-input" autocomplete="off" id="letter['+ i +']" name="letter[' + i + ']" maxlength="1">');
-            }
+            // hide button group to start with
+			$("#letter-button-group").hide();
             
             // setup client JWT authentication
             $.post(authUrl, $.param({email: apiUserEmail, password: apiPassword})).done(function(token){
@@ -82,17 +117,48 @@
                 }
             });  
 
-            // useful methods
+            // some useful methods
             function isNullOrWhitespace(input) {
                 if (typeof input === 'undefined' || input == null) return true;
                 
                 return input.replace(/\s/g, '').length < 1;
             }
+            
+            function getPatternString(inputObject) {
+                var patternString = '';
+                var isEmptyPattern = true;
+                $(inputObject).each(function( index, element ) {
+                    var input = $(element);
+                    var value = input.val();
+                    //console.log(index + ': ' + element.id + ' - "' + value + '"');                    
+                    if (isNullOrWhitespace(value)) {
+                        patternString += '_';
+                    } else {
+                        patternString += value;
+                        isEmptyPattern = false;
+                    }
+                });          
+
+                return patternString.toUpperCase();
+            };
+
+            function isEmptyPattern(patternString) {
+                return /^(.)\1+$/.test(patternString);
+            }
 
             function displaySearchResults(data) {
                 //console.log(data);
 
-                $("#search-header").html('Fant <b>' + data.length + '</b> synonym til ' + $("#word").val());                
+                if (letterCount === 0) {
+                    $("#search-header").html('Fant <b>' + data.length + '</b> synonym til ' + $("#word").val());                
+                } else {
+                    var patternString = getPatternString($('#letter-buttons :input'));
+                    if (!isEmptyPattern(patternString)) {
+                        $("#search-header").html('Fant <b>' + data.length + '</b> synonymer til ' + $("#word").val() + ' med bokstavene <b>' + patternString + '</b>');                        
+                    } else {
+                        $("#search-header").html('Fant <b>' + data.length + '</b> synonymer til ' + $("#word").val() + ' med <b>' + letterCount + '</b> bokstaver');                        
+                    }
+                }
 
                 $("#word-list").html('');            
                 $.each( data, function( index, element ) {
@@ -144,7 +210,11 @@
 
 			$("#submit-search").click(function() {
 
-                if ($("#word").val() === '') {
+                var wordValue = $("#word").val();
+                var letterLength = $('#letter-length').val();
+
+                if (wordValue === '') {
+                    $("#search-header").html('Du må skrive inn et spørreord!');
                     return;
                 }
                 
@@ -163,10 +233,10 @@
                     }
                 });          
                 
-                var wordValue = $("#word").val();
                 var url = baseSynonymUrl + wordValue;
 
-                if (!isEmptyPattern) {
+                //if (!isEmptyPattern) {
+                if (letterLength != 0) {                    
                     //console.log('using search pattern: ' + pattern);
                     url += "/" + pattern;
                 } else {
@@ -192,11 +262,12 @@
 
             $('#letter-more').click(function(e) { // user click on add
                 e.preventDefault();
-                if (letterCount == 20) return;
+                if (letterCount == 30) return;
                 letterCount++;
                 $('#letter-buttons').append('<input type="text" class="letter-input" autocomplete="off" id="letter['+ letterCount +']" name="letter[' + letterCount + ']" maxlength="1">');
                 //$('#letter-buttons').children('input:last-child').focus();
                 $('#letter-more').focus();
+                $("#submit-search").click();
             });        
 
             $('#letter-less').click(function(e) { // user click on remove
@@ -206,6 +277,7 @@
                 //$('#letter-buttons').children('input:last-child').focus();
                 $('#letter-less').focus();
                 letterCount--;
+                $("#submit-search").click();
             });        
 
             // For on() to be able to delegate you have to call it on a static element that you know is always going to be there and then you pass the dynamic element 
@@ -233,6 +305,37 @@
                 if(code==13) {
                     $("#submit-search").click();
                 }
+            });
+
+            $('#letter-length').on('change', function(e) {
+                console.log(this.value);
+                
+                if(this.value!=0) {
+                    
+                    $('#letter-buttons').html('');
+
+                    letterCount = this.value;
+                    for (var i = 1; i <= letterCount; i++) {
+                        $('#letter-buttons').append('<input type="text" class="letter-input" autocomplete="off" id="letter['+ i +']" name="letter[' + i + ']" maxlength="1">');
+                    }
+
+			        $("#letter-button-group").show();
+			        $("#letter-length-group").hide();
+                    $("#submit-search").click();
+                }
+            });
+
+			$("#submit-show-all").click(function() {
+                // reset
+                letterCount = 0;
+                $('#letter-length').val('0');
+                $('#letter-buttons').html('');
+
+                $("#letter-button-group").hide();
+                $("#letter-length-group").show();
+                $("#submit-search").click();
+
+                return false; // avoid to execute the actual submit of the form.
             });
 
             /*
