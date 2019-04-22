@@ -13754,3 +13754,1429 @@
 2019-04-21 11:00:34.731 +00:00 [ERR] Warning! synonym search for 'SELSKAPS' on page 9 has too many words: 150
 2019-04-20 12:22:34.303 +00:00 [ERR] Warning! Pattern search for 'var????????' on page 1 has too many words: 191
 2019-04-20 12:22:48.577 +00:00 [ERR] Warning! synonym search for 'BESATTE' on page 1 has too many words: 134
+2019-04-21 13:13:39.882 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-21 13:37:46.902 +00:00 [ERR] Warning! Pattern search for 'und??????????' on page 1 has too many words: 129
+2019-04-21 13:38:12.304 +00:00 [ERR] Warning! Pattern search for 'und??????????' on page 2 has too many words: 129
+2019-04-21 13:38:48.036 +00:00 [ERR] Warning! Pattern search for 'und??????????' on page 3 has too many words: 129
+2019-04-21 13:39:35.012 +00:00 [ERR] Warning! Pattern search for 'und??????????' on page 4 has too many words: 129
+2019-04-21 13:40:08.173 +00:00 [ERR] Warning! synonym search for 'UNDERHOLDNING' on page 1 has too many words: 274
+2019-04-21 13:40:11.595 +00:00 [ERR] Warning! synonym search for 'UNDERHOLDNING' on page 2 has too many words: 274
+2019-04-21 13:40:14.435 +00:00 [ERR] Warning! synonym search for 'UNDERHOLDNING' on page 3 has too many words: 274
+2019-04-21 13:40:17.665 +00:00 [ERR] Warning! synonym search for 'UNDERHOLDNING' on page 4 has too many words: 274
+2019-04-21 13:40:20.539 +00:00 [ERR] Warning! synonym search for 'UNDERHOLDNING' on page 5 has too many words: 274
+2019-04-21 13:40:23.864 +00:00 [ERR] Warning! synonym search for 'UNDERHOLDNING' on page 6 has too many words: 274
+2019-04-21 13:40:27.075 +00:00 [ERR] Warning! synonym search for 'UNDERHOLDNING' on page 7 has too many words: 274
+2019-04-21 13:40:30.428 +00:00 [ERR] Warning! synonym search for 'UNDERHOLDNING' on page 8 has too many words: 274
+2019-04-21 13:40:33.608 +00:00 [ERR] Warning! synonym search for 'UNDERHOLDNING' on page 9 has too many words: 274
+2019-04-21 13:40:53.398 +00:00 [ERR] Warning! Pattern search for 'und??????????' on page 5 has too many words: 129
+2019-04-21 13:41:22.373 +00:00 [ERR] Warning! Pattern search for 'und??????????' on page 6 has too many words: 129
+2019-04-21 13:42:01.817 +00:00 [ERR] Warning! Pattern search for 'und??????????' on page 7 has too many words: 129
+2019-04-21 13:42:46.837 +00:00 [ERR] Warning! Pattern search for 'und??????????' on page 8 has too many words: 129
+2019-04-21 13:43:31.008 +00:00 [ERR] Warning! synonym search for 'UNDERSØKELSEN' on page 1 has too many words: 121
+2019-04-21 13:43:34.345 +00:00 [ERR] Warning! synonym search for 'UNDERSØKELSEN' on page 2 has too many words: 121
+2019-04-21 13:43:37.287 +00:00 [ERR] Warning! synonym search for 'UNDERSØKELSEN' on page 3 has too many words: 121
+2019-04-21 13:43:40.531 +00:00 [ERR] Warning! synonym search for 'UNDERSØKELSEN' on page 4 has too many words: 121
+2019-04-21 13:43:44.090 +00:00 [ERR] Warning! synonym search for 'UNDERSØKELSEN' on page 5 has too many words: 121
+2019-04-21 13:43:47.074 +00:00 [ERR] Warning! synonym search for 'UNDERSØKELSEN' on page 6 has too many words: 121
+2019-04-21 13:43:50.401 +00:00 [ERR] Warning! synonym search for 'UNDERSØKELSEN' on page 7 has too many words: 121
+2019-04-21 13:43:53.182 +00:00 [ERR] Warning! synonym search for 'UNDERSØKELSEN' on page 8 has too many words: 121
+2019-04-21 13:43:56.032 +00:00 [ERR] Warning! synonym search for 'UNDERSØKELSEN' on page 9 has too many words: 121
+2019-04-21 13:43:58.897 +00:00 [ERR] Warning! Pattern search for 'und??????????' on page 9 has too many words: 129
+2019-04-21 14:04:51.177 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-21 14:06:25.462 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-21 14:07:30.372 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-21 14:08:18.254 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-21 14:09:04.672 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-21 14:09:53.216 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-21 14:10:41.320 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-21 14:11:29.936 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-21 14:12:18.970 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-21 14:13:06.481 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-21 14:13:53.219 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-21 14:17:00.389 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-21 14:17:09.265 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-21 14:23:28.519 +00:00 [ERR] Warning! synonym search for 'VEI I FREDRIKSTAD' on page 1 has too many words: 1234
+2019-04-21 14:23:36.539 +00:00 [ERR] Warning! synonym search for 'VEI I FREDRIKSTAD' on page 2 has too many words: 1234
+2019-04-21 14:23:44.326 +00:00 [ERR] Warning! synonym search for 'VEI I FREDRIKSTAD' on page 3 has too many words: 1234
+2019-04-21 14:23:52.483 +00:00 [ERR] Warning! synonym search for 'VEI I FREDRIKSTAD' on page 4 has too many words: 1234
+2019-04-21 14:24:00.621 +00:00 [ERR] Warning! synonym search for 'VEI I FREDRIKSTAD' on page 5 has too many words: 1234
+2019-04-21 14:24:08.848 +00:00 [ERR] Warning! synonym search for 'VEI I FREDRIKSTAD' on page 6 has too many words: 1234
+2019-04-21 14:24:17.211 +00:00 [ERR] Warning! synonym search for 'VEI I FREDRIKSTAD' on page 7 has too many words: 1234
+2019-04-21 14:24:24.678 +00:00 [ERR] Warning! synonym search for 'VEI I FREDRIKSTAD' on page 8 has too many words: 1234
+2019-04-21 14:24:32.920 +00:00 [ERR] Warning! synonym search for 'VEI I FREDRIKSTAD' on page 9 has too many words: 1234
+2019-04-21 14:25:40.349 +00:00 [ERR] Warning! synonym search for 'VEI I KONGSVINGER' on page 1 has too many words: 272
+2019-04-21 14:25:48.607 +00:00 [ERR] Warning! synonym search for 'VEI I KONGSVINGER' on page 2 has too many words: 272
+2019-04-21 14:25:57.336 +00:00 [ERR] Warning! synonym search for 'VEI I KONGSVINGER' on page 3 has too many words: 272
+2019-04-21 14:26:04.317 +00:00 [ERR] Warning! synonym search for 'VEI I KONGSVINGER' on page 4 has too many words: 272
+2019-04-21 14:26:13.224 +00:00 [ERR] Warning! synonym search for 'VEI I KONGSVINGER' on page 5 has too many words: 272
+2019-04-21 14:26:21.416 +00:00 [ERR] Warning! synonym search for 'VEI I KONGSVINGER' on page 6 has too many words: 272
+2019-04-21 14:26:29.950 +00:00 [ERR] Warning! synonym search for 'VEI I KONGSVINGER' on page 7 has too many words: 272
+2019-04-21 14:26:36.932 +00:00 [ERR] Warning! synonym search for 'VEI I KONGSVINGER' on page 8 has too many words: 272
+2019-04-21 14:26:44.361 +00:00 [ERR] Warning! synonym search for 'VEI I KONGSVINGER' on page 9 has too many words: 272
+2019-04-21 14:26:44.446 +00:00 [ERR] Warning! synonym search for 'VEI I BERGEN' on page 1 has too many words: 1844
+2019-04-21 14:26:52.478 +00:00 [ERR] Warning! synonym search for 'VEI I LILLEHAMMER' on page 1 has too many words: 357
+2019-04-21 14:26:53.332 +00:00 [ERR] Warning! synonym search for 'VEI I BERGEN' on page 2 has too many words: 1844
+2019-04-21 14:27:00.418 +00:00 [ERR] Warning! synonym search for 'VEI I LILLEHAMMER' on page 2 has too many words: 357
+2019-04-21 14:27:01.986 +00:00 [ERR] Warning! synonym search for 'VEI I BERGEN' on page 3 has too many words: 1844
+2019-04-21 14:27:08.095 +00:00 [ERR] Warning! synonym search for 'VEI I LILLEHAMMER' on page 3 has too many words: 357
+2019-04-21 14:27:10.051 +00:00 [ERR] Warning! synonym search for 'VEI I BERGEN' on page 4 has too many words: 1844
+2019-04-21 14:27:15.941 +00:00 [ERR] Warning! synonym search for 'VEI I LILLEHAMMER' on page 4 has too many words: 357
+2019-04-21 14:27:18.552 +00:00 [ERR] Warning! synonym search for 'VEI I BERGEN' on page 5 has too many words: 1844
+2019-04-21 14:27:23.284 +00:00 [ERR] Warning! synonym search for 'VEI I LILLEHAMMER' on page 5 has too many words: 357
+2019-04-21 14:27:27.510 +00:00 [ERR] Warning! synonym search for 'VEI I BERGEN' on page 6 has too many words: 1844
+2019-04-21 14:27:30.109 +00:00 [ERR] Warning! synonym search for 'VEKSTEN' on page 1 has too many words: 393
+2019-04-21 14:27:31.535 +00:00 [ERR] Warning! synonym search for 'VEI I LILLEHAMMER' on page 6 has too many words: 357
+2019-04-21 14:27:35.479 +00:00 [ERR] Warning! synonym search for 'VEI I BERGEN' on page 7 has too many words: 1844
+2019-04-21 14:27:38.162 +00:00 [ERR] Warning! synonym search for 'VEI I LILLEHAMMER' on page 7 has too many words: 357
+2019-04-21 14:27:38.365 +00:00 [ERR] Warning! synonym search for 'VEKSTEN' on page 2 has too many words: 393
+2019-04-21 14:27:44.223 +00:00 [ERR] Warning! synonym search for 'VEI I BERGEN' on page 8 has too many words: 1844
+2019-04-21 14:27:44.685 +00:00 [ERR] Warning! synonym search for 'VEI I LILLEHAMMER' on page 8 has too many words: 357
+2019-04-21 14:27:45.424 +00:00 [ERR] Warning! synonym search for 'VEKSTEN' on page 3 has too many words: 393
+2019-04-21 14:27:51.948 +00:00 [ERR] Warning! synonym search for 'VEI I LILLEHAMMER' on page 9 has too many words: 357
+2019-04-21 14:27:52.591 +00:00 [ERR] Warning! synonym search for 'VEKSTEN' on page 4 has too many words: 393
+2019-04-21 14:27:53.251 +00:00 [ERR] Warning! synonym search for 'VEI I BERGEN' on page 9 has too many words: 1844
+2019-04-21 14:28:00.871 +00:00 [ERR] Warning! synonym search for 'VEKSTEN' on page 5 has too many words: 393
+2019-04-21 14:28:07.784 +00:00 [ERR] Warning! synonym search for 'VEKSTEN' on page 6 has too many words: 393
+2019-04-21 14:28:16.635 +00:00 [ERR] Warning! synonym search for 'VEKSTEN' on page 7 has too many words: 393
+2019-04-21 14:28:24.052 +00:00 [ERR] Warning! synonym search for 'VEKSTEN' on page 8 has too many words: 393
+2019-04-21 14:28:31.162 +00:00 [ERR] Warning! synonym search for 'VEKSTEN' on page 9 has too many words: 393
+2019-04-21 14:28:32.954 +00:00 [ERR] Warning! synonym search for 'VEI I FAUSKE' on page 1 has too many words: 167
+2019-04-21 14:28:39.032 +00:00 [ERR] Warning! synonym search for 'VEKSTER' on page 1 has too many words: 461
+2019-04-21 14:28:41.614 +00:00 [ERR] Warning! synonym search for 'VEI I FAUSKE' on page 2 has too many words: 167
+2019-04-21 14:28:47.832 +00:00 [ERR] Warning! synonym search for 'VEKSTER' on page 2 has too many words: 461
+2019-04-21 14:28:49.788 +00:00 [ERR] Warning! synonym search for 'VEI I FAUSKE' on page 3 has too many words: 167
+2019-04-21 14:28:55.845 +00:00 [ERR] Warning! synonym search for 'VEKSTER' on page 3 has too many words: 461
+2019-04-21 14:28:58.494 +00:00 [ERR] Warning! synonym search for 'VEI I FAUSKE' on page 4 has too many words: 167
+2019-04-21 14:29:04.221 +00:00 [ERR] Warning! synonym search for 'VEKSTER' on page 4 has too many words: 461
+2019-04-21 14:29:08.056 +00:00 [ERR] Warning! synonym search for 'VEI I FAUSKE' on page 5 has too many words: 167
+2019-04-21 14:29:13.937 +00:00 [ERR] Warning! synonym search for 'VEKSTER' on page 5 has too many words: 461
+2019-04-21 14:29:18.079 +00:00 [ERR] Warning! synonym search for 'VEI I FAUSKE' on page 6 has too many words: 167
+2019-04-21 14:29:21.824 +00:00 [ERR] Warning! synonym search for 'VEKSTER' on page 6 has too many words: 461
+2019-04-21 14:29:26.896 +00:00 [ERR] Warning! synonym search for 'VEI I FAUSKE' on page 7 has too many words: 167
+2019-04-21 14:29:30.362 +00:00 [ERR] Warning! synonym search for 'VEKSTER' on page 7 has too many words: 461
+2019-04-21 14:29:36.182 +00:00 [ERR] Warning! synonym search for 'VEI I FAUSKE' on page 8 has too many words: 167
+2019-04-21 14:29:38.515 +00:00 [ERR] Warning! synonym search for 'VEKSTER' on page 8 has too many words: 461
+2019-04-21 14:29:46.146 +00:00 [ERR] Warning! synonym search for 'VEI I FAUSKE' on page 9 has too many words: 167
+2019-04-21 14:29:46.172 +00:00 [ERR] Warning! synonym search for 'VEKSTER' on page 9 has too many words: 461
+2019-04-21 14:30:16.032 +00:00 [ERR] Warning! synonym search for 'VEI I GJØVIK' on page 1 has too many words: 347
+2019-04-21 14:30:23.874 +00:00 [ERR] Warning! synonym search for 'VEI I GJØVIK' on page 2 has too many words: 347
+2019-04-21 14:30:32.737 +00:00 [ERR] Warning! synonym search for 'VEI I GJØVIK' on page 3 has too many words: 347
+2019-04-21 14:30:41.284 +00:00 [ERR] Warning! synonym search for 'VEI I GJØVIK' on page 4 has too many words: 347
+2019-04-21 14:30:49.478 +00:00 [ERR] Warning! synonym search for 'VEI I GJØVIK' on page 5 has too many words: 347
+2019-04-21 14:30:57.595 +00:00 [ERR] Warning! synonym search for 'VEI I GJØVIK' on page 6 has too many words: 347
+2019-04-21 14:31:06.211 +00:00 [ERR] Warning! synonym search for 'VEI I GJØVIK' on page 7 has too many words: 347
+2019-04-21 14:31:15.259 +00:00 [ERR] Warning! synonym search for 'VEI I GJØVIK' on page 8 has too many words: 347
+2019-04-21 14:31:23.808 +00:00 [ERR] Warning! synonym search for 'VEI I GJØVIK' on page 9 has too many words: 347
+2019-04-21 14:33:10.252 +00:00 [ERR] Warning! synonym search for 'VEI I HALDEN' on page 1 has too many words: 473
+2019-04-21 14:33:19.787 +00:00 [ERR] Warning! synonym search for 'VEI I HALDEN' on page 2 has too many words: 473
+2019-04-21 14:33:28.579 +00:00 [ERR] Warning! synonym search for 'VEI I HALDEN' on page 3 has too many words: 473
+2019-04-21 14:33:37.731 +00:00 [ERR] Warning! synonym search for 'VEI I HALDEN' on page 4 has too many words: 473
+2019-04-21 14:33:46.502 +00:00 [ERR] Warning! synonym search for 'VEI I HALDEN' on page 5 has too many words: 473
+2019-04-21 14:33:55.337 +00:00 [ERR] Warning! synonym search for 'VEI I HALDEN' on page 6 has too many words: 473
+2019-04-21 14:34:04.736 +00:00 [ERR] Warning! synonym search for 'VEI I HALDEN' on page 7 has too many words: 473
+2019-04-21 14:34:12.922 +00:00 [ERR] Warning! synonym search for 'VEI I HALDEN' on page 8 has too many words: 473
+2019-04-21 14:34:22.512 +00:00 [ERR] Warning! synonym search for 'VEI I HALDEN' on page 9 has too many words: 473
+2019-04-21 14:35:27.346 +00:00 [ERR] Warning! synonym search for 'VEI I HORTEN' on page 1 has too many words: 312
+2019-04-21 14:35:37.433 +00:00 [ERR] Warning! synonym search for 'VEI I HORTEN' on page 2 has too many words: 312
+2019-04-21 14:35:46.523 +00:00 [ERR] Warning! synonym search for 'VEI I HORTEN' on page 3 has too many words: 312
+2019-04-21 14:35:55.994 +00:00 [ERR] Warning! synonym search for 'VEI I HORTEN' on page 4 has too many words: 312
+2019-04-21 14:36:04.691 +00:00 [ERR] Warning! synonym search for 'VEI I HORTEN' on page 5 has too many words: 312
+2019-04-21 14:36:08.996 +00:00 [ERR] Warning! synonym search for 'VEI I SKI' on page 1 has too many words: 188
+2019-04-21 14:36:13.241 +00:00 [ERR] Warning! synonym search for 'VEI I HORTEN' on page 6 has too many words: 312
+2019-04-21 14:36:16.645 +00:00 [ERR] Warning! synonym search for 'VEI I SKI' on page 2 has too many words: 188
+2019-04-21 14:36:21.797 +00:00 [ERR] Warning! synonym search for 'VEI I HORTEN' on page 7 has too many words: 312
+2019-04-21 14:36:24.734 +00:00 [ERR] Warning! synonym search for 'VEI I SKI' on page 3 has too many words: 188
+2019-04-21 14:36:30.176 +00:00 [ERR] Warning! synonym search for 'VEI I HORTEN' on page 8 has too many words: 312
+2019-04-21 14:36:34.015 +00:00 [ERR] Warning! synonym search for 'VEI I SKI' on page 4 has too many words: 188
+2019-04-21 14:36:39.841 +00:00 [ERR] Warning! synonym search for 'VEI I HORTEN' on page 9 has too many words: 312
+2019-04-21 14:36:42.899 +00:00 [ERR] Warning! synonym search for 'VEI I SKI' on page 5 has too many words: 188
+2019-04-21 14:36:49.376 +00:00 [ERR] Warning! synonym search for 'VEI I SKI' on page 6 has too many words: 188
+2019-04-21 14:36:59.663 +00:00 [ERR] Warning! synonym search for 'VEI I SKI' on page 7 has too many words: 188
+2019-04-21 14:37:15.395 +00:00 [ERR] Warning! synonym search for 'VEI I SKI' on page 8 has too many words: 188
+2019-04-21 14:37:27.468 +00:00 [ERR] Warning! synonym search for 'VEI I SKI' on page 9 has too many words: 188
+2019-04-21 14:39:11.776 +00:00 [ERR] Warning! synonym search for 'VEI I LARVIK' on page 1 has too many words: 530
+2019-04-21 14:39:28.017 +00:00 [ERR] Warning! synonym search for 'VEI I LARVIK' on page 2 has too many words: 530
+2019-04-21 14:39:54.554 +00:00 [ERR] Warning! synonym search for 'VEI I LARVIK' on page 3 has too many words: 530
+2019-04-21 14:40:29.734 +00:00 [ERR] Warning! synonym search for 'VEI I LARVIK' on page 4 has too many words: 530
+2019-04-21 14:40:53.642 +00:00 [ERR] Warning! synonym search for 'VEI I LARVIK' on page 5 has too many words: 530
+2019-04-21 14:41:04.247 +00:00 [ERR] Warning! synonym search for 'VEI I LARVIK' on page 6 has too many words: 530
+2019-04-21 14:41:14.914 +00:00 [ERR] Warning! synonym search for 'VEI I LARVIK' on page 7 has too many words: 530
+2019-04-21 14:41:25.521 +00:00 [ERR] Warning! synonym search for 'VEI I LARVIK' on page 8 has too many words: 530
+2019-04-21 14:41:34.743 +00:00 [ERR] Warning! synonym search for 'VEI I LARVIK' on page 9 has too many words: 530
+2019-04-21 14:41:54.207 +00:00 [ERR] Warning! synonym search for 'VEI I MANDAL' on page 1 has too many words: 308
+2019-04-21 14:42:08.351 +00:00 [ERR] Warning! synonym search for 'VEI I MANDAL' on page 2 has too many words: 308
+2019-04-21 14:42:27.242 +00:00 [ERR] Warning! synonym search for 'VEI I MANDAL' on page 3 has too many words: 308
+2019-04-21 14:42:45.947 +00:00 [ERR] Warning! synonym search for 'VEI I MANDAL' on page 4 has too many words: 308
+2019-04-21 14:43:05.781 +00:00 [ERR] Warning! synonym search for 'VEI I MANDAL' on page 5 has too many words: 308
+2019-04-21 14:43:24.034 +00:00 [ERR] Warning! synonym search for 'VEI I MANDAL' on page 6 has too many words: 308
+2019-04-21 14:43:48.342 +00:00 [ERR] Warning! synonym search for 'VEI I MANDAL' on page 7 has too many words: 308
+2019-04-21 14:44:15.166 +00:00 [ERR] Warning! synonym search for 'VEI I MANDAL' on page 8 has too many words: 308
+2019-04-21 14:44:37.346 +00:00 [ERR] Warning! synonym search for 'VEI I MANDAL' on page 9 has too many words: 308
+2019-04-21 14:45:53.500 +00:00 [ERR] Warning! synonym search for 'VEI I NARVIK' on page 1 has too many words: 202
+2019-04-21 14:46:04.866 +00:00 [ERR] Warning! synonym search for 'VEI I NARVIK' on page 2 has too many words: 202
+2019-04-21 14:46:14.310 +00:00 [ERR] Warning! synonym search for 'VEI I NARVIK' on page 3 has too many words: 202
+2019-04-21 14:46:23.737 +00:00 [ERR] Warning! synonym search for 'VEI I NARVIK' on page 4 has too many words: 202
+2019-04-21 14:46:34.208 +00:00 [ERR] Warning! synonym search for 'VEI I NARVIK' on page 5 has too many words: 202
+2019-04-21 14:46:48.502 +00:00 [ERR] Warning! synonym search for 'VEI I NARVIK' on page 6 has too many words: 202
+2019-04-21 14:47:07.386 +00:00 [ERR] Warning! synonym search for 'VEI I NARVIK' on page 7 has too many words: 202
+2019-04-21 14:47:28.875 +00:00 [ERR] Warning! synonym search for 'VEI I NARVIK' on page 8 has too many words: 202
+2019-04-21 14:47:49.710 +00:00 [ERR] Warning! synonym search for 'VEI I NARVIK' on page 9 has too many words: 202
+2019-04-21 14:49:18.010 +00:00 [ERR] Warning! synonym search for 'VEKTENHET' on page 1 has too many words: 114
+2019-04-21 14:49:28.338 +00:00 [ERR] Warning! synonym search for 'VEKTENHET' on page 2 has too many words: 114
+2019-04-21 14:49:42.124 +00:00 [ERR] Warning! synonym search for 'VEKTENHET' on page 3 has too many words: 114
+2019-04-21 14:49:50.518 +00:00 [ERR] Warning! synonym search for 'VEKTENHET' on page 4 has too many words: 114
+2019-04-21 14:49:59.936 +00:00 [ERR] Warning! synonym search for 'VEKTENHET' on page 5 has too many words: 114
+2019-04-21 14:50:07.795 +00:00 [ERR] Warning! synonym search for 'VEKTENHET' on page 6 has too many words: 114
+2019-04-21 14:50:18.074 +00:00 [ERR] Warning! synonym search for 'VEKTENHET' on page 7 has too many words: 114
+2019-04-21 14:50:32.350 +00:00 [ERR] Warning! synonym search for 'VEKTENHET' on page 8 has too many words: 114
+2019-04-21 14:50:41.296 +00:00 [ERR] Warning! synonym search for 'VEKTENHET' on page 9 has too many words: 114
+2019-04-21 14:52:29.288 +00:00 [ERR] Warning! synonym search for 'VENDING' on page 1 has too many words: 126
+2019-04-21 14:52:40.876 +00:00 [ERR] Warning! synonym search for 'VENDING' on page 2 has too many words: 126
+2019-04-21 14:52:54.066 +00:00 [ERR] Warning! synonym search for 'VENDING' on page 3 has too many words: 126
+2019-04-21 14:53:05.551 +00:00 [ERR] Warning! synonym search for 'VENDING' on page 4 has too many words: 126
+2019-04-21 14:53:15.366 +00:00 [ERR] Warning! synonym search for 'VENDING' on page 5 has too many words: 126
+2019-04-21 14:53:26.928 +00:00 [ERR] Warning! synonym search for 'VENDING' on page 6 has too many words: 126
+2019-04-21 14:53:38.077 +00:00 [ERR] Warning! synonym search for 'VENDING' on page 7 has too many words: 126
+2019-04-21 14:53:49.224 +00:00 [ERR] Warning! synonym search for 'VENDING' on page 8 has too many words: 126
+2019-04-21 14:54:00.190 +00:00 [ERR] Warning! synonym search for 'VENDING' on page 9 has too many words: 126
+2019-04-21 14:55:07.117 +00:00 [ERR] Warning! synonym search for 'VEI I TROMSØ' on page 1 has too many words: 614
+2019-04-21 14:55:16.452 +00:00 [ERR] Warning! Pattern search for 'vel??????' on page 1 has too many words: 126
+2019-04-21 14:55:17.210 +00:00 [ERR] Warning! synonym search for 'VEI I TROMSØ' on page 2 has too many words: 614
+2019-04-21 14:55:29.675 +00:00 [ERR] Warning! synonym search for 'VEI I TROMSØ' on page 3 has too many words: 614
+2019-04-21 14:55:43.461 +00:00 [ERR] Warning! synonym search for 'VEI I TROMSØ' on page 4 has too many words: 614
+2019-04-21 14:55:57.089 +00:00 [ERR] Warning! synonym search for 'VEI I TROMSØ' on page 5 has too many words: 614
+2019-04-21 14:56:37.928 +00:00 [ERR] Warning! synonym search for 'VEI I TROMSØ' on page 6 has too many words: 614
+2019-04-21 14:56:53.162 +00:00 [ERR] Warning! synonym search for 'VEI I TROMSØ' on page 7 has too many words: 614
+2019-04-21 14:57:10.078 +00:00 [ERR] Warning! synonym search for 'VEI I TROMSØ' on page 8 has too many words: 614
+2019-04-21 14:57:24.495 +00:00 [ERR] Warning! synonym search for 'VEI I TROMSØ' on page 9 has too many words: 614
+2019-04-21 14:59:02.213 +00:00 [ERR] Warning! Pattern search for 'vel??????' on page 2 has too many words: 126
+2019-04-21 15:04:40.062 +00:00 [ERR] Warning! Pattern search for 'vel??????' on page 3 has too many words: 126
+2019-04-21 15:06:41.871 +00:00 [ERR] Warning! synonym search for 'VENNLIG' on page 1 has too many words: 136
+2019-04-21 15:07:06.053 +00:00 [ERR] Warning! synonym search for 'VENNLIG' on page 2 has too many words: 136
+2019-04-21 15:07:13.388 +00:00 [ERR] Warning! synonym search for 'VENNLIG' on page 3 has too many words: 136
+2019-04-21 15:07:25.277 +00:00 [ERR] Warning! synonym search for 'VENNLIG' on page 4 has too many words: 136
+2019-04-21 15:08:04.680 +00:00 [ERR] Warning! synonym search for 'VENNLIG' on page 5 has too many words: 136
+2019-04-21 15:08:36.299 +00:00 [ERR] Warning! synonym search for 'VENNLIG' on page 6 has too many words: 136
+2019-04-21 15:09:25.625 +00:00 [ERR] Warning! synonym search for 'VENNLIG' on page 7 has too many words: 136
+2019-04-21 15:09:34.574 +00:00 [ERR] Warning! synonym search for 'VENNLIG' on page 8 has too many words: 136
+2019-04-21 15:09:42.067 +00:00 [ERR] Warning! synonym search for 'VENNLIG' on page 9 has too many words: 136
+2019-04-21 15:10:16.436 +00:00 [ERR] Warning! Pattern search for 'vel??????' on page 4 has too many words: 126
+2019-04-21 15:13:23.048 +00:00 [ERR] Warning! Pattern search for 'vel??????' on page 5 has too many words: 126
+2019-04-21 15:17:25.543 +00:00 [ERR] Warning! Pattern search for 'vel??????' on page 6 has too many words: 126
+2019-04-21 15:23:44.824 +00:00 [ERR] Warning! Pattern search for 'vel??????' on page 7 has too many words: 126
+2019-04-21 15:29:43.137 +00:00 [ERR] Warning! Pattern search for 'vel??????' on page 8 has too many words: 126
+2019-04-21 15:31:20.300 +00:00 [ERR] Warning! synonym search for 'VINTERLIG FENOMEN' on page 1 has too many words: 201
+2019-04-21 15:31:40.567 +00:00 [ERR] Warning! synonym search for 'VINTERLIG FENOMEN' on page 2 has too many words: 201
+2019-04-21 15:32:13.004 +00:00 [ERR] Warning! synonym search for 'VINTERLIG FENOMEN' on page 3 has too many words: 201
+2019-04-21 15:32:24.225 +00:00 [ERR] Warning! synonym search for 'VINTERLIG FENOMEN' on page 4 has too many words: 201
+2019-04-21 15:32:43.878 +00:00 [ERR] Warning! synonym search for 'VINTERLIG FENOMEN' on page 5 has too many words: 201
+2019-04-21 15:33:16.284 +00:00 [ERR] Warning! synonym search for 'VINTERLIG FENOMEN' on page 6 has too many words: 201
+2019-04-21 15:33:34.755 +00:00 [ERR] Warning! synonym search for 'VINTERLIG FENOMEN' on page 7 has too many words: 201
+2019-04-21 15:33:54.212 +00:00 [ERR] Warning! synonym search for 'VINTERLIG FENOMEN' on page 8 has too many words: 201
+2019-04-21 15:34:33.845 +00:00 [ERR] Warning! synonym search for 'VINTERLIG FENOMEN' on page 9 has too many words: 201
+2019-04-21 15:35:08.697 +00:00 [ERR] Warning! Pattern search for 'vel??????' on page 9 has too many words: 126
+2019-04-21 15:40:01.292 +00:00 [ERR] Warning! synonym search for 'VERKENE' on page 1 has too many words: 140
+2019-04-21 15:40:28.151 +00:00 [ERR] Warning! synonym search for 'VERKENE' on page 2 has too many words: 140
+2019-04-21 15:40:45.927 +00:00 [ERR] Warning! synonym search for 'VERKENE' on page 3 has too many words: 140
+2019-04-21 15:41:23.940 +00:00 [ERR] Warning! synonym search for 'VERKENE' on page 4 has too many words: 140
+2019-04-21 15:41:43.409 +00:00 [ERR] Warning! synonym search for 'VERKENE' on page 5 has too many words: 140
+2019-04-21 15:42:01.440 +00:00 [ERR] Warning! synonym search for 'VERKENE' on page 6 has too many words: 140
+2019-04-21 15:42:43.369 +00:00 [ERR] Warning! synonym search for 'VERKENE' on page 7 has too many words: 140
+2019-04-21 15:42:51.146 +00:00 [ERR] Warning! synonym search for 'VERKENE' on page 8 has too many words: 140
+2019-04-21 15:42:59.004 +00:00 [ERR] Warning! synonym search for 'VERKENE' on page 9 has too many words: 140
+2019-04-21 15:44:27.954 +00:00 [ERR] Warning! synonym search for 'VERKERS' on page 1 has too many words: 122
+2019-04-21 15:45:17.020 +00:00 [ERR] Warning! synonym search for 'VERKERS' on page 2 has too many words: 122
+2019-04-21 15:45:36.650 +00:00 [ERR] Warning! synonym search for 'VERKERS' on page 3 has too many words: 122
+2019-04-21 15:46:05.697 +00:00 [ERR] Warning! synonym search for 'VERKERS' on page 4 has too many words: 122
+2019-04-21 15:46:26.787 +00:00 [ERR] Warning! synonym search for 'VERKERS' on page 5 has too many words: 122
+2019-04-21 15:46:41.492 +00:00 [ERR] Warning! synonym search for 'VERKERS' on page 6 has too many words: 122
+2019-04-21 15:46:54.737 +00:00 [ERR] Warning! synonym search for 'VERKERS' on page 7 has too many words: 122
+2019-04-21 15:47:11.878 +00:00 [ERR] Warning! synonym search for 'VERKERS' on page 8 has too many words: 122
+2019-04-21 15:47:44.103 +00:00 [ERR] Warning! synonym search for 'VERKERS' on page 9 has too many words: 122
+2019-04-21 15:48:56.980 +00:00 [ERR] Warning! synonym search for 'VERKETS' on page 1 has too many words: 122
+2019-04-21 15:49:33.374 +00:00 [ERR] Warning! synonym search for 'VERKETS' on page 2 has too many words: 122
+2019-04-21 15:50:04.243 +00:00 [ERR] Warning! synonym search for 'VERKETS' on page 3 has too many words: 122
+2019-04-21 15:50:28.300 +00:00 [ERR] Warning! synonym search for 'VERKETS' on page 4 has too many words: 122
+2019-04-21 15:50:43.552 +00:00 [ERR] Warning! synonym search for 'VERKETS' on page 5 has too many words: 122
+2019-04-21 15:51:17.858 +00:00 [ERR] Warning! synonym search for 'VERKETS' on page 6 has too many words: 122
+2019-04-21 15:51:31.093 +00:00 [ERR] Warning! synonym search for 'VERKETS' on page 7 has too many words: 122
+2019-04-21 15:51:50.121 +00:00 [ERR] Warning! synonym search for 'VERKETS' on page 8 has too many words: 122
+2019-04-21 15:52:24.591 +00:00 [ERR] Warning! synonym search for 'VERKETS' on page 9 has too many words: 122
+2019-04-21 15:53:27.407 +00:00 [ERR] Warning! synonym search for 'VERKTØY' on page 1 has too many words: 611
+2019-04-21 15:53:36.916 +00:00 [ERR] Warning! synonym search for 'VERKTØY' on page 2 has too many words: 611
+2019-04-21 15:54:10.409 +00:00 [ERR] Warning! synonym search for 'VERKTØY' on page 3 has too many words: 611
+2019-04-21 15:54:21.717 +00:00 [ERR] Warning! synonym search for 'VERKTØY' on page 4 has too many words: 611
+2019-04-21 15:54:49.241 +00:00 [ERR] Warning! synonym search for 'VERKTØY' on page 5 has too many words: 611
+2019-04-21 15:55:23.904 +00:00 [ERR] Warning! synonym search for 'VERKTØY' on page 6 has too many words: 611
+2019-04-21 15:55:57.071 +00:00 [ERR] Warning! synonym search for 'VERKTØY' on page 7 has too many words: 611
+2019-04-21 15:56:29.785 +00:00 [ERR] Warning! synonym search for 'VERKTØY' on page 8 has too many words: 611
+2019-04-21 15:56:42.993 +00:00 [ERR] Warning! synonym search for 'VERKTØY' on page 9 has too many words: 611
+2019-04-21 16:22:54.588 +00:00 [ERR] Warning! synonym search for 'VESENAS' on page 1 has too many words: 115
+2019-04-21 16:23:30.611 +00:00 [ERR] Warning! synonym search for 'VESENAS' on page 2 has too many words: 115
+2019-04-21 16:23:59.289 +00:00 [ERR] Warning! synonym search for 'VESENAS' on page 3 has too many words: 115
+2019-04-21 16:24:18.492 +00:00 [ERR] Warning! synonym search for 'VESENAS' on page 4 has too many words: 115
+2019-04-21 16:24:54.820 +00:00 [ERR] Warning! synonym search for 'VESENAS' on page 5 has too many words: 115
+2019-04-21 16:25:33.014 +00:00 [ERR] Warning! synonym search for 'VESENAS' on page 6 has too many words: 115
+2019-04-21 16:26:14.762 +00:00 [ERR] Warning! synonym search for 'VESENAS' on page 7 has too many words: 115
+2019-04-21 16:26:59.359 +00:00 [ERR] Warning! synonym search for 'VESENAS' on page 8 has too many words: 115
+2019-04-21 16:27:36.397 +00:00 [ERR] Warning! synonym search for 'VESENAS' on page 9 has too many words: 115
+2019-04-21 16:27:43.785 +00:00 [ERR] Warning! synonym search for 'VESENER' on page 1 has too many words: 156
+2019-04-21 16:27:53.894 +00:00 [ERR] Warning! synonym search for 'VESENER' on page 2 has too many words: 156
+2019-04-21 16:28:12.718 +00:00 [ERR] Warning! synonym search for 'VESENER' on page 3 has too many words: 156
+2019-04-21 16:28:38.924 +00:00 [ERR] Warning! synonym search for 'VESENER' on page 4 has too many words: 156
+2019-04-21 16:29:14.019 +00:00 [ERR] Warning! synonym search for 'VESENER' on page 5 has too many words: 156
+2019-04-21 16:29:53.195 +00:00 [ERR] Warning! synonym search for 'VESENER' on page 6 has too many words: 156
+2019-04-21 16:30:30.233 +00:00 [ERR] Warning! synonym search for 'VESENER' on page 7 has too many words: 156
+2019-04-21 16:30:31.953 +00:00 [ERR] Warning! Pattern search for 'ver??????' on page 1 has too many words: 136
+2019-04-21 16:30:39.076 +00:00 [ERR] Warning! synonym search for 'VESENER' on page 8 has too many words: 156
+2019-04-21 16:31:02.212 +00:00 [ERR] Warning! synonym search for 'VESENER' on page 9 has too many words: 156
+2019-04-21 16:31:35.708 +00:00 [ERR] Warning! synonym search for 'VESENET' on page 1 has too many words: 164
+2019-04-21 16:32:14.551 +00:00 [ERR] Warning! synonym search for 'VESENET' on page 2 has too many words: 164
+2019-04-21 16:32:24.883 +00:00 [ERR] Warning! synonym search for 'VESENET' on page 3 has too many words: 164
+2019-04-21 16:32:39.372 +00:00 [ERR] Warning! synonym search for 'VESENET' on page 4 has too many words: 164
+2019-04-21 16:33:09.633 +00:00 [ERR] Warning! synonym search for 'VESENET' on page 5 has too many words: 164
+2019-04-21 16:33:45.820 +00:00 [ERR] Warning! synonym search for 'VESENET' on page 6 has too many words: 164
+2019-04-21 16:34:24.536 +00:00 [ERR] Warning! synonym search for 'VESENET' on page 7 has too many words: 164
+2019-04-21 16:35:04.442 +00:00 [ERR] Warning! synonym search for 'VESENET' on page 8 has too many words: 164
+2019-04-21 16:35:32.166 +00:00 [ERR] Warning! synonym search for 'VESENET' on page 9 has too many words: 164
+2019-04-21 16:37:59.542 +00:00 [ERR] Warning! Pattern search for 'ver??????' on page 2 has too many words: 136
+2019-04-21 16:40:39.542 +00:00 [ERR] Warning! Pattern search for 'ver?????????' on page 1 has too many words: 146
+2019-04-21 16:44:17.928 +00:00 [ERR] Warning! Pattern search for 'ver?????????' on page 2 has too many words: 146
+2019-04-21 16:48:20.750 +00:00 [ERR] Warning! Pattern search for 'ver?????????' on page 3 has too many words: 146
+2019-04-21 16:48:28.925 +00:00 [ERR] Warning! Pattern search for 'ver??????' on page 3 has too many words: 136
+2019-04-21 16:52:49.985 +00:00 [ERR] Warning! Pattern search for 'ver?????????' on page 4 has too many words: 146
+2019-04-21 16:55:44.068 +00:00 [ERR] Warning! Pattern search for 'ver??????' on page 4 has too many words: 136
+2019-04-21 17:02:15.296 +00:00 [ERR] Warning! Pattern search for 'ver?????????' on page 5 has too many words: 146
+2019-04-21 17:03:29.231 +00:00 [ERR] Warning! Pattern search for 'ver??????' on page 5 has too many words: 136
+2019-04-21 17:09:00.164 +00:00 [ERR] Warning! Pattern search for 'ver?????????' on page 6 has too many words: 146
+2019-04-21 17:10:43.628 +00:00 [ERR] Warning! Pattern search for 'ver??????' on page 6 has too many words: 136
+2019-04-21 17:15:40.958 +00:00 [ERR] Warning! Pattern search for 'ver?????????' on page 7 has too many words: 146
+2019-04-21 17:17:56.244 +00:00 [ERR] Warning! synonym search for 'VERKTØYET' on page 1 has too many words: 109
+2019-04-21 17:18:39.314 +00:00 [ERR] Warning! synonym search for 'VERKTØYET' on page 2 has too many words: 109
+2019-04-21 17:18:43.954 +00:00 [ERR] Warning! synonym search for 'VERKTØYET' on page 3 has too many words: 109
+2019-04-21 17:18:48.372 +00:00 [ERR] Warning! synonym search for 'VERKTØYET' on page 4 has too many words: 109
+2019-04-21 17:18:52.030 +00:00 [ERR] Warning! synonym search for 'VERKTØYET' on page 5 has too many words: 109
+2019-04-21 17:18:55.449 +00:00 [ERR] Warning! synonym search for 'VERKTØYET' on page 6 has too many words: 109
+2019-04-21 17:18:59.737 +00:00 [ERR] Warning! synonym search for 'VERKTØYET' on page 7 has too many words: 109
+2019-04-21 17:19:04.362 +00:00 [ERR] Warning! Pattern search for 'ver?????????' on page 8 has too many words: 146
+2019-04-21 17:19:04.666 +00:00 [ERR] Warning! synonym search for 'VERKTØYET' on page 8 has too many words: 109
+2019-04-21 17:19:08.260 +00:00 [ERR] Warning! synonym search for 'VERKTØYET' on page 9 has too many words: 109
+2019-04-21 17:19:44.733 +00:00 [ERR] Warning! Pattern search for 'ver??????' on page 7 has too many words: 136
+2019-04-21 17:19:48.195 +00:00 [ERR] Warning! Pattern search for 'ver?????????' on page 9 has too many words: 146
+2019-04-21 17:20:20.798 +00:00 [ERR] Warning! Pattern search for 'ver??????' on page 8 has too many words: 136
+2019-04-21 17:21:04.978 +00:00 [ERR] Warning! Pattern search for 'ver??????' on page 9 has too many words: 136
+2019-04-21 17:22:11.889 +00:00 [ERR] Warning! synonym search for 'VESENENES' on page 1 has too many words: 115
+2019-04-21 17:22:16.047 +00:00 [ERR] Warning! synonym search for 'VESENENES' on page 2 has too many words: 115
+2019-04-21 17:22:19.843 +00:00 [ERR] Warning! synonym search for 'VESENENES' on page 3 has too many words: 115
+2019-04-21 17:22:23.590 +00:00 [ERR] Warning! synonym search for 'VESENENES' on page 4 has too many words: 115
+2019-04-21 17:22:27.361 +00:00 [ERR] Warning! synonym search for 'VESENENES' on page 5 has too many words: 115
+2019-04-21 17:22:31.486 +00:00 [ERR] Warning! synonym search for 'VESENENES' on page 6 has too many words: 115
+2019-04-21 17:22:35.694 +00:00 [ERR] Warning! synonym search for 'VESENENES' on page 7 has too many words: 115
+2019-04-21 17:22:39.441 +00:00 [ERR] Warning! synonym search for 'VESENENES' on page 8 has too many words: 115
+2019-04-21 17:22:43.454 +00:00 [ERR] Warning! synonym search for 'VESENENES' on page 9 has too many words: 115
+2019-04-21 17:35:54.438 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-21 17:36:23.143 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 13 / 12
+2019-04-21 17:36:30.819 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 14 / 13
+2019-04-21 17:36:30.943 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 17 / 16
+2019-04-21 18:00:04.740 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-21 18:00:35.271 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 14 / 13
+2019-04-21 18:00:36.252 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 13 / 12
+2019-04-21 18:00:36.414 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 17 / 16
+2019-04-21 18:46:03.706 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 18 / 17
+2019-04-21 18:50:00.390 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 1 has too many words: 216
+2019-04-21 18:50:04.323 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 2 has too many words: 216
+2019-04-21 18:50:08.084 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 3 has too many words: 216
+2019-04-21 18:50:12.667 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 4 has too many words: 216
+2019-04-21 18:50:17.035 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 5 has too many words: 216
+2019-04-21 18:50:21.465 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 6 has too many words: 216
+2019-04-21 18:50:25.902 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 7 has too many words: 216
+2019-04-21 18:50:30.467 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 8 has too many words: 216
+2019-04-21 18:50:34.984 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 9 has too many words: 216
+2019-04-21 18:52:20.458 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 1 has too many words: 111
+2019-04-21 18:52:24.052 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 2 has too many words: 111
+2019-04-21 18:52:27.888 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 3 has too many words: 111
+2019-04-21 18:52:31.926 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 4 has too many words: 111
+2019-04-21 18:52:35.466 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 5 has too many words: 111
+2019-04-21 18:52:39.305 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 6 has too many words: 111
+2019-04-21 18:52:43.343 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 7 has too many words: 111
+2019-04-21 18:52:47.370 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 8 has too many words: 111
+2019-04-21 18:52:50.883 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 9 has too many words: 111
+2019-04-21 19:05:54.690 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 1 has too many words: 140
+2019-04-21 19:05:59.337 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 2 has too many words: 140
+2019-04-21 19:06:03.639 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 3 has too many words: 140
+2019-04-21 19:06:08.148 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 4 has too many words: 140
+2019-04-21 19:06:12.398 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 5 has too many words: 140
+2019-04-21 19:06:16.890 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 6 has too many words: 140
+2019-04-21 19:06:21.307 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 7 has too many words: 140
+2019-04-21 19:06:25.632 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 8 has too many words: 140
+2019-04-21 19:06:30.043 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 9 has too many words: 140
+2019-04-21 19:10:51.199 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 8 / 7
+2019-04-21 19:24:04.289 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 10 / 9
+2019-04-21 19:24:07.964 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-21 19:24:40.551 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 17 / 16
+2019-04-21 19:35:35.636 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-21 19:36:10.843 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 17 / 16
+2019-04-21 21:40:43.641 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-21 21:40:52.235 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-21 21:41:24.048 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 17 / 16
+2019-04-21 22:52:17.776 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 1 has too many words: 216
+2019-04-21 22:52:21.883 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 2 has too many words: 216
+2019-04-21 22:52:25.451 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 3 has too many words: 216
+2019-04-21 22:52:29.547 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 4 has too many words: 216
+2019-04-21 22:52:33.388 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 5 has too many words: 216
+2019-04-21 22:52:37.338 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 6 has too many words: 216
+2019-04-21 22:52:41.703 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 7 has too many words: 216
+2019-04-21 22:52:45.977 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 8 has too many words: 216
+2019-04-21 22:52:50.334 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 9 has too many words: 216
+2019-04-21 22:54:00.190 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 13 / 12
+2019-04-21 22:54:26.955 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 1 has too many words: 111
+2019-04-21 22:54:29.813 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 2 has too many words: 111
+2019-04-21 22:54:32.515 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 3 has too many words: 111
+2019-04-21 22:54:35.265 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 4 has too many words: 111
+2019-04-21 22:54:37.994 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 5 has too many words: 111
+2019-04-21 22:54:40.661 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 6 has too many words: 111
+2019-04-21 22:54:43.480 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 7 has too many words: 111
+2019-04-21 22:54:46.196 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 8 has too many words: 111
+2019-04-21 22:54:49.035 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 9 has too many words: 111
+2019-04-21 23:08:22.844 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 8 / 7
+2019-04-21 23:08:26.230 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-21 23:08:56.139 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 17 / 16
+2019-04-21 23:43:55.636 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-21 23:44:30.905 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 17 / 16
+2019-04-22 00:00:05.801 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-22 00:00:37.755 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 17 / 16
+2019-04-22 01:19:01.965 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 1 has too many words: 140
+2019-04-22 01:19:09.171 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 2 has too many words: 140
+2019-04-22 01:19:14.982 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 3 has too many words: 140
+2019-04-22 01:19:20.725 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 4 has too many words: 140
+2019-04-22 01:19:27.434 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 5 has too many words: 140
+2019-04-22 01:19:32.817 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 6 has too many words: 140
+2019-04-22 01:19:38.641 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 7 has too many words: 140
+2019-04-22 01:19:44.719 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 8 has too many words: 140
+2019-04-22 01:19:49.831 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 9 has too many words: 140
+2019-04-22 01:23:25.713 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 1 has too many words: 216
+2019-04-22 01:23:31.112 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 2 has too many words: 216
+2019-04-22 01:23:36.639 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 3 has too many words: 216
+2019-04-22 01:23:43.571 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 4 has too many words: 216
+2019-04-22 01:23:49.734 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 5 has too many words: 216
+2019-04-22 01:23:57.504 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 6 has too many words: 216
+2019-04-22 01:24:03.152 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 7 has too many words: 216
+2019-04-22 01:24:09.054 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 8 has too many words: 216
+2019-04-22 01:24:15.649 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 9 has too many words: 216
+2019-04-22 01:26:52.598 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 1 has too many words: 111
+2019-04-22 01:26:57.801 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 2 has too many words: 111
+2019-04-22 01:27:03.392 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 3 has too many words: 111
+2019-04-22 01:27:10.023 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 4 has too many words: 111
+2019-04-22 01:27:15.246 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 5 has too many words: 111
+2019-04-22 01:27:20.431 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 6 has too many words: 111
+2019-04-22 01:27:25.709 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 7 has too many words: 111
+2019-04-22 01:27:31.385 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 8 has too many words: 111
+2019-04-22 01:27:37.010 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 9 has too many words: 111
+2019-04-22 01:37:56.069 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 14 / 13
+2019-04-22 01:41:13.251 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 10 / 9
+2019-04-22 01:46:50.192 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 8 / 7
+2019-04-22 01:46:53.674 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-22 01:47:26.701 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 17 / 16
+2019-04-22 02:54:55.258 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 1 has too many words: 140
+2019-04-22 02:54:58.756 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 2 has too many words: 140
+2019-04-22 02:54:59.090 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 18 / 17
+2019-04-22 02:55:01.619 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 3 has too many words: 140
+2019-04-22 02:55:04.551 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 4 has too many words: 140
+2019-04-22 02:55:07.302 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 5 has too many words: 140
+2019-04-22 02:55:10.102 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 6 has too many words: 140
+2019-04-22 02:55:12.913 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 7 has too many words: 140
+2019-04-22 02:55:15.665 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 8 has too many words: 140
+2019-04-22 02:55:18.430 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 9 has too many words: 140
+2019-04-22 03:06:54.656 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 10 / 9
+2019-04-22 03:06:57.951 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-22 03:07:29.045 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 17 / 16
+2019-04-22 04:28:54.783 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 14 / 13
+2019-04-22 04:32:37.966 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 1 has too many words: 216
+2019-04-22 04:32:41.985 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 2 has too many words: 216
+2019-04-22 04:32:45.484 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 3 has too many words: 216
+2019-04-22 04:32:49.710 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 4 has too many words: 216
+2019-04-22 04:32:54.121 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 5 has too many words: 216
+2019-04-22 04:32:58.121 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 6 has too many words: 216
+2019-04-22 04:33:01.749 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 7 has too many words: 216
+2019-04-22 04:33:05.485 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 8 has too many words: 216
+2019-04-22 04:33:09.015 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 9 has too many words: 216
+2019-04-22 04:34:29.770 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 18 / 17
+2019-04-22 04:34:48.561 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 1 has too many words: 111
+2019-04-22 04:34:51.703 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 2 has too many words: 111
+2019-04-22 04:34:54.603 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 3 has too many words: 111
+2019-04-22 04:34:57.383 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 4 has too many words: 111
+2019-04-22 04:35:00.109 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 5 has too many words: 111
+2019-04-22 04:35:03.011 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 6 has too many words: 111
+2019-04-22 04:35:05.748 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 7 has too many words: 111
+2019-04-22 04:35:08.556 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 8 has too many words: 111
+2019-04-22 04:35:11.402 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 9 has too many words: 111
+2019-04-22 04:49:00.558 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 8 / 7
+2019-04-22 04:49:03.957 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-22 04:49:36.961 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 17 / 16
+2019-04-22 06:00:04.502 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-22 06:00:36.311 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 17 / 16
+2019-04-22 07:02:36.187 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 1 has too many words: 216
+2019-04-22 07:02:41.816 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 2 has too many words: 216
+2019-04-22 07:02:47.244 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 3 has too many words: 216
+2019-04-22 07:02:52.506 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 4 has too many words: 216
+2019-04-22 07:02:58.162 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 5 has too many words: 216
+2019-04-22 07:03:05.204 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 6 has too many words: 216
+2019-04-22 07:03:11.196 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 7 has too many words: 216
+2019-04-22 07:03:16.777 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 8 has too many words: 216
+2019-04-22 07:03:21.622 +00:00 [ERR] Warning! synonym search for 'ÅPENBAR' on page 9 has too many words: 216
+2019-04-22 07:05:18.940 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 1 has too many words: 140
+2019-04-22 07:05:24.583 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 2 has too many words: 140
+2019-04-22 07:05:31.158 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 3 has too many words: 140
+2019-04-22 07:05:36.415 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 4 has too many words: 140
+2019-04-22 07:05:41.636 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 5 has too many words: 140
+2019-04-22 07:05:46.982 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 6 has too many words: 140
+2019-04-22 07:05:52.448 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 7 has too many words: 140
+2019-04-22 07:05:57.391 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 8 has too many words: 140
+2019-04-22 07:06:02.785 +00:00 [ERR] Warning! synonym search for 'ÅPNINGENE' on page 9 has too many words: 140
+2019-04-22 07:06:03.941 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 1 has too many words: 111
+2019-04-22 07:06:09.376 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 2 has too many words: 111
+2019-04-22 07:06:15.436 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 3 has too many words: 111
+2019-04-22 07:06:21.235 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 4 has too many words: 111
+2019-04-22 07:06:28.261 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 5 has too many words: 111
+2019-04-22 07:06:33.447 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 6 has too many words: 111
+2019-04-22 07:06:38.818 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 7 has too many words: 111
+2019-04-22 07:06:44.150 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 8 has too many words: 111
+2019-04-22 07:06:49.582 +00:00 [ERR] Warning! synonym search for 'ÅPNINGA' on page 9 has too many words: 111
+2019-04-22 07:11:29.318 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 18 / 17
+2019-04-22 07:24:11.830 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 10 / 9
+2019-04-22 07:26:26.419 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 8 / 7
+2019-04-22 07:26:29.951 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-22 07:27:01.484 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 17 / 16
+2019-04-22 08:23:47.593 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 18 / 17
+2019-04-22 08:28:42.386 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 14 / 13
+2019-04-22 08:28:58.383 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 13 / 12
+2019-04-22 08:29:01.818 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-22 08:29:34.040 +00:00 [ERR] Warning! Quitting since the current letter length > letter count: 17 / 16
+2019-04-22 09:26:35.882 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-22 09:26:42.225 +00:00 [ERR] Using scraper config - site: 'Kryssord', continue with last word: 'false', from/to letter count: 1-20.
+2019-04-22 09:28:34.405 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-22 09:28:38.467 +00:00 [ERR] Using scraper config - site: 'Kryssord', continue with last word: 'false', from/to letter count: 1-20.
+2019-04-22 09:53:19.030 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK BY' on page 1 has too many words: 3134
+2019-04-22 09:53:25.817 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK BY' on page 2 has too many words: 3134
+2019-04-22 09:53:31.467 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK BY' on page 3 has too many words: 3134
+2019-04-22 09:53:37.075 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK BY' on page 4 has too many words: 3134
+2019-04-22 09:53:37.649 +00:00 [ERR] Warning! synonym search for 'ADAMS' on page 1 has too many words: 199
+2019-04-22 09:53:42.900 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK BY' on page 5 has too many words: 3134
+2019-04-22 09:53:43.560 +00:00 [ERR] Warning! synonym search for 'ADAMS' on page 2 has too many words: 199
+2019-04-22 09:53:48.561 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK BY' on page 6 has too many words: 3134
+2019-04-22 09:53:48.630 +00:00 [ERR] Warning! synonym search for 'ADAMS' on page 3 has too many words: 199
+2019-04-22 09:53:54.607 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK BY' on page 7 has too many words: 3134
+2019-04-22 09:53:54.697 +00:00 [ERR] Warning! synonym search for 'ADAMS' on page 4 has too many words: 199
+2019-04-22 09:54:00.236 +00:00 [ERR] Warning! synonym search for 'ADAMS' on page 5 has too many words: 199
+2019-04-22 09:54:00.747 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK BY' on page 8 has too many words: 3134
+2019-04-22 09:54:05.675 +00:00 [ERR] Warning! synonym search for 'ADAMS' on page 6 has too many words: 199
+2019-04-22 09:54:06.707 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK BY' on page 9 has too many words: 3134
+2019-04-22 09:54:11.915 +00:00 [ERR] Warning! synonym search for 'ADAMS' on page 7 has too many words: 199
+2019-04-22 09:54:17.612 +00:00 [ERR] Warning! synonym search for 'ADAMS' on page 8 has too many words: 199
+2019-04-22 09:54:22.962 +00:00 [ERR] Warning! synonym search for 'ADAMS' on page 9 has too many words: 199
+2019-04-22 10:06:45.985 +00:00 [ERR] Warning! synonym search for 'AFTEN' on page 1 has too many words: 140
+2019-04-22 10:06:51.511 +00:00 [ERR] Warning! synonym search for 'AFTEN' on page 2 has too many words: 140
+2019-04-22 10:06:56.706 +00:00 [ERR] Warning! synonym search for 'AFTEN' on page 3 has too many words: 140
+2019-04-22 10:07:03.964 +00:00 [ERR] Warning! synonym search for 'AFTEN' on page 4 has too many words: 140
+2019-04-22 10:07:09.149 +00:00 [ERR] Warning! synonym search for 'AFTEN' on page 5 has too many words: 140
+2019-04-22 10:07:14.600 +00:00 [ERR] Warning! synonym search for 'AFTEN' on page 6 has too many words: 140
+2019-04-22 10:07:21.163 +00:00 [ERR] Warning! synonym search for 'AFTEN' on page 7 has too many words: 140
+2019-04-22 10:07:26.694 +00:00 [ERR] Warning! synonym search for 'AFTEN' on page 8 has too many words: 140
+2019-04-22 10:07:32.607 +00:00 [ERR] Warning! synonym search for 'AFTEN' on page 9 has too many words: 140
+2019-04-22 10:11:11.708 +00:00 [ERR] Warning! synonym search for 'AGENT' on page 1 has too many words: 115
+2019-04-22 10:11:18.259 +00:00 [ERR] Warning! synonym search for 'AGENT' on page 2 has too many words: 115
+2019-04-22 10:11:23.738 +00:00 [ERR] Warning! synonym search for 'AGENT' on page 3 has too many words: 115
+2019-04-22 10:11:29.291 +00:00 [ERR] Warning! synonym search for 'AGENT' on page 4 has too many words: 115
+2019-04-22 10:11:35.259 +00:00 [ERR] Warning! synonym search for 'AGENT' on page 5 has too many words: 115
+2019-04-22 10:11:40.954 +00:00 [ERR] Warning! synonym search for 'AGENT' on page 6 has too many words: 115
+2019-04-22 10:11:46.889 +00:00 [ERR] Warning! synonym search for 'AGENT' on page 7 has too many words: 115
+2019-04-22 10:11:52.654 +00:00 [ERR] Warning! synonym search for 'AGENT' on page 8 has too many words: 115
+2019-04-22 10:11:57.732 +00:00 [ERR] Warning! synonym search for 'AGENT' on page 9 has too many words: 115
+2019-04-22 10:39:19.289 +00:00 [ERR] Warning! synonym search for 'AKTER' on page 1 has too many words: 150
+2019-04-22 10:39:25.535 +00:00 [ERR] Warning! synonym search for 'AKTER' on page 2 has too many words: 150
+2019-04-22 10:39:32.018 +00:00 [ERR] Warning! synonym search for 'AKTER' on page 3 has too many words: 150
+2019-04-22 10:39:37.297 +00:00 [ERR] Warning! synonym search for 'AKTER' on page 4 has too many words: 150
+2019-04-22 10:39:44.016 +00:00 [ERR] Warning! synonym search for 'AKTER' on page 5 has too many words: 150
+2019-04-22 10:39:49.445 +00:00 [ERR] Warning! synonym search for 'AKTER' on page 6 has too many words: 150
+2019-04-22 10:39:54.691 +00:00 [ERR] Warning! synonym search for 'AKTER' on page 7 has too many words: 150
+2019-04-22 10:40:00.754 +00:00 [ERR] Warning! synonym search for 'AKTER' on page 8 has too many words: 150
+2019-04-22 10:40:06.827 +00:00 [ERR] Warning! synonym search for 'AKTER' on page 9 has too many words: 150
+2019-04-22 10:40:22.263 +00:00 [ERR] Warning! synonym search for 'AKVARIEFISK' on page 1 has too many words: 325
+2019-04-22 10:40:28.394 +00:00 [ERR] Warning! synonym search for 'AKVARIEFISK' on page 2 has too many words: 325
+2019-04-22 10:40:34.357 +00:00 [ERR] Warning! synonym search for 'AKVARIEFISK' on page 3 has too many words: 325
+2019-04-22 10:40:40.285 +00:00 [ERR] Warning! synonym search for 'AKVARIEFISK' on page 4 has too many words: 325
+2019-04-22 10:40:45.898 +00:00 [ERR] Warning! synonym search for 'AKVARIEFISK' on page 5 has too many words: 325
+2019-04-22 10:40:48.028 +00:00 [ERR] Warning! synonym search for 'AKTET' on page 1 has too many words: 210
+2019-04-22 10:40:52.204 +00:00 [ERR] Warning! synonym search for 'AKVARIEFISK' on page 6 has too many words: 325
+2019-04-22 10:40:53.916 +00:00 [ERR] Warning! synonym search for 'AKTET' on page 2 has too many words: 210
+2019-04-22 10:40:58.277 +00:00 [ERR] Warning! synonym search for 'AKVARIEFISK' on page 7 has too many words: 325
+2019-04-22 10:41:00.459 +00:00 [ERR] Warning! synonym search for 'AKTET' on page 3 has too many words: 210
+2019-04-22 10:41:04.576 +00:00 [ERR] Warning! synonym search for 'AKVARIEFISK' on page 8 has too many words: 325
+2019-04-22 10:41:05.957 +00:00 [ERR] Warning! synonym search for 'AKTET' on page 4 has too many words: 210
+2019-04-22 10:41:10.622 +00:00 [ERR] Warning! synonym search for 'AKVARIEFISK' on page 9 has too many words: 325
+2019-04-22 10:41:11.249 +00:00 [ERR] Warning! synonym search for 'AKTET' on page 5 has too many words: 210
+2019-04-22 10:41:16.657 +00:00 [ERR] Warning! synonym search for 'AKTET' on page 6 has too many words: 210
+2019-04-22 10:41:22.082 +00:00 [ERR] Warning! synonym search for 'AKTET' on page 7 has too many words: 210
+2019-04-22 10:41:27.447 +00:00 [ERR] Warning! synonym search for 'AKTET' on page 8 has too many words: 210
+2019-04-22 10:41:32.733 +00:00 [ERR] Warning! synonym search for 'AKTET' on page 9 has too many words: 210
+2019-04-22 10:46:01.281 +00:00 [ERR] Warning! synonym search for 'ALARM' on page 1 has too many words: 173
+2019-04-22 10:46:07.090 +00:00 [ERR] Warning! synonym search for 'ALARM' on page 2 has too many words: 173
+2019-04-22 10:46:12.114 +00:00 [ERR] Warning! synonym search for 'ALARM' on page 3 has too many words: 173
+2019-04-22 10:46:18.542 +00:00 [ERR] Warning! synonym search for 'ALARM' on page 4 has too many words: 173
+2019-04-22 10:46:25.417 +00:00 [ERR] Warning! synonym search for 'ALARM' on page 5 has too many words: 173
+2019-04-22 10:46:31.176 +00:00 [ERR] Warning! synonym search for 'ALARM' on page 6 has too many words: 173
+2019-04-22 10:46:36.854 +00:00 [ERR] Warning! synonym search for 'ALARM' on page 7 has too many words: 173
+2019-04-22 10:46:40.997 +00:00 [ERR] Warning! synonym search for 'ALARM' on page 8 has too many words: 173
+2019-04-22 10:46:47.199 +00:00 [ERR] Warning! synonym search for 'ALARM' on page 9 has too many words: 173
+2019-04-22 10:50:25.567 +00:00 [ERR] Warning! synonym search for 'ALDEN' on page 1 has too many words: 148
+2019-04-22 10:50:31.881 +00:00 [ERR] Warning! synonym search for 'ALDEN' on page 2 has too many words: 148
+2019-04-22 10:50:37.571 +00:00 [ERR] Warning! synonym search for 'ALDEN' on page 3 has too many words: 148
+2019-04-22 10:50:43.072 +00:00 [ERR] Warning! synonym search for 'ALDEN' on page 4 has too many words: 148
+2019-04-22 10:50:49.488 +00:00 [ERR] Warning! synonym search for 'ALDEN' on page 5 has too many words: 148
+2019-04-22 10:50:54.702 +00:00 [ERR] Warning! synonym search for 'ALDEN' on page 6 has too many words: 148
+2019-04-22 10:51:00.996 +00:00 [ERR] Warning! synonym search for 'ALDEN' on page 7 has too many words: 148
+2019-04-22 10:51:07.878 +00:00 [ERR] Warning! synonym search for 'ALDEN' on page 8 has too many words: 148
+2019-04-22 10:51:13.278 +00:00 [ERR] Warning! synonym search for 'ALDEN' on page 9 has too many words: 148
+2019-04-22 10:51:19.952 +00:00 [ERR] Warning! synonym search for 'ALDER' on page 1 has too many words: 119
+2019-04-22 10:51:25.832 +00:00 [ERR] Warning! synonym search for 'ALDER' on page 2 has too many words: 119
+2019-04-22 10:51:31.545 +00:00 [ERR] Warning! synonym search for 'ALDER' on page 3 has too many words: 119
+2019-04-22 10:51:38.578 +00:00 [ERR] Warning! synonym search for 'ALDER' on page 4 has too many words: 119
+2019-04-22 10:51:44.527 +00:00 [ERR] Warning! synonym search for 'ALDER' on page 5 has too many words: 119
+2019-04-22 10:51:49.826 +00:00 [ERR] Warning! synonym search for 'ALDER' on page 6 has too many words: 119
+2019-04-22 10:51:56.036 +00:00 [ERR] Warning! synonym search for 'ALDER' on page 7 has too many words: 119
+2019-04-22 10:52:02.252 +00:00 [ERR] Warning! synonym search for 'ALDER' on page 8 has too many words: 119
+2019-04-22 10:52:07.544 +00:00 [ERR] Warning! synonym search for 'ALDER' on page 9 has too many words: 119
+2019-04-22 10:53:32.850 +00:00 [ERR] Warning! synonym search for 'ALENE' on page 1 has too many words: 115
+2019-04-22 10:53:38.135 +00:00 [ERR] Warning! synonym search for 'ALENE' on page 2 has too many words: 115
+2019-04-22 10:53:43.506 +00:00 [ERR] Warning! synonym search for 'ALENE' on page 3 has too many words: 115
+2019-04-22 10:53:49.331 +00:00 [ERR] Warning! synonym search for 'ALENE' on page 4 has too many words: 115
+2019-04-22 10:53:54.897 +00:00 [ERR] Warning! synonym search for 'ALENE' on page 5 has too many words: 115
+2019-04-22 10:53:59.974 +00:00 [ERR] Warning! synonym search for 'ALENE' on page 6 has too many words: 115
+2019-04-22 10:54:04.507 +00:00 [ERR] Warning! synonym search for 'ALENE' on page 7 has too many words: 115
+2019-04-22 10:54:10.514 +00:00 [ERR] Warning! synonym search for 'ALENE' on page 8 has too many words: 115
+2019-04-22 10:54:15.524 +00:00 [ERR] Warning! synonym search for 'ALENE' on page 9 has too many words: 115
+2019-04-22 10:55:17.523 +00:00 [ERR] Warning! synonym search for 'ANDEBYBEBOER' on page 1 has too many words: 121
+2019-04-22 10:55:22.950 +00:00 [ERR] Warning! synonym search for 'ANDEBYBEBOER' on page 2 has too many words: 121
+2019-04-22 10:55:28.679 +00:00 [ERR] Warning! synonym search for 'ANDEBYBEBOER' on page 3 has too many words: 121
+2019-04-22 10:55:34.073 +00:00 [ERR] Warning! synonym search for 'ANDEBYBEBOER' on page 4 has too many words: 121
+2019-04-22 10:55:39.804 +00:00 [ERR] Warning! synonym search for 'ANDEBYBEBOER' on page 5 has too many words: 121
+2019-04-22 10:55:45.263 +00:00 [ERR] Warning! synonym search for 'ANDEBYBEBOER' on page 6 has too many words: 121
+2019-04-22 10:55:51.865 +00:00 [ERR] Warning! synonym search for 'ANDEBYBEBOER' on page 7 has too many words: 121
+2019-04-22 10:55:58.350 +00:00 [ERR] Warning! synonym search for 'ANDEBYBEBOER' on page 8 has too many words: 121
+2019-04-22 10:56:04.542 +00:00 [ERR] Warning! synonym search for 'ANDEBYBEBOER' on page 9 has too many words: 121
+2019-04-22 11:01:04.976 +00:00 [ERR] Warning! synonym search for 'ALLEN' on page 1 has too many words: 161
+2019-04-22 11:01:12.991 +00:00 [ERR] Warning! synonym search for 'ALLEN' on page 2 has too many words: 161
+2019-04-22 11:01:18.628 +00:00 [ERR] Warning! synonym search for 'ALLEN' on page 3 has too many words: 161
+2019-04-22 11:01:24.142 +00:00 [ERR] Warning! synonym search for 'ALLEN' on page 4 has too many words: 161
+2019-04-22 11:01:31.106 +00:00 [ERR] Warning! synonym search for 'ALLEN' on page 5 has too many words: 161
+2019-04-22 11:01:37.135 +00:00 [ERR] Warning! synonym search for 'ALLEN' on page 6 has too many words: 161
+2019-04-22 11:01:42.483 +00:00 [ERR] Warning! synonym search for 'ALLEN' on page 7 has too many words: 161
+2019-04-22 11:01:48.166 +00:00 [ERR] Warning! synonym search for 'ALLEN' on page 8 has too many words: 161
+2019-04-22 11:01:53.474 +00:00 [ERR] Warning! synonym search for 'ALLEN' on page 9 has too many words: 161
+2019-04-22 12:00:04.760 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-22 12:00:09.145 +00:00 [ERR] Using scraper config - site: 'Kryssord', continue with last word: 'false', from/to letter count: 1-20.
+2019-04-22 12:11:16.157 +00:00 [ERR] Warning! synonym search for 'AAS' on page 1 has too many words: 198
+2019-04-22 12:12:08.414 +00:00 [ERR] Warning! synonym search for 'AAS' on page 2 has too many words: 198
+2019-04-22 12:12:17.332 +00:00 [ERR] Warning! synonym search for 'AAS' on page 3 has too many words: 198
+2019-04-22 12:12:37.258 +00:00 [ERR] Warning! synonym search for 'AAS' on page 4 has too many words: 198
+2019-04-22 12:13:08.414 +00:00 [ERR] Warning! synonym search for 'AAS' on page 5 has too many words: 198
+2019-04-22 12:13:21.144 +00:00 [ERR] Warning! synonym search for 'AAS' on page 6 has too many words: 198
+2019-04-22 12:13:35.090 +00:00 [ERR] Warning! synonym search for 'AAS' on page 7 has too many words: 198
+2019-04-22 12:14:24.621 +00:00 [ERR] Warning! synonym search for 'AAS' on page 8 has too many words: 198
+2019-04-22 12:14:45.648 +00:00 [ERR] Warning! synonym search for 'AAS' on page 9 has too many words: 198
+2019-04-22 12:27:42.448 +00:00 [ERR] Warning! synonym search for 'ABEL' on page 1 has too many words: 135
+2019-04-22 12:28:16.936 +00:00 [ERR] Warning! synonym search for 'ABEL' on page 2 has too many words: 135
+2019-04-22 12:28:43.968 +00:00 [ERR] Warning! synonym search for 'ABEL' on page 3 has too many words: 135
+2019-04-22 12:28:49.703 +00:00 [ERR] Warning! synonym search for 'ABEL' on page 4 has too many words: 135
+2019-04-22 12:28:55.884 +00:00 [ERR] Warning! synonym search for 'ABEL' on page 5 has too many words: 135
+2019-04-22 12:29:02.348 +00:00 [ERR] Warning! synonym search for 'ABEL' on page 6 has too many words: 135
+2019-04-22 12:29:07.703 +00:00 [ERR] Warning! synonym search for 'ABEL' on page 7 has too many words: 135
+2019-04-22 12:29:13.044 +00:00 [ERR] Warning! synonym search for 'ABEL' on page 8 has too many words: 135
+2019-04-22 12:29:19.244 +00:00 [ERR] Warning! synonym search for 'ABEL' on page 9 has too many words: 135
+2019-04-22 12:34:32.076 +00:00 [ERR] Warning! synonym search for 'ADAM' on page 1 has too many words: 204
+2019-04-22 12:34:38.009 +00:00 [ERR] Warning! synonym search for 'ADAM' on page 2 has too many words: 204
+2019-04-22 12:34:44.877 +00:00 [ERR] Warning! synonym search for 'ADAM' on page 3 has too many words: 204
+2019-04-22 12:34:49.951 +00:00 [ERR] Warning! synonym search for 'ADAM' on page 4 has too many words: 204
+2019-04-22 12:34:55.178 +00:00 [ERR] Warning! synonym search for 'ADAM' on page 5 has too many words: 204
+2019-04-22 12:35:00.756 +00:00 [ERR] Warning! synonym search for 'ADAM' on page 6 has too many words: 204
+2019-04-22 12:35:06.221 +00:00 [ERR] Warning! synonym search for 'ADAM' on page 7 has too many words: 204
+2019-04-22 12:35:11.895 +00:00 [ERR] Warning! synonym search for 'ADAM' on page 8 has too many words: 204
+2019-04-22 12:35:17.467 +00:00 [ERR] Warning! synonym search for 'ADAM' on page 9 has too many words: 204
+2019-04-22 12:36:05.397 +00:00 [ERR] Warning! synonym search for 'ADEL' on page 1 has too many words: 121
+2019-04-22 12:36:11.096 +00:00 [ERR] Warning! synonym search for 'ADEL' on page 2 has too many words: 121
+2019-04-22 12:36:16.040 +00:00 [ERR] Warning! synonym search for 'ADEL' on page 3 has too many words: 121
+2019-04-22 12:36:21.644 +00:00 [ERR] Warning! synonym search for 'ADEL' on page 4 has too many words: 121
+2019-04-22 12:36:27.924 +00:00 [ERR] Warning! synonym search for 'ADEL' on page 5 has too many words: 121
+2019-04-22 12:36:34.549 +00:00 [ERR] Warning! synonym search for 'ADEL' on page 6 has too many words: 121
+2019-04-22 12:36:40.543 +00:00 [ERR] Warning! synonym search for 'ADEL' on page 7 has too many words: 121
+2019-04-22 12:36:45.956 +00:00 [ERR] Warning! synonym search for 'ADEL' on page 8 has too many words: 121
+2019-04-22 12:36:51.621 +00:00 [ERR] Warning! synonym search for 'ADEL' on page 9 has too many words: 121
+2019-04-22 12:37:25.798 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK SPRÅK' on page 1 has too many words: 130
+2019-04-22 12:37:31.618 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK SPRÅK' on page 2 has too many words: 130
+2019-04-22 12:37:37.927 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK SPRÅK' on page 3 has too many words: 130
+2019-04-22 12:37:44.087 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK SPRÅK' on page 4 has too many words: 130
+2019-04-22 12:37:51.016 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK SPRÅK' on page 5 has too many words: 130
+2019-04-22 12:37:57.455 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK SPRÅK' on page 6 has too many words: 130
+2019-04-22 12:38:03.742 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK SPRÅK' on page 7 has too many words: 130
+2019-04-22 12:38:09.446 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK SPRÅK' on page 8 has too many words: 130
+2019-04-22 12:38:15.640 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK SPRÅK' on page 9 has too many words: 130
+2019-04-22 12:38:53.337 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK FOLK' on page 1 has too many words: 112
+2019-04-22 12:38:59.213 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK FOLK' on page 2 has too many words: 112
+2019-04-22 12:39:04.789 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK FOLK' on page 3 has too many words: 112
+2019-04-22 12:39:11.355 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK FOLK' on page 4 has too many words: 112
+2019-04-22 12:39:18.212 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK FOLK' on page 5 has too many words: 112
+2019-04-22 12:39:24.006 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK FOLK' on page 6 has too many words: 112
+2019-04-22 12:39:30.523 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK FOLK' on page 7 has too many words: 112
+2019-04-22 12:39:37.104 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK FOLK' on page 8 has too many words: 112
+2019-04-22 12:39:43.030 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK FOLK' on page 9 has too many words: 112
+2019-04-22 12:40:14.774 +00:00 [ERR] Warning! synonym search for 'ADV.' on page 1 has too many words: 719
+2019-04-22 12:40:20.258 +00:00 [ERR] Warning! synonym search for 'ADV.' on page 2 has too many words: 719
+2019-04-22 12:40:26.201 +00:00 [ERR] Warning! synonym search for 'ADV.' on page 3 has too many words: 719
+2019-04-22 12:40:31.612 +00:00 [ERR] Warning! synonym search for 'ADV.' on page 4 has too many words: 719
+2019-04-22 12:40:37.484 +00:00 [ERR] Warning! synonym search for 'ADV.' on page 5 has too many words: 719
+2019-04-22 12:40:42.650 +00:00 [ERR] Warning! synonym search for 'ADV.' on page 6 has too many words: 719
+2019-04-22 12:40:48.677 +00:00 [ERR] Warning! synonym search for 'ADV.' on page 7 has too many words: 719
+2019-04-22 12:40:55.318 +00:00 [ERR] Warning! synonym search for 'ADV.' on page 8 has too many words: 719
+2019-04-22 12:41:00.868 +00:00 [ERR] Warning! synonym search for 'ADV.' on page 9 has too many words: 719
+2019-04-22 13:00:28.450 +00:00 [ERR] Warning! synonym search for 'AKER' on page 1 has too many words: 175
+2019-04-22 13:00:34.849 +00:00 [ERR] Warning! synonym search for 'AKER' on page 2 has too many words: 175
+2019-04-22 13:00:40.862 +00:00 [ERR] Warning! synonym search for 'AKER' on page 3 has too many words: 175
+2019-04-22 13:00:46.489 +00:00 [ERR] Warning! synonym search for 'AKER' on page 4 has too many words: 175
+2019-04-22 13:00:52.106 +00:00 [ERR] Warning! synonym search for 'AKER' on page 5 has too many words: 175
+2019-04-22 13:00:57.743 +00:00 [ERR] Warning! synonym search for 'AKER' on page 6 has too many words: 175
+2019-04-22 13:01:03.912 +00:00 [ERR] Warning! synonym search for 'AKER' on page 7 has too many words: 175
+2019-04-22 13:01:10.205 +00:00 [ERR] Warning! synonym search for 'AKER' on page 8 has too many words: 175
+2019-04-22 13:01:15.852 +00:00 [ERR] Warning! synonym search for 'AKER' on page 9 has too many words: 175
+2019-04-22 13:04:30.100 +00:00 [ERR] Warning! synonym search for 'AKTA' on page 1 has too many words: 151
+2019-04-22 13:04:37.168 +00:00 [ERR] Warning! synonym search for 'AKTA' on page 2 has too many words: 151
+2019-04-22 13:04:44.883 +00:00 [ERR] Warning! synonym search for 'AKTA' on page 3 has too many words: 151
+2019-04-22 13:04:50.265 +00:00 [ERR] Warning! synonym search for 'AKTA' on page 4 has too many words: 151
+2019-04-22 13:04:55.799 +00:00 [ERR] Warning! synonym search for 'AKTA' on page 5 has too many words: 151
+2019-04-22 13:05:01.794 +00:00 [ERR] Warning! synonym search for 'AKTA' on page 6 has too many words: 151
+2019-04-22 13:05:08.273 +00:00 [ERR] Warning! synonym search for 'AKTA' on page 7 has too many words: 151
+2019-04-22 13:05:15.730 +00:00 [ERR] Warning! synonym search for 'AKTA' on page 8 has too many words: 151
+2019-04-22 13:05:23.734 +00:00 [ERR] Warning! synonym search for 'AKTA' on page 9 has too many words: 151
+2019-04-22 13:05:33.347 +00:00 [ERR] Warning! synonym search for 'AKTE' on page 1 has too many words: 169
+2019-04-22 13:05:49.397 +00:00 [ERR] Warning! synonym search for 'AKTE' on page 2 has too many words: 169
+2019-04-22 13:06:11.700 +00:00 [ERR] Warning! synonym search for 'AKTE' on page 3 has too many words: 169
+2019-04-22 13:06:30.569 +00:00 [ERR] Warning! synonym search for 'AKTE' on page 4 has too many words: 169
+2019-04-22 13:06:52.862 +00:00 [ERR] Warning! synonym search for 'AKTE' on page 5 has too many words: 169
+2019-04-22 13:07:06.449 +00:00 [ERR] Warning! synonym search for 'AKTE' on page 6 has too many words: 169
+2019-04-22 13:07:19.897 +00:00 [ERR] Warning! synonym search for 'AKTE' on page 7 has too many words: 169
+2019-04-22 13:07:26.994 +00:00 [ERR] Warning! synonym search for 'AKTE' on page 8 has too many words: 169
+2019-04-22 13:07:35.332 +00:00 [ERR] Warning! synonym search for 'AKTE' on page 9 has too many words: 169
+2019-04-22 13:25:16.775 +00:00 [ERR] Warning! synonym search for 'AMERIKANSK FILM' on page 1 has too many words: 899
+2019-04-22 13:25:56.451 +00:00 [ERR] Warning! synonym search for 'AMERIKANSK FILM' on page 2 has too many words: 899
+2019-04-22 13:26:28.819 +00:00 [ERR] Warning! synonym search for 'AMERIKANSK FILM' on page 3 has too many words: 899
+2019-04-22 13:27:28.585 +00:00 [ERR] Warning! synonym search for 'AMERIKANSK FILM' on page 4 has too many words: 899
+2019-04-22 13:28:04.390 +00:00 [ERR] Warning! synonym search for 'AMERIKANSK FILM' on page 5 has too many words: 899
+2019-04-22 13:28:35.654 +00:00 [ERR] Warning! synonym search for 'AMERIKANSK FILM' on page 6 has too many words: 899
+2019-04-22 13:29:32.585 +00:00 [ERR] Warning! synonym search for 'AMERIKANSK FILM' on page 7 has too many words: 899
+2019-04-22 13:30:24.547 +00:00 [ERR] Warning! synonym search for 'AMERIKANSK FILM' on page 8 has too many words: 899
+2019-04-22 13:31:08.356 +00:00 [ERR] Warning! synonym search for 'AMERIKANSK FILM' on page 9 has too many words: 899
+2019-04-22 13:54:19.081 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-22 13:54:23.149 +00:00 [ERR] Using scraper config - site: 'Kryssord', continue with last word: 'false', from/to letter count: 1-20.
+2019-04-22 13:57:58.609 +00:00 [ERR] Warning! synonym search for 'AAS' on page 1 has too many words: 198
+2019-04-22 13:58:02.865 +00:00 [ERR] Warning! synonym search for 'AAS' on page 2 has too many words: 198
+2019-04-22 13:58:07.509 +00:00 [ERR] Warning! synonym search for 'AAS' on page 3 has too many words: 198
+2019-04-22 13:58:11.441 +00:00 [ERR] Warning! synonym search for 'AAS' on page 4 has too many words: 198
+2019-04-22 13:58:15.542 +00:00 [ERR] Warning! synonym search for 'AAS' on page 5 has too many words: 198
+2019-04-22 13:58:19.773 +00:00 [ERR] Warning! synonym search for 'AAS' on page 6 has too many words: 198
+2019-04-22 13:58:23.735 +00:00 [ERR] Warning! synonym search for 'AAS' on page 7 has too many words: 198
+2019-04-22 13:58:27.995 +00:00 [ERR] Warning! synonym search for 'AAS' on page 8 has too many words: 198
+2019-04-22 13:58:32.127 +00:00 [ERR] Warning! synonym search for 'AAS' on page 9 has too many words: 198
+2019-04-22 14:05:43.369 +00:00 [ERR] Warning! synonym search for 'ADJ' on page 1 has too many words: 11199
+2019-04-22 14:05:48.087 +00:00 [ERR] Warning! synonym search for 'ADJ' on page 2 has too many words: 11199
+2019-04-22 14:05:52.443 +00:00 [ERR] Warning! synonym search for 'ADJ' on page 3 has too many words: 11199
+2019-04-22 14:05:56.841 +00:00 [ERR] Warning! synonym search for 'ADJ' on page 4 has too many words: 11199
+2019-04-22 14:06:01.199 +00:00 [ERR] Warning! synonym search for 'ADJ' on page 5 has too many words: 11199
+2019-04-22 14:06:05.567 +00:00 [ERR] Warning! synonym search for 'ADJ' on page 6 has too many words: 11199
+2019-04-22 14:06:10.094 +00:00 [ERR] Warning! synonym search for 'ADJ' on page 7 has too many words: 11199
+2019-04-22 14:06:15.367 +00:00 [ERR] Warning! synonym search for 'ADJ' on page 8 has too many words: 11199
+2019-04-22 14:06:19.556 +00:00 [ERR] Warning! synonym search for 'ADJ' on page 9 has too many words: 11199
+2019-04-22 14:07:15.104 +00:00 [ERR] Warning! synonym search for 'ADV' on page 1 has too many words: 254
+2019-04-22 14:07:19.517 +00:00 [ERR] Warning! synonym search for 'ADV' on page 2 has too many words: 254
+2019-04-22 14:07:23.517 +00:00 [ERR] Warning! synonym search for 'ADV' on page 3 has too many words: 254
+2019-04-22 14:07:27.383 +00:00 [ERR] Warning! synonym search for 'ADV' on page 4 has too many words: 254
+2019-04-22 14:07:31.472 +00:00 [ERR] Warning! synonym search for 'ADV' on page 5 has too many words: 254
+2019-04-22 14:07:35.588 +00:00 [ERR] Warning! synonym search for 'ADV' on page 6 has too many words: 254
+2019-04-22 14:07:39.667 +00:00 [ERR] Warning! synonym search for 'ADV' on page 7 has too many words: 254
+2019-04-22 14:07:47.526 +00:00 [ERR] Warning! synonym search for 'ADV' on page 8 has too many words: 254
+2019-04-22 14:07:51.797 +00:00 [ERR] Warning! synonym search for 'ADV' on page 9 has too many words: 254
+2019-04-22 14:11:44.875 +00:00 [ERR] Warning! synonym search for 'AGA' on page 1 has too many words: 156
+2019-04-22 14:11:49.184 +00:00 [ERR] Warning! synonym search for 'AGA' on page 2 has too many words: 156
+2019-04-22 14:11:54.134 +00:00 [ERR] Warning! synonym search for 'AGA' on page 3 has too many words: 156
+2019-04-22 14:11:58.626 +00:00 [ERR] Warning! synonym search for 'AGA' on page 4 has too many words: 156
+2019-04-22 14:12:02.982 +00:00 [ERR] Warning! synonym search for 'AGA' on page 5 has too many words: 156
+2019-04-22 14:12:07.111 +00:00 [ERR] Warning! synonym search for 'AGA' on page 6 has too many words: 156
+2019-04-22 14:12:11.340 +00:00 [ERR] Warning! synonym search for 'AGA' on page 7 has too many words: 156
+2019-04-22 14:12:15.592 +00:00 [ERR] Warning! synonym search for 'AGA' on page 8 has too many words: 156
+2019-04-22 14:12:19.812 +00:00 [ERR] Warning! synonym search for 'AGA' on page 9 has too many words: 156
+2019-04-22 14:13:53.013 +00:00 [ERR] Warning! synonym search for 'AGN' on page 1 has too many words: 225
+2019-04-22 14:13:57.181 +00:00 [ERR] Warning! synonym search for 'AGN' on page 2 has too many words: 225
+2019-04-22 14:14:01.237 +00:00 [ERR] Warning! synonym search for 'AGN' on page 3 has too many words: 225
+2019-04-22 14:14:05.334 +00:00 [ERR] Warning! synonym search for 'AGN' on page 4 has too many words: 225
+2019-04-22 14:14:09.358 +00:00 [ERR] Warning! synonym search for 'AGN' on page 5 has too many words: 225
+2019-04-22 14:14:13.554 +00:00 [ERR] Warning! synonym search for 'AGN' on page 6 has too many words: 225
+2019-04-22 14:14:17.793 +00:00 [ERR] Warning! synonym search for 'AGN' on page 7 has too many words: 225
+2019-04-22 14:14:22.148 +00:00 [ERR] Warning! synonym search for 'AGN' on page 8 has too many words: 225
+2019-04-22 14:14:26.167 +00:00 [ERR] Warning! synonym search for 'AGN' on page 9 has too many words: 225
+2019-04-22 14:23:41.122 +00:00 [ERR] Warning! synonym search for 'AKT' on page 1 has too many words: 254
+2019-04-22 14:23:45.537 +00:00 [ERR] Warning! synonym search for 'AKT' on page 2 has too many words: 254
+2019-04-22 14:23:49.529 +00:00 [ERR] Warning! synonym search for 'AKT' on page 3 has too many words: 254
+2019-04-22 14:23:53.323 +00:00 [ERR] Warning! synonym search for 'AKT' on page 4 has too many words: 254
+2019-04-22 14:23:58.377 +00:00 [ERR] Warning! synonym search for 'AKT' on page 5 has too many words: 254
+2019-04-22 14:24:02.602 +00:00 [ERR] Warning! synonym search for 'AKT' on page 6 has too many words: 254
+2019-04-22 14:24:06.824 +00:00 [ERR] Warning! synonym search for 'AKT' on page 7 has too many words: 254
+2019-04-22 14:24:10.979 +00:00 [ERR] Warning! synonym search for 'AKT' on page 8 has too many words: 254
+2019-04-22 14:24:15.174 +00:00 [ERR] Warning! synonym search for 'AKT' on page 9 has too many words: 254
+2019-04-22 14:28:25.232 +00:00 [ERR] Warning! synonym search for 'ALT' on page 1 has too many words: 147
+2019-04-22 14:28:29.586 +00:00 [ERR] Warning! synonym search for 'ALT' on page 2 has too many words: 147
+2019-04-22 14:28:33.646 +00:00 [ERR] Warning! synonym search for 'ALT' on page 3 has too many words: 147
+2019-04-22 14:28:38.492 +00:00 [ERR] Warning! synonym search for 'ALT' on page 4 has too many words: 147
+2019-04-22 14:28:42.661 +00:00 [ERR] Warning! synonym search for 'ALT' on page 5 has too many words: 147
+2019-04-22 14:28:47.460 +00:00 [ERR] Warning! synonym search for 'ALT' on page 6 has too many words: 147
+2019-04-22 14:28:51.841 +00:00 [ERR] Warning! synonym search for 'ALT' on page 7 has too many words: 147
+2019-04-22 14:28:56.032 +00:00 [ERR] Warning! synonym search for 'ALT' on page 8 has too many words: 147
+2019-04-22 14:29:00.061 +00:00 [ERR] Warning! synonym search for 'ALT' on page 9 has too many words: 147
+2019-04-22 14:33:37.710 +00:00 [ERR] Warning! synonym search for 'AND' on page 1 has too many words: 136
+2019-04-22 14:33:41.854 +00:00 [ERR] Warning! synonym search for 'AND' on page 2 has too many words: 136
+2019-04-22 14:33:46.978 +00:00 [ERR] Warning! synonym search for 'AND' on page 3 has too many words: 136
+2019-04-22 14:33:50.746 +00:00 [ERR] Warning! synonym search for 'AND' on page 4 has too many words: 136
+2019-04-22 14:33:54.734 +00:00 [ERR] Warning! synonym search for 'AND' on page 5 has too many words: 136
+2019-04-22 14:33:59.067 +00:00 [ERR] Warning! synonym search for 'AND' on page 6 has too many words: 136
+2019-04-22 14:34:03.101 +00:00 [ERR] Warning! synonym search for 'AND' on page 7 has too many words: 136
+2019-04-22 14:34:06.949 +00:00 [ERR] Warning! synonym search for 'AND' on page 8 has too many words: 136
+2019-04-22 14:34:11.044 +00:00 [ERR] Warning! synonym search for 'AND' on page 9 has too many words: 136
+2019-04-22 14:34:16.925 +00:00 [ERR] Warning! synonym search for 'ANE' on page 1 has too many words: 147
+2019-04-22 14:34:21.003 +00:00 [ERR] Warning! synonym search for 'ANE' on page 2 has too many words: 147
+2019-04-22 14:34:25.063 +00:00 [ERR] Warning! synonym search for 'ANE' on page 3 has too many words: 147
+2019-04-22 14:34:29.162 +00:00 [ERR] Warning! synonym search for 'ANE' on page 4 has too many words: 147
+2019-04-22 14:34:33.119 +00:00 [ERR] Warning! synonym search for 'ANE' on page 5 has too many words: 147
+2019-04-22 14:34:37.350 +00:00 [ERR] Warning! synonym search for 'ANE' on page 6 has too many words: 147
+2019-04-22 14:34:41.404 +00:00 [ERR] Warning! synonym search for 'ANE' on page 7 has too many words: 147
+2019-04-22 14:34:45.806 +00:00 [ERR] Warning! synonym search for 'ANE' on page 8 has too many words: 147
+2019-04-22 14:34:50.015 +00:00 [ERR] Warning! synonym search for 'ANE' on page 9 has too many words: 147
+2019-04-22 14:39:33.219 +00:00 [ERR] Warning! synonym search for 'APE' on page 1 has too many words: 220
+2019-04-22 14:39:37.431 +00:00 [ERR] Warning! synonym search for 'APE' on page 2 has too many words: 220
+2019-04-22 14:39:41.594 +00:00 [ERR] Warning! synonym search for 'APE' on page 3 has too many words: 220
+2019-04-22 14:39:45.766 +00:00 [ERR] Warning! synonym search for 'APE' on page 4 has too many words: 220
+2019-04-22 14:39:49.879 +00:00 [ERR] Warning! synonym search for 'APE' on page 5 has too many words: 220
+2019-04-22 14:39:54.313 +00:00 [ERR] Warning! synonym search for 'APE' on page 6 has too many words: 220
+2019-04-22 14:39:58.432 +00:00 [ERR] Warning! synonym search for 'APE' on page 7 has too many words: 220
+2019-04-22 14:40:02.826 +00:00 [ERR] Warning! synonym search for 'APE' on page 8 has too many words: 220
+2019-04-22 14:40:07.122 +00:00 [ERR] Warning! synonym search for 'APE' on page 9 has too many words: 220
+2019-04-22 14:43:10.973 +00:00 [ERR] Warning! synonym search for 'AKVARIEFISK' on page 1 has too many words: 325
+2019-04-22 14:43:15.023 +00:00 [ERR] Warning! synonym search for 'AKVARIEFISK' on page 2 has too many words: 325
+2019-04-22 14:43:18.963 +00:00 [ERR] Warning! synonym search for 'AKVARIEFISK' on page 3 has too many words: 325
+2019-04-22 14:43:22.933 +00:00 [ERR] Warning! synonym search for 'AKVARIEFISK' on page 4 has too many words: 325
+2019-04-22 14:43:27.018 +00:00 [ERR] Warning! synonym search for 'AKVARIEFISK' on page 5 has too many words: 325
+2019-04-22 14:43:31.161 +00:00 [ERR] Warning! synonym search for 'AKVARIEFISK' on page 6 has too many words: 325
+2019-04-22 14:43:35.122 +00:00 [ERR] Warning! synonym search for 'AKVARIEFISK' on page 7 has too many words: 325
+2019-04-22 14:43:39.056 +00:00 [ERR] Warning! synonym search for 'AKVARIEFISK' on page 8 has too many words: 325
+2019-04-22 14:43:43.164 +00:00 [ERR] Warning! synonym search for 'AKVARIEFISK' on page 9 has too many words: 325
+2019-04-22 14:44:38.911 +00:00 [ERR] Warning! synonym search for 'ARG' on page 1 has too many words: 121
+2019-04-22 14:44:43.309 +00:00 [ERR] Warning! synonym search for 'ARG' on page 2 has too many words: 121
+2019-04-22 14:44:48.039 +00:00 [ERR] Warning! synonym search for 'ARG' on page 3 has too many words: 121
+2019-04-22 14:44:53.028 +00:00 [ERR] Warning! synonym search for 'ARG' on page 4 has too many words: 121
+2019-04-22 14:44:57.017 +00:00 [ERR] Warning! synonym search for 'ARG' on page 5 has too many words: 121
+2019-04-22 14:45:01.103 +00:00 [ERR] Warning! synonym search for 'ARG' on page 6 has too many words: 121
+2019-04-22 14:45:05.130 +00:00 [ERR] Warning! synonym search for 'ARG' on page 7 has too many words: 121
+2019-04-22 14:45:09.538 +00:00 [ERR] Warning! synonym search for 'ARG' on page 8 has too many words: 121
+2019-04-22 14:45:13.408 +00:00 [ERR] Warning! synonym search for 'ARG' on page 9 has too many words: 121
+2019-04-22 14:45:39.401 +00:00 [ERR] Warning! synonym search for 'ARK' on page 1 has too many words: 129
+2019-04-22 14:45:44.145 +00:00 [ERR] Warning! synonym search for 'ARK' on page 2 has too many words: 129
+2019-04-22 14:45:48.679 +00:00 [ERR] Warning! synonym search for 'ARK' on page 3 has too many words: 129
+2019-04-22 14:45:52.984 +00:00 [ERR] Warning! synonym search for 'ARK' on page 4 has too many words: 129
+2019-04-22 14:45:57.468 +00:00 [ERR] Warning! synonym search for 'ARK' on page 5 has too many words: 129
+2019-04-22 14:46:01.592 +00:00 [ERR] Warning! synonym search for 'ARK' on page 6 has too many words: 129
+2019-04-22 14:46:06.371 +00:00 [ERR] Warning! synonym search for 'ARK' on page 7 has too many words: 129
+2019-04-22 14:46:11.056 +00:00 [ERR] Warning! synonym search for 'ARK' on page 8 has too many words: 129
+2019-04-22 14:46:15.069 +00:00 [ERR] Warning! synonym search for 'ARK' on page 9 has too many words: 129
+2019-04-22 14:46:24.682 +00:00 [ERR] Warning! synonym search for 'ARM' on page 1 has too many words: 113
+2019-04-22 14:46:28.942 +00:00 [ERR] Warning! synonym search for 'ARM' on page 2 has too many words: 113
+2019-04-22 14:46:32.944 +00:00 [ERR] Warning! synonym search for 'ARM' on page 3 has too many words: 113
+2019-04-22 14:46:36.966 +00:00 [ERR] Warning! synonym search for 'ARM' on page 4 has too many words: 113
+2019-04-22 14:46:41.322 +00:00 [ERR] Warning! synonym search for 'ARM' on page 5 has too many words: 113
+2019-04-22 14:46:45.570 +00:00 [ERR] Warning! synonym search for 'ARM' on page 6 has too many words: 113
+2019-04-22 14:46:49.842 +00:00 [ERR] Warning! synonym search for 'ARM' on page 7 has too many words: 113
+2019-04-22 14:46:54.201 +00:00 [ERR] Warning! synonym search for 'ARM' on page 8 has too many words: 113
+2019-04-22 14:46:58.235 +00:00 [ERR] Warning! synonym search for 'ARM' on page 9 has too many words: 113
+2019-04-22 14:48:30.135 +00:00 [ERR] Warning! synonym search for 'ART' on page 1 has too many words: 168
+2019-04-22 14:48:34.437 +00:00 [ERR] Warning! synonym search for 'ART' on page 2 has too many words: 168
+2019-04-22 14:48:38.694 +00:00 [ERR] Warning! synonym search for 'ART' on page 3 has too many words: 168
+2019-04-22 14:48:43.366 +00:00 [ERR] Warning! synonym search for 'ART' on page 4 has too many words: 168
+2019-04-22 14:48:47.325 +00:00 [ERR] Warning! synonym search for 'ART' on page 5 has too many words: 168
+2019-04-22 14:48:51.382 +00:00 [ERR] Warning! synonym search for 'ART' on page 6 has too many words: 168
+2019-04-22 14:48:55.372 +00:00 [ERR] Warning! synonym search for 'ART' on page 7 has too many words: 168
+2019-04-22 14:48:59.446 +00:00 [ERR] Warning! synonym search for 'ART' on page 8 has too many words: 168
+2019-04-22 14:49:04.630 +00:00 [ERR] Warning! synonym search for 'ART' on page 9 has too many words: 168
+2019-04-22 14:51:47.529 +00:00 [ERR] Warning! synonym search for 'ASK' on page 1 has too many words: 192
+2019-04-22 14:51:51.648 +00:00 [ERR] Warning! synonym search for 'ASK' on page 2 has too many words: 192
+2019-04-22 14:51:56.121 +00:00 [ERR] Warning! synonym search for 'ASK' on page 3 has too many words: 192
+2019-04-22 14:52:00.314 +00:00 [ERR] Warning! synonym search for 'ASK' on page 4 has too many words: 192
+2019-04-22 14:52:05.150 +00:00 [ERR] Warning! synonym search for 'ASK' on page 5 has too many words: 192
+2019-04-22 14:52:09.262 +00:00 [ERR] Warning! synonym search for 'ASK' on page 6 has too many words: 192
+2019-04-22 14:52:13.656 +00:00 [ERR] Warning! synonym search for 'ASK' on page 7 has too many words: 192
+2019-04-22 14:52:17.569 +00:00 [ERR] Warning! synonym search for 'ASK' on page 8 has too many words: 192
+2019-04-22 14:52:21.774 +00:00 [ERR] Warning! synonym search for 'ASK' on page 9 has too many words: 192
+2019-04-22 15:01:28.910 +00:00 [ERR] Warning! synonym search for 'AVL' on page 1 has too many words: 166
+2019-04-22 15:01:33.525 +00:00 [ERR] Warning! synonym search for 'AVL' on page 2 has too many words: 166
+2019-04-22 15:01:38.517 +00:00 [ERR] Warning! synonym search for 'AVL' on page 3 has too many words: 166
+2019-04-22 15:01:42.735 +00:00 [ERR] Warning! synonym search for 'AVL' on page 4 has too many words: 166
+2019-04-22 15:01:48.022 +00:00 [ERR] Warning! synonym search for 'AVL' on page 5 has too many words: 166
+2019-04-22 15:01:52.278 +00:00 [ERR] Warning! synonym search for 'AVL' on page 6 has too many words: 166
+2019-04-22 15:01:56.559 +00:00 [ERR] Warning! synonym search for 'AVL' on page 7 has too many words: 166
+2019-04-22 15:02:01.415 +00:00 [ERR] Warning! synonym search for 'AVL' on page 8 has too many words: 166
+2019-04-22 15:02:05.748 +00:00 [ERR] Warning! synonym search for 'AVL' on page 9 has too many words: 166
+2019-04-22 15:11:11.112 +00:00 [ERR] Warning! synonym search for 'BAD' on page 1 has too many words: 258
+2019-04-22 15:11:15.238 +00:00 [ERR] Warning! synonym search for 'BAD' on page 2 has too many words: 258
+2019-04-22 15:11:19.373 +00:00 [ERR] Warning! synonym search for 'BAD' on page 3 has too many words: 258
+2019-04-22 15:11:23.666 +00:00 [ERR] Warning! synonym search for 'BAD' on page 4 has too many words: 258
+2019-04-22 15:11:27.674 +00:00 [ERR] Warning! synonym search for 'BAD' on page 5 has too many words: 258
+2019-04-22 15:11:31.798 +00:00 [ERR] Warning! synonym search for 'BAD' on page 6 has too many words: 258
+2019-04-22 15:11:36.042 +00:00 [ERR] Warning! synonym search for 'BAD' on page 7 has too many words: 258
+2019-04-22 15:11:40.297 +00:00 [ERR] Warning! synonym search for 'BAD' on page 8 has too many words: 258
+2019-04-22 15:11:44.418 +00:00 [ERR] Warning! synonym search for 'BAD' on page 9 has too many words: 258
+2019-04-22 15:13:17.203 +00:00 [ERR] Warning! synonym search for 'BAK' on page 1 has too many words: 150
+2019-04-22 15:13:21.227 +00:00 [ERR] Warning! synonym search for 'BAK' on page 2 has too many words: 150
+2019-04-22 15:13:25.527 +00:00 [ERR] Warning! synonym search for 'BAK' on page 3 has too many words: 150
+2019-04-22 15:13:29.875 +00:00 [ERR] Warning! synonym search for 'BAK' on page 4 has too many words: 150
+2019-04-22 15:13:33.714 +00:00 [ERR] Warning! synonym search for 'BAK' on page 5 has too many words: 150
+2019-04-22 15:13:37.755 +00:00 [ERR] Warning! synonym search for 'BAK' on page 6 has too many words: 150
+2019-04-22 15:13:41.826 +00:00 [ERR] Warning! synonym search for 'BAK' on page 7 has too many words: 150
+2019-04-22 15:13:45.938 +00:00 [ERR] Warning! synonym search for 'BAK' on page 8 has too many words: 150
+2019-04-22 15:13:50.240 +00:00 [ERR] Warning! synonym search for 'BAK' on page 9 has too many words: 150
+2019-04-22 15:15:00.954 +00:00 [ERR] Warning! synonym search for 'BAR' on page 1 has too many words: 266
+2019-04-22 15:15:05.051 +00:00 [ERR] Warning! synonym search for 'BAR' on page 2 has too many words: 266
+2019-04-22 15:15:09.231 +00:00 [ERR] Warning! synonym search for 'BAR' on page 3 has too many words: 266
+2019-04-22 15:15:13.546 +00:00 [ERR] Warning! synonym search for 'BAR' on page 4 has too many words: 266
+2019-04-22 15:15:17.705 +00:00 [ERR] Warning! synonym search for 'BAR' on page 5 has too many words: 266
+2019-04-22 15:15:22.030 +00:00 [ERR] Warning! synonym search for 'BAR' on page 6 has too many words: 266
+2019-04-22 15:15:26.339 +00:00 [ERR] Warning! synonym search for 'BAR' on page 7 has too many words: 266
+2019-04-22 15:15:30.674 +00:00 [ERR] Warning! synonym search for 'BAR' on page 8 has too many words: 266
+2019-04-22 15:15:34.869 +00:00 [ERR] Warning! synonym search for 'BAR' on page 9 has too many words: 266
+2019-04-22 15:22:04.348 +00:00 [ERR] Warning! synonym search for 'BEN' on page 1 has too many words: 193
+2019-04-22 15:22:08.529 +00:00 [ERR] Warning! synonym search for 'BEN' on page 2 has too many words: 193
+2019-04-22 15:22:12.716 +00:00 [ERR] Warning! synonym search for 'BEN' on page 3 has too many words: 193
+2019-04-22 15:22:16.405 +00:00 [ERR] Warning! synonym search for 'BEN' on page 4 has too many words: 193
+2019-04-22 15:22:21.055 +00:00 [ERR] Warning! synonym search for 'BEN' on page 5 has too many words: 193
+2019-04-22 15:22:26.122 +00:00 [ERR] Warning! synonym search for 'BEN' on page 6 has too many words: 193
+2019-04-22 15:22:30.861 +00:00 [ERR] Warning! synonym search for 'BEN' on page 7 has too many words: 193
+2019-04-22 15:22:34.877 +00:00 [ERR] Warning! synonym search for 'BEN' on page 8 has too many words: 193
+2019-04-22 15:22:38.923 +00:00 [ERR] Warning! synonym search for 'BEN' on page 9 has too many words: 193
+2019-04-22 15:23:31.151 +00:00 [ERR] Warning! synonym search for 'BET' on page 1 has too many words: 117
+2019-04-22 15:23:35.196 +00:00 [ERR] Warning! synonym search for 'BET' on page 2 has too many words: 117
+2019-04-22 15:23:39.374 +00:00 [ERR] Warning! synonym search for 'BET' on page 3 has too many words: 117
+2019-04-22 15:23:43.666 +00:00 [ERR] Warning! synonym search for 'BET' on page 4 has too many words: 117
+2019-04-22 15:23:48.016 +00:00 [ERR] Warning! synonym search for 'BET' on page 5 has too many words: 117
+2019-04-22 15:23:52.156 +00:00 [ERR] Warning! synonym search for 'BET' on page 6 has too many words: 117
+2019-04-22 15:23:56.109 +00:00 [ERR] Warning! synonym search for 'BET' on page 7 has too many words: 117
+2019-04-22 15:24:00.138 +00:00 [ERR] Warning! synonym search for 'BET' on page 8 has too many words: 117
+2019-04-22 15:24:04.746 +00:00 [ERR] Warning! synonym search for 'BET' on page 9 has too many words: 117
+2019-04-22 15:29:13.895 +00:00 [ERR] Warning! synonym search for 'BIL' on page 1 has too many words: 314
+2019-04-22 15:29:18.324 +00:00 [ERR] Warning! synonym search for 'BIL' on page 2 has too many words: 314
+2019-04-22 15:29:22.515 +00:00 [ERR] Warning! synonym search for 'BIL' on page 3 has too many words: 314
+2019-04-22 15:29:26.878 +00:00 [ERR] Warning! synonym search for 'BIL' on page 4 has too many words: 314
+2019-04-22 15:29:31.240 +00:00 [ERR] Warning! synonym search for 'BIL' on page 5 has too many words: 314
+2019-04-22 15:29:35.537 +00:00 [ERR] Warning! synonym search for 'BIL' on page 6 has too many words: 314
+2019-04-22 15:29:39.735 +00:00 [ERR] Warning! synonym search for 'BIL' on page 7 has too many words: 314
+2019-04-22 15:29:43.907 +00:00 [ERR] Warning! synonym search for 'BIL' on page 8 has too many words: 314
+2019-04-22 15:29:47.948 +00:00 [ERR] Warning! synonym search for 'BIL' on page 9 has too many words: 314
+2019-04-22 15:30:31.464 +00:00 [ERR] Warning! synonym search for 'BIT' on page 1 has too many words: 153
+2019-04-22 15:30:36.081 +00:00 [ERR] Warning! synonym search for 'BIT' on page 2 has too many words: 153
+2019-04-22 15:30:40.470 +00:00 [ERR] Warning! synonym search for 'BIT' on page 3 has too many words: 153
+2019-04-22 15:30:44.680 +00:00 [ERR] Warning! synonym search for 'BIT' on page 4 has too many words: 153
+2019-04-22 15:30:49.010 +00:00 [ERR] Warning! synonym search for 'BIT' on page 5 has too many words: 153
+2019-04-22 15:30:53.458 +00:00 [ERR] Warning! synonym search for 'BIT' on page 6 has too many words: 153
+2019-04-22 15:30:57.638 +00:00 [ERR] Warning! synonym search for 'BIT' on page 7 has too many words: 153
+2019-04-22 15:31:01.990 +00:00 [ERR] Warning! synonym search for 'BIT' on page 8 has too many words: 153
+2019-04-22 15:31:06.053 +00:00 [ERR] Warning! synonym search for 'BIT' on page 9 has too many words: 153
+2019-04-22 15:40:31.843 +00:00 [ERR] Warning! synonym search for 'BOK' on page 1 has too many words: 686
+2019-04-22 15:40:36.278 +00:00 [ERR] Warning! synonym search for 'BOK' on page 2 has too many words: 686
+2019-04-22 15:40:40.519 +00:00 [ERR] Warning! synonym search for 'BOK' on page 3 has too many words: 686
+2019-04-22 15:40:45.302 +00:00 [ERR] Warning! synonym search for 'BOK' on page 4 has too many words: 686
+2019-04-22 15:40:49.507 +00:00 [ERR] Warning! synonym search for 'BOK' on page 5 has too many words: 686
+2019-04-22 15:40:54.113 +00:00 [ERR] Warning! synonym search for 'BOK' on page 6 has too many words: 686
+2019-04-22 15:40:59.218 +00:00 [ERR] Warning! synonym search for 'BOK' on page 7 has too many words: 686
+2019-04-22 15:41:03.538 +00:00 [ERR] Warning! synonym search for 'BOK' on page 8 has too many words: 686
+2019-04-22 15:41:07.871 +00:00 [ERR] Warning! synonym search for 'BOK' on page 9 has too many words: 686
+2019-04-22 15:41:14.504 +00:00 [ERR] Warning! synonym search for 'BOL' on page 1 has too many words: 120
+2019-04-22 15:41:18.863 +00:00 [ERR] Warning! synonym search for 'BOL' on page 2 has too many words: 120
+2019-04-22 15:41:23.204 +00:00 [ERR] Warning! synonym search for 'BOL' on page 3 has too many words: 120
+2019-04-22 15:41:27.514 +00:00 [ERR] Warning! synonym search for 'BOL' on page 4 has too many words: 120
+2019-04-22 15:41:31.929 +00:00 [ERR] Warning! synonym search for 'BOL' on page 5 has too many words: 120
+2019-04-22 15:41:36.314 +00:00 [ERR] Warning! synonym search for 'BOL' on page 6 has too many words: 120
+2019-04-22 15:41:40.525 +00:00 [ERR] Warning! synonym search for 'BOL' on page 7 has too many words: 120
+2019-04-22 15:41:45.225 +00:00 [ERR] Warning! synonym search for 'BOL' on page 8 has too many words: 120
+2019-04-22 15:41:49.608 +00:00 [ERR] Warning! synonym search for 'BOL' on page 9 has too many words: 120
+2019-04-22 15:41:55.540 +00:00 [ERR] Warning! synonym search for 'BOM' on page 1 has too many words: 164
+2019-04-22 15:41:59.669 +00:00 [ERR] Warning! synonym search for 'BOM' on page 2 has too many words: 164
+2019-04-22 15:42:06.619 +00:00 [ERR] Warning! synonym search for 'BOM' on page 3 has too many words: 164
+2019-04-22 15:42:11.647 +00:00 [ERR] Warning! synonym search for 'BOM' on page 4 has too many words: 164
+2019-04-22 15:42:15.596 +00:00 [ERR] Warning! synonym search for 'BOM' on page 5 has too many words: 164
+2019-04-22 15:42:19.642 +00:00 [ERR] Warning! synonym search for 'BOM' on page 6 has too many words: 164
+2019-04-22 15:42:24.112 +00:00 [ERR] Warning! synonym search for 'BOM' on page 7 has too many words: 164
+2019-04-22 15:42:28.133 +00:00 [ERR] Warning! synonym search for 'BOM' on page 8 has too many words: 164
+2019-04-22 15:42:32.147 +00:00 [ERR] Warning! synonym search for 'BOM' on page 9 has too many words: 164
+2019-04-22 15:43:12.865 +00:00 [ERR] Warning! synonym search for 'BOR' on page 1 has too many words: 124
+2019-04-22 15:43:17.089 +00:00 [ERR] Warning! synonym search for 'BOR' on page 2 has too many words: 124
+2019-04-22 15:43:21.230 +00:00 [ERR] Warning! synonym search for 'BOR' on page 3 has too many words: 124
+2019-04-22 15:43:25.367 +00:00 [ERR] Warning! synonym search for 'BOR' on page 4 has too many words: 124
+2019-04-22 15:43:30.368 +00:00 [ERR] Warning! synonym search for 'BOR' on page 5 has too many words: 124
+2019-04-22 15:43:35.352 +00:00 [ERR] Warning! synonym search for 'BOR' on page 6 has too many words: 124
+2019-04-22 15:43:39.241 +00:00 [ERR] Warning! synonym search for 'BOR' on page 7 has too many words: 124
+2019-04-22 15:43:43.424 +00:00 [ERR] Warning! synonym search for 'BOR' on page 8 has too many words: 124
+2019-04-22 15:43:47.344 +00:00 [ERR] Warning! synonym search for 'BOR' on page 9 has too many words: 124
+2019-04-22 15:47:07.614 +00:00 [ERR] Warning! synonym search for 'BRA' on page 1 has too many words: 251
+2019-04-22 15:47:12.034 +00:00 [ERR] Warning! synonym search for 'BRA' on page 2 has too many words: 251
+2019-04-22 15:47:16.009 +00:00 [ERR] Warning! synonym search for 'BRA' on page 3 has too many words: 251
+2019-04-22 15:47:19.894 +00:00 [ERR] Warning! synonym search for 'BRA' on page 4 has too many words: 251
+2019-04-22 15:47:23.998 +00:00 [ERR] Warning! synonym search for 'BRA' on page 5 has too many words: 251
+2019-04-22 15:47:28.167 +00:00 [ERR] Warning! synonym search for 'BRA' on page 6 has too many words: 251
+2019-04-22 15:47:32.261 +00:00 [ERR] Warning! synonym search for 'BRA' on page 7 has too many words: 251
+2019-04-22 15:47:36.499 +00:00 [ERR] Warning! synonym search for 'BRA' on page 8 has too many words: 251
+2019-04-22 15:47:40.551 +00:00 [ERR] Warning! synonym search for 'BRA' on page 9 has too many words: 251
+2019-04-22 15:47:53.933 +00:00 [ERR] Warning! synonym search for 'BRE' on page 1 has too many words: 143
+2019-04-22 15:47:58.403 +00:00 [ERR] Warning! synonym search for 'BRE' on page 2 has too many words: 143
+2019-04-22 15:48:02.678 +00:00 [ERR] Warning! synonym search for 'BRE' on page 3 has too many words: 143
+2019-04-22 15:48:06.946 +00:00 [ERR] Warning! synonym search for 'BRE' on page 4 has too many words: 143
+2019-04-22 15:48:11.275 +00:00 [ERR] Warning! synonym search for 'BRE' on page 5 has too many words: 143
+2019-04-22 15:48:16.222 +00:00 [ERR] Warning! synonym search for 'BRE' on page 6 has too many words: 143
+2019-04-22 15:48:20.388 +00:00 [ERR] Warning! synonym search for 'BRE' on page 7 has too many words: 143
+2019-04-22 15:48:24.509 +00:00 [ERR] Warning! synonym search for 'BRE' on page 8 has too many words: 143
+2019-04-22 15:48:28.715 +00:00 [ERR] Warning! synonym search for 'BRE' on page 9 has too many words: 143
+2019-04-22 15:49:05.713 +00:00 [ERR] Warning! synonym search for 'BRO' on page 1 has too many words: 180
+2019-04-22 15:49:10.117 +00:00 [ERR] Warning! synonym search for 'BRO' on page 2 has too many words: 180
+2019-04-22 15:49:14.374 +00:00 [ERR] Warning! synonym search for 'BRO' on page 3 has too many words: 180
+2019-04-22 15:49:18.251 +00:00 [ERR] Warning! synonym search for 'BRO' on page 4 has too many words: 180
+2019-04-22 15:49:22.390 +00:00 [ERR] Warning! synonym search for 'BRO' on page 5 has too many words: 180
+2019-04-22 15:49:26.409 +00:00 [ERR] Warning! synonym search for 'BRO' on page 6 has too many words: 180
+2019-04-22 15:49:30.355 +00:00 [ERR] Warning! synonym search for 'BRO' on page 7 has too many words: 180
+2019-04-22 15:49:35.339 +00:00 [ERR] Warning! synonym search for 'BRO' on page 8 has too many words: 180
+2019-04-22 15:49:39.022 +00:00 [ERR] Warning! synonym search for 'BRO' on page 9 has too many words: 180
+2019-04-22 15:49:59.071 +00:00 [ERR] Warning! synonym search for 'BRU' on page 1 has too many words: 157
+2019-04-22 15:50:03.662 +00:00 [ERR] Warning! synonym search for 'BRU' on page 2 has too many words: 157
+2019-04-22 15:50:08.006 +00:00 [ERR] Warning! synonym search for 'BRU' on page 3 has too many words: 157
+2019-04-22 15:50:13.092 +00:00 [ERR] Warning! synonym search for 'BRU' on page 4 has too many words: 157
+2019-04-22 15:50:17.932 +00:00 [ERR] Warning! synonym search for 'BRU' on page 5 has too many words: 157
+2019-04-22 15:50:22.883 +00:00 [ERR] Warning! synonym search for 'BRU' on page 6 has too many words: 157
+2019-04-22 15:50:28.483 +00:00 [ERR] Warning! synonym search for 'BRU' on page 7 has too many words: 157
+2019-04-22 15:50:33.105 +00:00 [ERR] Warning! synonym search for 'BRU' on page 8 has too many words: 157
+2019-04-22 15:50:37.252 +00:00 [ERR] Warning! synonym search for 'BRU' on page 9 has too many words: 157
+2019-04-22 15:50:47.528 +00:00 [ERR] Warning! synonym search for 'BRY' on page 1 has too many words: 148
+2019-04-22 15:50:52.195 +00:00 [ERR] Warning! synonym search for 'BRY' on page 2 has too many words: 148
+2019-04-22 15:50:56.740 +00:00 [ERR] Warning! synonym search for 'BRY' on page 3 has too many words: 148
+2019-04-22 15:51:01.894 +00:00 [ERR] Warning! synonym search for 'BRY' on page 4 has too many words: 148
+2019-04-22 15:51:06.920 +00:00 [ERR] Warning! synonym search for 'BRY' on page 5 has too many words: 148
+2019-04-22 15:51:13.206 +00:00 [ERR] Warning! synonym search for 'BRY' on page 6 has too many words: 148
+2019-04-22 15:51:17.733 +00:00 [ERR] Warning! synonym search for 'BRY' on page 7 has too many words: 148
+2019-04-22 15:51:22.192 +00:00 [ERR] Warning! synonym search for 'BRY' on page 8 has too many words: 148
+2019-04-22 15:51:27.345 +00:00 [ERR] Warning! synonym search for 'BRY' on page 9 has too many words: 148
+2019-04-22 15:51:37.497 +00:00 [ERR] Warning! synonym search for 'BRÅ' on page 1 has too many words: 169
+2019-04-22 15:51:41.795 +00:00 [ERR] Warning! synonym search for 'BRÅ' on page 2 has too many words: 169
+2019-04-22 15:51:46.141 +00:00 [ERR] Warning! synonym search for 'BRÅ' on page 3 has too many words: 169
+2019-04-22 15:51:50.327 +00:00 [ERR] Warning! synonym search for 'BRÅ' on page 4 has too many words: 169
+2019-04-22 15:51:54.602 +00:00 [ERR] Warning! synonym search for 'BRÅ' on page 5 has too many words: 169
+2019-04-22 15:51:58.576 +00:00 [ERR] Warning! synonym search for 'BRÅ' on page 6 has too many words: 169
+2019-04-22 15:52:03.354 +00:00 [ERR] Warning! synonym search for 'BRÅ' on page 7 has too many words: 169
+2019-04-22 15:52:07.426 +00:00 [ERR] Warning! synonym search for 'BRÅ' on page 8 has too many words: 169
+2019-04-22 15:52:11.457 +00:00 [ERR] Warning! synonym search for 'BRÅ' on page 9 has too many words: 169
+2019-04-22 15:54:43.901 +00:00 [ERR] Warning! synonym search for 'BUD' on page 1 has too many words: 230
+2019-04-22 15:54:49.349 +00:00 [ERR] Warning! synonym search for 'BUD' on page 2 has too many words: 230
+2019-04-22 15:54:53.483 +00:00 [ERR] Warning! synonym search for 'BUD' on page 3 has too many words: 230
+2019-04-22 15:54:57.691 +00:00 [ERR] Warning! synonym search for 'BUD' on page 4 has too many words: 230
+2019-04-22 15:55:02.163 +00:00 [ERR] Warning! synonym search for 'BUD' on page 5 has too many words: 230
+2019-04-22 15:55:06.294 +00:00 [ERR] Warning! synonym search for 'BUD' on page 6 has too many words: 230
+2019-04-22 15:55:10.421 +00:00 [ERR] Warning! synonym search for 'BUD' on page 7 has too many words: 230
+2019-04-22 15:55:14.702 +00:00 [ERR] Warning! synonym search for 'BUD' on page 8 has too many words: 230
+2019-04-22 15:55:19.068 +00:00 [ERR] Warning! synonym search for 'BUD' on page 9 has too many words: 230
+2019-04-22 15:55:24.811 +00:00 [ERR] Warning! synonym search for 'BUE' on page 1 has too many words: 131
+2019-04-22 15:55:29.039 +00:00 [ERR] Warning! synonym search for 'BUE' on page 2 has too many words: 131
+2019-04-22 15:55:33.265 +00:00 [ERR] Warning! synonym search for 'BUE' on page 3 has too many words: 131
+2019-04-22 15:55:37.310 +00:00 [ERR] Warning! synonym search for 'BUE' on page 4 has too many words: 131
+2019-04-22 15:55:41.407 +00:00 [ERR] Warning! synonym search for 'BUE' on page 5 has too many words: 131
+2019-04-22 15:55:45.455 +00:00 [ERR] Warning! synonym search for 'BUE' on page 6 has too many words: 131
+2019-04-22 15:55:49.469 +00:00 [ERR] Warning! synonym search for 'BUE' on page 7 has too many words: 131
+2019-04-22 15:55:53.851 +00:00 [ERR] Warning! synonym search for 'BUE' on page 8 has too many words: 131
+2019-04-22 15:55:58.133 +00:00 [ERR] Warning! synonym search for 'BUE' on page 9 has too many words: 131
+2019-04-22 15:57:35.304 +00:00 [ERR] Warning! synonym search for 'BUR' on page 1 has too many words: 146
+2019-04-22 15:57:39.565 +00:00 [ERR] Warning! synonym search for 'BUR' on page 2 has too many words: 146
+2019-04-22 15:57:43.388 +00:00 [ERR] Warning! synonym search for 'BUR' on page 3 has too many words: 146
+2019-04-22 15:57:48.827 +00:00 [ERR] Warning! synonym search for 'BUR' on page 4 has too many words: 146
+2019-04-22 15:57:52.956 +00:00 [ERR] Warning! synonym search for 'BUR' on page 5 has too many words: 146
+2019-04-22 15:57:57.036 +00:00 [ERR] Warning! synonym search for 'BUR' on page 6 has too many words: 146
+2019-04-22 15:58:01.270 +00:00 [ERR] Warning! synonym search for 'BUR' on page 7 has too many words: 146
+2019-04-22 15:58:05.440 +00:00 [ERR] Warning! synonym search for 'BUR' on page 8 has too many words: 146
+2019-04-22 15:58:09.893 +00:00 [ERR] Warning! synonym search for 'BUR' on page 9 has too many words: 146
+2019-04-22 16:01:35.900 +00:00 [ERR] Warning! synonym search for 'BYE' on page 1 has too many words: 151
+2019-04-22 16:01:40.339 +00:00 [ERR] Warning! synonym search for 'BYE' on page 2 has too many words: 151
+2019-04-22 16:01:44.418 +00:00 [ERR] Warning! synonym search for 'BYE' on page 3 has too many words: 151
+2019-04-22 16:01:49.432 +00:00 [ERR] Warning! synonym search for 'BYE' on page 4 has too many words: 151
+2019-04-22 16:01:53.912 +00:00 [ERR] Warning! synonym search for 'BYE' on page 5 has too many words: 151
+2019-04-22 16:01:58.590 +00:00 [ERR] Warning! synonym search for 'BYE' on page 6 has too many words: 151
+2019-04-22 16:02:04.237 +00:00 [ERR] Warning! synonym search for 'BYE' on page 7 has too many words: 151
+2019-04-22 16:02:09.574 +00:00 [ERR] Warning! synonym search for 'BYE' on page 8 has too many words: 151
+2019-04-22 16:02:13.601 +00:00 [ERR] Warning! synonym search for 'BYE' on page 9 has too many words: 151
+2019-04-22 16:07:24.570 +00:00 [ERR] Warning! synonym search for 'ARBEIDERSKE' on page 1 has too many words: 185
+2019-04-22 16:07:28.637 +00:00 [ERR] Warning! synonym search for 'ARBEIDERSKE' on page 2 has too many words: 185
+2019-04-22 16:07:32.911 +00:00 [ERR] Warning! synonym search for 'ARBEIDERSKE' on page 3 has too many words: 185
+2019-04-22 16:07:37.452 +00:00 [ERR] Warning! synonym search for 'ARBEIDERSKE' on page 4 has too many words: 185
+2019-04-22 16:07:41.803 +00:00 [ERR] Warning! synonym search for 'ARBEIDERSKE' on page 5 has too many words: 185
+2019-04-22 16:07:46.038 +00:00 [ERR] Warning! synonym search for 'ARBEIDERSKE' on page 6 has too many words: 185
+2019-04-22 16:07:49.942 +00:00 [ERR] Warning! synonym search for 'ARBEIDERSKE' on page 7 has too many words: 185
+2019-04-22 16:07:54.054 +00:00 [ERR] Warning! synonym search for 'ARBEIDERSKE' on page 8 has too many words: 185
+2019-04-22 16:07:58.193 +00:00 [ERR] Warning! synonym search for 'ARBEIDERSKE' on page 9 has too many words: 185
+2019-04-22 16:08:51.184 +00:00 [ERR] Warning! synonym search for 'BÆR' on page 1 has too many words: 208
+2019-04-22 16:08:55.594 +00:00 [ERR] Warning! synonym search for 'BÆR' on page 2 has too many words: 208
+2019-04-22 16:08:59.744 +00:00 [ERR] Warning! synonym search for 'BÆR' on page 3 has too many words: 208
+2019-04-22 16:09:04.196 +00:00 [ERR] Warning! synonym search for 'BÆR' on page 4 has too many words: 208
+2019-04-22 16:09:08.599 +00:00 [ERR] Warning! synonym search for 'BÆR' on page 5 has too many words: 208
+2019-04-22 16:09:12.780 +00:00 [ERR] Warning! synonym search for 'BÆR' on page 6 has too many words: 208
+2019-04-22 16:09:17.151 +00:00 [ERR] Warning! synonym search for 'BÆR' on page 7 has too many words: 208
+2019-04-22 16:09:21.582 +00:00 [ERR] Warning! synonym search for 'BÆR' on page 8 has too many words: 208
+2019-04-22 16:09:25.618 +00:00 [ERR] Warning! synonym search for 'BÆR' on page 9 has too many words: 208
+2019-04-22 16:11:26.525 +00:00 [ERR] Warning! synonym search for 'BÅT' on page 1 has too many words: 1968
+2019-04-22 16:11:31.273 +00:00 [ERR] Warning! synonym search for 'BÅT' on page 2 has too many words: 1968
+2019-04-22 16:11:35.879 +00:00 [ERR] Warning! synonym search for 'BÅT' on page 3 has too many words: 1968
+2019-04-22 16:11:40.062 +00:00 [ERR] Warning! synonym search for 'BÅT' on page 4 has too many words: 1968
+2019-04-22 16:11:44.571 +00:00 [ERR] Warning! synonym search for 'BÅT' on page 5 has too many words: 1968
+2019-04-22 16:11:48.865 +00:00 [ERR] Warning! synonym search for 'BÅT' on page 6 has too many words: 1968
+2019-04-22 16:11:53.063 +00:00 [ERR] Warning! synonym search for 'BÅT' on page 7 has too many words: 1968
+2019-04-22 16:11:57.192 +00:00 [ERR] Warning! synonym search for 'BÅT' on page 8 has too many words: 1968
+2019-04-22 16:12:01.539 +00:00 [ERR] Warning! synonym search for 'BÅT' on page 9 has too many words: 1968
+2019-04-22 16:12:27.295 +00:00 [ERR] Warning! synonym search for 'ARBEIDSSTED' on page 1 has too many words: 339
+2019-04-22 16:12:32.460 +00:00 [ERR] Warning! synonym search for 'ARBEIDSSTED' on page 2 has too many words: 339
+2019-04-22 16:12:36.660 +00:00 [ERR] Warning! synonym search for 'ARBEIDSSTED' on page 3 has too many words: 339
+2019-04-22 16:12:40.857 +00:00 [ERR] Warning! synonym search for 'ARBEIDSSTED' on page 4 has too many words: 339
+2019-04-22 16:12:44.913 +00:00 [ERR] Warning! synonym search for 'ARBEIDSSTED' on page 5 has too many words: 339
+2019-04-22 16:12:48.822 +00:00 [ERR] Warning! synonym search for 'ARBEIDSSTED' on page 6 has too many words: 339
+2019-04-22 16:12:53.154 +00:00 [ERR] Warning! synonym search for 'ARBEIDSSTED' on page 7 has too many words: 339
+2019-04-22 16:12:56.992 +00:00 [ERR] Warning! synonym search for 'ARBEIDSSTED' on page 8 has too many words: 339
+2019-04-22 16:13:01.803 +00:00 [ERR] Warning! synonym search for 'ARBEIDSSTED' on page 9 has too many words: 339
+2019-04-22 16:23:58.341 +00:00 [ERR] Warning! synonym search for 'ARRANGEMENT' on page 1 has too many words: 460
+2019-04-22 16:24:03.304 +00:00 [ERR] Warning! synonym search for 'ARRANGEMENT' on page 2 has too many words: 460
+2019-04-22 16:24:07.865 +00:00 [ERR] Warning! synonym search for 'ARRANGEMENT' on page 3 has too many words: 460
+2019-04-22 16:24:13.302 +00:00 [ERR] Warning! synonym search for 'ARRANGEMENT' on page 4 has too many words: 460
+2019-04-22 16:24:17.168 +00:00 [ERR] Warning! synonym search for 'ARRANGEMENT' on page 5 has too many words: 460
+2019-04-22 16:24:21.184 +00:00 [ERR] Warning! synonym search for 'ARRANGEMENT' on page 6 has too many words: 460
+2019-04-22 16:24:25.120 +00:00 [ERR] Warning! synonym search for 'ARRANGEMENT' on page 7 has too many words: 460
+2019-04-22 16:24:32.043 +00:00 [ERR] Warning! synonym search for 'ARRANGEMENT' on page 8 has too many words: 460
+2019-04-22 16:24:36.734 +00:00 [ERR] Warning! synonym search for 'ARRANGEMENT' on page 9 has too many words: 460
+2019-04-22 16:29:39.281 +00:00 [ERR] Warning! synonym search for 'COX' on page 1 has too many words: 142
+2019-04-22 16:29:43.820 +00:00 [ERR] Warning! synonym search for 'COX' on page 2 has too many words: 142
+2019-04-22 16:29:48.037 +00:00 [ERR] Warning! synonym search for 'COX' on page 3 has too many words: 142
+2019-04-22 16:29:52.238 +00:00 [ERR] Warning! synonym search for 'COX' on page 4 has too many words: 142
+2019-04-22 16:29:57.637 +00:00 [ERR] Warning! synonym search for 'COX' on page 5 has too many words: 142
+2019-04-22 16:30:01.899 +00:00 [ERR] Warning! synonym search for 'COX' on page 6 has too many words: 142
+2019-04-22 16:30:06.202 +00:00 [ERR] Warning! synonym search for 'COX' on page 7 has too many words: 142
+2019-04-22 16:30:10.594 +00:00 [ERR] Warning! synonym search for 'COX' on page 8 has too many words: 142
+2019-04-22 16:30:14.860 +00:00 [ERR] Warning! synonym search for 'COX' on page 9 has too many words: 142
+2019-04-22 16:32:47.780 +00:00 [ERR] Warning! synonym search for 'ASIATISK BY' on page 1 has too many words: 4739
+2019-04-22 16:32:52.190 +00:00 [ERR] Warning! synonym search for 'ASIATISK BY' on page 2 has too many words: 4739
+2019-04-22 16:32:56.542 +00:00 [ERR] Warning! synonym search for 'ASIATISK BY' on page 3 has too many words: 4739
+2019-04-22 16:33:00.607 +00:00 [ERR] Warning! synonym search for 'ASIATISK BY' on page 4 has too many words: 4739
+2019-04-22 16:33:04.781 +00:00 [ERR] Warning! synonym search for 'ASIATISK BY' on page 5 has too many words: 4739
+2019-04-22 16:33:09.961 +00:00 [ERR] Warning! synonym search for 'ASIATISK BY' on page 6 has too many words: 4739
+2019-04-22 16:33:14.293 +00:00 [ERR] Warning! synonym search for 'ASIATISK BY' on page 7 has too many words: 4739
+2019-04-22 16:33:18.477 +00:00 [ERR] Warning! synonym search for 'ASIATISK BY' on page 8 has too many words: 4739
+2019-04-22 16:33:22.768 +00:00 [ERR] Warning! synonym search for 'ASIATISK BY' on page 9 has too many words: 4739
+2019-04-22 16:33:27.523 +00:00 [ERR] Warning! synonym search for 'ASIATISK ØY' on page 1 has too many words: 130
+2019-04-22 16:33:32.032 +00:00 [ERR] Warning! synonym search for 'ASIATISK ØY' on page 2 has too many words: 130
+2019-04-22 16:33:36.367 +00:00 [ERR] Warning! synonym search for 'ASIATISK ØY' on page 3 has too many words: 130
+2019-04-22 16:33:40.617 +00:00 [ERR] Warning! synonym search for 'ASIATISK ØY' on page 4 has too many words: 130
+2019-04-22 16:33:44.812 +00:00 [ERR] Warning! synonym search for 'ASIATISK ØY' on page 5 has too many words: 130
+2019-04-22 16:33:49.320 +00:00 [ERR] Warning! synonym search for 'ASIATISK ØY' on page 6 has too many words: 130
+2019-04-22 16:33:53.475 +00:00 [ERR] Warning! synonym search for 'ASIATISK ØY' on page 7 has too many words: 130
+2019-04-22 16:33:57.923 +00:00 [ERR] Warning! synonym search for 'ASIATISK ØY' on page 8 has too many words: 130
+2019-04-22 16:34:02.279 +00:00 [ERR] Warning! synonym search for 'ASIATISK ØY' on page 9 has too many words: 130
+2019-04-22 16:43:37.321 +00:00 [ERR] Warning! synonym search for 'DAG' on page 1 has too many words: 223
+2019-04-22 16:43:41.713 +00:00 [ERR] Warning! synonym search for 'DAG' on page 2 has too many words: 223
+2019-04-22 16:43:45.955 +00:00 [ERR] Warning! synonym search for 'DAG' on page 3 has too many words: 223
+2019-04-22 16:43:50.503 +00:00 [ERR] Warning! synonym search for 'DAG' on page 4 has too many words: 223
+2019-04-22 16:43:55.029 +00:00 [ERR] Warning! synonym search for 'DAG' on page 5 has too many words: 223
+2019-04-22 16:43:59.144 +00:00 [ERR] Warning! synonym search for 'DAG' on page 6 has too many words: 223
+2019-04-22 16:44:03.358 +00:00 [ERR] Warning! synonym search for 'DAG' on page 7 has too many words: 223
+2019-04-22 16:44:07.394 +00:00 [ERR] Warning! synonym search for 'DAG' on page 8 has too many words: 223
+2019-04-22 16:44:11.418 +00:00 [ERR] Warning! synonym search for 'DAG' on page 9 has too many words: 223
+2019-04-22 16:44:29.341 +00:00 [ERR] Warning! synonym search for 'DAL' on page 1 has too many words: 976
+2019-04-22 16:44:33.436 +00:00 [ERR] Warning! synonym search for 'DAL' on page 2 has too many words: 976
+2019-04-22 16:44:37.428 +00:00 [ERR] Warning! synonym search for 'DAL' on page 3 has too many words: 976
+2019-04-22 16:44:41.539 +00:00 [ERR] Warning! synonym search for 'DAL' on page 4 has too many words: 976
+2019-04-22 16:44:45.818 +00:00 [ERR] Warning! synonym search for 'DAL' on page 5 has too many words: 976
+2019-04-22 16:44:50.300 +00:00 [ERR] Warning! synonym search for 'DAL' on page 6 has too many words: 976
+2019-04-22 16:44:54.315 +00:00 [ERR] Warning! synonym search for 'DAL' on page 7 has too many words: 976
+2019-04-22 16:44:58.465 +00:00 [ERR] Warning! synonym search for 'DAL' on page 8 has too many words: 976
+2019-04-22 16:45:02.561 +00:00 [ERR] Warning! synonym search for 'DAL' on page 9 has too many words: 976
+2019-04-22 16:47:41.906 +00:00 [ERR] Warning! synonym search for 'DAY' on page 1 has too many words: 169
+2019-04-22 16:47:46.130 +00:00 [ERR] Warning! synonym search for 'DAY' on page 2 has too many words: 169
+2019-04-22 16:47:50.246 +00:00 [ERR] Warning! synonym search for 'DAY' on page 3 has too many words: 169
+2019-04-22 16:47:54.410 +00:00 [ERR] Warning! synonym search for 'DAY' on page 4 has too many words: 169
+2019-04-22 16:47:58.702 +00:00 [ERR] Warning! synonym search for 'DAY' on page 5 has too many words: 169
+2019-04-22 16:48:02.871 +00:00 [ERR] Warning! synonym search for 'DAY' on page 6 has too many words: 169
+2019-04-22 16:48:07.253 +00:00 [ERR] Warning! synonym search for 'DAY' on page 7 has too many words: 169
+2019-04-22 16:48:11.481 +00:00 [ERR] Warning! synonym search for 'DAY' on page 8 has too many words: 169
+2019-04-22 16:48:16.002 +00:00 [ERR] Warning! synonym search for 'DAY' on page 9 has too many words: 169
+2019-04-22 16:52:41.940 +00:00 [ERR] Warning! synonym search for 'DEL' on page 1 has too many words: 365
+2019-04-22 16:52:46.315 +00:00 [ERR] Warning! synonym search for 'DEL' on page 2 has too many words: 365
+2019-04-22 16:52:50.131 +00:00 [ERR] Warning! synonym search for 'DEL' on page 3 has too many words: 365
+2019-04-22 16:52:54.239 +00:00 [ERR] Warning! synonym search for 'DEL' on page 4 has too many words: 365
+2019-04-22 16:52:58.705 +00:00 [ERR] Warning! synonym search for 'DEL' on page 5 has too many words: 365
+2019-04-22 16:53:02.928 +00:00 [ERR] Warning! synonym search for 'DEL' on page 6 has too many words: 365
+2019-04-22 16:53:07.438 +00:00 [ERR] Warning! synonym search for 'DEL' on page 7 has too many words: 365
+2019-04-22 16:53:11.892 +00:00 [ERR] Warning! synonym search for 'DEL' on page 8 has too many words: 365
+2019-04-22 16:53:15.808 +00:00 [ERR] Warning! synonym search for 'DEL' on page 9 has too many words: 365
+2019-04-22 17:00:02.956 +00:00 [ERR] Warning! synonym search for 'DIX' on page 1 has too many words: 116
+2019-04-22 17:00:07.449 +00:00 [ERR] Warning! synonym search for 'DIX' on page 2 has too many words: 116
+2019-04-22 17:00:12.730 +00:00 [ERR] Warning! synonym search for 'DIX' on page 3 has too many words: 116
+2019-04-22 17:00:17.150 +00:00 [ERR] Warning! synonym search for 'DIX' on page 4 has too many words: 116
+2019-04-22 17:00:21.132 +00:00 [ERR] Warning! synonym search for 'DIX' on page 5 has too many words: 116
+2019-04-22 17:00:25.232 +00:00 [ERR] Warning! synonym search for 'DIX' on page 6 has too many words: 116
+2019-04-22 17:00:29.436 +00:00 [ERR] Warning! synonym search for 'DIX' on page 7 has too many words: 116
+2019-04-22 17:00:33.554 +00:00 [ERR] Warning! synonym search for 'DIX' on page 8 has too many words: 116
+2019-04-22 17:00:38.089 +00:00 [ERR] Warning! synonym search for 'DIX' on page 9 has too many words: 116
+2019-04-22 17:02:32.887 +00:00 [ERR] Warning! synonym search for 'AVDELINGENE' on page 1 has too many words: 119
+2019-04-22 17:02:36.868 +00:00 [ERR] Warning! synonym search for 'AVDELINGENE' on page 2 has too many words: 119
+2019-04-22 17:02:41.123 +00:00 [ERR] Warning! synonym search for 'AVDELINGENE' on page 3 has too many words: 119
+2019-04-22 17:02:45.547 +00:00 [ERR] Warning! synonym search for 'AVDELINGENE' on page 4 has too many words: 119
+2019-04-22 17:02:51.424 +00:00 [ERR] Warning! synonym search for 'AVDELINGENE' on page 5 has too many words: 119
+2019-04-22 17:02:55.584 +00:00 [ERR] Warning! synonym search for 'AVDELINGENE' on page 6 has too many words: 119
+2019-04-22 17:02:59.928 +00:00 [ERR] Warning! synonym search for 'AVDELINGENE' on page 7 has too many words: 119
+2019-04-22 17:03:04.224 +00:00 [ERR] Warning! synonym search for 'AVDELINGENE' on page 8 has too many words: 119
+2019-04-22 17:03:08.407 +00:00 [ERR] Warning! synonym search for 'AVDELINGENE' on page 9 has too many words: 119
+2019-04-22 17:07:18.326 +00:00 [ERR] Warning! synonym search for 'DOM' on page 1 has too many words: 163
+2019-04-22 17:07:22.457 +00:00 [ERR] Warning! synonym search for 'DOM' on page 2 has too many words: 163
+2019-04-22 17:07:26.563 +00:00 [ERR] Warning! synonym search for 'DOM' on page 3 has too many words: 163
+2019-04-22 17:07:30.806 +00:00 [ERR] Warning! synonym search for 'DOM' on page 4 has too many words: 163
+2019-04-22 17:07:36.188 +00:00 [ERR] Warning! synonym search for 'DOM' on page 5 has too many words: 163
+2019-04-22 17:07:40.073 +00:00 [ERR] Warning! synonym search for 'DOM' on page 6 has too many words: 163
+2019-04-22 17:07:44.097 +00:00 [ERR] Warning! synonym search for 'DOM' on page 7 has too many words: 163
+2019-04-22 17:07:48.235 +00:00 [ERR] Warning! synonym search for 'DOM' on page 8 has too many words: 163
+2019-04-22 17:07:52.187 +00:00 [ERR] Warning! synonym search for 'DOM' on page 9 has too many words: 163
+2019-04-22 17:07:58.132 +00:00 [ERR] Warning! synonym search for 'DON' on page 1 has too many words: 127
+2019-04-22 17:08:02.399 +00:00 [ERR] Warning! synonym search for 'DON' on page 2 has too many words: 127
+2019-04-22 17:08:06.744 +00:00 [ERR] Warning! synonym search for 'DON' on page 3 has too many words: 127
+2019-04-22 17:08:10.929 +00:00 [ERR] Warning! synonym search for 'DON' on page 4 has too many words: 127
+2019-04-22 17:08:14.841 +00:00 [ERR] Warning! synonym search for 'DON' on page 5 has too many words: 127
+2019-04-22 17:08:19.385 +00:00 [ERR] Warning! synonym search for 'DON' on page 6 has too many words: 127
+2019-04-22 17:08:23.953 +00:00 [ERR] Warning! synonym search for 'DON' on page 7 has too many words: 127
+2019-04-22 17:08:28.431 +00:00 [ERR] Warning! synonym search for 'DON' on page 8 has too many words: 127
+2019-04-22 17:08:32.720 +00:00 [ERR] Warning! synonym search for 'DON' on page 9 has too many words: 127
+2019-04-22 17:11:55.206 +00:00 [ERR] Warning! synonym search for 'DRA' on page 1 has too many words: 212
+2019-04-22 17:11:59.429 +00:00 [ERR] Warning! synonym search for 'DRA' on page 2 has too many words: 212
+2019-04-22 17:12:03.918 +00:00 [ERR] Warning! synonym search for 'DRA' on page 3 has too many words: 212
+2019-04-22 17:12:08.041 +00:00 [ERR] Warning! synonym search for 'DRA' on page 4 has too many words: 212
+2019-04-22 17:12:12.392 +00:00 [ERR] Warning! synonym search for 'DRA' on page 5 has too many words: 212
+2019-04-22 17:12:16.712 +00:00 [ERR] Warning! synonym search for 'DRA' on page 6 has too many words: 212
+2019-04-22 17:12:21.348 +00:00 [ERR] Warning! synonym search for 'DRA' on page 7 has too many words: 212
+2019-04-22 17:12:26.467 +00:00 [ERR] Warning! synonym search for 'DRA' on page 8 has too many words: 212
+2019-04-22 17:12:31.152 +00:00 [ERR] Warning! synonym search for 'DRA' on page 9 has too many words: 212
+2019-04-22 17:12:58.398 +00:00 [ERR] Warning! synonym search for 'DRO' on page 1 has too many words: 154
+2019-04-22 17:13:02.791 +00:00 [ERR] Warning! synonym search for 'DRO' on page 2 has too many words: 154
+2019-04-22 17:13:08.333 +00:00 [ERR] Warning! synonym search for 'DRO' on page 3 has too many words: 154
+2019-04-22 17:13:12.291 +00:00 [ERR] Warning! synonym search for 'DRO' on page 4 has too many words: 154
+2019-04-22 17:13:16.378 +00:00 [ERR] Warning! synonym search for 'DRO' on page 5 has too many words: 154
+2019-04-22 17:13:20.415 +00:00 [ERR] Warning! synonym search for 'DRO' on page 6 has too many words: 154
+2019-04-22 17:13:24.820 +00:00 [ERR] Warning! synonym search for 'DRO' on page 7 has too many words: 154
+2019-04-22 17:13:30.725 +00:00 [ERR] Warning! synonym search for 'DRO' on page 8 has too many words: 154
+2019-04-22 17:13:34.766 +00:00 [ERR] Warning! synonym search for 'DRO' on page 9 has too many words: 154
+2019-04-22 17:16:17.565 +00:00 [ERR] Warning! synonym search for 'DUE' on page 1 has too many words: 118
+2019-04-22 17:16:21.772 +00:00 [ERR] Warning! synonym search for 'DUE' on page 2 has too many words: 118
+2019-04-22 17:16:26.448 +00:00 [ERR] Warning! synonym search for 'DUE' on page 3 has too many words: 118
+2019-04-22 17:16:31.118 +00:00 [ERR] Warning! synonym search for 'DUE' on page 4 has too many words: 118
+2019-04-22 17:16:35.508 +00:00 [ERR] Warning! synonym search for 'DUE' on page 5 has too many words: 118
+2019-04-22 17:16:39.456 +00:00 [ERR] Warning! synonym search for 'DUE' on page 6 has too many words: 118
+2019-04-22 17:16:43.536 +00:00 [ERR] Warning! synonym search for 'DUE' on page 7 has too many words: 118
+2019-04-22 17:16:47.864 +00:00 [ERR] Warning! synonym search for 'DUE' on page 8 has too many words: 118
+2019-04-22 17:16:51.941 +00:00 [ERR] Warning! synonym search for 'DUE' on page 9 has too many words: 118
+2019-04-22 17:17:43.907 +00:00 [ERR] Warning! synonym search for 'DUM' on page 1 has too many words: 205
+2019-04-22 17:17:48.405 +00:00 [ERR] Warning! synonym search for 'DUM' on page 2 has too many words: 205
+2019-04-22 17:17:52.458 +00:00 [ERR] Warning! synonym search for 'DUM' on page 3 has too many words: 205
+2019-04-22 17:17:57.408 +00:00 [ERR] Warning! synonym search for 'DUM' on page 4 has too many words: 205
+2019-04-22 17:18:01.609 +00:00 [ERR] Warning! synonym search for 'DUM' on page 5 has too many words: 205
+2019-04-22 17:18:05.938 +00:00 [ERR] Warning! synonym search for 'DUM' on page 6 has too many words: 205
+2019-04-22 17:18:10.717 +00:00 [ERR] Warning! synonym search for 'DUM' on page 7 has too many words: 205
+2019-04-22 17:18:14.602 +00:00 [ERR] Warning! synonym search for 'DUM' on page 8 has too many words: 205
+2019-04-22 17:18:18.485 +00:00 [ERR] Warning! synonym search for 'DUM' on page 9 has too many words: 205
+2019-04-22 17:18:57.342 +00:00 [ERR] Warning! synonym search for 'DUO' on page 1 has too many words: 109
+2019-04-22 17:19:01.728 +00:00 [ERR] Warning! synonym search for 'DUO' on page 2 has too many words: 109
+2019-04-22 17:19:06.177 +00:00 [ERR] Warning! synonym search for 'DUO' on page 3 has too many words: 109
+2019-04-22 17:19:10.449 +00:00 [ERR] Warning! synonym search for 'DUO' on page 4 has too many words: 109
+2019-04-22 17:19:15.113 +00:00 [ERR] Warning! synonym search for 'DUO' on page 5 has too many words: 109
+2019-04-22 17:19:19.153 +00:00 [ERR] Warning! synonym search for 'DUO' on page 6 has too many words: 109
+2019-04-22 17:19:23.498 +00:00 [ERR] Warning! synonym search for 'DUO' on page 7 has too many words: 109
+2019-04-22 17:19:27.794 +00:00 [ERR] Warning! synonym search for 'DUO' on page 8 has too many words: 109
+2019-04-22 17:19:31.971 +00:00 [ERR] Warning! synonym search for 'DUO' on page 9 has too many words: 109
+2019-04-22 17:25:38.103 +00:00 [ERR] Warning! synonym search for 'DYR' on page 1 has too many words: 6416
+2019-04-22 17:25:42.221 +00:00 [ERR] Warning! synonym search for 'DYR' on page 2 has too many words: 6416
+2019-04-22 17:25:46.756 +00:00 [ERR] Warning! synonym search for 'DYR' on page 3 has too many words: 6416
+2019-04-22 17:25:50.884 +00:00 [ERR] Warning! synonym search for 'DYR' on page 4 has too many words: 6416
+2019-04-22 17:25:56.287 +00:00 [ERR] Warning! synonym search for 'DYR' on page 5 has too many words: 6416
+2019-04-22 17:26:01.554 +00:00 [ERR] Warning! synonym search for 'DYR' on page 6 has too many words: 6416
+2019-04-22 17:26:06.165 +00:00 [ERR] Warning! synonym search for 'DYR' on page 7 has too many words: 6416
+2019-04-22 17:26:10.586 +00:00 [ERR] Warning! synonym search for 'DYR' on page 8 has too many words: 6416
+2019-04-22 17:26:14.381 +00:00 [ERR] Warning! synonym search for 'DYR' on page 9 has too many words: 6416
+2019-04-22 17:27:35.805 +00:00 [ERR] Warning! synonym search for 'DØD' on page 1 has too many words: 149
+2019-04-22 17:27:40.422 +00:00 [ERR] Warning! synonym search for 'DØD' on page 2 has too many words: 149
+2019-04-22 17:27:44.442 +00:00 [ERR] Warning! synonym search for 'DØD' on page 3 has too many words: 149
+2019-04-22 17:27:48.488 +00:00 [ERR] Warning! synonym search for 'DØD' on page 4 has too many words: 149
+2019-04-22 17:27:53.496 +00:00 [ERR] Warning! synonym search for 'DØD' on page 5 has too many words: 149
+2019-04-22 17:27:58.635 +00:00 [ERR] Warning! synonym search for 'DØD' on page 6 has too many words: 149
+2019-04-22 17:28:03.075 +00:00 [ERR] Warning! synonym search for 'DØD' on page 7 has too many words: 149
+2019-04-22 17:28:07.314 +00:00 [ERR] Warning! synonym search for 'DØD' on page 8 has too many words: 149
+2019-04-22 17:28:12.263 +00:00 [ERR] Warning! synonym search for 'DØD' on page 9 has too many words: 149
+2019-04-22 17:29:08.790 +00:00 [ERR] Warning! synonym search for 'DØR' on page 1 has too many words: 122
+2019-04-22 17:29:12.742 +00:00 [ERR] Warning! synonym search for 'DØR' on page 2 has too many words: 122
+2019-04-22 17:29:16.974 +00:00 [ERR] Warning! synonym search for 'DØR' on page 3 has too many words: 122
+2019-04-22 17:29:21.089 +00:00 [ERR] Warning! synonym search for 'DØR' on page 4 has too many words: 122
+2019-04-22 17:29:25.444 +00:00 [ERR] Warning! synonym search for 'DØR' on page 5 has too many words: 122
+2019-04-22 17:29:29.779 +00:00 [ERR] Warning! synonym search for 'DØR' on page 6 has too many words: 122
+2019-04-22 17:29:33.651 +00:00 [ERR] Warning! synonym search for 'DØR' on page 7 has too many words: 122
+2019-04-22 17:29:38.074 +00:00 [ERR] Warning! synonym search for 'DØR' on page 8 has too many words: 122
+2019-04-22 17:29:42.019 +00:00 [ERR] Warning! synonym search for 'DØR' on page 9 has too many words: 122
+2019-04-22 17:42:55.629 +00:00 [ERR] Warning! synonym search for 'EGG' on page 1 has too many words: 210
+2019-04-22 17:42:59.685 +00:00 [ERR] Warning! synonym search for 'EGG' on page 2 has too many words: 210
+2019-04-22 17:43:03.615 +00:00 [ERR] Warning! synonym search for 'EGG' on page 3 has too many words: 210
+2019-04-22 17:43:07.877 +00:00 [ERR] Warning! synonym search for 'EGG' on page 4 has too many words: 210
+2019-04-22 17:43:12.129 +00:00 [ERR] Warning! synonym search for 'EGG' on page 5 has too many words: 210
+2019-04-22 17:43:16.423 +00:00 [ERR] Warning! synonym search for 'EGG' on page 6 has too many words: 210
+2019-04-22 17:43:21.293 +00:00 [ERR] Warning! synonym search for 'EGG' on page 7 has too many words: 210
+2019-04-22 17:43:25.465 +00:00 [ERR] Warning! synonym search for 'EGG' on page 8 has too many words: 210
+2019-04-22 17:43:29.596 +00:00 [ERR] Warning! synonym search for 'EGG' on page 9 has too many words: 210
+2019-04-22 17:46:20.221 +00:00 [ERR] Warning! synonym search for 'EID' on page 1 has too many words: 116
+2019-04-22 17:46:24.562 +00:00 [ERR] Warning! synonym search for 'EID' on page 2 has too many words: 116
+2019-04-22 17:46:28.739 +00:00 [ERR] Warning! synonym search for 'EID' on page 3 has too many words: 116
+2019-04-22 17:46:32.941 +00:00 [ERR] Warning! synonym search for 'EID' on page 4 has too many words: 116
+2019-04-22 17:46:38.004 +00:00 [ERR] Warning! synonym search for 'EID' on page 5 has too many words: 116
+2019-04-22 17:46:43.849 +00:00 [ERR] Warning! synonym search for 'EID' on page 6 has too many words: 116
+2019-04-22 17:46:47.873 +00:00 [ERR] Warning! synonym search for 'EID' on page 7 has too many words: 116
+2019-04-22 17:46:51.973 +00:00 [ERR] Warning! synonym search for 'EID' on page 8 has too many words: 116
+2019-04-22 17:46:56.273 +00:00 [ERR] Warning! synonym search for 'EID' on page 9 has too many words: 116
+2019-04-22 17:56:32.308 +00:00 [ERR] Warning! synonym search for 'ELV' on page 1 has too many words: 6542
+2019-04-22 17:56:37.817 +00:00 [ERR] Warning! synonym search for 'ELV' on page 2 has too many words: 6542
+2019-04-22 17:56:42.267 +00:00 [ERR] Warning! synonym search for 'ELV' on page 3 has too many words: 6542
+2019-04-22 17:56:46.599 +00:00 [ERR] Warning! synonym search for 'ELV' on page 4 has too many words: 6542
+2019-04-22 17:56:51.008 +00:00 [ERR] Warning! synonym search for 'ELV' on page 5 has too many words: 6542
+2019-04-22 17:56:54.969 +00:00 [ERR] Warning! synonym search for 'ELV' on page 6 has too many words: 6542
+2019-04-22 17:56:59.091 +00:00 [ERR] Warning! synonym search for 'ELV' on page 7 has too many words: 6542
+2019-04-22 17:57:03.905 +00:00 [ERR] Warning! synonym search for 'ELV' on page 8 has too many words: 6542
+2019-04-22 17:57:08.241 +00:00 [ERR] Warning! synonym search for 'ELV' on page 9 has too many words: 6542
+2019-04-22 18:00:05.299 +00:00 [ERR] Starting CrossWord.Scraper - retrieving database ....
+2019-04-22 18:00:09.362 +00:00 [ERR] Using scraper config - site: 'Kryssord', continue with last word: 'false', from/to letter count: 1-20.
+2019-04-22 18:07:03.264 +00:00 [ERR] Warning! synonym search for 'ABEL' on page 1 has too many words: 135
+2019-04-22 18:07:07.517 +00:00 [ERR] Warning! synonym search for 'ABEL' on page 2 has too many words: 135
+2019-04-22 18:07:11.173 +00:00 [ERR] Warning! synonym search for 'ABEL' on page 3 has too many words: 135
+2019-04-22 18:07:15.084 +00:00 [ERR] Warning! synonym search for 'ABEL' on page 4 has too many words: 135
+2019-04-22 18:07:18.954 +00:00 [ERR] Warning! synonym search for 'ABEL' on page 5 has too many words: 135
+2019-04-22 18:07:22.936 +00:00 [ERR] Warning! synonym search for 'ABEL' on page 6 has too many words: 135
+2019-04-22 18:07:27.187 +00:00 [ERR] Warning! synonym search for 'ABEL' on page 7 has too many words: 135
+2019-04-22 18:07:31.242 +00:00 [ERR] Warning! synonym search for 'ABEL' on page 8 has too many words: 135
+2019-04-22 18:07:35.580 +00:00 [ERR] Warning! synonym search for 'ABEL' on page 9 has too many words: 135
+2019-04-22 18:11:14.732 +00:00 [ERR] Warning! synonym search for 'ADAM' on page 1 has too many words: 204
+2019-04-22 18:11:18.721 +00:00 [ERR] Warning! synonym search for 'ADAM' on page 2 has too many words: 204
+2019-04-22 18:11:22.637 +00:00 [ERR] Warning! synonym search for 'ADAM' on page 3 has too many words: 204
+2019-04-22 18:11:26.369 +00:00 [ERR] Warning! synonym search for 'ADAM' on page 4 has too many words: 204
+2019-04-22 18:11:29.876 +00:00 [ERR] Warning! synonym search for 'ADAM' on page 5 has too many words: 204
+2019-04-22 18:11:34.099 +00:00 [ERR] Warning! synonym search for 'ADAM' on page 6 has too many words: 204
+2019-04-22 18:11:38.999 +00:00 [ERR] Warning! synonym search for 'ADAM' on page 7 has too many words: 204
+2019-04-22 18:11:42.822 +00:00 [ERR] Warning! synonym search for 'ADAM' on page 8 has too many words: 204
+2019-04-22 18:11:46.555 +00:00 [ERR] Warning! synonym search for 'ADAM' on page 9 has too many words: 204
+2019-04-22 18:12:17.225 +00:00 [ERR] Warning! synonym search for 'ADEL' on page 1 has too many words: 121
+2019-04-22 18:12:21.419 +00:00 [ERR] Warning! synonym search for 'ADEL' on page 2 has too many words: 121
+2019-04-22 18:12:25.652 +00:00 [ERR] Warning! synonym search for 'ADEL' on page 3 has too many words: 121
+2019-04-22 18:12:29.899 +00:00 [ERR] Warning! synonym search for 'ADEL' on page 4 has too many words: 121
+2019-04-22 18:12:34.081 +00:00 [ERR] Warning! synonym search for 'ADEL' on page 5 has too many words: 121
+2019-04-22 18:12:38.229 +00:00 [ERR] Warning! synonym search for 'ADEL' on page 6 has too many words: 121
+2019-04-22 18:12:42.321 +00:00 [ERR] Warning! synonym search for 'ADEL' on page 7 has too many words: 121
+2019-04-22 18:12:46.036 +00:00 [ERR] Warning! synonym search for 'ADEL' on page 8 has too many words: 121
+2019-04-22 18:12:49.872 +00:00 [ERR] Warning! synonym search for 'ADEL' on page 9 has too many words: 121
+2019-04-22 18:15:09.911 +00:00 [ERR] Warning! synonym search for 'ADV.' on page 1 has too many words: 719
+2019-04-22 18:15:13.526 +00:00 [ERR] Warning! synonym search for 'ADV.' on page 2 has too many words: 719
+2019-04-22 18:15:18.294 +00:00 [ERR] Warning! synonym search for 'ADV.' on page 3 has too many words: 719
+2019-04-22 18:15:23.001 +00:00 [ERR] Warning! synonym search for 'ADV.' on page 4 has too many words: 719
+2019-04-22 18:15:28.210 +00:00 [ERR] Warning! synonym search for 'ADV.' on page 5 has too many words: 719
+2019-04-22 18:15:32.494 +00:00 [ERR] Warning! synonym search for 'ADV.' on page 6 has too many words: 719
+2019-04-22 18:15:36.812 +00:00 [ERR] Warning! synonym search for 'ADV.' on page 7 has too many words: 719
+2019-04-22 18:15:41.302 +00:00 [ERR] Warning! synonym search for 'ADV.' on page 8 has too many words: 719
+2019-04-22 18:15:45.345 +00:00 [ERR] Warning! synonym search for 'ADV.' on page 9 has too many words: 719
+2019-04-22 18:18:44.497 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK ELV' on page 1 has too many words: 192
+2019-04-22 18:18:48.681 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK ELV' on page 2 has too many words: 192
+2019-04-22 18:18:52.662 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK ELV' on page 3 has too many words: 192
+2019-04-22 18:18:56.608 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK ELV' on page 4 has too many words: 192
+2019-04-22 18:19:00.634 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK ELV' on page 5 has too many words: 192
+2019-04-22 18:19:04.611 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK ELV' on page 6 has too many words: 192
+2019-04-22 18:19:09.022 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK ELV' on page 7 has too many words: 192
+2019-04-22 18:19:13.083 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK ELV' on page 8 has too many words: 192
+2019-04-22 18:19:18.334 +00:00 [ERR] Warning! synonym search for 'AFRIKANSK ELV' on page 9 has too many words: 192
+2019-04-22 18:29:39.435 +00:00 [ERR] Warning! synonym search for 'AKER' on page 1 has too many words: 175
+2019-04-22 18:29:44.138 +00:00 [ERR] Warning! synonym search for 'AKER' on page 2 has too many words: 175
+2019-04-22 18:29:48.162 +00:00 [ERR] Warning! synonym search for 'AKER' on page 3 has too many words: 175
+2019-04-22 18:29:52.421 +00:00 [ERR] Warning! synonym search for 'AKER' on page 4 has too many words: 175
+2019-04-22 18:29:56.987 +00:00 [ERR] Warning! synonym search for 'AKER' on page 5 has too many words: 175
+2019-04-22 18:30:01.247 +00:00 [ERR] Warning! synonym search for 'AKER' on page 6 has too many words: 175
+2019-04-22 18:30:04.729 +00:00 [ERR] Warning! synonym search for 'AKER' on page 7 has too many words: 175
+2019-04-22 18:30:08.657 +00:00 [ERR] Warning! synonym search for 'AKER' on page 8 has too many words: 175
+2019-04-22 18:30:13.017 +00:00 [ERR] Warning! synonym search for 'AKER' on page 9 has too many words: 175
+2019-04-22 18:32:11.741 +00:00 [ERR] Warning! synonym search for 'AKTA' on page 1 has too many words: 151
+2019-04-22 18:32:15.965 +00:00 [ERR] Warning! synonym search for 'AKTA' on page 2 has too many words: 151
+2019-04-22 18:32:20.191 +00:00 [ERR] Warning! synonym search for 'AKTA' on page 3 has too many words: 151
+2019-04-22 18:32:23.287 +00:00 [ERR] Warning! synonym search for 'AKTA' on page 4 has too many words: 151
+2019-04-22 18:32:26.862 +00:00 [ERR] Warning! synonym search for 'AKTA' on page 5 has too many words: 151
+2019-04-22 18:32:31.314 +00:00 [ERR] Warning! synonym search for 'AKTA' on page 6 has too many words: 151
+2019-04-22 18:32:36.192 +00:00 [ERR] Warning! synonym search for 'AKTA' on page 7 has too many words: 151
+2019-04-22 18:32:40.288 +00:00 [ERR] Warning! synonym search for 'AKTA' on page 8 has too many words: 151
+2019-04-22 18:32:44.160 +00:00 [ERR] Warning! synonym search for 'AKTA' on page 9 has too many words: 151
+2019-04-22 18:32:48.125 +00:00 [ERR] Warning! synonym search for 'AKTE' on page 1 has too many words: 169
+2019-04-22 18:32:51.987 +00:00 [ERR] Warning! synonym search for 'AKTE' on page 2 has too many words: 169
+2019-04-22 18:32:56.437 +00:00 [ERR] Warning! synonym search for 'AKTE' on page 3 has too many words: 169
+2019-04-22 18:33:01.724 +00:00 [ERR] Warning! synonym search for 'AKTE' on page 4 has too many words: 169
+2019-04-22 18:33:06.235 +00:00 [ERR] Warning! synonym search for 'AKTE' on page 5 has too many words: 169
+2019-04-22 18:33:10.604 +00:00 [ERR] Warning! synonym search for 'AKTE' on page 6 has too many words: 169
+2019-04-22 18:33:14.641 +00:00 [ERR] Warning! synonym search for 'AKTE' on page 7 has too many words: 169
+2019-04-22 18:33:18.768 +00:00 [ERR] Warning! synonym search for 'AKTE' on page 8 has too many words: 169
+2019-04-22 18:33:22.827 +00:00 [ERR] Warning! synonym search for 'AKTE' on page 9 has too many words: 169
+2019-04-22 18:42:21.773 +00:00 [ERR] Warning! synonym search for 'ALTA' on page 1 has too many words: 134
+2019-04-22 18:42:26.213 +00:00 [ERR] Warning! synonym search for 'ALTA' on page 2 has too many words: 134
+2019-04-22 18:42:30.121 +00:00 [ERR] Warning! synonym search for 'ALTA' on page 3 has too many words: 134
+2019-04-22 18:42:34.284 +00:00 [ERR] Warning! synonym search for 'ALTA' on page 4 has too many words: 134
+2019-04-22 18:42:38.125 +00:00 [ERR] Warning! synonym search for 'ALTA' on page 5 has too many words: 134
+2019-04-22 18:42:42.083 +00:00 [ERR] Warning! synonym search for 'ALTA' on page 6 has too many words: 134
+2019-04-22 18:42:46.357 +00:00 [ERR] Warning! synonym search for 'ALTA' on page 7 has too many words: 134
+2019-04-22 18:42:50.594 +00:00 [ERR] Warning! synonym search for 'ALTA' on page 8 has too many words: 134
+2019-04-22 18:42:54.960 +00:00 [ERR] Warning! synonym search for 'ALTA' on page 9 has too many words: 134
+2019-04-22 18:52:15.403 +00:00 [ERR] Warning! synonym search for 'ANGI' on page 1 has too many words: 175
+2019-04-22 18:52:19.178 +00:00 [ERR] Warning! synonym search for 'ANGI' on page 2 has too many words: 175
+2019-04-22 18:52:23.764 +00:00 [ERR] Warning! synonym search for 'ANGI' on page 3 has too many words: 175
+2019-04-22 18:52:27.572 +00:00 [ERR] Warning! synonym search for 'ANGI' on page 4 has too many words: 175
+2019-04-22 18:52:31.204 +00:00 [ERR] Warning! synonym search for 'ANGI' on page 5 has too many words: 175
+2019-04-22 18:52:34.925 +00:00 [ERR] Warning! synonym search for 'ANGI' on page 6 has too many words: 175
+2019-04-22 18:52:39.101 +00:00 [ERR] Warning! synonym search for 'ANGI' on page 7 has too many words: 175
+2019-04-22 18:52:43.566 +00:00 [ERR] Warning! synonym search for 'ANGI' on page 8 has too many words: 175
+2019-04-22 18:52:47.728 +00:00 [ERR] Warning! synonym search for 'ANGI' on page 9 has too many words: 175
+2019-04-22 18:54:19.262 +00:00 [ERR] Warning! synonym search for 'AMERIKANSK BY' on page 1 has too many words: 1869
+2019-04-22 18:54:23.637 +00:00 [ERR] Warning! synonym search for 'AMERIKANSK BY' on page 2 has too many words: 1869
+2019-04-22 18:54:28.219 +00:00 [ERR] Warning! synonym search for 'AMERIKANSK BY' on page 3 has too many words: 1869
+2019-04-22 18:54:33.320 +00:00 [ERR] Warning! synonym search for 'AMERIKANSK BY' on page 4 has too many words: 1869
+2019-04-22 18:54:37.306 +00:00 [ERR] Warning! synonym search for 'AMERIKANSK BY' on page 5 has too many words: 1869
+2019-04-22 18:54:41.291 +00:00 [ERR] Warning! synonym search for 'AMERIKANSK BY' on page 6 has too many words: 1869
+2019-04-22 18:54:45.410 +00:00 [ERR] Warning! synonym search for 'AMERIKANSK BY' on page 7 has too many words: 1869
+2019-04-22 18:54:49.835 +00:00 [ERR] Warning! synonym search for 'AMERIKANSK BY' on page 8 has too many words: 1869
+2019-04-22 18:54:53.917 +00:00 [ERR] Warning! synonym search for 'AMERIKANSK BY' on page 9 has too many words: 1869
+2019-04-22 18:57:52.749 +00:00 [ERR] Warning! synonym search for 'ANTA' on page 1 has too many words: 141
+2019-04-22 18:57:56.422 +00:00 [ERR] Warning! synonym search for 'ANTA' on page 2 has too many words: 141
+2019-04-22 18:58:00.468 +00:00 [ERR] Warning! synonym search for 'ANTA' on page 3 has too many words: 141
+2019-04-22 18:58:04.139 +00:00 [ERR] Warning! synonym search for 'ANTA' on page 4 has too many words: 141
+2019-04-22 18:58:07.822 +00:00 [ERR] Warning! synonym search for 'ANTA' on page 5 has too many words: 141
+2019-04-22 18:58:11.353 +00:00 [ERR] Warning! synonym search for 'ANTA' on page 6 has too many words: 141
+2019-04-22 18:58:16.121 +00:00 [ERR] Warning! synonym search for 'ANTA' on page 7 has too many words: 141
+2019-04-22 18:58:20.566 +00:00 [ERR] Warning! synonym search for 'ANTA' on page 8 has too many words: 141
+2019-04-22 18:58:24.408 +00:00 [ERR] Warning! synonym search for 'ANTA' on page 9 has too many words: 141
+2019-04-22 18:58:28.422 +00:00 [ERR] Warning! synonym search for 'ANTE' on page 1 has too many words: 128
+2019-04-22 18:58:32.310 +00:00 [ERR] Warning! synonym search for 'ANTE' on page 2 has too many words: 128
+2019-04-22 18:58:36.624 +00:00 [ERR] Warning! synonym search for 'ANTE' on page 3 has too many words: 128
+2019-04-22 18:58:40.790 +00:00 [ERR] Warning! synonym search for 'ANTE' on page 4 has too many words: 128
+2019-04-22 18:58:44.490 +00:00 [ERR] Warning! synonym search for 'ANTE' on page 5 has too many words: 128
+2019-04-22 18:58:48.149 +00:00 [ERR] Warning! synonym search for 'ANTE' on page 6 has too many words: 128
+2019-04-22 18:58:53.250 +00:00 [ERR] Warning! synonym search for 'ANTE' on page 7 has too many words: 128
+2019-04-22 18:58:57.016 +00:00 [ERR] Warning! synonym search for 'ANTE' on page 8 has too many words: 128
+2019-04-22 18:59:00.761 +00:00 [ERR] Warning! synonym search for 'ANTE' on page 9 has too many words: 128
