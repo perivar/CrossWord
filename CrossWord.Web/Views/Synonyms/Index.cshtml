@@ -200,8 +200,9 @@
                     },
                     error: function(error){
                         //console.log(error);
-                        $("#search-header").html('');
-                        $("#word-list").html('<tr><th scope="row">' + error.statusText + '</th>');
+                        //$("#search-header").html('');
+                        //$("#word-list").html('<tr><th scope="row">' + error.statusText + '</th>');
+                        displaySearchResults([]);
                     }
                 });
                 
@@ -252,8 +253,9 @@
                     },
                     error: function(error){
                         //console.log(error);
-                        $("#search-header").html('');
-                        $("#word-list").html('<tr><th scope="row">' + error.statusText + '</th>');
+                        //$("#search-header").html('Fant <b>ingen</b> synonym til ' + $("#word").val());                
+                        //$("#word-list").html('<tr><th scope="row">' + error.statusText + '</th>');
+                        displaySearchResults([]);
                     }
                 });
 

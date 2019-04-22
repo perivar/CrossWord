@@ -86,7 +86,7 @@
   },
   {
     "outputFileName": "wwwroot/lib/popper.js/dist/popper.js",
-    "inputFiles": ["node_modules/lib/popper.js/dist/popper.js"],
+    "inputFiles": ["node_modules/popper.js/dist/popper.js"],
     "minify": {
       "enabled": false,
       "renameLocals": false,
@@ -95,7 +95,7 @@
   },
   {
     "outputFileName": "wwwroot/lib/popper.js/dist/popper.min.js",
-    "inputFiles": ["node_modules/lib/popper.js/dist/popper.min.js"],
+    "inputFiles": ["node_modules/popper.js/dist/popper.min.js"],
     "minify": {
       "enabled": false,
       "renameLocals": false,
