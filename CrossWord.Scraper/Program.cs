@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -72,46 +73,53 @@ namespace CrossWord.Scraper
             // make sure that no chrome and chrome drivers are running
             ChromeDriverUtils.KillAllChromeDriverInstances();
 
+            // read inn scraper info from environment variables (docker-compose)
+            string scraperSite = configuration["ScraperSite"] ?? "Kryssord";
+            bool doContinueWithLastWord = GetConfigurationBoolValue(configuration, "ScraperContinueLastWord", true);
+            int startLetterCount = GetConfigurationIntValue(configuration, "ScraperStartLetterCount", 1);
+            int endLetterCount = GetConfigurationIntValue(configuration, "ScraperEndLetterCount", 20);
+
+            Log.Error("Using scraper config - site: '{0}', continue with last word: '{1}', from/to letter count: {2}-{3}.", scraperSite, doContinueWithLastWord, startLetterCount, endLetterCount);
+
             // start several scrapers in parallell
             var options = new ParallelOptions();
-            // // options.MaxDegreeOfParallelism = 50; // seems to work better without a MaxDegreeOfParallelism number
+            // options.MaxDegreeOfParallelism = 50; // seems to work better without a MaxDegreeOfParallelism number
 
-            Parallel.Invoke(options,
-            //    () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 1, false),
-            //    () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 2, false),
-            //    () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 3, false),
-            //    () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 4, false),
-            //    () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 5, false),
-            //    () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 6, false),
-               () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 7),
-            //    () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 8, false),
-               () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 9),
-            //    () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 10, false),
-            //    () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 11, false),
-               () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 12),
-               () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 13),
-            //    () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 14, false),
-            //    () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 15, false),
-               () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 16),
-               () => new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, 17)
+            // using Parallel.ForEach
+            var actionsList = new List<Action>();
+            for (int i = startLetterCount; i <= endLetterCount; i++)
+            {
+                int local_i = i; // have to use local i to not use the same increment on all scrapers
+                switch (scraperSite)
+                {
+                    default:
+                    case "Kryssord":
+                        actionsList.Add(() => { new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, local_i, doContinueWithLastWord); });
 
-            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 1),
-            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 2),
-            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 3),
-            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 4),
-            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 5),
-            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 6),
-            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 7),
-            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 8),
-            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 9),
-            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 10),
-            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 11),
-            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 12),
-            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 13),
-            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 14),
-            //   () => new KryssordHjelpScraper(connectionString, signalRHubURL, 15)
+                        break;
+                    case "KryssordHjelp":
+                        actionsList.Add(() => { new KryssordHjelpScraper(connectionString, signalRHubURL, local_i, doContinueWithLastWord); });
+                        break;
+                }
+            }
 
-            );
+            Parallel.ForEach<Action>(actionsList, options, (o => o()));
+        }
+
+        private static int GetConfigurationIntValue(IConfiguration configuration, string key, int defaultValue)
+        {
+            string stringValue = configuration[key] ?? defaultValue.ToString();
+            int returnValue = defaultValue;
+            int.TryParse(stringValue, out returnValue);
+            return returnValue;
+        }
+
+        private static bool GetConfigurationBoolValue(IConfiguration configuration, string key, bool defaultValue)
+        {
+            string stringValue = configuration[key] ?? defaultValue.ToString();
+            bool returnValue = defaultValue;
+            bool.TryParse(stringValue, out returnValue);
+            return returnValue;
         }
     }
 }

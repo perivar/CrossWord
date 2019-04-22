@@ -23,7 +23,7 @@ namespace CrossWord.Scraper
         string connectionString = null;
         string signalRHubURL = null;
 
-        public KryssordHjelpScraper(string connectionString, string signalRHubURL, int letterCount)
+        public KryssordHjelpScraper(string connectionString, string signalRHubURL, int letterCount, bool doContinueWithLastWord = true)
         {
             this.connectionString = connectionString;
             this.signalRHubURL = signalRHubURL;
@@ -37,15 +37,38 @@ namespace CrossWord.Scraper
             // do this before this class is called instead
             // KillAllChromeDriverInstances();
 
-            DoScrape(letterCount);
+            DoScrape(letterCount, doContinueWithLastWord);
         }
 
-        private void DoScrape(int letterCount)
+        private void DoScrape(int letterCount, bool doContinueWithLastWord)
         {
             var dbContextFactory = new DesignTimeDbContextFactory();
             using (var db = dbContextFactory.CreateDbContext(connectionString, Log.Logger))
             {
-                string lastWordString = WordDatabaseService.GetLastWordFromLetterCount(db, letterCount);
+                string lastWordString = null;
+                if (doContinueWithLastWord)
+                {
+                    lastWordString = WordDatabaseService.GetLastWordFromLetterCount(db, letterCount);
+                }
+
+                // if we didn't get back a word, use a pattern instead
+                if (lastWordString == null)
+                {
+                    switch (letterCount)
+                    {
+                        case 1:
+                            lastWordString = "a";
+                            break;
+                        case 2:
+                            lastWordString = "aa";
+                            break;
+                        default:
+                            lastWordString = "aa" + new string('?', letterCount - 2);
+                            break;
+                    }
+
+                    Log.Information("Could not find any words having '{0}' letters. Therefore using last word pattern '{1}'.", letterCount, lastWordString);
+                }
 
                 // Note! 
                 // the user needs to be added before we disable tracking and disable AutoDetectChanges

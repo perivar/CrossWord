@@ -47,6 +47,10 @@ services:
       - DBUSER=root
       - DBPASSWORD=secret
       - DATABASE=dictionary
+      - ScraperSite=Kryssord # Kryssord or KryssordHjelp
+      - ScraperContinueLastWord=false
+      - ScraperStartLetterCount=1
+      - ScraperEndLetterCount=20
       - SignalRHubURL=http://order.wazalo.com:5000/crosswords
     privileged: true
     cap_add:
