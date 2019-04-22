@@ -14,22 +14,90 @@
   },
   {
     "outputFileName": "wwwroot/css/vendor.min.css",
-    "inputFiles": ["node_modules/bootstrap/dist/css/bootstrap.min.css"],
+    "inputFiles": ["node_modules/typeahead.js-bootstrap4-css/typeaheadjs.css"],
     "minify": {
-      "enabled": true,
+      "enabled": false,
       "renameLocals": false,
       "adjustRelativePaths": false
     }
   },
   {
     "outputFileName": "wwwroot/js/vendor.min.js",
-    "inputFiles": [
-      "node_modules/jquery/dist/jquery.min.js",
-      "node_modules/popper.js/dist/umd/popper.min.js",
-      "node_modules/bootstrap/dist/js/bootstrap.min.js"
-    ],
+    "inputFiles": ["node_modules/typeahead.js/dist/typeahead.jquery.min.js"],
     "minify": {
-      "enabled": true,
+      "enabled": false,
+      "renameLocals": false,
+      "adjustRelativePaths": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/lib/jquery/dist/jquery.js",
+    "inputFiles": ["node_modules/jquery/dist/jquery.js"],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false,
+      "adjustRelativePaths": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/lib/jquery/dist/jquery.min.js",
+    "inputFiles": ["node_modules/jquery/dist/jquery.min.js"],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false,
+      "adjustRelativePaths": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/lib/bootstrap/dist/css/bootstrap.css",
+    "inputFiles": ["node_modules/bootstrap/dist/css/bootstrap.css"],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false,
+      "adjustRelativePaths": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/lib/bootstrap/dist/css/bootstrap.min.css",
+    "inputFiles": ["node_modules/bootstrap/dist/css/bootstrap.min.css"],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false,
+      "adjustRelativePaths": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/lib/bootstrap/dist/js/bootstrap.bundle.js",
+    "inputFiles": ["node_modules/bootstrap/dist/js/bootstrap.bundle.js"],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false,
+      "adjustRelativePaths": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/lib/bootstrap/dist/js/bootstrap.bundle.min.js",
+    "inputFiles": ["node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false,
+      "adjustRelativePaths": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/lib/popper.js/dist/popper.js",
+    "inputFiles": ["node_modules/lib/popper.js/dist/popper.js"],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false,
+      "adjustRelativePaths": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/lib/popper.js/dist/popper.min.js",
+    "inputFiles": ["node_modules/lib/popper.js/dist/popper.min.js"],
+    "minify": {
+      "enabled": false,
       "renameLocals": false,
       "adjustRelativePaths": false
     }
@@ -37,6 +105,15 @@
   {
     "outputFileName": "wwwroot/lib/signalr/signalr.js",
     "inputFiles": ["node_modules/@aspnet/signalr/dist/browser/signalr.js"],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false,
+      "adjustRelativePaths": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/lib/signalr/signalr.min.js",
+    "inputFiles": ["node_modules/@aspnet/signalr/dist/browser/signalr.min.js"],
     "minify": {
       "enabled": false,
       "renameLocals": false,

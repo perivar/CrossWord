@@ -18,19 +18,16 @@
     }
 }
 
-.table-row {
-    cursor:pointer;
-}
-
-@media only screen and (min-width: 320px) {
+/*@media only screen and (min-width: 320px) {*/
     input.letter-input {
-        height: 50px!important;
+        height: 32px !important;
+        width: 32px !important;
         margin: 2px 2px 2px 2px;
         text-transform: uppercase!important;
-        width: 50px!important;
         padding: 4px;
         border: 1px solid #ccc;
         text-align: center;
-        font-size: 28px;
+        font-size: 16px !important;
     }
-}
+/*}*/
+

@@ -6,11 +6,11 @@
 <form>
     <div class="form-group">
         <label for="word">Spørreord</label>
-        <input type="text" class="form-control" id="word" aria-describedby="wordHelp" placeholder="Spørreord" autocapitalize="none" autocomplete="off">
+        <input type="text" class="form-control typeahead twitter-typeahead" data-provide="typeahead" id="word" aria-describedby="wordHelp" placeholder="Spørreord" autocapitalize="none" autocomplete="off">
         <small id="wordHelp" class="form-text text-muted">Skriv inn ordet du søker etter her</small>
     </div>
     <div class="form-group">
-        <label for="letter-buttons">Mønster</label>
+        <label for="letter-buttons">Skriv inn bokstavene du har</label>
         <div class="input-group">
             <div class="input-group-prepend">
                 <button class="btn btn-outline-secondary" type="button" id="letter-less"><i class="fas fa-chevron-left"></i></button>
@@ -28,7 +28,7 @@
 <br />
 <p class="lead" id="search-header"></p>
 <div class="table-responsive">
-    <table class="table table-hover">
+    <table class="table">
     <thead class="thead-light">
         <tr>
         <th scope="col">Synonym</th>
@@ -51,7 +51,9 @@
     <script>
         $(function() {
             
-            var baseUrl = "@ViewData["ApiBaseUrl"]" + "synonyms/";
+            var baseUrl = "@ViewData["ApiBaseUrl"]";
+            var baseSynonymUrl = baseUrl + "synonyms/";
+            var baseWordUrl = baseUrl + "words/";
             var authUrl = "@ViewData["ApiBaseUrl"]" + "Account/Login";
             var apiUserEmail = "@ViewData["ApiUserEmail"]";
             var apiPassword = "@ViewData["ApiPassword"]";
@@ -96,7 +98,7 @@
                 $.each( data, function( index, element ) {
                     //console.log(index + ' ' + element.wordFrom.value + ' - ' + element.wordTo.value);                    
                     var date = $.date(element.createdDate);
-                    $("#word-list").append('<tr class="table-row" data-value="' + element.value + '"><th scope="row">' + element.value + '</th><td>' + element.numberOfWords + '</td><td>' + element.numberOfLetters + '</td><td>' + element.comment + '</td><td>' + date + '</td></tr>');
+                    $("#word-list").append('<tr class="table-row"><th scope="row"><a href="/synonyms/' + element.value + '">' + element.value + '</a></th><td>' + element.numberOfWords + '</td><td>' + element.numberOfLetters + '</td><td>' + element.comment + '</td><td>' + date + '</td></tr>');
                 });              
             };
 
@@ -121,8 +123,8 @@
                 
                 $("#word").val(word);            
 
-                var url = baseUrl + word;
-
+                var url = baseSynonymUrl + word;
+                
                 $.ajax({
                     url: url,
                     type: "GET",
@@ -136,6 +138,8 @@
                         $("#word-list").html('<tr><th scope="row">' + error.statusText + '</th>');
                     }
                 });
+                
+                //$("#submit-search").click();
             }
 
 			$("#submit-search").click(function() {
@@ -160,7 +164,7 @@
                 });          
                 
                 var wordValue = $("#word").val();
-                var url = baseUrl + wordValue;
+                var url = baseSynonymUrl + wordValue;
 
                 if (!isEmptyPattern) {
                     //console.log('using search pattern: ' + pattern);
@@ -224,18 +228,107 @@
                 }
             });
 
+            $('#word').on('keypress', function(e) {
+                var code = e.keyCode || e.which;
+                if(code==13) {
+                    $("#submit-search").click();
+                }
+            });
+
+            /*
             $(document).on("click", ".table-row", function() {
                 var value = $(this).data("value");
                 value = encodeURIComponent(value.toLowerCase());
                 window.document.location = '/synonyms/' + value;
             });
 
-            $('#word').on('keypress', function(e) {
-                var code = e.keyCode || e.which;
-                if(code==13){
-                    $("#submit-search").click();
+
+            $('#word').on('keyup', function(e) {
+                if($("#word").val().length > 1) {
+
+                    var wordValue = $(this).val();
+                    var url = baseWordUrl + wordValue;
+
+                    $.ajax({
+                        url: url,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data){
+                            console.log(data);
+                        },
+                        error: function(error){
+                            console.log(error);
+                        }
+                    });
                 }
             });
+            */
+
+            /*
+            var $input = $(".typeahead");
+            $input.typeahead({
+                source: function (query, result) {                    
+                    var url = baseWordUrl + query;
+
+                    $.ajax({
+                        url: url,
+                        type: "GET",
+                        dataType: "json",
+                        success: function (data) {
+                            result($.map(data, function (item) {
+                                return item;
+                            }));
+                        }
+                    });                
+                },
+                autoSelect: true
+            });
+            /*
+
+            /*
+            $(".typeahead").typeahead({
+                source: function (query, result) {                    
+                    var url = baseWordUrl + query;
+
+                    $.ajax({
+                        url: url,
+                        type: "GET",
+                        dataType: "json",
+                        success: function (data) {
+                            result($.map(data, function (item) {
+                                return item;
+                            }));
+                        }
+                    });                
+                },
+                autoSelect: true
+            });
+            */       
+
+            $('.typeahead').typeahead({
+                    hint: true,
+                    highlight: true,
+                    minLength: 1
+                },
+                {
+                    limit: 12,
+                    async: true,
+                    source: function (query, processSync, processAsync) {
+                        //processSync(['This suggestion appears immediately', 'This one too']);
+                        return $.ajax({
+                            url: baseWordUrl + query,
+                            type: "GET",
+                            dataType: "json",
+                            success: function (json) {
+                                return processAsync(json);
+                            }
+                        });                
+                    }
+                });       
+
+            $('.typeahead').bind('typeahead:select', function(ev, suggestion) {
+                $("#submit-search").click();
+            });             
 
         }); // document ready        
     </script>

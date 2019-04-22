@@ -31,6 +31,21 @@ namespace CrossWord.API.Controllers
             this.db = db;
         }
 
+        // GET: api/word/5
+        [Authorize]
+        [HttpGet]
+        [Route("api/word/{id}")]
+        public IActionResult GetWord(long id)
+        {
+            var word = db.Words.Where(w => w.WordId == id).SingleOrDefault();
+            if (word == null)
+            {
+                return NotFound(id);
+            }
+
+            return Json(word);
+        }
+
         // GET: api/words
         [Authorize]
         [HttpGet]
@@ -49,19 +64,28 @@ namespace CrossWord.API.Controllers
             return Json(wordResult);
         }
 
-        // GET: api/words/5
+        // GET: api/words/query
         [Authorize]
         [HttpGet]
-        [Route("api/words/{id}")]
-        public IActionResult GetWord(long id)
+        [Route("api/words/{query}")]
+        public IActionResult GetWord(string query)
         {
-            var word = db.Words.Where(w => w.WordId == id).SingleOrDefault();
-            if (word == null)
+            query = query.ToUpper();
+            var pattern = $"{query}%";
+
+            var wordResult = db.Words.Where(w => EF.Functions.Like(w.Value, pattern))
+                                    .OrderBy(w => w.NumberOfLetters)
+                                    .ThenBy(w => w.Value)
+                                    .AsNoTracking()
+                                    .Select(w => w.Value)
+                                    .Take(20);
+
+            if (!wordResult.Any())
             {
-                return NotFound(id);
+                return NotFound(query);
             }
 
-            return Json(word);
+            return Json(wordResult);
         }
 
         // GET: api/synonyms/ord
@@ -81,11 +105,12 @@ namespace CrossWord.API.Controllers
             var wordId = wordResult.First().WordId;
 
             var wordRelations = db.WordRelations.Where(w => (w.WordFromId == wordId) || (w.WordToId == wordId))
-                    // .OrderBy(w => w.WordFrom.NumberOfLetters)
-                    // .Include(w => w.WordFrom)
-                    // .Include(w => w.WordTo)
-                    .AsNoTracking()
-                    .Select(w => new { w.WordFrom, w.WordTo });
+                                            // .OrderBy(w => w.WordFrom.NumberOfLetters)
+                                            // .Include(w => w.WordFrom)
+                                            // .Include(w => w.WordTo)
+                                            .AsNoTracking()
+                                            .Select(w => new { w.WordFrom, w.WordTo })
+                                            .Take(200);
 
             if (!wordRelations.Any())
             {
@@ -134,7 +159,8 @@ namespace CrossWord.API.Controllers
                                                 // .Include(w => w.WordFrom)
                                                 // .Include(w => w.WordTo)
                                                 .AsNoTracking()
-                                                .Select(w => new { w.WordFrom, w.WordTo });
+                                                .Select(w => new { w.WordFrom, w.WordTo })
+                                                .Take(200);
 
             if (!wordRelations.Any())
             {
