@@ -10,7 +10,7 @@ namespace CrossWord.Scraper.MySQLDbService
 {
     public static class WordDatabaseService
     {
-        public static string GetLastWordFromLetterCount(WordHintDbContext db, int letterCount)
+        public static string GetLastWordFromLetterCount(WordHintDbContext db, string source, int letterCount)
         {
             if (letterCount > 0)
             {
@@ -24,8 +24,8 @@ namespace CrossWord.Scraper.MySQLDbService
                 //     .Where(c => EF.Functions.Like(c.WordFrom.Value, pattern))
                 //     .OrderByDescending(p => p.WordFromId).FirstOrDefault();
 
-                // SELECT wr.WordFromId, w1.Value AS WordFrom, wr.WordToId, w2.Value AS WordTo FROM WordRelations wr INNER JOIN Words w1 ON wr.WordFromId = w1.WordId INNER JOIN Words w2 ON wr.WordToId = w2.WordId WHERE w1.Value LIKE '______' ORDER BY w1.Value COLLATE utf8mb4_sv_0900_as_cs DESC LIMIT 1;
-                string rawSQL = $"SELECT wr.WordFromId, w1.Value AS WordFrom, wr.WordToId, w2.Value AS WordTo FROM WordRelations wr INNER JOIN Words w1 ON wr.WordFromId = w1.WordId INNER JOIN Words w2 ON wr.WordToId = w2.WordId WHERE w1.Value LIKE '{pattern}' ORDER BY w1.Value COLLATE utf8mb4_sv_0900_as_cs DESC LIMIT 1";
+                // SELECT wr.WordFromId, w1.Value AS WordFrom, wr.WordToId, w2.Value AS WordTo FROM WordRelations wr INNER JOIN Words w1 ON wr.WordFromId = w1.WordId INNER JOIN Words w2 ON wr.WordToId = w2.WordId WHERE w1.Source = 'kryssordhjelp.no' AND w1.Value LIKE '______' ORDER BY w1.Value COLLATE utf8mb4_sv_0900_as_cs DESC LIMIT 1;
+                string rawSQL = $"SELECT wr.WordFromId, w1.Value AS WordFrom, wr.WordToId, w2.Value AS WordTo FROM WordRelations wr INNER JOIN Words w1 ON wr.WordFromId = w1.WordId INNER JOIN Words w2 ON wr.WordToId = w2.WordId WHERE w1.Source = '{source}' AND w1.Value LIKE '{pattern}' ORDER BY w1.Value COLLATE utf8mb4_sv_0900_as_cs DESC LIMIT 1";
                 var lastWordWithPatternLength = db.WordRelationQueryModels.FromSql(rawSQL);
 
                 if (lastWordWithPatternLength.Any())

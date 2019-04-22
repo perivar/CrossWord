@@ -22,25 +22,27 @@ namespace CrossWord.Scraper
         TextWriter writer = null;
         string connectionString = null;
         string signalRHubURL = null;
+        string source = null;
 
         public KryssordHjelpScraper(string connectionString, string signalRHubURL, int letterCount, bool doContinueWithLastWord = true)
         {
             this.connectionString = connectionString;
             this.signalRHubURL = signalRHubURL;
+            this.source = "kryssordhjelp.no";
 
             // set writer identifier as pattern            
             this.writer = new SignalRClientWriter(signalRHubURL, letterCount.ToString());
-            writer.WriteLine("Starting KryssordHjelp Scraper ....");
+            writer.WriteLine("Starting {0} Scraper ....", this.source);
 
             // make sure that no chrome and chrome drivers are running
             // cannot do this here, since several instances of the scraper might be running in parallel
             // do this before this class is called instead
             // KillAllChromeDriverInstances();
 
-            DoScrape(letterCount, doContinueWithLastWord);
+            DoScrape(letterCount, source, doContinueWithLastWord);
         }
 
-        private void DoScrape(int letterCount, bool doContinueWithLastWord)
+        private void DoScrape(int letterCount, string source, bool doContinueWithLastWord)
         {
             var dbContextFactory = new DesignTimeDbContextFactory();
             using (var db = dbContextFactory.CreateDbContext(connectionString, Log.Logger))
@@ -48,7 +50,7 @@ namespace CrossWord.Scraper
                 string lastWordString = null;
                 if (doContinueWithLastWord)
                 {
-                    lastWordString = WordDatabaseService.GetLastWordFromLetterCount(db, letterCount);
+                    lastWordString = WordDatabaseService.GetLastWordFromLetterCount(db, source, letterCount);
                 }
 
                 // if we didn't get back a word, use a pattern instead
@@ -246,7 +248,7 @@ namespace CrossWord.Scraper
                     NumberOfWords = ScraperUtils.CountNumberOfWords(wordText),
                     User = adminUser,
                     CreatedDate = DateTime.Now,
-                    Source = "kryssordhjelp.no"
+                    Source = this.source
                 };
 
                 GetWordSynonyms(word, driver, db, adminUser, href);
@@ -306,7 +308,7 @@ namespace CrossWord.Scraper
                     NumberOfWords = ScraperUtils.CountNumberOfWords(hintText),
                     User = adminUser,
                     CreatedDate = DateTime.Now,
-                    Source = "kryssordhjelp.no"
+                    Source = this.source
                 };
 
                 relatedWords.Add(hint);
