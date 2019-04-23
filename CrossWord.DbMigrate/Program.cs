@@ -233,7 +233,7 @@ namespace CrossWord.DbMigrate
                                     ).Distinct(); // Note that this requires the object to implement IEquatable<Word> 
 
                                     // add to database
-                                    Scraper.MySQLDbService.WordDatabaseService.AddToDatabase(db, word, relatedWords);
+                                    Scraper.MySQLDbService.WordDatabaseService.AddToDatabase(db, "kryssord.org", word, relatedWords);
 
                                     if (isDebugging)
                                     {

@@ -85,6 +85,10 @@ namespace CrossWord.Scraper
             var options = new ParallelOptions();
             // options.MaxDegreeOfParallelism = 50; // seems to work better without a MaxDegreeOfParallelism number
 
+            // debug
+            startLetterCount = 5;
+            endLetterCount = 5;
+
             // using Parallel.ForEach
             var actionsList = new List<Action>();
             for (int i = startLetterCount; i <= endLetterCount; i++)

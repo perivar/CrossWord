@@ -12,6 +12,7 @@ namespace CrossWord.Scraper.MySQLDbService
         public DbSet<Word> Words { get; set; }
         public DbSet<WordRelation> WordRelations { get; set; }
         public DbSet<User> DictionaryUsers { get; set; }
+        public DbSet<State> States { get; set; }
 
         public WordHintDbContext()
             : base()

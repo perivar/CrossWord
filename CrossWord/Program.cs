@@ -135,6 +135,7 @@ namespace CrossWord
                     isDebugging = true;
 #endif                    
 
+                    var source = "norwegian-synonyms.json";
                     if (Path.GetExtension(dictionaryFile).ToLower().Equals(".json"))
                     {
                         // read json files
@@ -152,7 +153,7 @@ namespace CrossWord
                                 var wordText = item.Name;
                                 var relatedArray = item.Values().Select(a => a.Value<string>());
 
-                                WordDatabaseService.AddToDatabase(db, user, wordText, relatedArray);
+                                WordDatabaseService.AddToDatabase(db, source, user, wordText, relatedArray);
 
                                 if (isDebugging)
                                 {

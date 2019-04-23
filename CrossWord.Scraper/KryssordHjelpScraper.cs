@@ -317,7 +317,7 @@ namespace CrossWord.Scraper
             relatedWords = relatedWords.Distinct().ToList(); // Note that this requires the object to implement IEquatable<Word> 
 
             // and add to database
-            WordDatabaseService.AddToDatabase(db, word, relatedWords, writer);
+            WordDatabaseService.AddToDatabase(db, this.source, word, relatedWords, writer);
 
             // now lets close our new tab
             chromeDriver.ExecuteScript("window.close();");

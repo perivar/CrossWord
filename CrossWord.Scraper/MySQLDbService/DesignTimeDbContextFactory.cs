@@ -109,6 +109,7 @@ namespace CrossWord.Scraper.MySQLDbService
             var configurationBuilder = new ConfigurationBuilder()
                         .SetBasePath(Directory.GetCurrentDirectory())
                         .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                        .AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true)
                         .AddInMemoryCollection(inMemoryCollection);
 
             IConfigurationRoot configuration = configurationBuilder.Build();

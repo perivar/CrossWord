@@ -14,7 +14,7 @@ namespace CrossWord.Scraper.MySQLDbService
         {
             if (letterCount > 0)
             {
-                Log.Information("Looking for last word using letter count '{0}'", letterCount);
+                Log.Information("Looking for last word using letter count '{0}' from {1}", letterCount, source);
 
                 var pattern = new string('_', letterCount); // underscore is the any character in SQL
 
@@ -25,20 +25,26 @@ namespace CrossWord.Scraper.MySQLDbService
                 //     .OrderByDescending(p => p.WordFromId).FirstOrDefault();
 
                 // SELECT wr.WordFromId, w1.Value AS WordFrom, wr.WordToId, w2.Value AS WordTo FROM WordRelations wr INNER JOIN Words w1 ON wr.WordFromId = w1.WordId INNER JOIN Words w2 ON wr.WordToId = w2.WordId WHERE w1.Source = 'kryssordhjelp.no' AND w1.Value LIKE '______' ORDER BY w1.Value COLLATE utf8mb4_sv_0900_as_cs DESC LIMIT 1;
-                string rawSQL = $"SELECT wr.WordFromId, w1.Value AS WordFrom, wr.WordToId, w2.Value AS WordTo FROM WordRelations wr INNER JOIN Words w1 ON wr.WordFromId = w1.WordId INNER JOIN Words w2 ON wr.WordToId = w2.WordId WHERE w1.Source = '{source}' AND w1.Value LIKE '{pattern}' ORDER BY w1.Value COLLATE utf8mb4_sv_0900_as_cs DESC LIMIT 1";
-                var lastWordWithPatternLength = db.WordRelationQueryModels.FromSql(rawSQL);
+                // string rawSQL = $"SELECT wr.WordFromId, w1.Value AS WordFrom, wr.WordToId, w2.Value AS WordTo FROM WordRelations wr INNER JOIN Words w1 ON wr.WordFromId = w1.WordId INNER JOIN Words w2 ON wr.WordToId = w2.WordId WHERE w1.Source = '{source}' AND w1.Value LIKE '{pattern}' ORDER BY w1.Value COLLATE utf8mb4_sv_0900_as_cs DESC LIMIT 1";
+                // var lastWordWithPatternLength = db.WordRelationQueryModels.FromSql(rawSQL);
 
-                if (lastWordWithPatternLength.Any())
+                var lastWordWithPatternLength = db.States
+                    .Include(w => w.Word)
+                    .Where(c => EF.Functions.Like(c.Word.Value, pattern) && c.Source == source)
+                    .OrderByDescending(p => p.CreatedDate).AsNoTracking().FirstOrDefault();
+
+
+                if (lastWordWithPatternLength != null)
                 {
                     Log.Information("Using the last word with letter count '{0}', last word '{1}'", letterCount, lastWordWithPatternLength);
-                    return lastWordWithPatternLength.First().WordFrom;
+                    return lastWordWithPatternLength.Word.Value;
                 }
             }
 
             return null;
         }
 
-        public static void AddToDatabase(WordHintDbContext db, User user, string wordText, IEnumerable<string> relatedValues)
+        public static void AddToDatabase(WordHintDbContext db, string source, User user, string wordText, IEnumerable<string> relatedValues)
         {
             // Note that  tracking should be disabled to speed things up
             // note that this doesn't load the virtual properties, but loads the object ids after a save
@@ -71,10 +77,10 @@ namespace CrossWord.Scraper.MySQLDbService
                 CreatedDate = DateTime.Now
             });
 
-            AddToDatabase(db, word, relatedWords);
+            AddToDatabase(db, source, word, relatedWords);
         }
 
-        public static void AddToDatabase(WordHintDbContext db, Word word, IEnumerable<Word> relatedWords, TextWriter writer = null)
+        public static void AddToDatabase(WordHintDbContext db, string source, Word word, IEnumerable<Word> relatedWords, TextWriter writer = null)
         {
             // Note that  tracking should be disabled to speed things up
             // note that this doesn't load the virtual properties, but loads the object ids after a save
@@ -96,6 +102,9 @@ namespace CrossWord.Scraper.MySQLDbService
                 db.Words.Add(word);
                 db.SaveChanges();
             }
+
+            // update that we are processing this word
+            UpdateState(db, source, word, writer);
 
             // Note! ensure related are all uppercase before this method is called
             var relatedValuesUpperCase = relatedWords.Select(x => x.Value);
@@ -173,14 +182,59 @@ namespace CrossWord.Scraper.MySQLDbService
                 if (db.ChangeTracker.QueryTrackingBehavior == QueryTrackingBehavior.NoTracking)
                 {
                     // without tracking we don't have the word value, so use only the wordids
-                    if (writer != null) writer.WriteLine("Skipped relating '{0}' to '{1}'", string.Join(",", existingWordRelations.Select(i => i.WordToId).ToArray()), word.Value);
+                    if (writer != null) writer.WriteLine("Skipped relating '{0}' to '{1}'", string.Join(",", existingWordRelations.Select(i => i.WordToId).Distinct().ToArray()), word.Value);
                 }
                 else
                 {
                     // with tracking we can output the actual words
-                    if (writer != null) writer.WriteLine("Skipped relating '{0}' to '{1}'", string.Join(",", existingWordRelations.Select(i => i.WordTo.Value).ToArray()), word.Value);
+                    if (writer != null) writer.WriteLine("Skipped relating '{0}' to '{1}'", string.Join(",", existingWordRelations.Select(i => i.WordTo.Value).Distinct().ToArray()), word.Value);
                 }
             }
+        }
+
+        public static void UpdateState(WordHintDbContext db, string source, Word word, TextWriter writer = null)
+        {
+            // SELECT `item`.`StateId`, `item`.`Comment`, `item`.`CreatedDate`, `item`.`Source`, `item`.`WordId`
+            // FROM `States` AS `item`
+            // INNER JOIN `Words` AS `item.Word` ON `item`.`WordId` = `item.Word`.`WordId`
+            // WHERE ((`item`.`Source` = "kryssord.org") AND (`item.Word`.`NumberOfWords` = 1)) AND (`item.Word`.`NumberOfLetters` = 5)
+            // LIMIT 1;
+            var stateEntity = db.States.AsNoTracking().FirstOrDefault(item => item.Source == source && item.Word.NumberOfWords == word.NumberOfWords && item.Word.NumberOfLetters == word.NumberOfLetters);
+
+            // Validate entity is not null
+            if (stateEntity != null)
+            {
+                stateEntity.CreatedDate = DateTime.Now;
+
+                // attach and detach in order to only update the foreign key to word
+                db.Attach(stateEntity);
+                db.Entry(stateEntity).Property("WordId").CurrentValue = word.WordId;
+
+                if (writer != null) writer.WriteLine("Updated state with '{0}' as last processed word for '{1}' letters with  source '{2}'.", word.Value, word.NumberOfLetters, source);
+            }
+            else
+            {
+                stateEntity = new State
+                {
+                    Word = word,
+                    CreatedDate = DateTime.Now,
+                    Source = source
+                };
+
+                // add new state
+                db.States.Add(stateEntity);
+
+                // use the following statement so that Word won't be inserted
+                db.Entry(stateEntity.Word).State = EntityState.Unchanged;
+
+                if (writer != null) writer.WriteLine("Added state with '{0}' as last processed word for '{1}' letters with  source '{2}'.", word.Value, word.NumberOfLetters, source);
+            }
+
+            // Save changes in database
+            db.SaveChanges();
+
+            // detach in order to clean this from the db tracked cache
+            db.Entry(stateEntity).State = EntityState.Detached;
         }
     }
 }
