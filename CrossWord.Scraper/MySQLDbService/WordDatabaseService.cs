@@ -16,23 +16,10 @@ namespace CrossWord.Scraper.MySQLDbService
             {
                 Log.Information("Looking for last word using letter count '{0}' from {1}", letterCount, source);
 
-                var pattern = new string('_', letterCount); // underscore is the any character in SQL
-
-                // SELECT  wr.WordFromId, w1.Value, wr.WordToId, w2.Value FROM WordRelations wr INNER JOIN Words w1 ON wr.WordFromId = w1.WordId INNER JOIN Words w2 ON wr.WordToId = w2.WordId WHERE w1.Value LIKE '______' ORDER BY wr.WordFromId DESC LIMIT 1;
-                // var lastWordWithPatternLength = db.WordRelations
-                //     .Include(w => w.WordFrom)
-                //     .Where(c => EF.Functions.Like(c.WordFrom.Value, pattern))
-                //     .OrderByDescending(p => p.WordFromId).FirstOrDefault();
-
-                // SELECT wr.WordFromId, w1.Value AS WordFrom, wr.WordToId, w2.Value AS WordTo FROM WordRelations wr INNER JOIN Words w1 ON wr.WordFromId = w1.WordId INNER JOIN Words w2 ON wr.WordToId = w2.WordId WHERE w1.Source = 'kryssordhjelp.no' AND w1.Value LIKE '______' ORDER BY w1.Value COLLATE utf8mb4_sv_0900_as_cs DESC LIMIT 1;
-                // string rawSQL = $"SELECT wr.WordFromId, w1.Value AS WordFrom, wr.WordToId, w2.Value AS WordTo FROM WordRelations wr INNER JOIN Words w1 ON wr.WordFromId = w1.WordId INNER JOIN Words w2 ON wr.WordToId = w2.WordId WHERE w1.Source = '{source}' AND w1.Value LIKE '{pattern}' ORDER BY w1.Value COLLATE utf8mb4_sv_0900_as_cs DESC LIMIT 1";
-                // var lastWordWithPatternLength = db.WordRelationQueryModels.FromSql(rawSQL);
-
                 var lastWordWithPatternLength = db.States
-                    .Include(w => w.Word)
-                    .Where(c => EF.Functions.Like(c.Word.Value, pattern) && c.Source == source)
-                    .OrderByDescending(p => p.CreatedDate).AsNoTracking().FirstOrDefault();
-
+                        .AsNoTracking()
+                        .Include(w => w.Word)
+                        .FirstOrDefault(item => item.Source == source && item.Word.NumberOfWords == 1 && item.Word.NumberOfLetters == letterCount);
 
                 if (lastWordWithPatternLength != null)
                 {
