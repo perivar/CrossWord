@@ -14,17 +14,19 @@ namespace CrossWord.Scraper.MySQLDbService
         {
             if (letterCount > 0)
             {
-                Log.Information("Looking for last word using letter count '{0}' from {1}", letterCount, source);
+                Log.Information("Looking for last word using letter count '{0}' from '{1}'", letterCount, source);
 
                 var lastWordWithPatternLength = db.States
-                        .AsNoTracking()
-                        .Include(w => w.Word)
-                        .FirstOrDefault(item => item.Source == source && item.Word.NumberOfWords == 1 && item.Word.NumberOfLetters == letterCount);
+                        // .AsNoTracking()
+                        .FirstOrDefault(item => item.Source == source && item.NumberOfLetters == letterCount);
 
                 if (lastWordWithPatternLength != null)
                 {
+                    // detach in order to clean this from the db tracked cache
+                    db.Entry(lastWordWithPatternLength).State = EntityState.Detached;
+
                     Log.Information("Using the last word with letter count '{0}', last word '{1}'", letterCount, lastWordWithPatternLength);
-                    return lastWordWithPatternLength.Word.Value;
+                    return lastWordWithPatternLength.Word;
                 }
             }
 
@@ -181,21 +183,21 @@ namespace CrossWord.Scraper.MySQLDbService
 
         public static void UpdateState(WordHintDbContext db, string source, Word word, TextWriter writer = null)
         {
-            // SELECT `item`.`StateId`, `item`.`Comment`, `item`.`CreatedDate`, `item`.`Source`, `item`.`WordId`
-            // FROM `States` AS `item`
-            // INNER JOIN `Words` AS `item.Word` ON `item`.`WordId` = `item.Word`.`WordId`
-            // WHERE ((`item`.`Source` = "kryssord.org") AND (`item.Word`.`NumberOfWords` = 1)) AND (`item.Word`.`NumberOfLetters` = 5)
-            // LIMIT 1;
-            var stateEntity = db.States.AsNoTracking().FirstOrDefault(item => item.Source == source && item.Word.NumberOfWords == word.NumberOfWords && item.Word.NumberOfLetters == word.NumberOfLetters);
+            var wordText = word.Value;
+            var wordLength = word.Value.Length; // use actual word length
+
+            var stateEntity = db.States
+                            // .AsNoTracking()
+                            .FirstOrDefault(item => item.Source == source && item.NumberOfLetters == wordLength);
 
             // Validate entity is not null
             if (stateEntity != null)
             {
                 stateEntity.CreatedDate = DateTime.Now;
+                stateEntity.Word = wordText;
 
-                // attach and detach in order to only update the foreign key to word
-                db.Attach(stateEntity);
-                db.Entry(stateEntity).Property("WordId").CurrentValue = word.WordId;
+                // add state
+                db.States.Update(stateEntity);
 
                 if (writer != null) writer.WriteLine("Updated state with '{0}' as last processed word for '{1}' letters with  source '{2}'.", word.Value, word.NumberOfLetters, source);
             }
@@ -203,16 +205,14 @@ namespace CrossWord.Scraper.MySQLDbService
             {
                 stateEntity = new State
                 {
-                    Word = word,
+                    Word = wordText,
+                    NumberOfLetters = wordLength,
                     CreatedDate = DateTime.Now,
                     Source = source
                 };
 
                 // add new state
                 db.States.Add(stateEntity);
-
-                // use the following statement so that Word won't be inserted
-                db.Entry(stateEntity.Word).State = EntityState.Unchanged;
 
                 if (writer != null) writer.WriteLine("Added state with '{0}' as last processed word for '{1}' letters with  source '{2}'.", word.Value, word.NumberOfLetters, source);
             }

@@ -7,8 +7,8 @@ namespace CrossWord.Scraper.MySQLDbService.Models
     public class State
     {
         public int StateId { get; set; }
-        public int WordId { get; set; }
-        public virtual Word Word { get; set; }
+        public string Word { get; set; }
+        public int NumberOfLetters { get; set; }
         public DateTime CreatedDate { get; set; }
         public string Source { get; set; }
         public string Comment { get; set; }
@@ -16,7 +16,7 @@ namespace CrossWord.Scraper.MySQLDbService.Models
 
         public override string ToString()
         {
-            return string.Format("Id: {0}, WordId: {1}, Value: {2}, Date: {3:dd-MM-yyyy}, Source: {4}, Comment: {5}", StateId, WordId, Word != null ? Word.Value : "", CreatedDate, Source, Comment);
+            return string.Format("Id: {0}, Word: {1}, Letters: {2}, Date: {3:dd-MM-yyyy}, Source: {4}, Comment: {5}", StateId, Word, NumberOfLetters, CreatedDate, Source, Comment);
         }
 
     }
