@@ -130,7 +130,7 @@ namespace CrossWord.Scraper.MySQLDbService
             );
 
             // all relations
-            var allWordRelations = allWordRelationsFrom.Concat(allWordRelationsTo);
+            var allWordRelations = allWordRelationsFrom.Concat(allWordRelationsTo).Distinct();
 
             // find out which relations already exist in the database
             // check both directions in the Many-to-Many Relationship 
