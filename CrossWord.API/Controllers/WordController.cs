@@ -185,5 +185,22 @@ namespace CrossWord.API.Controllers
 
             return Json(sortedReturnList);
         }
+
+        // GET: api/states
+        [Authorize]
+        [HttpGet]
+        [Route("api/states")]
+        public IActionResult GetStates()
+        {
+            var stateResult = db.States.OrderByDescending(p => p.CreatedDate)
+                .AsNoTracking();
+
+            if (!stateResult.Any())
+            {
+                return NotFound();
+            }
+
+            return Json(stateResult);
+        }
     }
 }
