@@ -40,26 +40,26 @@ namespace CrossWord
             var historyTrans = new List<List<CrossTransformation>>();
             var matchingWords = new List<string>();
             var usedWords = new HashSet<string>();
-            CrossPattern patt = _board.GetMostConstrainedPattern(_dict);
+            CrossPattern pattern = _board.GetMostConstrainedPattern(_dict);
 
             // Random rnd = new Random();
 
             while (true)
             {
                 DoCommands();
-                if (patt != null)
+                if (pattern != null)
                 {
                     matchingWords.Clear();
-                    _dict.GetMatch(patt.Pattern, matchingWords);
+                    _dict.GetMatch(pattern.Pattern, matchingWords);
                     var succTrans = new List<CrossTransformation>();
                     foreach (string t in matchingWords)
                     {
                         if (usedWords.Count > 0 && usedWords.Contains(t)) continue;
-                        var trans = patt.TryFill(t, t.AsSpan(), _dict);
+                        var trans = pattern.TryFill(t, t.AsSpan(), _dict);
                         if (trans != null)
                         {
                             succTrans.Add(trans);
-                            trans.Pattern = patt;
+                            trans.Pattern = pattern;
                         }
                     }
 
@@ -73,23 +73,23 @@ namespace CrossWord
                         var trans = succTrans[0];
 
                         usedWords.Add(trans.Word);
-                        trans.Transform(patt);
+                        trans.Transform(pattern);
                         historyTrans.Add(succTrans);
                         history.Add(0);
-                        patt = _board.GetMostConstrainedPattern(_dict);
+                        pattern = _board.GetMostConstrainedPattern(_dict);
                     }
                     else
                     {
-                        patt = BackTrack(history, historyTrans, usedWords);
-                        if (patt == null)
+                        pattern = BackTrack(history, historyTrans, usedWords);
+                        if (pattern == null)
                             yield break;
                     }
                 }
                 else
                 {
                     yield return _board.Clone();
-                    patt = BackTrack(history, historyTrans, usedWords);
-                    if (patt == null)
+                    pattern = BackTrack(history, historyTrans, usedWords);
+                    if (pattern == null)
                         yield break;
                 }
             }

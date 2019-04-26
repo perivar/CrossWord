@@ -58,7 +58,9 @@ namespace CrossWord
             // sort by Y then X
             int result = this.Y.CompareTo(other.Y);
             if (result == 0)
+            {
                 result = this.X.CompareTo(other.X);
+            }
             return result;
         }
 
@@ -74,7 +76,9 @@ namespace CrossWord
         {
             int result = sw1.StartX.CompareTo(sw2.StartX);
             if (result == 0)
+            {
                 result = sw1.StartY.CompareTo(sw2.StartY);
+            }
             return result;
         }
     }
@@ -85,7 +89,9 @@ namespace CrossWord
         {
             int result = sw1.StartY.CompareTo(sw2.StartY);
             if (result == 0)
+            {
                 result = sw1.StartX.CompareTo(sw2.StartX);
+            }
             return result;
         }
     }
@@ -253,7 +259,9 @@ namespace CrossWord
         public CrossPattern GetCrossPattern(int aIndex)
         {
             if (aIndex < _horizontalPatterns.Count)
+            {
                 return _horizontalPatterns[aIndex];
+            }
             return _verticalPatterns[aIndex - _horizontalPatterns.Count];
         }
 
@@ -284,14 +292,18 @@ namespace CrossWord
             foreach (var p in _horizontalPatterns)
             {
                 if (p.InstantiationCount >= min)
+                {
                     continue;
+                }
                 result = p;
                 min = p.InstantiationCount;
             }
             foreach (var p in _verticalPatterns)
             {
                 if (p.InstantiationCount >= min)
+                {
                     continue;
+                }
                 result = p;
                 min = p.InstantiationCount;
             }
@@ -312,9 +324,13 @@ namespace CrossWord
                 for (int x = p.StartX; x < p.StartX + p.Length; x++)
                 {
                     if (p.Pattern != null)
+                    {
                         board[x, p.StartY] = p.Pattern[x - p.StartX];
+                    }
                     else
+                    {
                         board[x, p.StartY] = '.';
+                    }
                 }
             }
             foreach (var p in _verticalPatterns)
@@ -325,7 +341,9 @@ namespace CrossWord
                     {
                         var c = p.Pattern[y - p.StartY];
                         if (c != '.')
+                        {
                             board[p.StartX, y] = c;
+                        }
                     }
                 }
             }
@@ -334,7 +352,9 @@ namespace CrossWord
             {
                 string row = "";
                 for (int x = 0; x < _sizeX; x++)
+                {
                     row += board[x, y] + " ";
+                }
                 writer.WriteLine("{0:00}: {1}", y, row);
             }
 
@@ -395,7 +415,9 @@ namespace CrossWord
                     var ap = p.AdjacentPatterns[i];
                     if (ap == null) continue;
                     if (ap.Pattern[p.StartY - ap.StartY] != p.Pattern[i])
+                    {
                         throw new Exception("X/Y inconsistency");
+                    }
                 }
             }
 
@@ -406,7 +428,9 @@ namespace CrossWord
                     var ap = p.AdjacentPatterns[i];
                     if (ap == null) continue;
                     if (ap.Pattern[p.StartX - ap.StartX] != p.Pattern[i])
+                    {
                         throw new Exception("Y/X inconsistency");
+                    }
                 }
             }
         }

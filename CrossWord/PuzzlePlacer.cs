@@ -18,7 +18,7 @@ namespace CrossWord
 
         public IEnumerable<ICrossBoard> GetAllPossiblePlacements(ICrossDictionary dictionary)
         {
-            var puzzle = NormalizePuzzle(_puzzle);
+            var puzzle = NormalizePuzzle(_puzzle); // used to be .AsSpan() but throwing exception: Instance of type 'ReadOnlySpan<char>' cannot be used inside a nested function, query expression, iterator block or async method
             var board = _board.Clone();
             board.Preprocess(dictionary);
 
@@ -31,7 +31,9 @@ namespace CrossWord
             // sort by word length
             patterns.Sort((a, b) => -1 * a.Length.CompareTo(b.Length));
             if (patterns.Count == 0)
+            {
                 yield break;
+            }
 
             var restPuzzleLength = puzzle.Length;
             var stack = new List<int>();
@@ -52,11 +54,11 @@ namespace CrossWord
                     }
                     if (restPuzzleLength - pattern.Length == 1)
                     {
-                        break; // PIN was continue - which I think is a bug
+                        break; // PIN: this was a continue statement - which seems like a bug
                     }
 
-                    var trans = pattern.TryFillPuzzle(puzzle.AsSpan().Slice(puzzle.Length - restPuzzleLength,
-                                                   pattern.Length), dictionary);
+                    var trans = pattern.TryFillPuzzle(puzzle.AsSpan(puzzle.Length - restPuzzleLength, pattern.Length),
+                                                        dictionary);
                     if (trans != null)
                     {
                         trans.Transform(pattern);
@@ -85,7 +87,9 @@ namespace CrossWord
                 }
 
                 if (stack.Count == 0)
+                {
                     break;
+                }
 
                 idx = stack.Back();
                 stack.Pop();
@@ -103,7 +107,9 @@ namespace CrossWord
             foreach (var c in puzzle)
             {
                 if (Char.IsLetter(c))
+                {
                     builder.Append(Char.ToUpper(c));
+                }
             }
             return builder.ToString();
         }

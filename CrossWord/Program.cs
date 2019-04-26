@@ -255,11 +255,13 @@ namespace CrossWord
                                                   successFullBoard = solution;
                                                   cts.Cancel();
                                                   mre.Set();
-                                                  break; //interested in the first one
+                                                  break; // interested in the first one
                                               }
                                           }, cts.Token);
                 if (cts.IsCancellationRequested)
+                {
                     break;
+                }
             }
             mre.WaitOne();
             return successFullBoard;

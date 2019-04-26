@@ -192,7 +192,7 @@ namespace CrossWord.API.Controllers
         [Route("api/states")]
         public IActionResult GetStates()
         {
-            var stateResult = db.States.OrderByDescending(p => p.CreatedDate)
+            var stateResult = db.States.OrderByDescending(p => p.NumberOfLetters)
                 .AsNoTracking();
 
             if (!stateResult.Any())

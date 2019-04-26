@@ -53,7 +53,8 @@ namespace CrossWord
 
                     await hubConnection.InvokeAsync("SendCrossword", "Client", crossWordModel, cancellationToken);
 
-                    await Task.Delay(100); // this makes the generation slower, can be removed
+                    // await Task.Delay(100); // this makes the generation slower, can be removed
+                    break;
                 }
             }
             catch (OperationCanceledException)

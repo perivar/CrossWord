@@ -130,13 +130,13 @@ namespace CrossWord
                 }
             }
             trans.AddChangeInst(-1, _instantiationCount, (int)Constants.Unbounded);
-            trans.SumInst = instSum;
+            trans.SumInst = instSum; // set the sum instantiationC
             return trans;
         }
 
         public override string ToString()
         {
-            return string.Format("{0},{1},{2},'{3}',[{4}]", (_isHorizontal ? "-" : "|"),  _startX, _startY, new string(_pattern), _pattern.Length);
+            return string.Format("{0},{1},{2},'{3}',[{4}]", (_isHorizontal ? "-" : "|"), _startX, _startY, new string(_pattern), _pattern.Length);
         }
 
         public object Clone()
