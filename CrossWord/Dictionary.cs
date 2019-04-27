@@ -8,26 +8,42 @@ namespace CrossWord
 {
     public class Dictionary : object, ICrossDictionary
     {
-        readonly WordFilter _filter;
-        readonly IList<string>[] _words; //different array list for each word length
-        readonly WordIndex[] _indexes;
-        readonly int _maxWordLength;
-        readonly Dictionary<string, string> _description;
+        WordFilter _filter;
+        IList<string>[] _words; //different array list for each word length
+        WordIndex[] _indexes;
+        int _maxWordLength;
+        Dictionary<string, string> _description;
 
-        public IList<string>[] Words { get { return _words; } }
+        public IEnumerable<string>[] Words
+        {
+            get { return _words; }
+        }
 
-        public Dictionary<string, string> Description { get { return _description; } }
+        public IDictionary<string, string> Descriptions
+        {
+            get { return _description; }
+        }
+
+        public int MaxWordLength
+        {
+            get { return _maxWordLength; }
+        }
 
         public Dictionary(int maxWordLength)
         {
+            InitDatabaseDictionary(maxWordLength);
+        }
+
+        private void InitDatabaseDictionary(int maxWordLength)
+        {
             _maxWordLength = maxWordLength;
             _words = new List<string>[maxWordLength + 1];
-            for (int i = 1; i <= maxWordLength; i++)
+            for (int i = 1; i <= _maxWordLength; i++)
             {
                 _words[i] = new List<string>();
             }
             _indexes = new WordIndex[maxWordLength + 1];
-            for (int i = 1; i <= maxWordLength; i++)
+            for (int i = 1; i <= _maxWordLength; i++)
             {
                 _indexes[i] = new WordIndex(i);
             }
@@ -82,11 +98,6 @@ namespace CrossWord
                     }
                 }
             }
-        }
-
-        public int MaxWordLength
-        {
-            get { return _maxWordLength; }
         }
 
         public void AddDescription(string word, string description)
@@ -147,6 +158,11 @@ namespace CrossWord
         public void AddAllDescriptions(List<string> words)
         {
             // this can safely be ignored since all the descriptions has already been loaded at load time
+        }
+
+        public void ResetDictionary(int maxWordLength)
+        {
+            // this can safely be ignored since all this has been loaded at load time
         }
     }
 }

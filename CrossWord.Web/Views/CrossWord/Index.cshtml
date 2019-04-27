@@ -191,7 +191,7 @@
                 .fail(function() {
                     $("#puzTitle").html("Could not find a crossword for this date, please try again ...");
                 });
-            } else {
+            } else if(date == "current") {
                 var passedDateString = '@dateStringFormatted';
                 var nytPassedDateUrl = "https://raw.githubusercontent.com/doshea/nyt_crosswords/master/" + passedDateString + ".json";
                 nytUrl = nytPassedDateUrl;
@@ -201,11 +201,21 @@
                 .fail(function() {
                     $("#puzTitle").html("Could not find a crossword for this date, please try again ...");
                 });
-            }		
+            } else 
+            {
+                var generatedUrl = window.location.protocol + "//" + window.location.hostname + ':' + 8000 + '/api/crosswords';
+			    $.getJSON(generatedUrl, function( json ) {
+                    ShowPuzzle(json);
+                })
+                .fail(function() {
+                    $("#puzTitle").html("Could not find a crossword for this date, please try again ...");
+                });
+            }	
         }
     </script>
 }    
 
+<button id="recent" onclick="LoadPuzzle('generate')">Generate</button> &nbsp;
 <button id="recent" onclick="LoadPuzzle('current')">Current Puzzle</button> &nbsp;
 <button id="random" onclick="LoadPuzzle('random')">Random Puzzle</button> &nbsp;
 <button id="random" onclick="CopyNYUrlToClipboard()">Copy NY Puzzle Url to Clipboard</button>

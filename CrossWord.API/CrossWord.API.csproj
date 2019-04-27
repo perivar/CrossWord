@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CrossWord.Scraper\CrossWord.Scraper.csproj" />
+    <ProjectReference Include="..\CrossWord\CrossWord.csproj" />
   </ItemGroup>
 
 </Project>

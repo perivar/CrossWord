@@ -4,11 +4,15 @@ namespace CrossWord
 {
     public interface ICrossDictionary
     {
+        int MaxWordLength { get; }
+        IEnumerable<string>[] Words { get; }
+        IDictionary<string, string> Descriptions { get; }
+
         void AddWord(string word);
         int GetWordOfLengthCount(int length);
         int GetMatchCount(char[] pattern);
         void GetMatch(char[] pattern, List<string> matched);
-        int MaxWordLength { get; }
+
         void AddDescription(string word, string description);
         bool TryGetDescription(string word, out string description);
 
@@ -17,5 +21,8 @@ namespace CrossWord
         /// </summary>
         /// <param name="words">a list of words</param>
         void AddAllDescriptions(List<string> words);
+
+        void ResetDictionary(int maxWordLength);
+
     }
 }

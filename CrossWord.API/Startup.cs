@@ -73,6 +73,16 @@ namespace CrossWord.API
                     + $"port={dbport}; database={database}; charset=utf8;");
             });
 
+            // Singleton objects are the same for every object and every request.
+            // for this to be able to use the database
+            // add a constructor that takes (ILoggerFactory logger, IServiceScopeFactory scopeFactory)
+            // and instantiate the database whenever needed
+            // using (var scope = scopeFactory.CreateScope())
+            // {
+            // var db = scope.ServiceProvider.GetRequiredService<WordHintDbContext>();
+            //  }
+            services.AddSingleton<ICrossDictionary, DatabaseDictionary>();
+
             // You cannot use AddDefaultIdentity, since internally, this calls AddDefaultUI, which contains the Razor Pages "endpoints" you don't want. 
             // You'll need to use AddIdentity<TUser, TRole> or AddIdentityCore<TUser> instead.
             // https://github.com/aspnet/Identity/blob/master/src/UI/IdentityServiceCollectionUIExtensions.cs#L47
