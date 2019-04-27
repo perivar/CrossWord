@@ -64,8 +64,8 @@ namespace CrossWord
             if (outputFile.Equals("signalr"))
             {
                 // generate and send to signalr hub
-                var tokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(20));
-                // var tokenSource = new CancellationTokenSource();
+                // var tokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(20));
+                var tokenSource = new CancellationTokenSource();
                 Task workerTask = Task.Run(
                             async () =>
                             {

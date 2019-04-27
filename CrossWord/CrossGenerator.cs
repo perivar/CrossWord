@@ -42,7 +42,7 @@ namespace CrossWord
             var usedWords = new HashSet<string>();
             CrossPattern pattern = _board.GetMostConstrainedPattern(_dict);
 
-            // Random rnd = new Random();
+            Random rnd = new Random();
 
             while (true)
             {
@@ -55,6 +55,8 @@ namespace CrossWord
                     foreach (string t in matchingWords)
                     {
                         if (usedWords.Count > 0 && usedWords.Contains(t)) continue;
+
+                        // checking if there exist words in the dictionary matching each of the adjacent patterns 
                         var trans = pattern.TryFill(t, t.AsSpan(), _dict);
                         if (trans != null)
                         {
@@ -67,15 +69,21 @@ namespace CrossWord
                     {
                         succTrans.Sort(new CrossTransformationComparer()); // using the successfull transform with most ?!
 
-                        // not always use the "best" match ?!
-                        // int index = succTrans.Count == 1 ? 0 : rnd.Next(1, succTrans.Count);
-                        // var trans = succTrans[index];
-                        var trans = succTrans[0];
+                        // always use the first index (i.e. the one with the most possible adjacent hits)
+                        // var trans = succTrans[0];
+                        // history.Add(0);
+
+                        // don't always use the "best" match to randomize the crossword better
+                        var lowestIndexToUse = 0;
+                        var highestIndexToUse = succTrans.Count > 10 ? 10 : succTrans.Count;
+                        int index = rnd.Next(lowestIndexToUse, highestIndexToUse);
+                        var trans = succTrans[index];
+                        history.Add(index);
 
                         usedWords.Add(trans.Word);
                         trans.Transform(pattern);
                         historyTrans.Add(succTrans);
-                        history.Add(0);
+
                         pattern = _board.GetMostConstrainedPattern(_dict);
                     }
                     else

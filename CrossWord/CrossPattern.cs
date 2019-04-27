@@ -111,7 +111,7 @@ namespace CrossWord
                             char[] adjacent = AdjacentPatterns[i].Pattern;
                             adjacent[adjIndex] = word[i];
                             int newInstCount = dict.GetMatchCount(adjacent);
-                            adjacent[adjIndex] = '.';
+                            adjacent[adjIndex] = '.'; // clear the adj index
                             if (newInstCount == 0)
                             {
                                 return null;
@@ -130,7 +130,7 @@ namespace CrossWord
                 }
             }
             trans.AddChangeInst(-1, _instantiationCount, (int)Constants.Unbounded);
-            trans.SumInst = instSum; // set the sum instantiationC
+            trans.SumInst = instSum; // set the sum instantiation count
             return trans;
         }
 
