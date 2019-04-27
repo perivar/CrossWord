@@ -223,5 +223,88 @@ namespace CrossWord.Scraper.MySQLDbService
             // detach in order to clean this from the db tracked cache
             db.Entry(stateEntity).State = EntityState.Detached;
         }
+
+        /// <summary>
+        /// Get a word id list for all the words that is related to the passed word
+        /// </summary>
+        /// <param name="db">database</param>
+        /// <param name="wordValue">word</param>
+        /// <returns>a word id list for all the words that is related to the passed word</returns>
+        /// <example>var exludeIds = WordDatabaseService.GetWordIdList(db, "BY");</example>
+        public static IEnumerable<int> GetWordIdList(WordHintDbContext db, string wordValue)
+        {
+            var word = db.Words.SingleOrDefault(w => w.Value == wordValue);
+            if (word != null)
+            {
+                var wordId = word.WordId;
+
+                var relatedWords = db.WordRelations.Where(w => w.WordFromId == word.WordId || w.WordToId == word.WordId)
+                                            .AsNoTracking();
+
+                if (relatedWords.Any())
+                {
+                    var wordList = new List<int>();
+
+                    // build flattened distinct list
+                    foreach (var relation in relatedWords)
+                    {
+                        wordList.Add(relation.WordToId);
+                        wordList.Add(relation.WordFromId);
+                    }
+
+                    // add main key
+                    wordList.Add(wordId);
+
+                    // and sort
+                    wordList.Sort();
+
+                    // return distinct ids
+                    return wordList.Distinct();
+                }
+            }
+            return new List<int>();
+        }
+
+        /// <summary>
+        /// Get a word id list for all the words that is related to the passed words
+        /// </summary>
+        /// <param name="db">database</param>
+        /// <param name="wordValues">words</param>
+        /// <returns>a word id list for all the words that is related to the passed words</returns>
+        /// <example>var exludeIds = WordDatabaseService.GetWordIdList(db, new List<string> { "BY", "NAVN" });</example>
+        public static IEnumerable<int> GetWordIdList(WordHintDbContext db, IEnumerable<string> wordValues)
+        {
+            var words = db.Words.Where(w => wordValues.Contains(w.Value));
+            if (words.Any())
+            {
+                var wordIds = words.Select(w => w.WordId);
+
+                var relatedWords = db.WordRelations.Where(w => wordIds.Contains(w.WordFromId) || wordIds.Contains(w.WordToId))
+                                            .AsNoTracking();
+
+                if (relatedWords.Any())
+                {
+                    var wordList = new List<int>();
+
+                    // build flattened distinct list
+                    foreach (var relation in relatedWords)
+                    {
+                        wordList.Add(relation.WordToId);
+                        wordList.Add(relation.WordFromId);
+                    }
+
+                    // add main keys
+                    wordList.AddRange(wordIds);
+
+                    // and sort
+                    wordList.Sort();
+
+                    // return distinct ids
+                    return wordList.Distinct();
+                }
+            }
+            return new List<int>();
+        }
+
     }
 }

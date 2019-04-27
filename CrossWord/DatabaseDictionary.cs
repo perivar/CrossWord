@@ -61,7 +61,7 @@ namespace CrossWord
             this.ConnectionString = connectionString;
 
 #if DEBUG
-            this._doSQLDebug = true;
+            // this._doSQLDebug = true;
 
             // Create new stopwatch.
             Stopwatch stopwatch = new Stopwatch();
@@ -72,31 +72,14 @@ namespace CrossWord
 
             using (var db = CreateDbContext(ConnectionString, _doSQLDebug))
             {
-                var excludeCityIds = GetIdList(db, "BY");
-                var excludeNameIds = GetIdList(db, "NAVN");
-                var exludeIds = excludeCityIds.Concat(excludeNameIds);
+                var wordIdsToExclude = WordDatabaseService.GetWordIdList(db, new List<string> { "BY", "NAVN" });
 
                 // search for all words
                 var words = db.Words
-                    .Where((w => (w.NumberOfWords == 1) && (w.NumberOfLetters <= maxWordLength) && !exludeIds.Contains(w.WordId)))
+                    .Where((w => (w.NumberOfWords == 1) && (w.NumberOfLetters <= maxWordLength) && !wordIdsToExclude.Contains(w.WordId)))
                     .OrderBy(w => w.Value)
                     .Select(w => w.Value)
                     .AsNoTracking();
-
-                // IEnumerable<string> strings = new List<string> { "BY", "NAVN" };
-                // string whereClauseW1 = strings.Aggregate((concat, str) => $"w1.Value LIKE '{concat}' OR w1.Value LIKE '{str}'");
-                // string whereClauseW2 = strings.Aggregate((concat, str) => $"w2.Value LIKE '{concat}' OR w2.Value LIKE '{str}'");
-                // var ignoreWordsSQL = $"SELECT wr.WordFromId AS WordFromId, w1.Value AS WordFrom, wr.WordToId AS WordToId, w2.Value AS WordTo FROM WordRelations wr INNER JOIN Words w1 ON wr.WordFromId = w1.WordId INNER JOIN Words w2 ON wr.WordToId = w2.WordId WHERE ({whereClauseW1}) OR ({whereClauseW2});";
-                // var excludedWords = db.WordRelationQueryModels.FromSql(ignoreWordsSQL)
-                //                                                 .AsNoTracking();
-
-                // var excludedWords = db.WordRelations.Where(x => strings.Contains(x.WordFrom.Value) || strings.Contains(x.WordTo.Value))
-                //                                     .Select(w => new { WordFrom = w.WordFrom.Value, WordTo = w.WordTo.Value })
-                //                                     .AsNoTracking();
-
-                // exclude
-                // var wordsToUse = words.Where(x => !excludedWords.Any(a => a.WordFrom == x || a.WordTo == x));
-
 
                 // search for all words
                 // var words = db.Words
@@ -121,7 +104,7 @@ namespace CrossWord
                     }
                 }
 
-                // using ADO.NET seems faster than ef core
+                // using ADO.NET seems faster than ef core for raw SQLs
                 // using (var command = db.Database.GetDbConnection().CreateCommand())
                 // {
                 //     command.CommandText = $"SELECT w.Value FROM Words AS w WHERE w.NumberOfWords = 1 AND w.NumberOfLetters <= {_maxWordLength} ORDER BY w.Value COLLATE utf8mb4_da_0900_as_cs";
@@ -149,41 +132,6 @@ namespace CrossWord
             Console.WriteLine("Time elapsed: {0}", stopwatch.Elapsed);
 #endif
 
-        }
-
-        private static List<int> GetIdList(WordHintDbContext db, string wordValue)
-        {
-            var uniqueList = new List<int>();
-            var word = db.Words.SingleOrDefault(w => w.Value == wordValue);
-            if (word != null)
-            {
-                var wordId = word.WordId;
-
-                var relatedWords = db.WordRelations.Where(w => w.WordFromId == word.WordId || w.WordToId == word.WordId)
-                                            .AsNoTracking();
-
-                if (relatedWords.Any())
-                {
-                    // build flattened distinct list
-                    foreach (var relation in relatedWords)
-                    {
-                        if (relation.WordFromId == wordId)
-                        {
-                            if (!uniqueList.Contains(relation.WordToId)) uniqueList.Add(relation.WordToId);
-                        }
-                        else if (relation.WordToId == wordId)
-                        {
-                            if (!uniqueList.Contains(relation.WordFromId)) uniqueList.Add(relation.WordFromId);
-                        }
-                    }
-
-                    // add main key
-                    uniqueList.Add(wordId);
-
-                    uniqueList.Sort();
-                }
-            }
-            return uniqueList;
         }
 
         public int MaxWordLength
