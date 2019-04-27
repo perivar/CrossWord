@@ -49,10 +49,9 @@ namespace CrossWord.API.Controllers
         [Route("api/crosswords")]
         public IActionResult GetCrossWords()
         {
-
             CrossWord.Models.CrossWordModel crossword;
 
-            // Start the watch   
+            // Start the stopwatch   
             var watch = new Stopwatch();
             watch.Start();
 
