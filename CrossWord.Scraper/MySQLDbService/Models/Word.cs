@@ -15,6 +15,8 @@ namespace CrossWord.Scraper.MySQLDbService.Models
         public DateTime CreatedDate { get; set; }
         public string Source { get; set; }
         public string Comment { get; set; }
+        public Category Category { get; set; }
+
 
         public virtual ICollection<WordRelation> RelatedTo { get; set; }
         public virtual ICollection<WordRelation> RelatedFrom { get; set; }

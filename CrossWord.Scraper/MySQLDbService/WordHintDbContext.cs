@@ -13,6 +13,8 @@ namespace CrossWord.Scraper.MySQLDbService
         public DbSet<WordRelation> WordRelations { get; set; }
         public DbSet<User> DictionaryUsers { get; set; }
         public DbSet<State> States { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<CrosswordTemplate> CrosswordTemplates { get; set; }
 
         public WordHintDbContext()
             : base()
@@ -65,6 +67,11 @@ namespace CrossWord.Scraper.MySQLDbService
             modelBuilder.Entity<Word>()
                         .Property(w => w.Value)
                         .HasAnnotation("MySql:Collation", "utf8mb4_0900_as_cs"); // Note! this only works with the Pomelo driver if overriding MySqlMigrationsSqlGenerator
+
+            // Save array of string in EntityFramework Core by using a private field to store the array as a string
+            modelBuilder.Entity<CrosswordTemplate>()
+                       .Property<string>("GridCollection")
+                       .HasField("_grid");
         }
     }
 }

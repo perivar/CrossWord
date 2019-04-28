@@ -44,13 +44,6 @@
                 .configureLogging(signalR.LogLevel.Information)
                 .build();
 
-        // listen to Broadcast events
-        connection.on("Broadcast", (user, message) => {
-            const msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-            const encodedMsg = user + ": " + msg;
-            $("#puzTitle").html(encodedMsg);
-        });
-
         // listen to Progress events
         connection.on("SendCrossword", (user, puzzle) => {
             "use strict";

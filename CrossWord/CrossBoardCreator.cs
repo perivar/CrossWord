@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Net;
@@ -12,8 +13,25 @@ namespace CrossWord
     {
         public static ICrossBoard CreateFromUrl(string url)
         {
-            CrossBoard board = null;
+            var model = GetCrossWordModelFromUrl(url);
+            var board = model.ToCrossBoard();
 
+            return board;
+        }
+
+        private static string RandomDateString(DateTime startDate, DateTime endDate)
+        {
+            TimeSpan timeSpan = endDate - startDate;
+            var randomTest = new Random();
+            TimeSpan newSpan = new TimeSpan(0, randomTest.Next(0, (int)timeSpan.TotalMinutes), 0);
+            DateTime newDate = startDate + newSpan;
+
+            return string.Format(CultureInfo.InvariantCulture, "{0:yyyy/MM/dd}", newDate);
+        }
+
+        public static CrossWordModel GetCrossWordModelFromUrl(string url)
+        {
+            CrossWordModel model = null;
             using (WebClient httpClient = new WebClient())
             {
                 if (url.ToLower().Equals("http-random"))
@@ -22,6 +40,9 @@ namespace CrossWord
                     var end = new DateTime(2017, 05, 29);
 
                     string jsonData = null;
+                    int timeoutMs = 4000;
+                    Stopwatch sw = new Stopwatch();
+                    sw.Start();
                     while (true)
                     {
                         var randomDateString = RandomDateString(start, end);
@@ -38,12 +59,15 @@ namespace CrossWord
                         {
                             // could not find an url, just try again
                         }
+
+                        if (sw.ElapsedMilliseconds > timeoutMs)
+                        {
+                            break;
+                        }
                     }
+                    sw.Stop();
 
-                    var model = CrossWordModel.FromJson(jsonData);
-
-                    // create board
-                    board = model.ToCrossBoard();
+                    model = CrossWordModel.FromJson(jsonData);
                 }
                 else
                 {
@@ -51,10 +75,7 @@ namespace CrossWord
                     {
                         // url = "https://raw.githubusercontent.com/doshea/nyt_crosswords/master/1997/03/13.json";
                         var jsonData = httpClient.DownloadString(url);
-                        var model = CrossWordModel.FromJson(jsonData);
-
-                        // create board
-                        board = model.ToCrossBoard();
+                        model = CrossWordModel.FromJson(jsonData);
                     }
                     catch (WebException e)
                     {
@@ -63,17 +84,7 @@ namespace CrossWord
                     }
                 }
             }
-            return board;
-        }
-
-        private static string RandomDateString(DateTime startDate, DateTime endDate)
-        {
-            TimeSpan timeSpan = endDate - startDate;
-            var randomTest = new Random();
-            TimeSpan newSpan = new TimeSpan(0, randomTest.Next(0, (int)timeSpan.TotalMinutes), 0);
-            DateTime newDate = startDate + newSpan;
-
-            return string.Format(CultureInfo.InvariantCulture, "{0:yyyy/MM/dd}", newDate);
+            return model;
         }
 
         public static ICrossBoard CreateFromFile(string path)

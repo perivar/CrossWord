@@ -13,6 +13,8 @@ using CrossWord.Scraper.MySQLDbService;
 using CrossWord.Scraper.MySQLDbService.Models;
 using System.Linq;
 using System.Diagnostics;
+using System.Net;
+using CrossWord.Models;
 
 namespace CrossWord.API.Controllers
 {
@@ -49,18 +51,65 @@ namespace CrossWord.API.Controllers
         [Route("api/crosswords")]
         public IActionResult GetCrossWords()
         {
-            CrossWord.Models.CrossWordModel crossword;
-
             // Start the stopwatch   
             var watch = new Stopwatch();
             watch.Start();
 
-            var board = CrossBoardCreator.CreateFromUrl("http-random");
+            ICrossBoard board = null;
+            var template = db.CrosswordTemplates.FirstOrDefault();
+            if (template != null)
+            {
+                board = new CrossBoard();
+
+                int cols = (int)template.Cols;
+                int rows = (int)template.Rows;
+
+                board.SetBoardSize(cols, rows);
+
+                int n = 0;
+                for (int row = 0; row < rows; row++)
+                {
+                    for (int col = 0; col < cols; col++)
+                    {
+                        var val = template.Grid[n];
+                        if (val == ".")
+                        {
+                            board.AddStartWord(col, row);
+                        }
+
+                        n += 1;
+                    }
+                }
+
+                // debug the generated template
+                // using (StreamWriter writer = new StreamWriter("template.txt"))
+                // {
+                //     board.WriteTemplateTo(writer);
+                // }
+            }
+            else
+            {
+                var model = CrossBoardCreator.GetCrossWordModelFromUrl("http-random");
+                board = model.ToCrossBoard();
+
+                // add in database
+                var newTemplate = new CrosswordTemplate()
+                {
+                    Rows = model.Size.Rows,
+                    Cols = model.Size.Cols,
+                    Grid = model.Grid
+                };
+
+                db.CrosswordTemplates.Add(newTemplate);
+                db.SaveChanges();
+            }
+
             var gen = new CrossGenerator(dictionary, board);
             board.Preprocess(dictionary);
 
             var generated = gen.Generate().FirstOrDefault() as CrossBoard;
 
+            CrossWord.Models.CrossWordModel crossword;
             if (generated == null)
             {
                 return NotFound();
