@@ -135,6 +135,13 @@ namespace CrossWord.API
                         .AllowAnyOrigin();
                 });
             });
+
+            // add Queued background tasks
+            services.AddHostedService<QueuedHostedService>();
+            services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+
+            // and a timed background task
+            services.AddHostedService<TimedHostedService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

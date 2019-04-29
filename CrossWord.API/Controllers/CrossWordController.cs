@@ -15,6 +15,8 @@ using System.Linq;
 using System.Diagnostics;
 using System.Net;
 using CrossWord.Models;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace CrossWord.API.Controllers
 {
@@ -26,13 +28,26 @@ namespace CrossWord.API.Controllers
         private readonly UserManager<IdentityUser> userManager;
         private readonly WordHintDbContext db;
         private readonly ICrossDictionary dictionary;
+        private readonly ILogger logger;
+        private readonly IServiceScopeFactory serviceScopeFactory;
 
-        public CrossWordController(IConfiguration config, UserManager<IdentityUser> userManager, WordHintDbContext db, ICrossDictionary dictionary)
+        public IBackgroundTaskQueue Queue { get; }
+
+        public CrossWordController(IConfiguration config,
+                                UserManager<IdentityUser> userManager,
+                                WordHintDbContext db,
+                                ICrossDictionary dictionary,
+                                IBackgroundTaskQueue queue,
+                                ILogger<CrossWordController> logger,
+                                IServiceScopeFactory serviceScopeFactory)
         {
             this.config = config;
             this.userManager = userManager;
             this.db = db;
             this.dictionary = dictionary;
+            this.logger = logger;
+            this.Queue = queue;
+            this.serviceScopeFactory = serviceScopeFactory;
         }
 
         // GET: api/crosswords/init
@@ -43,6 +58,18 @@ namespace CrossWord.API.Controllers
         {
             dictionary.ResetDictionary(25);
             return Ok("CrossWordDictionary was updated");
+        }
+
+        private CrosswordTemplate GetRandomCrosswordTemplateFromDb()
+        {
+            int total = db.CrosswordTemplates.Count();
+            if (total == 0) return null;
+
+            Random r = new Random();
+            int offset = r.Next(0, total);
+
+            var result = db.CrosswordTemplates.Skip(offset).FirstOrDefault();
+            return result;
         }
 
         // GET: api/crosswords
@@ -56,7 +83,7 @@ namespace CrossWord.API.Controllers
             watch.Start();
 
             ICrossBoard board = null;
-            var template = db.CrosswordTemplates.FirstOrDefault();
+            var template = GetRandomCrosswordTemplateFromDb();
             if (template != null)
             {
                 board = new CrossBoard();
@@ -135,5 +162,52 @@ namespace CrossWord.API.Controllers
             return NotFound();
         }
 
+        // GET: api/templates/generate
+        // [Authorize]
+        [HttpGet]
+        [Route("api/templates/generate")]
+        public IActionResult GenerateTemplates()
+        {
+            Queue.QueueBackgroundWorkItem(async token =>
+            {
+                var guid = Guid.NewGuid().ToString();
+                logger.LogInformation(
+                    $"Queued Background Task {guid} added to the queue.");
+
+                using (var scope = serviceScopeFactory.CreateScope())
+                {
+                    var scopedServices = scope.ServiceProvider;
+                    var db = scopedServices.GetRequiredService<WordHintDbContext>();
+
+                    try
+                    {
+                        var model = CrossBoardCreator.GetCrossWordModelFromUrl("http-random");
+                        var board = model.ToCrossBoard();
+
+                        // add in database
+                        var newTemplate = new CrosswordTemplate()
+                        {
+                            Rows = model.Size.Rows,
+                            Cols = model.Size.Cols,
+                            Grid = model.Grid
+                        };
+
+                        db.CrosswordTemplates.Add(newTemplate);
+                        await db.SaveChangesAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogError(ex,
+                            "An error occurred writing to the " +
+                            $"database. Error: {ex.Message}");
+                    }
+                }
+
+                logger.LogInformation(
+                    $"Queued Background Task {guid} is complete.");
+            });
+
+            return Ok("Generate crosssword template added to the queue");
+        }
     }
 }
