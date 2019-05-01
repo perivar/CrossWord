@@ -15,9 +15,9 @@ using System.Linq;
 
 namespace CrossWord.API.Controllers
 {
-
-    [ApiVersion("1.0")] // this attribute isn't required, but it's easier to understand
-    [ApiController]
+    // [ApiController] // Note this breaks HttpPost parameters that are not a model, like the Login method with username and password
+    [ApiVersionNeutral]
+    // [ApiVersion("1.0")] // this attribute isn't required, but it's easier to understand
     [Route("api/[controller]/[action]")]
     public class AccountController : Controller
     {

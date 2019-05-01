@@ -138,10 +138,10 @@ namespace CrossWord.API
                 .AddJsonOptions(opt =>
                 {
                     opt.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                    opt.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-                    opt.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
-                    opt.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
-                    opt.SerializerSettings.MetadataPropertyHandling = MetadataPropertyHandling.Ignore;
+                    // opt.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                    // opt.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+                    // opt.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+                    // opt.SerializerSettings.MetadataPropertyHandling = MetadataPropertyHandling.Ignore;
                     opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 })
                 ;

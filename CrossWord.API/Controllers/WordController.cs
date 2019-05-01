@@ -17,10 +17,10 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace CrossWord.API.Controllers
 {
-
     // [Route("api/[controller]/[action]")] // disable the default route and use method specific routes instead
-    [ApiVersion("1.0")] // this attribute isn't required, but it's easier to understand
     [ApiController]
+    [ApiVersionNeutral]
+    // [ApiVersion("1.0")] // this attribute isn't required, but it's easier to understand
     public class WordController : Controller
     {
         private readonly IConfiguration config;

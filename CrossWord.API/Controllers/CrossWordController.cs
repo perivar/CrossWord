@@ -20,9 +20,9 @@ using Microsoft.Extensions.Logging;
 
 namespace CrossWord.API.Controllers
 {
-
-    [ApiVersion("1.0")] // this attribute isn't required, but it's easier to understand
     [ApiController]
+    [ApiVersionNeutral]
+    // [ApiVersion("1.0")] // this attribute isn't required, but it's easier to understand
     // [Route("api/[controller]")]
     public class CrossWordController : Controller
     {
