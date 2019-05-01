@@ -177,7 +177,7 @@ namespace CrossWord.API
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
 
             // and a timed background task
-            services.AddHostedService<TimedHostedService>();
+            // services.AddHostedService<TimedHostedService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
