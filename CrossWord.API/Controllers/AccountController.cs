@@ -16,6 +16,8 @@ using System.Linq;
 namespace CrossWord.API.Controllers
 {
 
+    [ApiVersion("1.0")] // this attribute isn't required, but it's easier to understand
+    [ApiController]
     [Route("api/[controller]/[action]")]
     public class AccountController : Controller
     {

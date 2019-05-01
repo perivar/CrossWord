@@ -27,7 +27,7 @@ namespace CrossWord.API
             _logger.LogInformation("Timed Background Service is starting.");
 
             _timer = new Timer(DoWork, null, TimeSpan.Zero,
-                TimeSpan.FromSeconds(5));
+                TimeSpan.FromSeconds(10));
 
             return Task.CompletedTask;
         }

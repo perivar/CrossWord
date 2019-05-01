@@ -13,22 +13,27 @@ using CrossWord.Scraper.MySQLDbService;
 using CrossWord.Scraper.MySQLDbService.Models;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace CrossWord.API.Controllers
 {
 
     // [Route("api/[controller]/[action]")] // disable the default route and use method specific routes instead
+    [ApiVersion("1.0")] // this attribute isn't required, but it's easier to understand
+    [ApiController]
     public class WordController : Controller
     {
         private readonly IConfiguration config;
         private readonly UserManager<IdentityUser> userManager;
         private readonly WordHintDbContext db;
+        private readonly IApiDescriptionGroupCollectionProvider apiExplorer;
 
-        public WordController(IConfiguration config, UserManager<IdentityUser> userManager, WordHintDbContext db)
+        public WordController(IConfiguration config, UserManager<IdentityUser> userManager, WordHintDbContext db, IApiDescriptionGroupCollectionProvider apiExplorer)
         {
             this.config = config;
             this.userManager = userManager;
             this.db = db;
+            this.apiExplorer = apiExplorer;
         }
 
         // GET: api/word/5
