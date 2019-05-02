@@ -98,19 +98,20 @@
             var apiUserEmail = "@ViewData["ApiUserEmail"]";
             var apiPassword = "@ViewData["ApiPassword"]";
             var word = "@ViewData["Word"]";
+            var token = "@ViewData["Token"]";
             var letterCount = 0;
 
             // hide button group to start with
 			$("#letter-button-group").hide();
             
             // setup client JWT authentication
-            $.post(authUrl, $.param({email: apiUserEmail, password: apiPassword})).done(function(token){
+            //$.post(authUrl, $.param({email: apiUserEmail, password: apiPassword})).done(function(token){
                 // save the token in local storage
                 localStorage.setItem("token", token);
-            }).fail(function() {
-                $("#search-header").html('');
-                $("#word-list").html('<tr><th scope="row">Cannot access API (not authenticated)</th>');
-            });
+            //}).fail(function() {
+                //$("#search-header").html('');
+                //$("#word-list").html('<tr><th scope="row">Cannot access API (not authenticated)</th>');
+            //});
             
             // ensure the Authorization header is added to every request
             $.ajaxSetup({

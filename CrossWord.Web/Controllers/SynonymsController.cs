@@ -10,6 +10,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.SignalR;
 using CrossWord.Web.Hubs;
+using System.Net.Http;
+using System.Net;
 
 namespace CrossWord.Web.Controllers
 {
@@ -46,6 +48,7 @@ namespace CrossWord.Web.Controllers
             ViewData["ApiBaseUrl"] = apiBaseUrl;
             ViewData["ApiUserEmail"] = apiUserEmail;
             ViewData["ApiPassword"] = apiPassword;
+            ViewData["Token"] = GetToken(apiBaseUrl, apiUserEmail, apiPassword);
 
             return View();
         }
@@ -62,8 +65,31 @@ namespace CrossWord.Web.Controllers
             ViewData["ApiUserEmail"] = apiUserEmail;
             ViewData["ApiPassword"] = apiPassword;
             ViewData["Word"] = word;
+            ViewData["Token"] = GetToken(apiBaseUrl, apiUserEmail, apiPassword);
 
             return View();
+        }
+
+        private string GetToken(string apiBaseUrl, string apiUserEmail, string apiPassword)
+        {
+            var authUrl = $"{apiBaseUrl}Account/Login?email={apiUserEmail}&password={apiPassword}";
+
+            string token = string.Empty;
+            using (var httpClient = new HttpClient())
+            {
+                using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, authUrl))
+                {
+                    // var stringContent = new StringContent(JsonConvert.SerializeObject(TestAPIHelper.loginObject), Encoding.UTF8, "application/json");
+                    // request.Content = stringContent;
+
+                    using (HttpResponseMessage response = httpClient.SendAsync(request, System.Threading.CancellationToken.None).Result)
+                    {
+                        token = response.Content.ReadAsAsync<string>().Result;
+                    }
+                }
+            }
+
+            return token;
         }
 
         public IActionResult Privacy()
