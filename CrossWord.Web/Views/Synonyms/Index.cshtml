@@ -103,22 +103,11 @@
 
             // hide button group to start with
 			$("#letter-button-group").hide();
-            
-            // setup client JWT authentication
-            //$.post(authUrl, $.param({email: apiUserEmail, password: apiPassword})).done(function(token){
-                // save the token in local storage
-                localStorage.setItem("token", token);
-            //}).fail(function() {
-                //$("#search-header").html('');
-                //$("#word-list").html('<tr><th scope="row">Cannot access API (not authenticated)</th>');
-            //});
-            
+                        
             // ensure the Authorization header is added to every request
             $.ajaxSetup({
                 beforeSend: function(xhr) {
-                    if (localStorage.getItem("token") !== null) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem("token"));                      
-                    }
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + token);                      
                 }
             });  
 

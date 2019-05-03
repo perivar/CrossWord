@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace CrossWord.API
 {
     /// <summary>
-    /// Class to not add default UI when using Identity Frameword
+    /// Class to not add default UI when using Identity Framework
     /// You cannot use AddDefaultIdentity, since internally, this calls AddDefaultUI, which contains the Razor Pages "endpoints" you don't want. 
     /// You'll need to use AddIdentity<TUser, TRole> or AddIdentityCore<TUser> instead.
     /// https://github.com/aspnet/Identity/blob/master/src/UI/IdentityServiceCollectionUIExtensions.cs#L47

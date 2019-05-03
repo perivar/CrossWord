@@ -12,6 +12,9 @@ using Microsoft.AspNetCore.SignalR;
 using CrossWord.Web.Hubs;
 using System.Net.Http;
 using System.Net;
+using Newtonsoft.Json;
+using System.Text;
+using Newtonsoft.Json.Linq;
 
 namespace CrossWord.Web.Controllers
 {
@@ -72,15 +75,19 @@ namespace CrossWord.Web.Controllers
 
         private string GetToken(string apiBaseUrl, string apiUserEmail, string apiPassword)
         {
-            var authUrl = $"{apiBaseUrl}Account/Login?email={apiUserEmail}&password={apiPassword}";
+            var authUrl = $"{apiBaseUrl}Account/Login";
+
+            dynamic userModel = new JObject();
+            userModel.Username = apiUserEmail;
+            userModel.Password = apiPassword;
 
             string token = string.Empty;
             using (var httpClient = new HttpClient())
             {
                 using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, authUrl))
                 {
-                    // var stringContent = new StringContent(JsonConvert.SerializeObject(TestAPIHelper.loginObject), Encoding.UTF8, "application/json");
-                    // request.Content = stringContent;
+                    var stringContent = new StringContent(JsonConvert.SerializeObject(userModel), Encoding.UTF8, "application/json");
+                    request.Content = stringContent;
 
                     using (HttpResponseMessage response = httpClient.SendAsync(request, System.Threading.CancellationToken.None).Result)
                     {

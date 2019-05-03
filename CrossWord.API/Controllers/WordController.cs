@@ -17,11 +17,12 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace CrossWord.API.Controllers
 {
+    [Produces("application/json")]
     // [Route("api/[controller]/[action]")] // disable the default route and use method specific routes instead
     [ApiController]
     [ApiVersionNeutral]
     // [ApiVersion("1.0")] // this attribute isn't required, but it's easier to understand
-    public class WordController : Controller
+    public class WordController : ControllerBase
     {
         private readonly IConfiguration config;
         private readonly UserManager<IdentityUser> userManager;
@@ -48,7 +49,7 @@ namespace CrossWord.API.Controllers
                 return NotFound(id);
             }
 
-            return Json(word);
+            return Ok(word);
         }
 
         // GET: api/words
@@ -66,7 +67,7 @@ namespace CrossWord.API.Controllers
                 return NotFound();
             }
 
-            return Json(wordResult);
+            return Ok(wordResult);
         }
 
         // GET: api/words/query
@@ -90,7 +91,7 @@ namespace CrossWord.API.Controllers
                 return NotFound(query);
             }
 
-            return Json(wordResult);
+            return Ok(wordResult);
         }
 
         // GET: api/synonyms/ord
@@ -138,7 +139,7 @@ namespace CrossWord.API.Controllers
             }
             var sortedReturnList = returnList.OrderBy(w => w.NumberOfLetters).ThenBy(w => w.Value);
 
-            return Json(sortedReturnList);
+            return Ok(sortedReturnList);
         }
 
         // GET: api/synonyms/ord/pattern
@@ -188,7 +189,7 @@ namespace CrossWord.API.Controllers
             }
             var sortedReturnList = returnList.OrderBy(w => w.NumberOfLetters).ThenBy(w => w.Value);
 
-            return Json(sortedReturnList);
+            return Ok(sortedReturnList);
         }
 
         // GET: api/states
@@ -205,7 +206,7 @@ namespace CrossWord.API.Controllers
                 return NotFound();
             }
 
-            return Json(stateResult);
+            return Ok(stateResult);
         }
     }
 }

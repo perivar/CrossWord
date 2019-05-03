@@ -1,28 +1,27 @@
 using System;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
+using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using CrossWord.Scraper.MySQLDbService;
 using CrossWord.Scraper.MySQLDbService.Models;
-using System.Linq;
+using CrossWord.API.Models;
 
 namespace CrossWord.API.Controllers
 {
     [Produces("application/json")]
-    [ApiConventionType(typeof(DefaultApiConventions))]
-    [ApiController] // Note this breaks HttpPost parameters that are not a model, like the Login method with username and password
-    [ApiExplorerSettings(IgnoreApi = false)]
+    [ApiController] // Note this breaks HttpPost parameters that are not a model, like a Login method with username and password as string parameters
     [ApiVersionNeutral]
     // [ApiVersion("1.0")] // this attribute isn't required, but it's easier to understand
     [Route("api/[controller]/[action]")]
-    public class AccountController : Controller
+    public class AccountController : ControllerBase
     {
         private readonly IConfiguration config;
         private readonly UserManager<IdentityUser> userManager;
@@ -38,39 +37,45 @@ namespace CrossWord.API.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        // ValidateAntiForgeryToken won't work unless we are using the default Identity UI via AddDefaultUI()
-        // [ValidateAntiForgeryToken] 
-        public async Task<IActionResult> Register(string email, string password)
+        public async Task<IActionResult> Register(UserModel user)
         {
-            var userIdentity = new IdentityUser(email);
+            string username = user.Username;
+            string password = user.Password;
+
+            var userIdentity = new IdentityUser(username);
             var result = await userManager.CreateAsync(userIdentity, password);
 
             if (result == IdentityResult.Success)
             {
-                return await Login(email, password);
+                return await Login(user);
             }
-            else return BadRequest();
+            else return BadRequest(result);
         }
 
         [HttpPost]
         [AllowAnonymous]
-        // ValidateAntiForgeryToken won't work unless we are using the default Identity UI via AddDefaultUI()
-        // [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(string email, string password)
+        public async Task<IActionResult> Login(UserModel user)
         {
-            // get the IdentityUser to verify
-            var userToVerify = await userManager.FindByNameAsync(email);
+            string username = user.Username;
+            string password = user.Password;
 
-            if (userToVerify == null) return BadRequest();
+            // get the IdentityUser to verify
+            var userToVerify = await userManager.FindByNameAsync(username);
+
+            if (userToVerify == null)
+            {
+                // Don't reveal that the user does not exist
+                return BadRequest();
+            }
 
             // check the credentials
             if (await userManager.CheckPasswordAsync(userToVerify, password))
             {
                 var claims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
+                {
+                    new Claim(JwtRegisteredClaimNames.Sub, username),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                };
 
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -86,13 +91,15 @@ namespace CrossWord.API.Controllers
 
                 return Ok(new JwtSecurityTokenHandler().WriteToken(token));
             }
-            else return BadRequest();
+            else
+            {
+                return BadRequest();
+            }
         }
 
         // GET: /Account/GenerateForgotPasswordToken
         [HttpGet]
         [AllowAnonymous]
-        [ActionName("GenerateForgotPasswordToken")]
         public async Task<ActionResult> GenerateForgotPasswordToken(string email)
         {
             var user = await userManager.FindByNameAsync(email);
@@ -104,11 +111,9 @@ namespace CrossWord.API.Controllers
             return Ok(await userManager.GeneratePasswordResetTokenAsync(user));
         }
 
-        // POST: /Account/ResetPassword
-        [HttpPost]
+        // GET: /Account/ResetPassword
+        [HttpGet]
         [AllowAnonymous]
-        // ValidateAntiForgeryToken won't work unless we are using the default Identity UI via AddDefaultUI()
-        // [ValidateAntiForgeryToken]
         public async Task<ActionResult> ResetPassword(string email, string password, string code)
         {
             var user = await userManager.FindByNameAsync(email);
@@ -120,9 +125,12 @@ namespace CrossWord.API.Controllers
             var result = await userManager.ResetPasswordAsync(user, code, password);
             if (result.Succeeded)
             {
-                return Ok();
+                return Ok(result);
             }
-            else return BadRequest();
+            else
+            {
+                return BadRequest();
+            }
         }
     }
 }

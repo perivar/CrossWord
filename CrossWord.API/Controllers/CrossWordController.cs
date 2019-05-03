@@ -20,11 +20,12 @@ using Microsoft.Extensions.Logging;
 
 namespace CrossWord.API.Controllers
 {
+    [Produces("application/json")]
     [ApiController]
     [ApiVersionNeutral]
     // [ApiVersion("1.0")] // this attribute isn't required, but it's easier to understand
     // [Route("api/[controller]")]
-    public class CrossWordController : Controller
+    public class CrossWordController : ControllerBase
     {
         private readonly IConfiguration config;
         private readonly UserManager<IdentityUser> userManager;
@@ -138,7 +139,7 @@ namespace CrossWord.API.Controllers
 
             var generated = gen.Generate().FirstOrDefault() as CrossBoard;
 
-            CrossWord.Models.CrossWordModel crossword;
+            CrossWordModel crossword;
             if (generated == null)
             {
                 return NotFound();
@@ -152,7 +153,7 @@ namespace CrossWord.API.Controllers
             var responseTimeForCompleteRequest = watch.ElapsedMilliseconds;
 
             crossword.Title = $"Generated in {responseTimeForCompleteRequest} milliseconds";
-            return Json(crossword);
+            return Ok(crossword);
         }
 
         // GET: api/crosswords/5
