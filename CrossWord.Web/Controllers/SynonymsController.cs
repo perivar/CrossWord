@@ -15,6 +15,7 @@ using System.Net;
 using Newtonsoft.Json;
 using System.Text;
 using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Http;
 
 namespace CrossWord.Web.Controllers
 {
@@ -51,7 +52,18 @@ namespace CrossWord.Web.Controllers
             ViewData["ApiBaseUrl"] = apiBaseUrl;
             ViewData["ApiUserEmail"] = apiUserEmail;
             ViewData["ApiPassword"] = apiPassword;
-            ViewData["Token"] = GetToken(apiBaseUrl, apiUserEmail, apiPassword);
+
+            string token = null;
+            if (HttpContext.Session.GetString("token") == null)
+            {
+                token = GetJwtToken(apiBaseUrl, apiUserEmail, apiPassword);
+                if (token != null) HttpContext.Session.SetString("token", token);
+            }
+            else
+            {
+                token = HttpContext.Session.GetString("token");
+            }
+            ViewData["Token"] = token;
 
             return View();
         }
@@ -68,12 +80,23 @@ namespace CrossWord.Web.Controllers
             ViewData["ApiUserEmail"] = apiUserEmail;
             ViewData["ApiPassword"] = apiPassword;
             ViewData["Word"] = word;
-            ViewData["Token"] = GetToken(apiBaseUrl, apiUserEmail, apiPassword);
+
+            string token = null;
+            if (HttpContext.Session.GetString("token") == null)
+            {
+                token = GetJwtToken(apiBaseUrl, apiUserEmail, apiPassword);
+                if (token != null) HttpContext.Session.SetString("token", token);
+            }
+            else
+            {
+                token = HttpContext.Session.GetString("token");
+            }
+            ViewData["Token"] = token;
 
             return View();
         }
 
-        private string GetToken(string apiBaseUrl, string apiUserEmail, string apiPassword)
+        private string GetJwtToken(string apiBaseUrl, string apiUserEmail, string apiPassword)
         {
             var authUrl = $"{apiBaseUrl}Account/Login";
 

@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.SignalR;
 using CrossWord.Web.Hubs;
+using Microsoft.AspNetCore.Http;
 
 namespace CrossWord.Web.Controllers
 {
@@ -37,6 +38,9 @@ namespace CrossWord.Web.Controllers
 
         public IActionResult Index()
         {
+            // clear jwt token
+            HttpContext.Session.Remove("token");
+            
             return View();
         }
 

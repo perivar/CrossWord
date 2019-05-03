@@ -41,6 +41,10 @@ namespace CrossWord.Web
                 options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All);
             });
 
+            // Enable Session state
+            services.AddMemoryCache();
+            services.AddSession();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             // Enable SignalR
@@ -80,6 +84,8 @@ namespace CrossWord.Web
             // app.UseHttpsRedirection(); // disable to use within docker behind a proxy
             app.UseStaticFiles();
             app.UseCookiePolicy();
+
+            app.UseSession();
 
             app.UseCors("Everything");
 
