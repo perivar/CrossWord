@@ -147,8 +147,8 @@ namespace CrossWord.API
                 ;
 
             // Register the Swagger generator and enable OData
-            services.AddODataSwaggerDocumentation();
-            // services.AddODataVersioningSwaggerDocumentation();
+            // services.AddODataSwaggerDocumentation();
+            services.AddODataVersioningSwaggerDocumentation();
 
             services.AddCors(o =>
             {
@@ -170,8 +170,8 @@ namespace CrossWord.API
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, WordHintDbContext db
-                            // , VersionedODataModelBuilder modelBuilder
-                            // , IApiVersionDescriptionProvider provider
+                            , VersionedODataModelBuilder modelBuilder
+                            , IApiVersionDescriptionProvider provider
                             )
         {
             if (env.IsDevelopment())
@@ -205,8 +205,8 @@ namespace CrossWord.API
             app.UseCors("Everything");
 
             // Add support for OData to MVC pipeline
-            // var models = modelBuilder.GetEdmModels(); // versioning API
-            var model = WordModelConfiguration.GetEdmModel(new ODataConventionModelBuilder()); // single odata API
+            var models = modelBuilder.GetEdmModels(); // versioning API
+            // var model = WordModelConfiguration.GetEdmModel(new ODataConventionModelBuilder()); // single odata API
             app.UseMvc(routes =>
             {
                 // routes.MapRoute(
@@ -217,10 +217,10 @@ namespace CrossWord.API
                 routes.Select().Expand().Filter().OrderBy().MaxTop(300).Count();
 
                 // version with query parameter
-                // routes.MapVersionedODataRoutes(
-                //     routeName: "odata",
-                //     routePrefix: "odata",
-                //     models: models);
+                routes.MapVersionedODataRoutes(
+                    routeName: "odata",
+                    routePrefix: "odata",
+                    models: models);
 
                 // version by path
                 // routes.MapVersionedODataRoutes(
@@ -229,7 +229,7 @@ namespace CrossWord.API
                 //     models: models);
 
                 // setup non-versioned odata route
-                routes.MapODataServiceRoute("odata", "odata", model);
+                // routes.MapODataServiceRoute("odata", "odata", model);
 
                 // Error: Cannot find the services container for the non-OData route. 
                 // This can occur when using OData components on the non-OData route and is usually a configuration issue. 
@@ -241,8 +241,8 @@ namespace CrossWord.API
             });
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
-            // app.UseODataVersioningSwaggerDocumentation(modelBuilder, provider);
-            app.UseSwaggerDocumentation();
+            app.UseODataVersioningSwaggerDocumentation(modelBuilder, provider);
+            // app.UseSwaggerDocumentation();
         }
     }
 }

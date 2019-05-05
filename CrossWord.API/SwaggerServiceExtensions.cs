@@ -20,7 +20,6 @@ namespace CrossWord.API
 {
     public static class SwaggerServiceExtensions
     {
-        // https://ppolyzos.com/2017/10/30/add-jwt-bearer-authorization-to-swagger-and-asp-net-core/
         public static IServiceCollection AddSwaggerDocumentation(this IServiceCollection services)
         {
             // Register the Swagger generator, defining 1 or more Swagger documents
@@ -28,6 +27,7 @@ namespace CrossWord.API
             {
                 c.SwaggerDoc("v1", new Info { Title = "Main API", Version = "v1" });
 
+                // https://ppolyzos.com/2017/10/30/add-jwt-bearer-authorization-to-swagger-and-asp-net-core/
                 c.AddSecurityDefinition("Bearer", new ApiKeyScheme
                 {
                     Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\"",
@@ -48,6 +48,8 @@ namespace CrossWord.API
         public static IServiceCollection AddSwaggerODataWorkaround(this IServiceCollection services)
         {
             // Required to get Swagger to work with OData Controllers
+            // System.InvalidOperationException: No media types found in 'Microsoft.AspNet.OData.Formatter.ODataInputFormatter.SupportedMediaTypes'. 
+            // Add at least one media type to the list of supported media types.
             // Workaround: https://github.com/OData/WebApi/issues/1177
             services.AddMvcCore(options =>
             {
@@ -85,7 +87,7 @@ namespace CrossWord.API
                 // This option enables sending the api-supported-versions and api-deprecated-versions HTTP header in responses.
                 option.ReportApiVersions = true;
 
-                // option.ApiVersionReader = new UrlSegmentApiVersionReader();
+                option.ApiVersionReader = new UrlSegmentApiVersionReader();
             });
 
             services.AddOData().EnableApiVersioning();
@@ -128,11 +130,14 @@ namespace CrossWord.API
                   }
 
                   // add a custom operation filter which sets default values
-                  options.OperationFilter<SwaggerDefaultValues>();
+                  options.OperationFilter<SwaggerOperationFilter>();
+                  // options.DocumentFilter<SwaggerDocumentFilter>();
+                  // options.ParameterFilter<SwaggerParameterFilter>();
 
                   // integrate xml comments, remember to generate the xml .csproj
                   options.IncludeXmlComments(XmlCommentsFilePath);
 
+                  // https://ppolyzos.com/2017/10/30/add-jwt-bearer-authorization-to-swagger-and-asp-net-core/
                   options.AddSecurityDefinition("Bearer", new ApiKeyScheme
                   {
                       Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\"",

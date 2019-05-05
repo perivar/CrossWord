@@ -18,6 +18,7 @@ using Microsoft.EntityFrameworkCore;
 namespace CrossWord.API.Controllers
 {
     [Produces("application/json")]
+    [ApiVersion("1.0")]
     [ODataRoutePrefix("Words")]
     public class WordsODataController : ODataController
     {
@@ -56,7 +57,7 @@ namespace CrossWord.API.Controllers
         [HttpGet]
         [EnableQuery]
         [ODataRoute("({key})")]
-        public SingleResult<Word> Get(int key)
+        public SingleResult<Word> Get([FromODataUri] int key)
         {
             var word = db.Words.Where(w => w.WordId == key).AsQueryable();
             return new SingleResult<Word>(word);
@@ -65,7 +66,7 @@ namespace CrossWord.API.Controllers
         [HttpGet]
         [EnableQuery]
         [ODataRoute("Synonyms(Word={word})")]
-        public IQueryable<Word> GetSynonyms(string word)
+        public IQueryable<Word> GetSynonyms([FromODataUri] string word)
         {
             word = word.ToUpper();
 

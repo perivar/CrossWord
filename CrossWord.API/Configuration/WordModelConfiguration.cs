@@ -17,17 +17,24 @@ namespace CrossWord.API.Configuration
         /// <param name="apiVersion">The <see cref="ApiVersion">API version</see> associated with the <paramref name="builder"/>.</param>
         public void Apply(ODataModelBuilder builder, ApiVersion apiVersion)
         {
-            builder.EntitySet<Word>("Words");
+            var word = builder.EntitySet<Word>("Words").EntityType;
+            word.HasKey(o => o.WordId);
 
             // bind a function to the words odata controller
             // GET /odata/Words/Synonyms(Word='FORFATTER')?$select=WordId,Value&$top=20&orderby=WordId%20desc
             // GET /odata/Words/Synonyms(Word='FORFATTER')?$apply=groupby((Value))&$top=100&$count=true
             builder
-                .EntityType<Word>().Collection
+                .EntityType<Word>().Collection // bound to Word, comment to make it unbounded
                 .Function("Synonyms")
-                // .ReturnsCollection<Word>() // Unbound
+                // .ReturnsCollection<Word>() // use when unbounded
                 .ReturnsCollectionFromEntitySet<Word>("Words") // Bound to the Words odata controller
                 .Parameter<string>("Word");
+
+            // builder
+            //     .EntityType<Word>().Collection
+            //     .Action("Synonyms")
+            //     .ReturnsCollectionFromEntitySet<Word>("Words") // Bound to the Words odata controller
+            //     .Parameter<string>("Word");
 
             // var word = builder.EntitySet<Word>("Words").EntityType;
             // word.HasKey(o => o.WordId);
@@ -47,9 +54,9 @@ namespace CrossWord.API.Configuration
             // GET /odata/Words/Synonyms(Word='FORFATTER')?$select=WordId,Value&$top=20&orderby=WordId%20desc
             // GET /odata/Words/Synonyms(Word='FORFATTER')?$apply=groupby((Value))&$top=100&$count=true
             builder
-                .EntityType<Word>().Collection
+                .EntityType<Word>().Collection // bound to Word, comment to make it unbounded
                 .Function("Synonyms")
-                // .ReturnsCollection<Word>() // Unbound
+                // .ReturnsCollection<Word>() // use when unbounded
                 .ReturnsCollectionFromEntitySet<Word>("Words") // Bound to the Words odata controller
                 .Parameter<string>("Word");
 
