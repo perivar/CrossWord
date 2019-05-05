@@ -79,11 +79,10 @@ namespace CrossWord.API.Controllers
             var wordId = wordResult.First().WordId;
 
             var wordRelations = db.WordRelations.Where(w => (w.WordFromId == wordId) || (w.WordToId == wordId))
-                                            // .OrderBy(w => w.WordFrom.NumberOfLetters)
                                             .AsNoTracking()
                                             .SelectMany(w => new[] { w.WordFrom, w.WordTo })
-                                            // .Distinct()
-                                            // .Take(300)
+                                            .GroupBy(p => p.Value) // to make it distinct
+                                            .Select(g => g.First()) // to make it distinct
                                             ;
 
             return wordRelations.AsQueryable();
