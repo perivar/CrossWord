@@ -1,14 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNet.OData.Extensions;
+using Microsoft.AspNet.OData.Formatter;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Net.Http.Headers;
 using Swashbuckle.AspNetCore.Swagger;
 using static Microsoft.AspNet.OData.Query.AllowedQueryOptions;
 using static Microsoft.AspNetCore.Mvc.CompatibilityVersion;
@@ -42,7 +45,35 @@ namespace CrossWord.API
             return services;
         }
 
+        public static IServiceCollection AddSwaggerODataWorkaround(this IServiceCollection services)
+        {
+            // Required to get Swagger to work with OData Controllers
+            // Workaround: https://github.com/OData/WebApi/issues/1177
+            services.AddMvcCore(options =>
+            {
+                foreach (var outputFormatter in options.OutputFormatters.OfType<ODataOutputFormatter>().Where(_ => _.SupportedMediaTypes.Count == 0))
+                {
+                    outputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
+                }
+                foreach (var inputFormatter in options.InputFormatters.OfType<ODataInputFormatter>().Where(_ => _.SupportedMediaTypes.Count == 0))
+                {
+                    inputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
+                }
+            });
+
+            return services;
+        }
+
         public static IServiceCollection AddODataSwaggerDocumentation(this IServiceCollection services)
+        {
+            services.AddOData();
+            services.AddSwaggerODataWorkaround();
+            services.AddSwaggerDocumentation();
+
+            return services;
+        }
+
+        public static IServiceCollection AddODataVersioningSwaggerDocumentation(this IServiceCollection services)
         {
             // allow a client to call you without specifying an api version
             // since we haven't configured it otherwise, the assumed api version will be 1.0
@@ -114,7 +145,13 @@ namespace CrossWord.API
                     {
                         { "Bearer", new string[] { } }
                     });
+
+                  // remove Conflicting schemaIds: Identical schemaIds detected for type when using both ControllerBase and ODataController
+                  // options.CustomSchemaIds(x => x.Assembly.IsDynamic ? "Dynamic." + x.FullName : x.FullName);
+                  // options.CustomSchemaIds(x => x.FullName);
               });
+
+            services.AddSwaggerODataWorkaround();
 
             return services;
         }
@@ -134,7 +171,7 @@ namespace CrossWord.API
             return app;
         }
 
-        public static IApplicationBuilder UseODataSwaggerDocumentation(this IApplicationBuilder app,
+        public static IApplicationBuilder UseODataVersioningSwaggerDocumentation(this IApplicationBuilder app,
                                                                 VersionedODataModelBuilder modelBuilder,
                                                                 IApiVersionDescriptionProvider provider)
         {

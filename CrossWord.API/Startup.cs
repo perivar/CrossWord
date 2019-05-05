@@ -26,8 +26,8 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using CrossWord.Scraper.MySQLDbService.Models;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
-using Microsoft.AspNet.OData.Formatter;
-using Microsoft.Net.Http.Headers;
+using Microsoft.OData.Edm;
+using CrossWord.API.Configuration;
 
 namespace CrossWord.API
 {
@@ -148,19 +148,7 @@ namespace CrossWord.API
 
             // Register the Swagger generator and enable OData
             services.AddODataSwaggerDocumentation();
-
-            // Workaround: https://github.com/OData/WebApi/issues/1177
-            services.AddMvcCore(options =>
-            {
-                foreach (var outputFormatter in options.OutputFormatters.OfType<ODataOutputFormatter>().Where(_ => _.SupportedMediaTypes.Count == 0))
-                {
-                    outputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
-                }
-                foreach (var inputFormatter in options.InputFormatters.OfType<ODataInputFormatter>().Where(_ => _.SupportedMediaTypes.Count == 0))
-                {
-                    inputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
-                }
-            });
+            // services.AddODataVersioningSwaggerDocumentation();
 
             services.AddCors(o =>
             {
@@ -181,9 +169,10 @@ namespace CrossWord.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, WordHintDbContext db,
-                            VersionedODataModelBuilder modelBuilder,
-                            IApiVersionDescriptionProvider provider)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, WordHintDbContext db
+                            // , VersionedODataModelBuilder modelBuilder
+                            // , IApiVersionDescriptionProvider provider
+                            )
         {
             if (env.IsDevelopment())
             {
@@ -216,18 +205,22 @@ namespace CrossWord.API
             app.UseCors("Everything");
 
             // Add support for OData to MVC pipeline
-            var models = modelBuilder.GetEdmModels();
+            // var models = modelBuilder.GetEdmModels(); // versioning API
+            var model = WordModelConfiguration.GetEdmModel(new ODataConventionModelBuilder()); // single odata API
             app.UseMvc(routes =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                // routes.MapRoute(
+                //     name: "default",
+                //     template: "{controller=Home}/{action=Index}/{id?}");
+
+                // setup odata filters
+                routes.Select().Expand().Filter().OrderBy().MaxTop(300).Count();
 
                 // version with query parameter
-                routes.MapVersionedODataRoutes(
-                    routeName: "odata",
-                    routePrefix: "odata",
-                    models: models);
+                // routes.MapVersionedODataRoutes(
+                //     routeName: "odata",
+                //     routePrefix: "odata",
+                //     models: models);
 
                 // version by path
                 // routes.MapVersionedODataRoutes(
@@ -235,12 +228,21 @@ namespace CrossWord.API
                 //     routePrefix: "odata/v{version:apiVersion}",
                 //     models: models);
 
+                // setup non-versioned odata route
+                routes.MapODataServiceRoute("odata", "odata", model);
+
+                // Error: Cannot find the services container for the non-OData route. 
+                // This can occur when using OData components on the non-OData route and is usually a configuration issue. 
+                // Call EnableDependencyInjection() to enable OData components on non-OData routes. 
+                // This may also occur when a request was mistakenly handled by the ASP.NET Core routing layer instead of the OData routing layer, 
+                // for instance the URL does not include the OData route prefix configured via a call to MapODataServiceRoute().
                 // Workaround: https://github.com/OData/WebApi/issues/1175
                 // routes.EnableDependencyInjection();
             });
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
-            app.UseODataSwaggerDocumentation(modelBuilder, provider);
+            // app.UseODataVersioningSwaggerDocumentation(modelBuilder, provider);
+            app.UseSwaggerDocumentation();
         }
     }
 }

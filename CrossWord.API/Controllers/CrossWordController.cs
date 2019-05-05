@@ -22,8 +22,8 @@ namespace CrossWord.API.Controllers
 {
     [Produces("application/json")]
     [ApiController]
-    [ApiVersionNeutral]
-    // [ApiVersion("1.0")] // this attribute isn't required, but it's easier to understand
+    // [ApiVersionNeutral]
+    [ApiVersion("1.0")] // this attribute isn't required, but it's easier to understand
     // [Route("api/[controller]")]
     public class CrossWordController : ControllerBase
     {

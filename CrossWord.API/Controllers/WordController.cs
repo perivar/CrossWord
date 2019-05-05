@@ -20,8 +20,8 @@ namespace CrossWord.API.Controllers
     [Produces("application/json")]
     // [Route("api/[controller]/[action]")] // disable the default route and use method specific routes instead
     [ApiController]
-    [ApiVersionNeutral]
-    // [ApiVersion("1.0")] // this attribute isn't required, but it's easier to understand
+    // [ApiVersionNeutral]
+    [ApiVersion("1.0")] // this attribute isn't required, but it's easier to understand
     public class WordController : ControllerBase
     {
         private readonly IConfiguration config;
