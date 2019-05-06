@@ -85,7 +85,7 @@ namespace CrossWord.API.Controllers
                                             .Select(g => g.First()) // to make it distinct
                                             ;
 
-            return wordRelations.AsQueryable();
+            return wordRelations.Where(w => w.Value != word).AsQueryable();
         }
     }
 }

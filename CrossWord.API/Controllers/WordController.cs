@@ -95,7 +95,7 @@ namespace CrossWord.API.Controllers
         }
 
         // GET: api/synonyms/ord
-        [Authorize]
+        // [Authorize]
         [HttpGet]
         [Route("api/synonyms/{word}")]
         public IActionResult GetWordSynonyms(string word)
@@ -111,39 +111,24 @@ namespace CrossWord.API.Controllers
             var wordId = wordResult.First().WordId;
 
             var wordRelations = db.WordRelations.Where(w => (w.WordFromId == wordId) || (w.WordToId == wordId))
-                                            // .OrderBy(w => w.WordFrom.NumberOfLetters)
-                                            // .Include(w => w.WordFrom)
-                                            // .Include(w => w.WordTo)
                                             .AsNoTracking()
-                                            .Select(w => new { w.WordFrom, w.WordTo })
-                                            .Take(300);
+                                            .SelectMany(w => new[] { w.WordFrom, w.WordTo })
+                                            .GroupBy(p => p.Value) // to make it distinct
+                                            .Select(g => g.First()) // to make it distinct
+                                            ;
 
             if (!wordRelations.Any())
             {
                 return NotFound($"No synonyms for '{word}' found");
             }
 
-            // build flattened distinct return list
-            // Contains() works because Word implements Equals()
-            var returnList = new List<Word>();
-            foreach (var relation in wordRelations)
-            {
-                if (relation.WordFrom.WordId == wordId)
-                {
-                    if (!returnList.Contains(relation.WordTo)) returnList.Add(relation.WordTo);
-                }
-                else if (relation.WordTo.WordId == wordId)
-                {
-                    if (!returnList.Contains(relation.WordFrom)) returnList.Add(relation.WordFrom);
-                }
-            }
-            var sortedReturnList = returnList.OrderBy(w => w.NumberOfLetters).ThenBy(w => w.Value);
+            var sortedReturnList = wordRelations.Where(w => w.Value != word).OrderBy(w => w.NumberOfLetters).ThenBy(w => w.Value);
 
             return Ok(sortedReturnList);
         }
 
         // GET: api/synonyms/ord/pattern
-        [Authorize]
+        // [Authorize]
         [HttpGet]
         [Route("api/synonyms/{word}/{pattern}")]
         public IActionResult GetWordSynonyms(string word, string pattern)
@@ -161,33 +146,18 @@ namespace CrossWord.API.Controllers
 
             var wordRelations = db.WordRelations.Where(w => ((w.WordFromId == wordId) || (w.WordToId == wordId))
                                                 && (EF.Functions.Like(w.WordFrom.Value, pattern) || EF.Functions.Like(w.WordTo.Value, pattern)))
-                                                // .OrderBy(w => w.WordFrom.NumberOfLetters)
-                                                // .Include(w => w.WordFrom)
-                                                // .Include(w => w.WordTo)
                                                 .AsNoTracking()
-                                                .Select(w => new { w.WordFrom, w.WordTo })
-                                                .Take(300);
+                                                .SelectMany(w => new[] { w.WordFrom, w.WordTo })
+                                                .GroupBy(p => p.Value) // to make it distinct
+                                                .Select(g => g.First()) // to make it distinct
+                                                ;
 
             if (!wordRelations.Any())
             {
                 return NotFound($"No synonyms for '{word}' found");
             }
 
-            // build flattened distinct return list
-            // Contains() works because Word implements Equals()
-            var returnList = new List<Word>();
-            foreach (var relation in wordRelations)
-            {
-                if (relation.WordFrom.WordId == wordId)
-                {
-                    if (!returnList.Contains(relation.WordTo) && relation.WordTo.NumberOfLetters == pattern.Length) returnList.Add(relation.WordTo);
-                }
-                else if (relation.WordTo.WordId == wordId)
-                {
-                    if (!returnList.Contains(relation.WordFrom) && relation.WordFrom.NumberOfLetters == pattern.Length) returnList.Add(relation.WordFrom);
-                }
-            }
-            var sortedReturnList = returnList.OrderBy(w => w.NumberOfLetters).ThenBy(w => w.Value);
+            var sortedReturnList = wordRelations.Where(w => w.Value != word).OrderBy(w => w.NumberOfLetters).ThenBy(w => w.Value);
 
             return Ok(sortedReturnList);
         }
