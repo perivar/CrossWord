@@ -157,7 +157,7 @@ namespace CrossWord.API.Controllers
                 return NotFound($"No synonyms for '{word}' found");
             }
 
-            var sortedReturnList = wordRelations.Where(w => w.Value != word).OrderBy(w => w.NumberOfLetters).ThenBy(w => w.Value);
+            var sortedReturnList = wordRelations.Where(w => w.Value != word && w.NumberOfLetters == pattern.Length).OrderBy(w => w.NumberOfLetters).ThenBy(w => w.Value);
 
             return Ok(sortedReturnList);
         }

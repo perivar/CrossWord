@@ -74,6 +74,16 @@
             document.body.removeChild(el);
         }
 
+        function ReloadDictionary() {
+            var reloaddUrl = window.location.protocol + "//" + window.location.hostname + ':' + 8000 + '/api/crosswords/init';
+            $.getJSON(reloaddUrl, function( json ) {
+                $("#puzTitle").html("Reloaded the dictionary ...");
+            })
+            .fail(function() {
+                $("#puzTitle").html("Could not find a crossword for this date, please try again ...");
+            });
+        }
+
         function RandomDate(start, end) {
             var d = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())),
                 month = '' + (d.getMonth() + 1),
@@ -208,10 +218,11 @@
     </script>
 }    
 
-<button id="recent" onclick="LoadPuzzle('generate')">Generate</button> &nbsp;
-<button id="recent" onclick="LoadPuzzle('current')">Current Puzzle</button> &nbsp;
+<button id="generate" onclick="LoadPuzzle('generate')">Generate</button> &nbsp;
+<button id="current" onclick="LoadPuzzle('current')">Current Puzzle</button> &nbsp;
 <button id="random" onclick="LoadPuzzle('random')">Random Puzzle</button> &nbsp;
-<button id="random" onclick="CopyNYUrlToClipboard()">Copy NY Puzzle Url to Clipboard</button>
+<button id="copy" onclick="CopyNYUrlToClipboard()">Copy NY Puzzle Url to Clipboard</button> &nbsp;
+<button id="reload" onclick="ReloadDictionary()">Reload dictionary</button>
 
 <h2 id="puzTitle"></h2>
 <p id="puzAuthor"></p>

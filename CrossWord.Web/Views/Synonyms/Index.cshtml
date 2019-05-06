@@ -263,10 +263,10 @@
 
                 //if (!isEmptyPattern) {
                 if (letterLength != 0) {                    
-                    //console.log('using search pattern: ' + pattern);
                     url += "/" + pattern;
+                    console.log('using search url: ' + url);
                 } else {
-                    //console.log('pattern is empty!');
+                    console.log('pattern is empty!');
                 }
 
                 $.ajax({
