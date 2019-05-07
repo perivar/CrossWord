@@ -44,12 +44,14 @@ namespace CrossWord.API.Controllers
             {
                 // make sure we always limit somewhat so that we don't ask for the full database
                 return db.Words
+                        .AsNoTracking()
                         .Take(50)
                         .AsQueryable();
             }
             else
             {
                 return db.Words
+                        .AsNoTracking()
                         .AsQueryable();
             }
         }
@@ -59,7 +61,11 @@ namespace CrossWord.API.Controllers
         [ODataRoute("({key})")]
         public SingleResult<Word> Get([FromODataUri] int key)
         {
-            var word = db.Words.Where(w => w.WordId == key).AsQueryable();
+            var word = db.Words
+                            .AsNoTracking()
+                            .Where(w => w.WordId == key)
+                            .AsQueryable();
+
             return new SingleResult<Word>(word);
         }
 
@@ -78,14 +84,47 @@ namespace CrossWord.API.Controllers
 
             var wordId = wordResult.First().WordId;
 
-            var wordRelations = db.WordRelations.Where(w => (w.WordFromId == wordId) || (w.WordToId == wordId))
+            var wordRelations = db.WordRelations
                                             .AsNoTracking()
+                                            .Where(w => (w.WordFromId == wordId) || (w.WordToId == wordId))
                                             .SelectMany(w => new[] { w.WordFrom, w.WordTo })
                                             .GroupBy(p => p.Value) // to make it distinct
                                             .Select(g => g.First()) // to make it distinct
+                                            .Where(w => w.Value != word)
                                             ;
 
-            return wordRelations.Where(w => w.Value != word).AsQueryable();
+            return wordRelations.AsQueryable();
         }
+
+
+        [HttpGet]
+        [EnableQuery]
+        [ODataRoute("Synonyms(Word={word}, Pattern={pattern})")]
+        public IQueryable<Word> GetSynonyms([FromODataUri] string word, [FromODataUri] string pattern)
+        {
+            word = word.ToUpper();
+            pattern = pattern.ToUpper();
+
+            var wordResult = db.Words.Where(w => w.Value == word);
+            if (!wordResult.Any())
+            {
+                return Enumerable.Empty<Word>().AsQueryable();
+            }
+
+            var wordId = wordResult.First().WordId;
+
+            var wordRelations = db.WordRelations
+                                            .AsNoTracking()
+                                            .Where(w => ((w.WordFromId == wordId) || (w.WordToId == wordId))
+                                            && (EF.Functions.Like(w.WordFrom.Value, pattern) || EF.Functions.Like(w.WordTo.Value, pattern)))
+                                            .SelectMany(w => new[] { w.WordFrom, w.WordTo })
+                                            .GroupBy(p => p.Value) // to make it distinct
+                                            .Select(g => g.First()) // to make it distinct
+                                            .Where(w => w.Value != word && w.NumberOfLetters == pattern.Length) // ensure we only care about the correct values
+                                            ;
+
+            return wordRelations.AsQueryable();
+        }
+
     }
 }

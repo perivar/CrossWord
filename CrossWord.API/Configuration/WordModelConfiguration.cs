@@ -23,27 +23,24 @@ namespace CrossWord.API.Configuration
             // bind a function to the words odata controller
             // GET /odata/Words/Synonyms(Word='FORFATTER')?$select=WordId,Value&$top=20&orderby=WordId%20desc
             // GET /odata/Words/Synonyms(Word='FORFATTER')?$apply=groupby((Value))&$top=100&$count=true
-            builder
+            var function = builder
                 .EntityType<Word>().Collection // bound to Word, comment to make it unbounded
                 .Function("Synonyms")
                 // .ReturnsCollection<Word>() // use when unbounded
                 .ReturnsCollectionFromEntitySet<Word>("Words") // Bound to the Words odata controller
                 .Parameter<string>("Word");
 
-            // builder
-            //     .EntityType<Word>().Collection
-            //     .Action("Synonyms")
-            //     .ReturnsCollectionFromEntitySet<Word>("Words") // Bound to the Words odata controller
-            //     .Parameter<string>("Word");
-
-            // var word = builder.EntitySet<Word>("Words").EntityType;
-            // word.HasKey(o => o.WordId);
-            // word.Filter(); // Allow for the $filter Command
-            // word.Count(); // Allow for the $count Command
-            // word.Expand(); // Allow for the $expand Command
-            // word.OrderBy(); // Allow for the $orderby Command
-            // word.Page(); // Allow for the $top and $skip Commands
-            // word.Select(); // Allow for the $select Command;     
+            // bind a function to the words odata controller
+            // GET /odata/Words/Synonyms(Word='FORFATTER', Pattern='_____')?$select=WordId,Value&$top=20&orderby=WordId%20desc
+            // GET /odata/Words/Synonyms(Word='FORFATTER', Pattern='_____')?$apply=groupby((Value))&$top=100&$count=true
+            var functionWithPattern = builder
+                            .EntityType<Word>().Collection // bound to Word, comment to make it unbounded
+                            .Function("Synonyms")
+                            // .ReturnsCollection<Word>() // use when unbounded
+                            .ReturnsCollectionFromEntitySet<Word>("Words") // Bound to the Words odata controller
+                            ;
+            functionWithPattern.Parameter<string>("Word");
+            functionWithPattern.Parameter<string>("Pattern");
         }
 
         public static IEdmModel GetEdmModel(ODataModelBuilder builder)
@@ -53,12 +50,24 @@ namespace CrossWord.API.Configuration
             // bind a function to the words odata controller
             // GET /odata/Words/Synonyms(Word='FORFATTER')?$select=WordId,Value&$top=20&orderby=WordId%20desc
             // GET /odata/Words/Synonyms(Word='FORFATTER')?$apply=groupby((Value))&$top=100&$count=true
-            builder
+            var function = builder
                 .EntityType<Word>().Collection // bound to Word, comment to make it unbounded
                 .Function("Synonyms")
                 // .ReturnsCollection<Word>() // use when unbounded
                 .ReturnsCollectionFromEntitySet<Word>("Words") // Bound to the Words odata controller
                 .Parameter<string>("Word");
+
+            // bind a function to the words odata controller
+            // GET /odata/Words/Synonyms(Word='FORFATTER', Pattern='_____')?$select=WordId,Value&$top=20&orderby=WordId%20desc
+            // GET /odata/Words/Synonyms(Word='FORFATTER', Pattern='_____')?$apply=groupby((Value))&$top=100&$count=true
+            var functionWithPattern = builder
+                            .EntityType<Word>().Collection // bound to Word, comment to make it unbounded
+                            .Function("Synonyms")
+                            // .ReturnsCollection<Word>() // use when unbounded
+                            .ReturnsCollectionFromEntitySet<Word>("Words") // Bound to the Words odata controller
+                            ;
+            functionWithPattern.Parameter<string>("Word");
+            functionWithPattern.Parameter<string>("Pattern");
 
             return builder.GetEdmModel();
         }
