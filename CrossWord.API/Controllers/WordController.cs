@@ -58,9 +58,11 @@ namespace CrossWord.API.Controllers
         [Route("api/words")]
         public IActionResult GetWords()
         {
-            var wordResult = db.Words.OrderByDescending(p => p.WordId)
+            var wordResult = db.Words
+                .AsNoTracking()
+                .OrderByDescending(p => p.WordId)
                 .Take(50)
-                .AsNoTracking();
+                ;
 
             if (!wordResult.Any())
             {
@@ -79,10 +81,11 @@ namespace CrossWord.API.Controllers
             query = query.ToUpper();
             var pattern = $"{query}%";
 
-            var wordResult = db.Words.Where(w => EF.Functions.Like(w.Value, pattern))
+            var wordResult = db.Words
+                                    .AsNoTracking()
+                                    .Where(w => EF.Functions.Like(w.Value, pattern))
                                     .OrderBy(w => w.NumberOfLetters)
                                     .ThenBy(w => w.Value)
-                                    .AsNoTracking()
                                     .Select(w => w.Value)
                                     .Take(20);
 
@@ -110,11 +113,15 @@ namespace CrossWord.API.Controllers
 
             var wordId = wordResult.First().WordId;
 
-            var wordRelations = db.WordRelations.Where(w => (w.WordFromId == wordId) || (w.WordToId == wordId))
+            var wordRelations = db.WordRelations
                                             .AsNoTracking()
+                                            .Where(w => ((w.WordFromId == wordId) || (w.WordToId == wordId)))
                                             .SelectMany(w => new[] { w.WordFrom, w.WordTo })
                                             .GroupBy(p => p.Value) // to make it distinct
                                             .Select(g => g.First()) // to make it distinct
+                                            .Where(w => w.Value != word)
+                                            .OrderBy(w => w.NumberOfLetters)
+                                            .ThenBy(w => w.Value)
                                             ;
 
             if (!wordRelations.Any())
@@ -122,9 +129,7 @@ namespace CrossWord.API.Controllers
                 return NotFound($"No synonyms for '{word}' found");
             }
 
-            var sortedReturnList = wordRelations.Where(w => w.Value != word).OrderBy(w => w.NumberOfLetters).ThenBy(w => w.Value);
-
-            return Ok(sortedReturnList);
+            return Ok(wordRelations);
         }
 
         // GET: api/synonyms/ord/pattern
@@ -144,12 +149,16 @@ namespace CrossWord.API.Controllers
 
             var wordId = wordResult.First().WordId;
 
-            var wordRelations = db.WordRelations.Where(w => ((w.WordFromId == wordId) || (w.WordToId == wordId))
-                                                && (EF.Functions.Like(w.WordFrom.Value, pattern) || EF.Functions.Like(w.WordTo.Value, pattern)))
+            var wordRelations = db.WordRelations
                                                 .AsNoTracking()
+                                                .Where(w => ((w.WordFromId == wordId) || (w.WordToId == wordId))
+                                                && (EF.Functions.Like(w.WordFrom.Value, pattern) || EF.Functions.Like(w.WordTo.Value, pattern)))
                                                 .SelectMany(w => new[] { w.WordFrom, w.WordTo })
                                                 .GroupBy(p => p.Value) // to make it distinct
                                                 .Select(g => g.First()) // to make it distinct
+                                                .Where(w => w.Value != word && w.NumberOfLetters == pattern.Length) // ensure we only care about the correct values
+                                                .OrderBy(w => w.NumberOfLetters)
+                                                .ThenBy(w => w.Value)
                                                 ;
 
             if (!wordRelations.Any())
@@ -157,9 +166,7 @@ namespace CrossWord.API.Controllers
                 return NotFound($"No synonyms for '{word}' found");
             }
 
-            var sortedReturnList = wordRelations.Where(w => w.Value != word && w.NumberOfLetters == pattern.Length).OrderBy(w => w.NumberOfLetters).ThenBy(w => w.Value);
-
-            return Ok(sortedReturnList);
+            return Ok(wordRelations);
         }
 
         // GET: api/states
