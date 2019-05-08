@@ -88,7 +88,7 @@ namespace CrossWord.Scraper
 #if DEBUG
             startLetterCount = 6;
             endLetterCount = 6;
-            scraperSite = "KryssordHjelp";
+            scraperSite = "GratisKryssord";
 #endif                    
 
             // using Parallel.ForEach
@@ -105,6 +105,9 @@ namespace CrossWord.Scraper
                         break;
                     case "KryssordHjelp":
                         actionsList.Add(() => { new KryssordHjelpScraper(connectionString, signalRHubURL, local_i, doContinueWithLastWord); });
+                        break;
+                    case "GratisKryssord":
+                        actionsList.Add(() => { new GratisKryssordScraper(connectionString, signalRHubURL, local_i, doContinueWithLastWord); });
                         break;
                 }
             }
