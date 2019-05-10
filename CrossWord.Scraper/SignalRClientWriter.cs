@@ -50,7 +50,7 @@ namespace CrossWord.Scraper
             //       (sender, certificate, chain, sslPolicyErrors) => true;
 
             // open connection
-            CheckOrOpenConnection().Wait();
+            CheckOrOpenConnection().GetAwaiter();
         }
 
         public override async Task WriteAsync(string value)
@@ -58,7 +58,9 @@ namespace CrossWord.Scraper
             await OutputMessage(value);
 
             if (FlushAfterEveryWrite)
+            {
                 await FlushAsync();
+            }
         }
 
         public override async Task WriteLineAsync(string value)
@@ -66,7 +68,9 @@ namespace CrossWord.Scraper
             await OutputMessage(value);
 
             if (FlushAfterEveryWrite)
+            {
                 await FlushAsync();
+            }
         }
 
         public override async Task WriteLineAsync()
@@ -74,7 +78,9 @@ namespace CrossWord.Scraper
             await OutputMessage(null);
 
             if (FlushAfterEveryWrite)
+            {
                 await FlushAsync();
+            }
         }
 
         public override async Task FlushAsync()
@@ -84,26 +90,32 @@ namespace CrossWord.Scraper
 
         public override void Write(string value)
         {
-            OutputMessage(value).Wait();
+            OutputMessage(value).GetAwaiter();
 
             if (FlushAfterEveryWrite)
+            {
                 Flush();
+            }
         }
 
         public override void WriteLine(string value)
         {
-            OutputMessage(value).Wait();
+            OutputMessage(value).GetAwaiter();
 
             if (FlushAfterEveryWrite)
+            {
                 Flush();
+            }
         }
 
         public override void WriteLine()
         {
-            OutputMessage(null).Wait();
+            OutputMessage(null).GetAwaiter();
 
             if (FlushAfterEveryWrite)
+            {
                 Flush();
+            }
         }
 
         public override void Flush()
@@ -124,7 +136,7 @@ namespace CrossWord.Scraper
                 }
                 catch (Exception ex)
                 {
-                    Console.Error.WriteLine("Failed starting SignalR client: {0}", ex.Message);
+                    await Console.Error.WriteLineAsync(String.Format("Failed starting SignalR client: {0}", ex.Message));
                 }
             }
         }
@@ -141,11 +153,9 @@ namespace CrossWord.Scraper
                 }
                 catch (Exception ex)
                 {
-                    Console.Error.WriteLine("Failed sending message to SignalR Hub: {0}", ex.Message);
+                    await Console.Error.WriteLineAsync(String.Format("Failed sending message to SignalR Hub: {0}", ex.Message));
                 }
             }
-
-            // Console.WriteLine(message);
         }
     }
 }
