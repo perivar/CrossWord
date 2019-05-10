@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
@@ -166,23 +167,12 @@ namespace CrossWord.Scraper
             }
 
             // parse all words
-            // https://www.gratiskryssord.no/kryssordbok/?o=
-            IList<IWebElement> ahrefs = driver.FindElements(By.XPath("//div[@id='oppslag']//a[starts-with(@href, 'https://www.gratiskryssord.no/kryssordbok/?o=')]"));
-            foreach (IWebElement ahref in ahrefs)
-            {
-                var wordText = ahref.Text;
-                var href = ahref.GetAttribute("href");
+            var words = ParseWords(driver, adminUser);
 
-                var word = new Word
-                {
-                    Language = "no",
-                    Value = wordText,
-                    NumberOfLetters = wordText.Count(c => c != ' '),
-                    NumberOfWords = ScraperUtils.CountNumberOfWords(wordText),
-                    User = adminUser,
-                    CreatedDate = DateTime.Now,
-                    Source = this.source
-                };
+            foreach (var wordAndHref in words)
+            {
+                var word = wordAndHref.Item1;
+                var href = wordAndHref.Item2;
 
                 GetWordSynonyms(word, driver, db, adminUser, href);
             }
@@ -211,36 +201,16 @@ namespace CrossWord.Scraper
             // lets navigate to a web site in our new tab
             driver.Navigate().GoToUrl(url);
 
+            HttpClient client = new HttpClient();
+
             var page = 1;
             while (true)
             {
                 Log.Information("Processing synonym search for '{0}' on page {1}", word.Value, page);
                 writer.WriteLine("Processing synonym search for '{0}' on page {1}", word.Value, page);
 
-                // parse all synonyms
-                // https://www.gratiskryssord.no/kryssordbok/?o=
-                IList<IWebElement> ahrefs = driver.FindElements(By.XPath("//div[@class='jscroll-inner']//a[starts-with(@href, 'https://www.gratiskryssord.no/kryssordbok/?o=')]"));
-                var relatedWords = new List<Word>();
-                foreach (IWebElement ahref in ahrefs)
-                {
-                    var hintText = ahref.Text;
-                    var href = ahref.GetAttribute("href");
-
-                    var hint = new Word
-                    {
-                        Language = "no",
-                        Value = hintText,
-                        NumberOfLetters = hintText.Count(c => c != ' '),
-                        NumberOfWords = ScraperUtils.CountNumberOfWords(hintText),
-                        User = adminUser,
-                        CreatedDate = DateTime.Now,
-                        Source = this.source
-                    };
-
-                    relatedWords.Add(hint);
-                }
-
-                relatedWords = relatedWords.Distinct().ToList(); // Note that this requires the object to implement IEquatable<Word> 
+                // parse synonyms
+                var relatedWords = ParseSynonyms(word, driver, adminUser);
 
                 // and add to database
                 WordDatabaseService.AddToDatabase(db, this.source, word, relatedWords, writer);
@@ -268,6 +238,62 @@ namespace CrossWord.Scraper
 
             // and have our WebDriver focus on the main document in the page to send commands to 
             chromeDriver.SwitchTo().DefaultContent();
+        }
+
+        private List<(Word, string)> ParseWords(IWebDriver driver, User adminUser)
+        {
+            // https://www.gratiskryssord.no/kryssordbok/?o=
+            IList<IWebElement> ahrefs = driver.FindElements(By.XPath("//div[@id='oppslag']//a[starts-with(@href, 'https://www.gratiskryssord.no/kryssordbok/?o=')]"));
+            var words = new List<(Word, string)>();
+            foreach (IWebElement ahref in ahrefs)
+            {
+                var wordText = ahref.Text;
+                var href = ahref.GetAttribute("href");
+
+                var word = new Word
+                {
+                    Language = "no",
+                    Value = wordText,
+                    NumberOfLetters = wordText.Count(c => c != ' '),
+                    NumberOfWords = ScraperUtils.CountNumberOfWords(wordText),
+                    User = adminUser,
+                    CreatedDate = DateTime.Now,
+                    Source = this.source
+                };
+
+                words.Add((word, href));
+            }
+
+            return words;
+        }
+
+        private List<Word> ParseSynonyms(Word word, IWebDriver driver, User adminUser)
+        {
+            // parse all synonyms
+            // https://www.gratiskryssord.no/kryssordbok/?o=
+            IList<IWebElement> ahrefs = driver.FindElements(By.XPath("//div[@class='jscroll-inner']//a[starts-with(@href, 'https://www.gratiskryssord.no/kryssordbok/?o=')]"));
+            var relatedWords = new List<Word>();
+            foreach (IWebElement ahref in ahrefs)
+            {
+                var hintText = ahref.Text;
+                var href = ahref.GetAttribute("href");
+
+                var hint = new Word
+                {
+                    Language = "no",
+                    Value = hintText,
+                    NumberOfLetters = hintText.Count(c => c != ' '),
+                    NumberOfWords = ScraperUtils.CountNumberOfWords(hintText),
+                    User = adminUser,
+                    CreatedDate = DateTime.Now,
+                    Source = this.source
+                };
+
+                relatedWords.Add(hint);
+            }
+
+            relatedWords = relatedWords.Distinct().ToList(); // Note that this requires the object to implement IEquatable<Word> 
+            return relatedWords;
         }
 
         private static IWebElement FindNextPageOrNull(IWebDriver driver)
