@@ -84,7 +84,7 @@ namespace CrossWord.Scraper
                 // this doesn't seem to work when adding new users all the time
                 db.ChangeTracker.AutoDetectChangesEnabled = false;
 
-                using (var driver = ChromeDriverUtils.GetChromeDriver(true))
+                using (var driver = ChromeDriverUtils.GetChromeDriver(false))
                 {
                     // read all words with the letter count
                     ReadWordsByAlphabeticOverview(letterCount, driver, db, adminUser, lastWordString);
@@ -114,6 +114,12 @@ namespace CrossWord.Scraper
                 return;
             }
 
+            // extract the two first letters of lastWord
+            if (lastWord != null)
+            {
+                lastWord = lastWord.Take(2).ToString();
+            }
+
 #if DEBUG
             lastWord = "BY";
 #endif
@@ -127,10 +133,10 @@ namespace CrossWord.Scraper
                 var href = ahref.GetAttribute("href");
 
                 // skip until we get to the last word
-                if (wordText != lastWord)
+                if (lastWord != null && wordText != lastWord)
                 {
-                    Log.Information("Skipping alphabetic word '{0}' until we get {1}", wordText, lastWord);
-                    // writer.WriteLine("Skipping alphabetic word '{0}' until we get {1}", wordText, lastWord);
+                    Log.Information("Skipping alphabetic word '{0}' until we find '{1}'", wordText, lastWord);
+                    // writer.WriteLine("Skipping alphabetic word '{0}' until we find '{1}'", wordText, lastWord);
                     continue;
                 }
 
@@ -205,10 +211,11 @@ namespace CrossWord.Scraper
             // lets navigate to a web site in our new tab
             driver.Navigate().GoToUrl(url);
 
+            var page = 1;
             while (true)
             {
-                Log.Information("Processing synonym search for '{0}'", word.Value);
-                writer.WriteLine("Processing synonym search for '{0}'", word.Value);
+                Log.Information("Processing synonym search for '{0}' on page {1}", word.Value, page);
+                writer.WriteLine("Processing synonym search for '{0}' on page {1}", word.Value, page);
 
                 // parse all synonyms
                 // https://www.gratiskryssord.no/kryssordbok/?o=
@@ -239,11 +246,12 @@ namespace CrossWord.Scraper
                 WordDatabaseService.AddToDatabase(db, this.source, word, relatedWords, writer);
 
                 // go to next page if exist
-                var nextPageElement = FindNextPageOrNull(driver, word.Value);
+                var nextPageElement = FindNextPageOrNull(driver);
                 if (nextPageElement != null)
                 {
                     // nextPageElement.Click();
-                    var nextPageUrl = nextPageElement.GetParent().GetAttribute("href");
+                    var nextPageUrl = nextPageElement.GetAttribute("href");
+                    page++;
                     driver.Navigate().GoToUrl(nextPageUrl);
                 }
                 else
@@ -262,11 +270,10 @@ namespace CrossWord.Scraper
             chromeDriver.SwitchTo().DefaultContent();
         }
 
-        private static IWebElement FindNextPageOrNull(IWebDriver driver, string word)
+        private static IWebElement FindNextPageOrNull(IWebDriver driver)
         {
-            word = word.ToLower();
-            string startUrl = $"https://www.gratiskryssord.no/kryssordbok/?o={word}&k=";
-            return driver.FindElementOrNull(By.XPath($"//a[starts-with(@href, '{startUrl}']/h1['Vis mer!']"));
+            string startUrl = $"https://www.gratiskryssord.no/kryssordbok/?o=";
+            return driver.FindElementOrNull(By.XPath($"//div[@class='jscroll-inner']//a[starts-with(@href, '{startUrl}')][h1['Vis mer!']]"));
         }
 
     }
