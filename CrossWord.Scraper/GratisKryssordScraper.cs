@@ -124,7 +124,7 @@ namespace CrossWord.Scraper
             }
 
 #if DEBUG
-            // lastWord = "BY";
+            lastWord = "BY";
 #endif
 
             // parse all words
