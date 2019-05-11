@@ -273,7 +273,8 @@ namespace CrossWord.Scraper
                 }
 
                 // parse all words
-                var words = ReadWords(driver, adminUser);
+                // var words = ReadWords(driver, adminUser);
+                var words = ReadWordsAgilityPack(driver, adminUser);
                 foreach (var word in words)
                 {
                     GetWordSynonyms(word, driver, db, adminUser);
@@ -350,7 +351,8 @@ namespace CrossWord.Scraper
                 }
 
                 // parse all related words
-                var relatedWords = ReadRelatedWords(driver, adminUser);
+                // var relatedWords = ReadRelatedWords(driver, adminUser);
+                var relatedWords = ReadRelatedWordsAgilityPack(driver, adminUser);
 
                 // and add to database
                 WordDatabaseService.AddToDatabase(db, this.source, word, relatedWords, writer);
@@ -412,6 +414,37 @@ namespace CrossWord.Scraper
             return wordListing;
         }
 
+        private IList<Word> ReadWordsAgilityPack(IWebDriver driver, User adminUser)
+        {
+            var tableRows = driver.FindNodes(By.XPath("/html/body//div[@class='results']/table/tbody/tr"));
+
+            var wordListing = new List<Word>();
+            foreach (var row in tableRows)
+            {
+                var rowTD = row.FindNodes(By.TagName("td"));
+
+                var wordText = rowTD[0].InnerText.Trim().ToUpper();
+                var userId = rowTD[3].InnerText.Trim();
+                var date = rowTD[4].InnerText.Trim();
+
+                var word = new Word
+                {
+                    Language = "no",
+                    Value = wordText,
+                    NumberOfLetters = ScraperUtils.CountNumberOfLetters(wordText),
+                    NumberOfWords = ScraperUtils.CountNumberOfWords(wordText),
+                    User = adminUser,
+                    CreatedDate = ScraperUtils.ParseDateTimeOrNow(date, "yyyy-MM-dd"),
+                    Source = this.source,
+                    Comment = "User " + userId
+                };
+
+                wordListing.Add(word);
+            }
+
+            return wordListing;
+        }
+
         private IList<Word> ReadRelatedWords(IWebDriver driver, User adminUser)
         {
             // parse all related words
@@ -426,6 +459,39 @@ namespace CrossWord.Scraper
                 var hintText = rowTD[0].Text.ToUpper();
                 var userId = rowTD[3].Text;
                 var date = rowTD[4].Text;
+
+                var hint = new Word
+                {
+                    Language = "no",
+                    Value = hintText,
+                    NumberOfLetters = ScraperUtils.CountNumberOfLetters(hintText),
+                    NumberOfWords = ScraperUtils.CountNumberOfWords(hintText),
+                    User = adminUser,
+                    CreatedDate = ScraperUtils.ParseDateTimeOrNow(date, "yyyy-MM-dd"),
+                    Source = this.source,
+                    Comment = "User " + userId
+                };
+
+                relatedWords.Add(hint);
+            }
+
+            relatedWords = relatedWords.Distinct().ToList(); // Note that this requires the object to implement IEquatable<Word> 
+
+            return relatedWords;
+        }
+
+        private IList<Word> ReadRelatedWordsAgilityPack(IWebDriver driver, User adminUser)
+        {
+            // parse all related words
+            var tableRows = driver.FindNodes(By.XPath("/html/body//div[@class='results']/table/tbody/tr"));
+
+            var relatedWords = new List<Word>();
+            foreach (var row in tableRows)
+            {
+                var rowTD = row.FindNodes(By.TagName("td"));
+                var hintText = rowTD[0].InnerText.Trim().ToUpper();
+                var userId = rowTD[3].InnerText.Trim();
+                var date = rowTD[4].InnerText.Trim();
 
                 var hint = new Word
                 {

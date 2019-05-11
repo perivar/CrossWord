@@ -101,7 +101,6 @@ namespace CrossWord.Scraper
                     default:
                     case "Kryssord":
                         actionsList.Add(() => { new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, local_i, doContinueWithLastWord); });
-
                         break;
                     case "KryssordHjelp":
                         actionsList.Add(() => { new KryssordHjelpScraper(connectionString, signalRHubURL, local_i, doContinueWithLastWord); });

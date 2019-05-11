@@ -9,12 +9,10 @@ namespace CrossWord.Scraper
 {
     public static class HtmlAgilityPackSeleniumExtensions
     {
-        // I used the Css2XPath Reloaded library by Jon Humphrey to convert By objects to xpaths
-        // https://bitbucket.org/jonrandahl/css2xpath-reloaded/src/master/
-        public static string ToCSSQuerySelection(this By by)
+        public static string ToCSSQuery(this By by)
         {
             var (byType, byArgs) = by.ToTypeAndArgument();
-            return GetCSSQuerySelection(byType, byArgs);
+            return GetCSSQuery(byType, byArgs);
         }
 
         public static (string, string) ToTypeAndArgument(this By by)
@@ -27,7 +25,7 @@ namespace CrossWord.Scraper
             return (byType, byArgs);
         }
 
-        public static string GetCSSQuerySelection(string byType, string byArgs)
+        public static string GetCSSQuery(string byType, string byArgs)
         {
             string css;
             switch (byType)
