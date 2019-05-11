@@ -87,7 +87,7 @@ namespace CrossWord.Scraper
                 // this doesn't seem to work when adding new users all the time
                 db.ChangeTracker.AutoDetectChangesEnabled = false;
 
-                using (var driver = ChromeDriverUtils.GetChromeDriver(false))
+                using (var driver = ChromeDriverUtils.GetChromeDriver(true))
                 {
                     // read all words with the letter count
                     ReadWordsByAlphabeticOverview(letterCount, driver, db, adminUser, lastWordString);

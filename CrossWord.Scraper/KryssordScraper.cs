@@ -273,28 +273,9 @@ namespace CrossWord.Scraper
                 }
 
                 // parse all words
-                IWebElement tableElement = driver.FindElement(By.XPath("/html/body//div[@class='results']/table/tbody"));
-                IList<IWebElement> tableRow = tableElement.FindElements(By.TagName("tr"));
-                IList<IWebElement> rowTD;
-                foreach (IWebElement row in tableRow)
+                var words = ReadWords(driver, adminUser);
+                foreach (var word in words)
                 {
-                    rowTD = row.FindElements(By.TagName("td"));
-                    var wordText = rowTD[0].Text.ToUpper();
-                    var userId = rowTD[3].Text;
-                    var date = rowTD[4].Text;
-
-                    var word = new Word
-                    {
-                        Language = "no",
-                        Value = wordText,
-                        NumberOfLetters = ScraperUtils.CountNumberOfLetters(wordText),
-                        NumberOfWords = ScraperUtils.CountNumberOfWords(wordText),
-                        User = adminUser,
-                        CreatedDate = ScraperUtils.ParseDateTimeOrNow(date, "yyyy-MM-dd"),
-                        Source = this.source,
-                        Comment = "User " + userId
-                    };
-
                     GetWordSynonyms(word, driver, db, adminUser);
                 }
 
@@ -368,35 +349,8 @@ namespace CrossWord.Scraper
                     }
                 }
 
-                // parse all words
-                IWebElement tableElement = driver.FindElement(By.XPath("/html/body//div[@class='results']/table/tbody"));
-                IList<IWebElement> tableRow = tableElement.FindElements(By.TagName("tr"));
-                IList<IWebElement> rowTD;
-
-                var relatedWords = new List<Word>();
-                foreach (IWebElement row in tableRow)
-                {
-                    rowTD = row.FindElements(By.TagName("td"));
-                    var hintText = rowTD[0].Text.ToUpper();
-                    var userId = rowTD[3].Text;
-                    var date = rowTD[4].Text;
-
-                    var hint = new Word
-                    {
-                        Language = "no",
-                        Value = hintText,
-                        NumberOfLetters = ScraperUtils.CountNumberOfLetters(hintText),
-                        NumberOfWords = ScraperUtils.CountNumberOfWords(hintText),
-                        User = adminUser,
-                        CreatedDate = ScraperUtils.ParseDateTimeOrNow(date, "yyyy-MM-dd"),
-                        Source = this.source,
-                        Comment = "User " + userId
-                    };
-
-                    relatedWords.Add(hint);
-                }
-
-                relatedWords = relatedWords.Distinct().ToList(); // Note that this requires the object to implement IEquatable<Word> 
+                // parse all related words
+                var relatedWords = ReadRelatedWords(driver, adminUser);
 
                 // and add to database
                 WordDatabaseService.AddToDatabase(db, this.source, word, relatedWords, writer);
@@ -424,6 +378,73 @@ namespace CrossWord.Scraper
 
             // and have our WebDriver focus on the main document in the page to send commands to 
             chromeDriver.SwitchTo().DefaultContent();
+        }
+
+        private IList<Word> ReadWords(IWebDriver driver, User adminUser)
+        {
+            IWebElement tableElement = driver.FindElement(By.XPath("/html/body//div[@class='results']/table/tbody"));
+            IList<IWebElement> tableRow = tableElement.FindElements(By.TagName("tr"));
+            IList<IWebElement> rowTD;
+
+            var wordListing = new List<Word>();
+            foreach (IWebElement row in tableRow)
+            {
+                rowTD = row.FindElements(By.TagName("td"));
+                var wordText = rowTD[0].Text.ToUpper();
+                var userId = rowTD[3].Text;
+                var date = rowTD[4].Text;
+
+                var word = new Word
+                {
+                    Language = "no",
+                    Value = wordText,
+                    NumberOfLetters = ScraperUtils.CountNumberOfLetters(wordText),
+                    NumberOfWords = ScraperUtils.CountNumberOfWords(wordText),
+                    User = adminUser,
+                    CreatedDate = ScraperUtils.ParseDateTimeOrNow(date, "yyyy-MM-dd"),
+                    Source = this.source,
+                    Comment = "User " + userId
+                };
+
+                wordListing.Add(word);
+            }
+
+            return wordListing;
+        }
+
+        private IList<Word> ReadRelatedWords(IWebDriver driver, User adminUser)
+        {
+            // parse all related words
+            IWebElement tableElement = driver.FindElement(By.XPath("/html/body//div[@class='results']/table/tbody"));
+            IList<IWebElement> tableRow = tableElement.FindElements(By.TagName("tr"));
+            IList<IWebElement> rowTD;
+
+            var relatedWords = new List<Word>();
+            foreach (IWebElement row in tableRow)
+            {
+                rowTD = row.FindElements(By.TagName("td"));
+                var hintText = rowTD[0].Text.ToUpper();
+                var userId = rowTD[3].Text;
+                var date = rowTD[4].Text;
+
+                var hint = new Word
+                {
+                    Language = "no",
+                    Value = hintText,
+                    NumberOfLetters = ScraperUtils.CountNumberOfLetters(hintText),
+                    NumberOfWords = ScraperUtils.CountNumberOfWords(hintText),
+                    User = adminUser,
+                    CreatedDate = ScraperUtils.ParseDateTimeOrNow(date, "yyyy-MM-dd"),
+                    Source = this.source,
+                    Comment = "User " + userId
+                };
+
+                relatedWords.Add(hint);
+            }
+
+            relatedWords = relatedWords.Distinct().ToList(); // Note that this requires the object to implement IEquatable<Word> 
+
+            return relatedWords;
         }
 
         private static IWebElement FindNextPageOrNull(IWebDriver driver)
