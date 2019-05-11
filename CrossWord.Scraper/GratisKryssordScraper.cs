@@ -120,20 +120,20 @@ namespace CrossWord.Scraper
             // extract the two first letters of lastWord
             if (lastWord != null)
             {
-                lastWord = lastWord.Take(2).ToString();
+                lastWord = new string(lastWord.Take(2).ToArray());
             }
 
 #if DEBUG
-            lastWord = "BY";
+            // lastWord = "BY";
 #endif
 
             // parse all words
-            // https://www.gratiskryssord.no/kryssordbok/?kart=
-            IList<IWebElement> ahrefs = driver.FindElements(By.XPath("//a[starts-with(@href, 'https://www.gratiskryssord.no/kryssordbok/?kart=')]"));
-            foreach (IWebElement ahref in ahrefs)
+            // var wordListing = ParseWordListing(driver);
+            var wordListing = ParseWordListingAgilityPack(driver);
+            foreach (var wordListElement in wordListing)
             {
-                var wordText = ahref.Text;
-                var href = ahref.GetAttribute("href");
+                var wordText = wordListElement.Item1;
+                var href = wordListElement.Item2;
 
                 // skip until we get to the last word
                 if (lastWord != null && wordText != lastWord)
@@ -170,7 +170,7 @@ namespace CrossWord.Scraper
 
             // parse all words
             // var words = ParseWords(driver, adminUser);
-            var words = ParseWords2(driver, adminUser);
+            var words = ParseWordsAgilityPack(driver, adminUser);
 
             foreach (var wordAndHref in words)
             {
@@ -212,7 +212,7 @@ namespace CrossWord.Scraper
 
                 // parse synonyms
                 // var relatedWords = ParseSynonyms(word, driver, adminUser);
-                var relatedWords = ParseSynonyms2(word, driver, adminUser);
+                var relatedWords = ParseSynonymsAgilityPack(word, driver, adminUser);
 
                 // and add to database
                 WordDatabaseService.AddToDatabase(db, this.source, word, relatedWords, writer);
@@ -242,10 +242,43 @@ namespace CrossWord.Scraper
             chromeDriver.SwitchTo().DefaultContent();
         }
 
+        private List<(string, string)> ParseWordListing(IWebDriver driver)
+        {
+            // https://www.gratiskryssord.no/kryssordbok/?kart=
+            var ahrefs = driver.FindElements(By.XPath("//a[starts-with(@href, 'https://www.gratiskryssord.no/kryssordbok/?kart=')]"));
+            var wordListing = new List<(string, string)>();
+            foreach (IWebElement ahref in ahrefs)
+            {
+                var wordText = ahref.Text;
+                var href = ahref.GetAttribute("href");
+
+                wordListing.Add((wordText, href));
+            }
+
+            return wordListing;
+        }
+
+        private List<(string, string)> ParseWordListingAgilityPack(IWebDriver driver)
+        {
+            // https://www.gratiskryssord.no/kryssordbok/?kart=
+            var ahrefs = driver.FindNodes(By.XPath("//a[starts-with(@href, 'https://www.gratiskryssord.no/kryssordbok/?kart=')]"));
+            var wordListing = new List<(string, string)>();
+            foreach (var ahref in ahrefs)
+            {
+                var wordText = ahref.InnerText;
+                var href = ahref.Attributes["href"].Value;
+
+                wordListing.Add((wordText, href));
+            }
+
+            return wordListing;
+        }
+
+
         private List<(Word, string)> ParseWords(IWebDriver driver, User adminUser)
         {
             // https://www.gratiskryssord.no/kryssordbok/?o=
-            IList<IWebElement> ahrefs = driver.FindElements(By.XPath("//div[@id='oppslag']//a[starts-with(@href, 'https://www.gratiskryssord.no/kryssordbok/?o=')]"));
+            var ahrefs = driver.FindElements(By.XPath("//div[@id='oppslag']//a[starts-with(@href, 'https://www.gratiskryssord.no/kryssordbok/?o=')]"));
             var words = new List<(Word, string)>();
             foreach (IWebElement ahref in ahrefs)
             {
@@ -269,16 +302,12 @@ namespace CrossWord.Scraper
             return words;
         }
 
-        private List<(Word, string)> ParseWords2(IWebDriver driver, User adminUser)
+        private List<(Word, string)> ParseWordsAgilityPack(IWebDriver driver, User adminUser)
         {
             var words = new List<(Word, string)>();
 
-            var html = driver.PageSource;
-            var document = new HtmlDocument();
-            document.LoadHtml(html);
-
             // https://www.gratiskryssord.no/kryssordbok/?o=
-            var ahrefs = document.DocumentNode.SelectNodes("//div[@id='oppslag']//a[starts-with(@href, 'https://www.gratiskryssord.no/kryssordbok/?o=')]");
+            var ahrefs = driver.FindNodes(By.XPath("//div[@id='oppslag']//a[starts-with(@href, 'https://www.gratiskryssord.no/kryssordbok/?o=')]"));
             foreach (var ahref in ahrefs)
             {
                 var wordText = ahref.InnerText;
@@ -305,7 +334,7 @@ namespace CrossWord.Scraper
         {
             // parse all synonyms
             // https://www.gratiskryssord.no/kryssordbok/?o=
-            IList<IWebElement> ahrefs = driver.FindElements(By.XPath("//div[@class='jscroll-inner']//a[starts-with(@href, 'https://www.gratiskryssord.no/kryssordbok/?o=')]"));
+            var ahrefs = driver.FindElements(By.XPath("//div[@class='jscroll-inner']//a[starts-with(@href, 'https://www.gratiskryssord.no/kryssordbok/?o=')]"));
             var relatedWords = new List<Word>();
             foreach (IWebElement ahref in ahrefs)
             {
@@ -330,18 +359,14 @@ namespace CrossWord.Scraper
             return relatedWords;
         }
 
-        private List<Word> ParseSynonyms2(Word word, IWebDriver driver, User adminUser)
+        private List<Word> ParseSynonymsAgilityPack(Word word, IWebDriver driver, User adminUser)
         {
             // parse all synonyms
             // https://www.gratiskryssord.no/kryssordbok/?o=
             var relatedWords = new List<Word>();
 
-            var html = driver.PageSource;
-            var document = new HtmlDocument();
-            document.LoadHtml(html);
-
             // https://www.gratiskryssord.no/kryssordbok/?o=
-            var ahrefs = document.DocumentNode.SelectNodes("//div[@class='jscroll-inner']//a[starts-with(@href, 'https://www.gratiskryssord.no/kryssordbok/?o=')]");
+            var ahrefs = driver.FindNodes(By.XPath("//div[@class='jscroll-inner']//a[starts-with(@href, 'https://www.gratiskryssord.no/kryssordbok/?o=')]"));
             foreach (var ahref in ahrefs)
             {
                 var hintText = ahref.InnerText;
