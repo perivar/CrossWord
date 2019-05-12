@@ -28,7 +28,7 @@ namespace CrossWord.Scraper
         string signalRHubURL = null;
         string source = null;
 
-        public GratisKryssordScraper(string connectionString, string signalRHubURL, int letterCount, bool doContinueWithLastWord = true)
+        public GratisKryssordScraper(string connectionString, string signalRHubURL, int letterCount, int endLetterCount, bool doContinueWithLastWord)
         {
             this.connectionString = connectionString;
             this.signalRHubURL = signalRHubURL;
@@ -43,20 +43,14 @@ namespace CrossWord.Scraper
             // do this before this class is called instead
             // KillAllChromeDriverInstances();
 
-            DoScrape(letterCount, source, doContinueWithLastWord);
+            DoScrape(letterCount, endLetterCount, source, doContinueWithLastWord);
         }
 
-        private void DoScrape(int letterCount, string source, bool doContinueWithLastWord)
+        private void DoScrape(int letterCount, int endLetterCount, string source, bool doContinueWithLastWord)
         {
             var dbContextFactory = new DesignTimeDbContextFactory();
             using (var db = dbContextFactory.CreateDbContext(connectionString, Log.Logger))
             {
-                string lastWordString = null;
-                if (doContinueWithLastWord)
-                {
-                    lastWordString = WordDatabaseService.GetLastWordFromLetterCount(db, source, letterCount);
-                }
-
                 // Note! 
                 // the user needs to be added before we disable tracking and disable AutoDetectChanges
                 // otherwise this will crash
@@ -91,19 +85,19 @@ namespace CrossWord.Scraper
                 using (var driver = ChromeDriverUtils.GetChromeDriver(true))
                 {
                     // read all words with the letter count
-                    ReadWordsByAlphabeticOverview(letterCount, driver, db, adminUser, lastWordString);
+                    ReadWordsByAlphabeticOverview(letterCount, endLetterCount, driver, db, adminUser, doContinueWithLastWord);
                 }
             }
         }
 
-        private void ReadWordsByAlphabeticOverview(int letterCount, IWebDriver driver, WordHintDbContext db, User adminUser, string lastWord)
+        private void ReadWordsByAlphabeticOverview(int letterCount, int endLetterCount, IWebDriver driver, WordHintDbContext db, User adminUser, bool doContinueWithLastWord)
         {
             // go to alphabetic overview            
             string url = "https://www.gratiskryssord.no/kryssordbok/";
             driver.Navigate().GoToUrl(url);
 
-            Log.Information("Processing alphabetic overview for '{0}'", lastWord);
-            writer.WriteLine("Processing alphabetic overview for '{0}'", lastWord);
+            Log.Information("Processing alphabetic overview using {0} - {1}", letterCount, endLetterCount);
+            writer.WriteLine("Processing alphabetic overview using {0} - {1}", letterCount, endLetterCount);
 
             // wait until the word list has loaded
             try
@@ -113,50 +107,58 @@ namespace CrossWord.Scraper
             }
             catch (System.Exception)
             {
-                Log.Error("Timeout searching for '{0}'", lastWord);
-                writer.WriteLine("Timeout searching for '{0}'", lastWord);
+                Log.Error("Timeout searching for alphabetic overview");
+                writer.WriteLine("Timeout searching for alphabetic overview");
                 return;
             }
-
-            // extract the two first letters of lastWord
-            if (lastWord != null)
-            {
-                lastWord = new string(lastWord.Take(2).ToArray());
-            }
-
-#if DEBUG
-            // lastWord = "BY";
-            lastWord = null;
-#endif
 
             // parse all words
             // var wordListing = ParseWordListing(driver);
             var wordListing = ParseWordListingAgilityPack(driver);
+
+            // use the letter count a little bit different when it comes to the alphabetic index:
+            // letterCount is the index to start with divided out on the total alphabetic index
+            // e.g. 
+            // if letter count is between 1 - 4 of a total index length of 1000:
+            // 1 is 1
+            // 2 is 250
+            // 3 is 500
+            // 4 is 750
+            int startIndex = (wordListing.Count / endLetterCount) * (letterCount - 1);
+            var startWordPrefix = wordListing[startIndex].Item1;
+
+            int curIndex = 0;
             foreach (var wordListElement in wordListing)
             {
-                var wordText = wordListElement.Item1;
+                curIndex++;
+
+                var wordPrefix = wordListElement.Item1;
                 var href = wordListElement.Item2;
 
-                // skip until we get to the last word
-                if (lastWord != null && wordText != lastWord)
+                if (curIndex < startIndex + 1)
                 {
-                    Log.Information("Skipping alphabetic word '{0}' until we find '{1}'", wordText, lastWord);
-                    // writer.WriteLine("Skipping alphabetic word '{0}' until we find '{1}'", wordText, lastWord);
+                    // Log.Information("Skipping alphabetic word '{0}' until we reach index {1} = '{2}'. [{3} / {4}]", wordPrefix, startIndex, startWordPrefix, curIndex, wordListing.Count);
+                    // writer.WriteLine("Skipping alphabetic word '{0}' until we reach index {1} = '{2}'. [{3} / {4}]", wordPrefix, startIndex, startWordPrefix, curIndex, wordListing.Count);
                     continue;
                 }
 
-                ReadWordsByWordPattern(wordText, href, driver, db, adminUser);
+                string lastWordString = null;
+                if (doContinueWithLastWord)
+                {
+                    lastWordString = WordDatabaseService.GetLastWordFromComment(db, source, wordPrefix);
+                }
+
+                ReadWordsByWordUrl(wordPrefix, href, driver, db, adminUser, lastWordString);
             }
         }
 
-        private void ReadWordsByWordPattern(string wordPattern, string url, IWebDriver driver, WordHintDbContext db, User adminUser)
+        private void ReadWordsByWordUrl(string wordPrefix, string url, IWebDriver driver, WordHintDbContext db, User adminUser, string lastWord)
         {
             // go to word page            
             driver.Navigate().GoToUrl(url);
 
-            Log.Information("Processing pattern search for '{0}'", wordPattern);
-            writer.WriteLine("Processing pattern search for '{0}'", wordPattern);
-
+            Log.Information("Processing word search for '{0}'", wordPrefix);
+            writer.WriteLine("Processing word search for '{0}'", wordPrefix);
 
             // wait until the word list has loaded
             try
@@ -165,8 +167,8 @@ namespace CrossWord.Scraper
             }
             catch (System.Exception)
             {
-                Log.Error("Timeout searching for '{0}'", wordPattern);
-                writer.WriteLine("Timeout searching for '{0}'", wordPattern);
+                Log.Error("Timeout searching for '{0}'", wordPrefix);
+                writer.WriteLine("Timeout searching for '{0}'", wordPrefix);
                 return;
             }
 
@@ -174,10 +176,24 @@ namespace CrossWord.Scraper
             // var words = ParseWords(driver, adminUser);
             var words = ParseWordsAgilityPack(driver, adminUser);
 
+            bool doSkip = true;
             foreach (var wordAndHref in words)
             {
                 var word = wordAndHref.Item1;
                 var href = wordAndHref.Item2;
+                var wordText = word.Value;
+
+                // skip until we get to the last word
+                if (doSkip && lastWord != null && lastWord != wordText)
+                {
+                    // Log.Information("Skipping alphabetic word '{0}' until we find '{1}'", wordText, lastWord);
+                    // writer.WriteLine("Skipping alphabetic word '{0}' until we find '{1}'", wordText, lastWord);
+                    continue;
+                }
+                doSkip = false; // make sure we don't skip on the next word after we have skipped
+
+                // update that we are processing this word
+                WordDatabaseService.UpdateState(db, source, new Word() { Value = wordText, Comment = wordPrefix }, writer, true);
 
                 GetWordSynonyms(word, driver, db, adminUser, href);
             }
@@ -217,7 +233,7 @@ namespace CrossWord.Scraper
                 var relatedWords = ParseSynonymsAgilityPack(word, driver, adminUser);
 
                 // and add to database
-                WordDatabaseService.AddToDatabase(db, this.source, word, relatedWords, writer);
+                WordDatabaseService.AddToDatabase(db, this.source, word, relatedWords, writer, false);
 
                 // go to next page if exist
                 var nextPageElement = FindNextPageOrNull(driver);

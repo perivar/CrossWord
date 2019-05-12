@@ -86,8 +86,8 @@ namespace CrossWord.Scraper
             // options.MaxDegreeOfParallelism = 50; // seems to work better without a MaxDegreeOfParallelism number
 
 #if DEBUG
-            startLetterCount = 6;
-            endLetterCount = 6;
+            startLetterCount = 1;
+            endLetterCount = 4;
             scraperSite = "GratisKryssord";
 #endif                    
 
@@ -106,7 +106,7 @@ namespace CrossWord.Scraper
                         actionsList.Add(() => { new KryssordHjelpScraper(connectionString, signalRHubURL, local_i, doContinueWithLastWord); });
                         break;
                     case "GratisKryssord":
-                        actionsList.Add(() => { new GratisKryssordScraper(connectionString, signalRHubURL, local_i, doContinueWithLastWord); });
+                        actionsList.Add(() => { new GratisKryssordScraper(connectionString, signalRHubURL, local_i, endLetterCount, doContinueWithLastWord); });
                         break;
                 }
             }

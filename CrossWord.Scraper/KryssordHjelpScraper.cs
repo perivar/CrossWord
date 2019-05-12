@@ -24,7 +24,7 @@ namespace CrossWord.Scraper
         string signalRHubURL = null;
         string source = null;
 
-        public KryssordHjelpScraper(string connectionString, string signalRHubURL, int letterCount, bool doContinueWithLastWord = true)
+        public KryssordHjelpScraper(string connectionString, string signalRHubURL, int letterCount, bool doContinueWithLastWord)
         {
             this.connectionString = connectionString;
             this.signalRHubURL = signalRHubURL;

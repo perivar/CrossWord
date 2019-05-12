@@ -33,6 +33,29 @@ namespace CrossWord.Scraper.MySQLDbService
             return null;
         }
 
+        public static string GetLastWordFromComment(WordHintDbContext db, string source, string comment)
+        {
+            if (comment != null)
+            {
+                Log.Information("Looking for last word using comment '{0}' from '{1}'", comment, source);
+
+                var lastWordWithComment = db.States
+                        // .AsNoTracking()
+                        .FirstOrDefault(item => item.Source == source && item.Comment == comment);
+
+                if (lastWordWithComment != null)
+                {
+                    // detach in order to clean this from the db tracked cache
+                    db.Entry(lastWordWithComment).State = EntityState.Detached;
+
+                    Log.Information("Using the last word with comment '{0}', last word '{1}'", comment, lastWordWithComment);
+                    return lastWordWithComment.Word.RemoveDiacriticsToNorwegian();
+                }
+            }
+
+            return null;
+        }
+
         public static void AddToDatabase(WordHintDbContext db, string source, User user, string wordText, IEnumerable<string> relatedValues)
         {
             // Note that  tracking should be disabled to speed things up
@@ -69,7 +92,7 @@ namespace CrossWord.Scraper.MySQLDbService
             AddToDatabase(db, source, word, relatedWords);
         }
 
-        public static void AddToDatabase(WordHintDbContext db, string source, Word word, IEnumerable<Word> relatedWords, TextWriter writer = null)
+        public static void AddToDatabase(WordHintDbContext db, string source, Word word, IEnumerable<Word> relatedWords, TextWriter writer = null, bool doStoreState = true)
         {
             // Note that  tracking should be disabled to speed things up
             // note that this doesn't load the virtual properties, but loads the object ids after a save
@@ -93,7 +116,10 @@ namespace CrossWord.Scraper.MySQLDbService
             }
 
             // update that we are processing this word
-            UpdateState(db, source, word, writer);
+            if (doStoreState)
+            {
+                UpdateState(db, source, word, writer);
+            }
 
             // Note! ensure related are all uppercase before this method is called
             var relatedValuesUpperCase = relatedWords.Select(x => x.Value);
@@ -181,14 +207,26 @@ namespace CrossWord.Scraper.MySQLDbService
             }
         }
 
-        public static void UpdateState(WordHintDbContext db, string source, Word word, TextWriter writer = null)
+        public static void UpdateState(WordHintDbContext db, string source, Word word, TextWriter writer = null, bool doUseCommentAsKey = false)
         {
             var wordText = word.Value;
+            var wordComment = word.Comment;
             var wordLength = word.Value.Length; // use actual word length
 
-            var stateEntity = db.States
-                            // .AsNoTracking()
-                            .FirstOrDefault(item => item.Source == source && item.NumberOfLetters == wordLength);
+            State stateEntity = null;
+            if (doUseCommentAsKey)
+            {
+                wordLength = 0; // ignore using word Length - set to zero
+                stateEntity = db.States
+                                // .AsNoTracking()
+                                .FirstOrDefault(item => item.Source == source && item.Comment == wordComment);
+            }
+            else
+            {
+                stateEntity = db.States
+                                // .AsNoTracking()
+                                .FirstOrDefault(item => item.Source == source && item.NumberOfLetters == wordLength);
+            }
 
             // Validate entity is not null
             if (stateEntity != null)
@@ -199,7 +237,7 @@ namespace CrossWord.Scraper.MySQLDbService
                 // add state
                 db.States.Update(stateEntity);
 
-                if (writer != null) writer.WriteLine("Updated state with '{0}' as last processed word for '{1}' letters with  source '{2}'.", word.Value, word.NumberOfLetters, source);
+                if (writer != null) writer.WriteLine("Updated state with '{0}' as last processed word for '{1}' letters with  source '{2}'.", wordText, wordLength, source);
             }
             else
             {
@@ -208,13 +246,14 @@ namespace CrossWord.Scraper.MySQLDbService
                     Word = wordText,
                     NumberOfLetters = wordLength,
                     CreatedDate = DateTime.Now,
-                    Source = source
+                    Source = source,
+                    Comment = wordComment
                 };
 
                 // add new state
                 db.States.Add(stateEntity);
 
-                if (writer != null) writer.WriteLine("Added state with '{0}' as last processed word for '{1}' letters with  source '{2}'.", word.Value, word.NumberOfLetters, source);
+                if (writer != null) writer.WriteLine("Added state with '{0}' as last processed word for '{1}' letters with  source '{2}'.", wordText, wordLength, source);
             }
 
             // Save changes in database
