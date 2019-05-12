@@ -75,9 +75,10 @@
         }
 
         function ReloadDictionary() {
+            $("#puzTitle").html("Starting reloading the dictionary ...");
             var reloaddUrl = window.location.protocol + "//" + window.location.hostname + ':' + 8000 + '/api/crosswords/init';
             $.getJSON(reloaddUrl, function( json ) {
-                $("#puzTitle").html("Reloaded the dictionary ...");
+                $("#puzTitle").html("Reloaded the dictionary successfully!");
             })
             .fail(function() {
                 $("#puzTitle").html("Could not find a crossword for this date, please try again ...");
