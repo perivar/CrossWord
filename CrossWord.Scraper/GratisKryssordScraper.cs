@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 using CrossWord.Scraper.MySQLDbService;
 using CrossWord.Scraper.MySQLDbService.Models;
 using HtmlAgilityPack;
@@ -124,7 +125,8 @@ namespace CrossWord.Scraper
             }
 
 #if DEBUG
-            lastWord = "BY";
+            // lastWord = "BY";
+            lastWord = null;
 #endif
 
             // parse all words
@@ -265,7 +267,8 @@ namespace CrossWord.Scraper
             var wordListing = new List<(string, string)>();
             foreach (var ahref in ahrefs)
             {
-                var wordText = ahref.InnerText;
+                var wordText = ahref.InnerText.Trim();
+                wordText = HttpUtility.HtmlDecode(wordText); // ensure that text like &amp; gets converted to &
                 var href = ahref.Attributes["href"].Value;
 
                 wordListing.Add((wordText, href));
@@ -310,7 +313,8 @@ namespace CrossWord.Scraper
             var ahrefs = driver.FindNodes(By.XPath("//div[@id='oppslag']//a[starts-with(@href, 'https://www.gratiskryssord.no/kryssordbok/?o=')]"));
             foreach (var ahref in ahrefs)
             {
-                var wordText = ahref.InnerText;
+                var wordText = ahref.InnerText.Trim();
+                wordText = HttpUtility.HtmlDecode(wordText); // ensure that text like &amp; gets converted to &
                 var href = ahref.Attributes["href"].Value;
 
                 var word = new Word
@@ -369,7 +373,8 @@ namespace CrossWord.Scraper
             var ahrefs = driver.FindNodes(By.XPath("//div[@class='jscroll-inner']//a[starts-with(@href, 'https://www.gratiskryssord.no/kryssordbok/?o=')]"));
             foreach (var ahref in ahrefs)
             {
-                var hintText = ahref.InnerText;
+                var hintText = ahref.InnerText.Trim();
+                hintText = HttpUtility.HtmlDecode(hintText); // ensure that text like &amp; gets converted to &
                 var href = ahref.Attributes["href"].Value;
 
                 var hint = new Word
