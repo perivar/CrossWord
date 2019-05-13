@@ -386,7 +386,7 @@ namespace CrossWord.Scraper
             var relatedWords = new List<Word>();
 
             // https://www.gratiskryssord.no/kryssordbok/?o=
-            var ahrefs = driver.FindNodes(By.XPath("//div[@class='jscroll-inner']//a[starts-with(@href, 'https://www.gratiskryssord.no/kryssordbok/?o=')]"));
+            var ahrefs = driver.FindNodes(By.XPath("//div[@class='jscroll-inner']/div[contains(@class, 'innh')]//a[starts-with(@href, 'https://www.gratiskryssord.no/kryssordbok/?o=')]"));
             foreach (var ahref in ahrefs)
             {
                 var hintText = ahref.InnerText.Trim();
