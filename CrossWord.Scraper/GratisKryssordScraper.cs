@@ -85,7 +85,7 @@ namespace CrossWord.Scraper
                 using (var driver = ChromeDriverUtils.GetChromeDriver(true))
                 {
                     // set general timeout to long
-                    driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(240);
+                    driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(60);
 
                     // read all words with the letter count
                     // ReadWordsByAlphabeticOverview(letterCount, endLetterCount, driver, db, adminUser, doContinueWithLastWord);
@@ -96,7 +96,31 @@ namespace CrossWord.Scraper
 
         private void ReadWordsByWordPermutations(int letterCount, int endLetterCount, IWebDriver driver, WordHintDbContext db, User adminUser, bool doContinueWithLastWord)
         {
-            var alphabet = "&()+,-0123456789abcdefghijklmnopqrstuvwxyzåæøö";
+            var alphabet = "abcdefghijklmnopqrstuvwxyzåæøö";
+            var permutations = alphabet.Select(x => x.ToString());
+            int permutationSize = 2;
+
+            for (int i = 0; i < permutationSize - 1; i++)
+            {
+                permutations = permutations.SelectMany(x => alphabet, (x, y) => x + y);
+            }
+
+            permutations.Append("&");
+            permutations.Append("(");
+            permutations.Append(")");
+            permutations.Append("+");
+            permutations.Append(",");
+            permutations.Append("-");
+            permutations.Append("0");
+            permutations.Append("1");
+            permutations.Append("2");
+            permutations.Append("3");
+            permutations.Append("4");
+            permutations.Append("5");
+            permutations.Append("6");
+            permutations.Append("7");
+            permutations.Append("8");
+            permutations.Append("9");
 
             // use the letter count a little bit different when it comes to the alphabetic index:
             // letterCount is the index to start with divided out on the total alphabetic index
@@ -106,48 +130,43 @@ namespace CrossWord.Scraper
             // 2 is 250
             // 3 is 500
             // 4 is 750
-            int startIndex = (int)(((double)alphabet.Length / (double)endLetterCount) * (letterCount - 1));
-            int endIndex = (int)((((double)alphabet.Length / (double)endLetterCount) * letterCount) - 1);
-            var startCharacter = alphabet[startIndex];
-            var endCharacter = alphabet[endIndex];
+            var wordPermutationList = permutations.ToList();
+            int length = wordPermutationList.Count;
+            int startIndex = (int)(((double)length / (double)endLetterCount) * (letterCount - 1));
+            int endIndex = (int)((((double)length / (double)endLetterCount) * letterCount) - 1);
+            var startString = wordPermutationList[startIndex];
+            var endString = wordPermutationList[endIndex];
 
-            Log.Information("Processing alphabetic permutation search using {0} - {1} = {2} - {3} ({4} - {5}) ", letterCount, endLetterCount, startIndex, endIndex, startCharacter, endCharacter);
-            writer.WriteLine("Processing alphabetic permutation search using {0} - {1} = {2} - {3} ({4} - {5}) ", letterCount, endLetterCount, startIndex, endIndex, startCharacter, endCharacter);
+            Log.Information("Processing alphabetic permutation search using {0}-{1} = {2}-{3} ({4} - {5}) ", letterCount, endLetterCount, startIndex, endIndex, startString, endString);
+            writer.WriteLine("Processing alphabetic permutation search using {0}-{1} = {2}-{3} ({4} - {5}) ", letterCount, endLetterCount, startIndex, endIndex, startString, endString);
 
             int curIndex = 0;
 
-            foreach (var character in alphabet)
+            foreach (var wordPermutation in wordPermutationList)
             {
-                string stringCharacter = "" + character;
-                string asciiCharacter = character < 45 ? string.Format("%{0:X}", (int)character) : stringCharacter;
+                string wordPattern = wordPermutation.Length == 1 && wordPermutation[0] < 45 ? string.Format("%{0:X}", (int)wordPermutation[0]) : wordPermutation;
                 curIndex++;
 
                 if (curIndex < startIndex + 1)
                 {
-                    Log.Information("Skipping alphabetic word {0} until we reach index {1} = {2}. [{3} / {4}]", character, startIndex, startCharacter, curIndex, alphabet.Length);
+                    Log.Information("Skipping pattern '{0}' until we reach index {1}: '{2}'. [{3}/{4}]", wordPattern, startIndex, startString, curIndex, length);
                     continue;
                 }
-                else if (alphabet.Length != curIndex && curIndex == endIndex + 1) // stop at last index except very last character
+                else if (length != curIndex && curIndex == endIndex + 1) // stop at last index except very last character
                 {
                     // reached the end - quit
-                    Log.Information("Quitting because we have reached the last index to process: {0} at index {1}.", character, curIndex);
+                    Log.Information("Quitting because we have reached the last index to process: {0} at index {1}.", wordPattern, curIndex);
                     break;
-                }
-
-                if (character > 127)
-                {
-                    // non ascii character
-                    continue;
                 }
 
                 string lastWordString = null;
                 if (doContinueWithLastWord)
                 {
-                    lastWordString = WordDatabaseService.GetLastWordFromComment(db, source, stringCharacter);
+                    lastWordString = WordDatabaseService.GetLastWordFromComment(db, source, wordPattern);
                 }
 
-                var href = $"https://www.gratiskryssord.no/kryssordbok/?kart={asciiCharacter}#oppslag";
-                ReadWordsByWordUrl(stringCharacter, href, driver, db, adminUser, lastWordString);
+                var href = $"https://www.gratiskryssord.no/kryssordbok/?kart={wordPattern}#oppslag";
+                ReadWordsByWordUrl(wordPattern, href, driver, db, adminUser, lastWordString);
             }
         }
 
@@ -222,7 +241,7 @@ namespace CrossWord.Scraper
             }
             catch (System.Exception)
             {
-                Log.Error("Timeout navigating to '{0}'", url);
+                // Log.Error("Timeout navigating to '{0}'", url);
                 writer.WriteLine("Timeout navigating to '{0}'", url);
                 return;
             }
@@ -231,16 +250,16 @@ namespace CrossWord.Scraper
             writer.WriteLine("Processing word search for '{0}'", wordPrefix);
 
             // wait until the word list has loaded
-            try
-            {
-                driver.WaitForElementLoad(By.XPath("//div[@id='oppslag']"), 20);
-            }
-            catch (System.Exception)
-            {
-                Log.Error("Timeout searching for '{0}'", wordPrefix);
-                writer.WriteLine("Timeout searching for '{0}'", wordPrefix);
-                return;
-            }
+            // try
+            // {
+            //     driver.WaitForElementLoad(By.XPath("//div[@id='oppslag']"), 10);
+            // }
+            // catch (System.Exception)
+            // {
+            //     // Log.Error("Timeout searching for '{0}'", wordPrefix);
+            //     writer.WriteLine("Timeout searching for '{0}'", wordPrefix);
+            //     return;
+            // }
 
             // parse all words
             // var words = ParseWords(driver, adminUser);
@@ -397,6 +416,8 @@ namespace CrossWord.Scraper
 
             // https://www.gratiskryssord.no/kryssordbok/?o=
             var ahrefs = driver.FindNodes(By.XPath("//div[@id='oppslag']//a[starts-with(@href, 'https://www.gratiskryssord.no/kryssordbok/?o=')]"));
+            if (ahrefs == null) return words;
+
             foreach (var ahref in ahrefs)
             {
                 var wordText = ahref.InnerText.Trim();
@@ -457,6 +478,8 @@ namespace CrossWord.Scraper
 
             // https://www.gratiskryssord.no/kryssordbok/?o=
             var ahrefs = driver.FindNodes(By.XPath("//div[@class='jscroll-inner']/div[contains(@class, 'innh')]//a[starts-with(@href, 'https://www.gratiskryssord.no/kryssordbok/?o=')]"));
+            if (ahrefs == null) return relatedWords;
+
             foreach (var ahref in ahrefs)
             {
                 var hintText = ahref.InnerText.Trim();
