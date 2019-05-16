@@ -84,9 +84,70 @@ namespace CrossWord.Scraper
 
                 using (var driver = ChromeDriverUtils.GetChromeDriver(true))
                 {
+                    // set general timeout to long
+                    driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(240);
+
                     // read all words with the letter count
-                    ReadWordsByAlphabeticOverview(letterCount, endLetterCount, driver, db, adminUser, doContinueWithLastWord);
+                    // ReadWordsByAlphabeticOverview(letterCount, endLetterCount, driver, db, adminUser, doContinueWithLastWord);
+                    ReadWordsByWordPermutations(letterCount, endLetterCount, driver, db, adminUser, doContinueWithLastWord);
                 }
+            }
+        }
+
+        private void ReadWordsByWordPermutations(int letterCount, int endLetterCount, IWebDriver driver, WordHintDbContext db, User adminUser, bool doContinueWithLastWord)
+        {
+            var alphabet = "&()+,-0123456789abcdefghijklmnopqrstuvwxyzåæøö";
+
+            // use the letter count a little bit different when it comes to the alphabetic index:
+            // letterCount is the index to start with divided out on the total alphabetic index
+            // e.g. 
+            // if letter count is between 1 - 4 of a total index length of 1000:
+            // 1 is 1
+            // 2 is 250
+            // 3 is 500
+            // 4 is 750
+            int startIndex = (int)(((double)alphabet.Length / (double)endLetterCount) * (letterCount - 1));
+            int endIndex = (int)((((double)alphabet.Length / (double)endLetterCount) * letterCount) - 1);
+            var startCharacter = alphabet[startIndex];
+            var endCharacter = alphabet[endIndex];
+
+            Log.Information("Processing alphabetic permutation search using {0} - {1} = {2} - {3} ({4} - {5}) ", letterCount, endLetterCount, startIndex, endIndex, startCharacter, endCharacter);
+            writer.WriteLine("Processing alphabetic permutation search using {0} - {1} = {2} - {3} ({4} - {5}) ", letterCount, endLetterCount, startIndex, endIndex, startCharacter, endCharacter);
+
+            int curIndex = 0;
+
+            foreach (var character in alphabet)
+            {
+                string stringCharacter = "" + character;
+                string asciiCharacter = character < 45 ? string.Format("%{0:X}", (int)character) : stringCharacter;
+                curIndex++;
+
+                if (curIndex < startIndex + 1)
+                {
+                    Log.Information("Skipping alphabetic word {0} until we reach index {1} = {2}. [{3} / {4}]", character, startIndex, startCharacter, curIndex, alphabet.Length);
+                    continue;
+                }
+                else if (alphabet.Length != curIndex && curIndex == endIndex + 1) // stop at last index except very last character
+                {
+                    // reached the end - quit
+                    Log.Information("Quitting because we have reached the last index to process: {0} at index {1}.", character, curIndex);
+                    break;
+                }
+
+                if (character > 127)
+                {
+                    // non ascii character
+                    continue;
+                }
+
+                string lastWordString = null;
+                if (doContinueWithLastWord)
+                {
+                    lastWordString = WordDatabaseService.GetLastWordFromComment(db, source, stringCharacter);
+                }
+
+                var href = $"https://www.gratiskryssord.no/kryssordbok/?kart={asciiCharacter}#oppslag";
+                ReadWordsByWordUrl(stringCharacter, href, driver, db, adminUser, lastWordString);
             }
         }
 
@@ -155,7 +216,16 @@ namespace CrossWord.Scraper
         private void ReadWordsByWordUrl(string wordPrefix, string url, IWebDriver driver, WordHintDbContext db, User adminUser, string lastWord)
         {
             // go to word page            
-            driver.Navigate().GoToUrl(url);
+            try
+            {
+                driver.Navigate().GoToUrl(url);
+            }
+            catch (System.Exception)
+            {
+                Log.Error("Timeout navigating to '{0}'", url);
+                writer.WriteLine("Timeout navigating to '{0}'", url);
+                return;
+            }
 
             Log.Information("Processing word search for '{0}'", wordPrefix);
             writer.WriteLine("Processing word search for '{0}'", wordPrefix);
@@ -186,7 +256,7 @@ namespace CrossWord.Scraper
                 // skip until we get to the last word
                 if (doSkip && lastWord != null && lastWord != wordText)
                 {
-                    // Log.Information("Skipping alphabetic word '{0}' until we find '{1}'", wordText, lastWord);
+                    Log.Information("Skipping alphabetic word '{0}' until we find '{1}'", wordText, lastWord);
                     // writer.WriteLine("Skipping alphabetic word '{0}' until we find '{1}'", wordText, lastWord);
                     continue;
                 }

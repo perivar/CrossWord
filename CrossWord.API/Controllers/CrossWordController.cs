@@ -22,9 +22,8 @@ namespace CrossWord.API.Controllers
 {
     [Produces("application/json")]
     [ApiController]
-    // [ApiVersionNeutral]
-    [ApiVersion("1.0")] // this attribute isn't required, but it's easier to understand
-    // [Route("api/[controller]")]
+    [ApiVersion("1.0")]
+    // [Route("api/[controller]/[action]")] // disable the default route and use method specific routes instead
     public class CrossWordController : ControllerBase
     {
         private readonly IConfiguration config;
@@ -54,7 +53,7 @@ namespace CrossWord.API.Controllers
         }
 
         // GET: api/crosswords/init
-        // [Authorize]
+        [Authorize]
         [HttpGet]
         [Route("api/crosswords/init")]
         public IActionResult InitCrossWordDictionary()
@@ -76,7 +75,7 @@ namespace CrossWord.API.Controllers
         }
 
         // GET: api/crosswords
-        // [Authorize]
+        [Authorize]
         [HttpGet]
         [Route("api/crosswords")]
         public IActionResult GetCrossWords()
@@ -157,7 +156,7 @@ namespace CrossWord.API.Controllers
         }
 
         // GET: api/crosswords/5
-        // [Authorize]
+        [Authorize]
         [HttpGet]
         [Route("api/crosswords/{id}")]
         public IActionResult GetCrossWord(long id)
@@ -166,7 +165,7 @@ namespace CrossWord.API.Controllers
         }
 
         // GET: api/templates/generate
-        // [Authorize]
+        [Authorize]
         [HttpGet]
         [Route("api/templates/generate")]
         public IActionResult GenerateTemplates()

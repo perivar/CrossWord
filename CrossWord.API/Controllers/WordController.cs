@@ -18,10 +18,9 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 namespace CrossWord.API.Controllers
 {
     [Produces("application/json")]
-    // [Route("api/[controller]/[action]")] // disable the default route and use method specific routes instead
     [ApiController]
-    // [ApiVersionNeutral]
-    [ApiVersion("1.0")] // this attribute isn't required, but it's easier to understand
+    [ApiVersion("1.0")]
+    // [Route("api/[controller]/[action]")] // disable the default route and use method specific routes instead
     public class WordController : ControllerBase
     {
         private readonly IConfiguration config;
@@ -98,7 +97,7 @@ namespace CrossWord.API.Controllers
         }
 
         // GET: api/synonyms/ord
-        // [Authorize]
+        [Authorize]
         [HttpGet]
         [Route("api/synonyms/{word}")]
         public IActionResult GetWordSynonyms(string word)
@@ -133,7 +132,7 @@ namespace CrossWord.API.Controllers
         }
 
         // GET: api/synonyms/ord/pattern
-        // [Authorize]
+        [Authorize]
         [HttpGet]
         [Route("api/synonyms/{word}/{pattern}")]
         public IActionResult GetWordSynonyms(string word, string pattern)
