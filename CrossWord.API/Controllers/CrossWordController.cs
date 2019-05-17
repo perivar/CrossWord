@@ -53,7 +53,7 @@ namespace CrossWord.API.Controllers
         }
 
         // GET: api/crosswords/init
-        [Authorize]
+        // [Authorize]
         [HttpGet]
         [Route("api/crosswords/init")]
         public IActionResult InitCrossWordDictionary()
@@ -75,7 +75,7 @@ namespace CrossWord.API.Controllers
         }
 
         // GET: api/crosswords
-        [Authorize]
+        // [Authorize]
         [HttpGet]
         [Route("api/crosswords")]
         public IActionResult GetCrossWords()
@@ -156,7 +156,7 @@ namespace CrossWord.API.Controllers
         }
 
         // GET: api/crosswords/5
-        [Authorize]
+        // [Authorize]
         [HttpGet]
         [Route("api/crosswords/{id}")]
         public IActionResult GetCrossWord(long id)
@@ -165,7 +165,7 @@ namespace CrossWord.API.Controllers
         }
 
         // GET: api/templates/generate
-        [Authorize]
+        // [Authorize]
         [HttpGet]
         [Route("api/templates/generate")]
         public IActionResult GenerateTemplates()
