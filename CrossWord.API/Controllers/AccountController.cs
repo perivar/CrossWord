@@ -25,7 +25,6 @@ namespace CrossWord.API.Controllers
     {
         private readonly IConfiguration config;
         private readonly UserManager<IdentityUser> userManager;
-
         private readonly WordHintDbContext db;
 
         public AccountController(IConfiguration config, UserManager<IdentityUser> userManager, WordHintDbContext db)
@@ -77,6 +76,12 @@ namespace CrossWord.API.Controllers
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 };
 
+                // Adding roles code
+                var userClaims = await userManager.GetClaimsAsync(userToVerify);        // UserManager.GetClaimsAsync(user) queries the UserClaims table.
+                // var roleClaims = await roleManager.GetClaimsAsync(userToVerify);     // RoleManager.GetClaimsAsync(role) queries the RoleClaims table.
+                // var roles = await userManager.GetRolesAsync(userToVerify);           // System.NotSupportedException: Store does not implement IUserRoleStore<TUser>.
+                claims.AddRange(userClaims);
+
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
                 var expires = DateTime.Now.AddSeconds(Convert.ToDouble(config["Jwt:ExpireSeconds"]));
@@ -90,6 +95,47 @@ namespace CrossWord.API.Controllers
                 );
 
                 return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> AddRole(RoleModel user)
+        {
+            string username = user.Username;
+            string password = user.Password;
+            string role = user.Role;
+
+            // get the IdentityUser to verify
+            var userToVerify = await userManager.FindByNameAsync(username);
+
+            if (userToVerify == null)
+            {
+                // Don't reveal that the user does not exist
+                return BadRequest();
+            }
+
+            // check the credentials
+            if (await userManager.CheckPasswordAsync(userToVerify, password) && !string.IsNullOrEmpty(role))
+            {
+                var newRoleClaim = new Claim(ClaimTypes.Role, role);
+
+                // check role hasn't already been added
+                var userClaims = await userManager.GetClaimsAsync(userToVerify);
+                var existingRoleClaim = userClaims.FirstOrDefault(c => c.Value == role);
+                if (existingRoleClaim == null)
+                {
+                    await userManager.AddClaimAsync(userToVerify, newRoleClaim);
+                    return Ok($"Role '{role}' successfully added to username '{username}'.");
+                }
+                else
+                {
+                    return BadRequest($"Role '{role}' already added to username '{username}'.");
+                }
             }
             else
             {
@@ -131,6 +177,13 @@ namespace CrossWord.API.Controllers
             {
                 return BadRequest();
             }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public string PingAdmin()
+        {
+            return "Pong";
         }
     }
 }
