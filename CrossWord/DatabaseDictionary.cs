@@ -128,7 +128,7 @@ namespace CrossWord
             stopwatch.Start();
 #endif
 
-            var wordIdsToExclude = WordDatabaseService.GetWordIdList(db, new List<string> { "BY", "NAVN" });
+            var wordIdsToExclude = WordDatabaseService.GetWordIdList(db, new List<string> { "BY", "NAVN", "ELV", "FJELL", "FORKORTELSE", "IATA-FLYPLASSKODE", "ISO-KODE" });
 
             // search for all words
             var words = db.Words
