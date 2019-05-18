@@ -97,6 +97,42 @@ namespace CrossWord.API.Controllers
             return Ok(wordResult);
         }
 
+        // DELETE: api/words/5
+        [HttpDelete]
+        [Route("api/words/{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var word = await db.Words.FindAsync(id);
+
+            if (word == null)
+            {
+                return NotFound();
+            }
+
+            db.Words.Remove(word);
+            await db.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        // DELETE: /api/words/delete?id=1&id=2&id=3
+        [HttpDelete]
+        [Route("api/words/delete")]
+        public async Task<IActionResult> Delete(int[] id)
+        {
+            var words = await db.Words.FindAsync(id);
+
+            if (words == null)
+            {
+                return NotFound();
+            }
+
+            db.Words.Remove(words);
+            await db.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         // GET: api/synonyms/ord
         [Authorize]
         [HttpGet]

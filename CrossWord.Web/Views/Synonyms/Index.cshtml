@@ -67,14 +67,11 @@
 </form>
 <br />
 <p class="lead" id="search-header"></p>
-<div class="table-responsive">
-    <table class="table" id="word-list">
-    </table>
-</div>
-<div class="table-responsive">
-    <table class="table" id="status-list">
-    </table>
-</div>
+<button id="remove" class="btn btn-danger" disabled>Delete</button>
+<table class="table" id="word-list">
+</table>
+<table class="table" id="status-list">
+</table>
 
 @section Scripts
 {
@@ -124,11 +121,16 @@
                     pagination: true,
                     search: true,
                     pageSize: 50,
+                    toolbar: '#remove',
                     columns: [
                     {
                         field: 'select',
                         title: 'Velg',
                         checkbox: true
+                    },
+                    {
+                        field: 'wordId',
+                        title: 'Id',
                     },
                     {
                         field: 'value',
@@ -298,6 +300,41 @@
                 $('#status-list').bootstrapTable("load", data);                    
             };
 
+            var $table = $('#word-list')
+            var $remove = $('#remove')
+
+            $table.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
+                $remove.prop('disabled', !$table.bootstrapTable('getSelections').length)
+            });
+    
+            $remove.click(function () {
+                var selects = $table.bootstrapTable('getSelections');
+                    ids = $.map(selects, function (row) {
+                        return row.wordId;
+                });
+
+                console.log(selects);
+
+                var url = baseWordUrl + '/delete';
+                $.ajax({
+                    url: url,
+                    data: selects,
+                    type: "DELETE",
+                    cache: false,
+                    dataType: "json",
+                    success: function(data){
+                        $table.bootstrapTable('remove', {
+                            field: 'wordId',
+                            values: selects
+                        });
+                    },
+                    error: function(error){
+                        console.log(error);
+                    }
+                });
+
+                $remove.prop('disabled', true);
+            });
 
             // if we have a search word, perform search
             if (!isNullOrWhitespace(word)) {
