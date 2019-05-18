@@ -174,7 +174,9 @@ namespace CrossWord.API.Controllers
         [Route("api/states")]
         public IActionResult GetStates()
         {
-            var stateResult = db.States.OrderByDescending(p => p.NumberOfLetters)
+            var stateResult = db.States
+                .OrderByDescending(p => p.NumberOfLetters)
+                .ThenBy(a => a.Comment)
                 .AsNoTracking();
 
             if (!stateResult.Any())
