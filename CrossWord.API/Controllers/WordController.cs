@@ -14,6 +14,7 @@ using CrossWord.Scraper.MySQLDbService.Models;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using System.Globalization;
 
 namespace CrossWord.API.Controllers
 {
@@ -169,15 +170,29 @@ namespace CrossWord.API.Controllers
         }
 
         // GET: api/states
-        [Authorize]
+        // [Authorize]
         [HttpGet]
         [Route("api/states")]
         public IActionResult GetStates()
         {
+            // in order to sort with Collation we need to use raw SQL
+            // however this requires the db field to have the right collation, which it doesn't
+            // var stateResult = db.States.FromSql(
+            //     $"SELECT * FROM States AS s ORDER BY s.NumberOfLetters DESC, s.Comment ASC COLLATE utf8mb4_da_0900_as_cs")
+            //     .AsNoTracking();
+
+            // var stateResult = db.States
+            //     .OrderByDescending(p => p.NumberOfLetters)
+            //     .ThenBy(a => a.Comment)
+            //     .AsNoTracking();
+
+            // sort in memory since the collation will not work
+            CultureInfo culture = new CultureInfo("no");
             var stateResult = db.States
+                .AsNoTracking()
+                .AsEnumerable() // force sorting in memory since the string comparer isn't supported directly in ef core
                 .OrderByDescending(p => p.NumberOfLetters)
-                .ThenBy(a => a.Comment)
-                .AsNoTracking();
+                .ThenBy(a => a.Comment, StringComparer.Create(culture, true));
 
             if (!stateResult.Any())
             {

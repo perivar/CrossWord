@@ -16,10 +16,12 @@
                 integrity="sha256-YLGeXaapI0/5IgZopewRJcFXomhRMlYYjugPLSyNjTY="
             />
         </environment>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.1/css/all.min.css" 
-            crossorigin="anonymous" 
-            integrity="sha256-7rF6RaSKyh16288E3hVdzQtHyzatA2MQRGu0cf6pqqM=" 
-        />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css" 
+            integrity="sha256-BtbhCIbtfeVWGsqxk1vOHEYXS6qcvQvLMZqjtpWUEx8=" 
+            crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.14.2/bootstrap-table.min.css" 
+            integrity="sha256-pxMFc5RPsIXrouYF4MXPEQe5TtTv+LVM0pyiWDWHyFY=" 
+            crossorigin="anonymous" />
         <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
         <link rel="stylesheet" href="~/css/vendor.min.css" asp-append-version="true"/>
             
@@ -66,12 +68,15 @@
         </div>
     </footer>
 
+    @{
+        // bootstrap.bundle.js contains both bootstrap and popper
+    }
     <environment include="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
     </environment>
     <environment exclude="Development">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js" 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" 
                 asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
                 asp-fallback-test="window.jQuery"
                 crossorigin="anonymous"
@@ -84,6 +89,7 @@
                 integrity="sha256-fzFFyH01cBVPYzl16KT40wqjhgPtq6FFUB6ckN2+GGw=">
         </script>
     </environment>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.14.2/bootstrap-table.min.js" integrity="sha256-/xffGMKcg3EPCNGt1lHxJ9dN/eMlD8noOvtptABHRls=" crossorigin="anonymous"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/vendor.min.js" asp-append-version="true"></script>
 

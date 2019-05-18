@@ -68,19 +68,12 @@
 <br />
 <p class="lead" id="search-header"></p>
 <div class="table-responsive">
-    <table class="table">
-    <thead class="thead-light">
-        <tr>
-        <th scope="col">Synonym</th>
-        <th scope="col">Ant. Ord</th>
-        <th scope="col">Lengde</th>
-        <th scope="col">Bruker</th>
-        <th scope="col">Dato</th>
-        </tr>
-    </thead>
-    <tbody id="word-list">
-    </tbody>
-  </table>
+    <table class="table" id="word-list">
+    </table>
+</div>
+<div class="table-responsive">
+    <table class="table" id="status-list">
+    </table>
 </div>
 
 @section Scripts
@@ -125,6 +118,83 @@
                 }
                 });
 
+            // init the word list bootstrap table
+            function initWordTable() {
+                $('#word-list').bootstrapTable({
+                    pagination: true,
+                    search: true,
+                    pageSize: 50,
+                    columns: [
+                    {
+                        field: 'select',
+                        title: 'Velg',
+                        checkbox: true
+                    },
+                    {
+                        field: 'value',
+                        title: 'Synonym',
+                        sortable: true,
+                        formatter: linkFormatter
+                    }, {
+                        field: 'numberOfWords',
+                        title: 'Ant. Ord',
+                        sortable: true
+                    }, {
+                        field: 'numberOfLetters',
+                        title: 'Lengde',
+                        sortable: true
+                    }, {
+                        field: 'comment',
+                        title: 'Bruker',
+                        sortable: true
+                    }, {
+                        field: 'createdDate',
+                        title: 'Dato',
+                        sortable: true,
+                        formatter: dateFormat
+                    }
+                    ]
+                });  
+            }   
+
+            // init the status list bootstrap table
+            function initStatusTable() {
+                $('#status-list').bootstrapTable({
+                    pagination: true,
+                    search: true,
+                    pageSize: 50,
+                    columns: [
+                    {
+                        field: 'select',
+                        title: 'Velg',
+                        checkbox: true
+                    },
+                    {
+                        field: 'word',
+                        title: 'Word',
+                        sortable: true,
+                        formatter: linkFormatter
+                    }, {
+                        field: 'numberOfLetters',
+                        title: 'Lengde',
+                        sortable: true
+                    }, {
+                        field: 'comment',
+                        title: 'Comment',
+                        sortable: true
+                    }, {
+                        field: 'source',
+                        title: 'Source',
+                        sortable: true
+                    }, {
+                        field: 'createdDate',
+                        title: 'Dato',
+                        sortable: true,
+                        formatter: dateFormat
+                    }
+                    ]
+                });     
+            }
 
             // some useful methods
             function isNullOrWhitespace(input) {
@@ -150,6 +220,10 @@
 
                 return patternString.toUpperCase();
             };
+
+            function linkFormatter(value, row, index) {
+                return '<a href="/synonyms/' + value + '">' + value + '</a>';
+            }
 
             function dateFormat(dateObject) {
                 var d = new Date(dateObject);
@@ -190,24 +264,38 @@
                     }
                 }
 
+                /*
                 $("#word-list").html('');            
                 $.each( data, function( index, element ) {
                     //console.log(index + ' ' + element.wordFrom.value + ' - ' + element.wordTo.value);                    
                     var date = dateFormat(element.createdDate);
                     $("#word-list").append('<tr class="table-row"><th scope="row"><a href="/synonyms/' + element.value + '">' + element.value + '</a></th><td>' + element.numberOfWords + '</td><td>' + element.numberOfLetters + '</td><td>' + element.comment + '</td><td>' + date + '</td></tr>');
-                });              
+                });
+                */
+
+                $('#status-list').bootstrapTable("destroy");
+                $('#word-list').bootstrapTable("destroy");
+                initWordTable();
+                $('#word-list').bootstrapTable("load", data);                    
             };
 
             function displayStatesResults(data) {
                 //console.log(data);
                 $("#search-header").html('Viser <b>status</b>');
 
+                /*
                 $("#word-list").html('');            
                 $.each( data, function( index, element ) {
                     //console.log(index + ' ' + element.wordFrom.value + ' - ' + element.wordTo.value);                    
                     var date = dateFormat(element.createdDate);
                     $("#word-list").append('<tr class="table-row"><th scope="row"><a href="/synonyms/' + element.word + '">' + element.word + '</a></th><td>' + element.numberOfLetters + '</td><td>' + element.comment + '</td><td>' + element.source + '</td><td>' + date + '</td></tr>');
-                });              
+                });
+                */
+
+                $('#status-list').bootstrapTable("destroy");
+                $('#word-list').bootstrapTable("destroy");
+                initStatusTable();
+                $('#status-list').bootstrapTable("load", data);                    
             };
 
 
