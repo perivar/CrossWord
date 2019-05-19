@@ -63,7 +63,7 @@
         <button type="button" id="submit-show-all" class="btn btn-secondary btn-sm">Vis alle synonymer</button>
     </div>
     <button type="button" id="submit-search" class="btn btn-primary btn-lg">Søk</button>
-    <button type="button" id="submit-status" class="btn btn-secondary btn-lg">Vist status</button>
+    <button type="button" id="submit-status" class="btn btn-secondary btn-lg">Vis status</button>
 </form>
 <br />
 <p class="lead" id="search-header"></p>
@@ -85,8 +85,6 @@
             var baseSynonymUrl = baseUrl + "synonyms/";
             var baseWordUrl = baseUrl + "words/";
             var authUrl = "@ViewData["ApiBaseUrl"]" + "Account/Login";
-            var apiUserEmail = "@ViewData["ApiUserEmail"]";
-            var apiPassword = "@ViewData["ApiPassword"]";
             var word = "@ViewData["Word"]";
             var token = "@ViewData["Token"]";
             var letterCount = 0;
@@ -102,6 +100,7 @@
             });  
 
             // load the latest words
+            /*
             $.ajax({
                 url: baseWordUrl,
                 type: "GET",
@@ -114,6 +113,7 @@
                     displaySearchResults([]);
                 }
                 });
+            */
 
             // init the word list bootstrap table
             function initWordTable() {
@@ -131,6 +131,72 @@
                     {
                         field: 'wordId',
                         title: 'Id',
+                    },
+                    {
+                        field: 'value',
+                        title: 'Synonym',
+                        sortable: true,
+                        formatter: linkFormatter
+                    }, {
+                        field: 'numberOfWords',
+                        title: 'Ant. Ord',
+                        sortable: true
+                    }, {
+                        field: 'numberOfLetters',
+                        title: 'Lengde',
+                        sortable: true
+                    }, {
+                        field: 'comment',
+                        title: 'Bruker',
+                        sortable: true
+                    }, {
+                        field: 'createdDate',
+                        title: 'Dato',
+                        sortable: true,
+                        formatter: dateFormat
+                    }
+                    ]
+                });  
+            }   
+
+            // init the word list bootstrap table
+            function initWordODataTable() {
+                var odataBaseUrl = /(.+)\/api\//.exec(baseUrl)[1];
+                $('#word-list').bootstrapTable({
+                    url: odataBaseUrl + '/odata/Words',
+                    pagination: true,
+                    search: true,
+                    pageSize: 20,
+                    toolbar: '#remove',
+                    sidePagination: 'server',
+                    silentSort: false,
+                    sortOrder: 'desc',
+                    searchOnEnterKey: true,
+                    queryParams: function (params) {
+                        return {
+                            $filter: (params.search === "" ? undefined : "contains(Value,'" + params.search + "')"),
+                            $orderby: (params.sort === undefined ? 'wordId' : params.sort) + ' '  + (params.order === undefined ? 'desc' : params.order),
+                            $skip: params.offset,
+                            $top: params.limit,
+                            $count: true
+                        };
+                    },
+                    responseHandler: function (res) {
+                        return {
+                            total: res["@@odata.count"],
+                            rows: res.value
+                        };
+                        },            
+                    columns: [
+                    {
+                        field: 'select',
+                        title: 'Velg',
+                        checkbox: true
+                    },
+                    {
+                        field: 'wordId',
+                        title: 'Id',
+                        sortable: true,
                     },
                     {
                         field: 'value',
@@ -300,6 +366,7 @@
                 $('#status-list').bootstrapTable("load", data);                    
             };
 
+            // bootstrap-table DELETE functionality
             var $table = $('#word-list')
             var $remove = $('#remove')
 
@@ -308,24 +375,25 @@
             });
     
             $remove.click(function () {
-                var selects = $table.bootstrapTable('getSelections');
-                    ids = $.map(selects, function (row) {
-                        return row.wordId;
+                var selects = $table.bootstrapTable('getSelections');                
+                var ids = $.map(selects, function (row) {
+                    return row.wordId;
                 });
 
-                console.log(selects);
+                //console.log(ids);
 
-                var url = baseWordUrl + '/delete';
+                var url = baseWordUrl + 'delete';
                 $.ajax({
                     url: url,
-                    data: selects,
+                    data: JSON.stringify(ids),
                     type: "DELETE",
                     cache: false,
-                    dataType: "json",
+                    dataType: "json", // this is for parsing received data
+                    contentType: "application/json; charset=UTF-8", // this is for sending data
                     success: function(data){
                         $table.bootstrapTable('remove', {
                             field: 'wordId',
-                            values: selects
+                            values: ids
                         });
                     },
                     error: function(error){
@@ -335,29 +403,6 @@
 
                 $remove.prop('disabled', true);
             });
-
-            // if we have a search word, perform search
-            if (!isNullOrWhitespace(word)) {
-                
-                $("#word").val(word);            
-
-                var url = baseSynonymUrl + word;
-                
-                $.ajax({
-                    url: url,
-                    type: "GET",
-                    dataType: "json",
-                    success: function(data){
-                        displaySearchResults(data);
-                    },
-                    error: function(error){
-                        //console.log(error);
-                        displaySearchResults([]);
-                    }
-                });
-                
-                //$("#submit-search").click();
-            }
 
 			$("#submit-search").click(function() {
 
@@ -532,6 +577,31 @@
 
                 return false; // avoid to execute the actual submit of the form.
             });
+
+
+            // if we have a search word, perform search
+            if (!isNullOrWhitespace(word)) {
+                
+                $("#word").val(word);            
+
+                var url = baseSynonymUrl + word;
+                
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    dataType: "json",
+                    success: function(data){
+                        displaySearchResults(data);
+                    },
+                    error: function(error){
+                        //console.log(error);
+                        displaySearchResults([]);
+                    }
+                });
+                
+            } else {
+                initWordODataTable();
+            }
 
         }); // document ready        
     </script>

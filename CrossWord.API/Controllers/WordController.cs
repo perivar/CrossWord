@@ -61,7 +61,7 @@ namespace CrossWord.API.Controllers
             var wordResult = db.Words
                 .AsNoTracking()
                 .OrderByDescending(p => p.WordId)
-                .Take(50)
+                .Take(300)
                 ;
 
             if (!wordResult.Any())
@@ -98,6 +98,8 @@ namespace CrossWord.API.Controllers
         }
 
         // DELETE: api/words/5
+        // [Authorize(Roles = "Admin")]
+        [Authorize]
         [HttpDelete]
         [Route("api/words/{id}")]
         public async Task<IActionResult> Delete(int id)
@@ -109,28 +111,48 @@ namespace CrossWord.API.Controllers
                 return NotFound();
             }
 
+            var wordRelations = await db.WordRelations
+                .Where(e => id == e.WordFromId || id == e.WordToId)
+                .ToListAsync();
+
+            // first delete the relations
+            db.WordRelations.RemoveRange(wordRelations);
+
+            // then delete the actual word
             db.Words.Remove(word);
             await db.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(word);
         }
 
         // DELETE: /api/words/delete?id=1&id=2&id=3
+        // [Authorize(Roles = "Admin")]
+        [Authorize]
         [HttpDelete]
         [Route("api/words/delete")]
         public async Task<IActionResult> Delete(int[] id)
         {
-            var words = await db.Words.FindAsync(id);
+            var words = await db.Words
+                .Where(e => id.Contains(e.WordId))
+                .ToListAsync();
 
             if (words == null)
             {
                 return NotFound();
             }
 
-            db.Words.Remove(words);
+            var wordRelations = await db.WordRelations
+                .Where(e => id.Contains(e.WordFromId) || id.Contains(e.WordToId))
+                .ToListAsync();
+
+            // first delete the relations
+            db.WordRelations.RemoveRange(wordRelations);
+
+            // then delete the actual words
+            db.Words.RemoveRange(words);
             await db.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(words);
         }
 
         // GET: api/synonyms/ord
