@@ -122,6 +122,7 @@
                     search: true,
                     pageSize: 50,
                     toolbar: '#remove',
+                    //clickToSelect: true,
                     columns: [
                     {
                         field: 'select',
@@ -131,12 +132,13 @@
                     {
                         field: 'wordId',
                         title: 'Id',
+                        formatter: linkFormatter
                     },
                     {
                         field: 'value',
                         title: 'Synonym',
                         sortable: true,
-                        formatter: linkFormatter
+                        editable: true
                     }, {
                         field: 'numberOfWords',
                         title: 'Ant. Ord',
@@ -157,6 +159,34 @@
                     }
                     ]
                 });  
+
+                $.fn.editable.defaults.mode = 'inline';
+                $.fn.editableform.buttons  = '<button type="submit" class="btn btn-primary btn-sm editable-submit"><i class="fas fa-check"></i></button>' +
+                '<button type="button" class="btn btn-default btn-sm editable-cancel"><i class="fas fa-times"></i></button>';
+
+                $('#word-list').on('editable-save.bs.table', function(e, field, row, oldValue, $el){
+                    //console.log(e);
+                    //console.log(field);
+                    console.log(row);
+                    //console.log(oldValue);
+                    //console.log($el);
+
+                    var url = baseWordUrl + row.wordId;
+                    $.ajax({
+                        url: url,
+                        data: JSON.stringify(row),
+                        type: "PUT",
+                        dataType: "json", // this is for parsing received data
+                        contentType: "application/json; charset=UTF-8", // this is for sending data
+                        success: function(data){
+                            console.log(data);
+                        },
+                        error: function(error){
+                            console.log(error);
+                        }
+                    });
+
+                });
             }   
 
             // init the word list bootstrap table

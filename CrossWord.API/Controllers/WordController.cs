@@ -155,6 +155,23 @@ namespace CrossWord.API.Controllers
             return Ok(words);
         }
 
+        // PUT: /api/words/5
+        [Authorize]
+        [HttpPut]
+        [Route("api/words/{id}")]
+        public async Task<IActionResult> PutWord(long id, Word item)
+        {
+            if (id != item.WordId)
+            {
+                return BadRequest();
+            }
+
+            db.Entry(item).State = EntityState.Modified;
+            await db.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         // GET: api/synonyms/ord
         [Authorize]
         [HttpGet]

@@ -1,33 +1,35 @@
 ﻿body {
-    padding-top: 50px;
-    padding-bottom: 20px;
+  padding-top: 50px;
+  padding-bottom: 20px;
 }
 
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {
-    padding-left: 15px;
-    padding-right: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 767px) {
-    /* Hide captions */
-    .carousel-caption {
-        display: none;
-    }
+  /* Hide captions */
+  .carousel-caption {
+    display: none;
+  }
 }
 
 /*@media only screen and (min-width: 320px) {*/
-    input.letter-input {
-        height: 32px !important;
-        width: 32px !important;
-        margin: 2px 2px 2px 2px;
-        text-transform: uppercase!important;
-        padding: 4px;
-        border: 1px solid #ccc;
-        text-align: center;
-        font-size: 16px !important;
-    }
+input.letter-input {
+  height: 32px !important;
+  width: 32px !important;
+  margin: 2px 2px 2px 2px;
+  text-transform: uppercase !important;
+  padding: 4px;
+  border: 1px solid #ccc;
+  text-align: center;
+  font-size: 16px !important;
+}
 /*}*/
+
+
 

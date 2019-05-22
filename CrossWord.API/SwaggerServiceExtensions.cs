@@ -152,7 +152,10 @@ namespace CrossWord.API
                     });
 
                   // remove Conflicting schemaIds: Identical schemaIds detected for type when using both ControllerBase and ODataController
-                  // options.CustomSchemaIds(x => x.Assembly.IsDynamic ? "Dynamic." + x.FullName : x.FullName);
+
+                  // remove Conflicting schemaIds: Identical schemaIds detected for types CrossWord.Scraper.MySQLDbService.Models.Word and CrossWord.Scraper.MySQLDbService.Models.Word.
+                  // this happens because we include a project which also includes the same classes as this project, i.e. CrossWord\CrossWord.csproj
+                  options.CustomSchemaIds(x => x.Assembly.IsDynamic ? "Dynamic." + x.FullName : x.FullName);
                   // options.CustomSchemaIds(x => x.FullName);
               });
 
