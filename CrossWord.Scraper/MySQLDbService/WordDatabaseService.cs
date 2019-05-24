@@ -158,23 +158,11 @@ namespace CrossWord.Scraper.MySQLDbService
             // all relations
             var allWordRelations = allWordRelationsFrom.Concat(allWordRelationsTo).Distinct();
 
-            // find out which relations already exist in the database
-            // check both directions in the Many-to-Many Relationship 
-            var allRelatedWordsIds = allRelatedWords.Select(a => a.WordId).ToList();
-            var existingWordRelations = db.WordRelations.Where(a =>
-                (a.WordFromId == word.WordId && allRelatedWordsIds.Contains(a.WordToId))
-                ||
-                (a.WordToId == word.WordId && allRelatedWordsIds.Contains(a.WordFromId))
-            ).ToList();
-
             // which relations need to be added?
-            // check both directions in the Many-to-Many Relationship             
-            var newWordRelations = allWordRelations.Where(wr => !existingWordRelations.Any
-            (a =>
-                (a.WordFromId == wr.WordFromId && a.WordToId == wr.WordToId)
-            // ||
-            // (a.WordFromId == wr.WordToId && a.WordToId == wr.WordFromId)
-            )).ToList();
+            var newWordRelations = allWordRelations.Where(x => !db.WordRelations.Any(z => z.WordFromId == x.WordFromId && z.WordToId == x.WordToId)).ToList();
+
+            // find out which relations already exist in the database
+            var existingWordRelations = allWordRelations.Except(newWordRelations);
 
             if (newWordRelations.Count > 0)
             {
