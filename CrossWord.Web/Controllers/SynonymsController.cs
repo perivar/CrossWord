@@ -96,6 +96,34 @@ namespace CrossWord.Web.Controllers
             return View();
         }
 
+        [Route("synonymsbyid/{id}")]
+        public IActionResult Index(int id)
+        {
+            // var apiBaseUrl = _appConfig["ApiBaseUrl"] ?? "http://order.wazalo.com:8000/api/";
+            var apiBaseUrl = _appConfig["ApiBaseUrl"] ?? "http://localhost:8000/api/";
+            var apiUserEmail = _appConfig["ApiUserEmail"] ?? "server@wazalo.com";
+            var apiPassword = _appConfig["ApiPassword"] ?? "123ABCabc!";
+
+            ViewData["ApiBaseUrl"] = apiBaseUrl;
+            ViewData["ApiUserEmail"] = apiUserEmail;
+            ViewData["ApiPassword"] = apiPassword;
+            ViewData["WordId"] = id;
+
+            string token = null;
+            if (HttpContext.Session.GetString("token") == null)
+            {
+                token = GetJwtToken(apiBaseUrl, apiUserEmail, apiPassword);
+                if (token != null) HttpContext.Session.SetString("token", token);
+            }
+            else
+            {
+                token = HttpContext.Session.GetString("token");
+            }
+            ViewData["Token"] = token;
+
+            return View();
+        }
+
         private string GetJwtToken(string apiBaseUrl, string apiUserEmail, string apiPassword)
         {
             var authUrl = $"{apiBaseUrl}Account/Login";

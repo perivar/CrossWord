@@ -83,9 +83,11 @@
             
             var baseUrl = "@ViewData["ApiBaseUrl"]";
             var baseSynonymUrl = baseUrl + "synonyms/";
+            var baseSynonymByIdUrl = baseUrl + "synonymsbyid/";
             var baseWordUrl = baseUrl + "words/";
             var authUrl = "@ViewData["ApiBaseUrl"]" + "Account/Login";
             var word = "@ViewData["Word"]";
+            var wordId = "@ViewData["WordId"]";
             var token = "@ViewData["Token"]";
             var letterCount = 0;
 
@@ -98,22 +100,6 @@
                     xhr.setRequestHeader('Authorization', 'Bearer ' + token);                      
                 }
             });  
-
-            // load the latest words
-            /*
-            $.ajax({
-                url: baseWordUrl,
-                type: "GET",
-                dataType: "json",
-                success: function(data){
-                    displaySearchResults(data);
-                },
-                error: function(error){
-                    //console.log(error);
-                    displaySearchResults([]);
-                }
-                });
-            */
 
             // init the word list bootstrap table
             function initWordTable() {
@@ -132,7 +118,7 @@
                     {
                         field: 'wordId',
                         title: 'Id',
-                        formatter: linkFormatter
+                        formatter: linkFormatterById
                     },
                     {
                         field: 'value',
@@ -159,34 +145,6 @@
                     }
                     ]
                 });  
-
-                $.fn.editable.defaults.mode = 'inline';
-                $.fn.editableform.buttons  = '<button type="submit" class="btn btn-primary btn-sm editable-submit"><i class="fas fa-check"></i></button>' +
-                '<button type="button" class="btn btn-default btn-sm editable-cancel"><i class="fas fa-times"></i></button>';
-
-                $('#word-list').on('editable-save.bs.table', function(e, field, row, oldValue, $el){
-                    //console.log(e);
-                    //console.log(field);
-                    console.log(row);
-                    //console.log(oldValue);
-                    //console.log($el);
-
-                    var url = baseWordUrl + row.wordId;
-                    $.ajax({
-                        url: url,
-                        data: JSON.stringify(row),
-                        type: "PUT",
-                        dataType: "json", // this is for parsing received data
-                        contentType: "application/json; charset=UTF-8", // this is for sending data
-                        success: function(data){
-                            console.log(data);
-                        },
-                        error: function(error){
-                            console.log(error);
-                        }
-                    });
-
-                });
             }   
 
             // init the word list bootstrap table
@@ -226,13 +184,14 @@
                     {
                         field: 'wordId',
                         title: 'Id',
-                        sortable: true,
+                        sortable: true,                        
+                        formatter: linkFormatterById
                     },
                     {
                         field: 'value',
                         title: 'Synonym',
                         sortable: true,
-                        formatter: linkFormatter
+                        editable: true
                     }, {
                         field: 'numberOfWords',
                         title: 'Ant. Ord',
@@ -323,6 +282,10 @@
                 return '<a href="/synonyms/' + value + '">' + value + '</a>';
             }
 
+            function linkFormatterById(value, row, index) {
+                return '<a href="/synonymsbyid/' + value + '">' + value + '</a>';
+            }
+
             function dateFormat(dateObject) {
                 var d = new Date(dateObject);
                 var day = d.getDate();
@@ -362,15 +325,6 @@
                     }
                 }
 
-                /*
-                $("#word-list").html('');            
-                $.each( data, function( index, element ) {
-                    //console.log(index + ' ' + element.wordFrom.value + ' - ' + element.wordTo.value);                    
-                    var date = dateFormat(element.createdDate);
-                    $("#word-list").append('<tr class="table-row"><th scope="row"><a href="/synonyms/' + element.value + '">' + element.value + '</a></th><td>' + element.numberOfWords + '</td><td>' + element.numberOfLetters + '</td><td>' + element.comment + '</td><td>' + date + '</td></tr>');
-                });
-                */
-
                 $('#status-list').bootstrapTable("destroy");
                 $('#word-list').bootstrapTable("destroy");
                 initWordTable();
@@ -380,16 +334,6 @@
             function displayStatesResults(data) {
                 //console.log(data);
                 $("#search-header").html('Viser <b>status</b>');
-
-                /*
-                $("#word-list").html('');            
-                $.each( data, function( index, element ) {
-                    //console.log(index + ' ' + element.wordFrom.value + ' - ' + element.wordTo.value);                    
-                    var date = dateFormat(element.createdDate);
-                    $("#word-list").append('<tr class="table-row"><th scope="row"><a href="/synonyms/' + element.word + '">' + element.word + '</a></th><td>' + element.numberOfLetters + '</td><td>' + element.comment + '</td><td>' + element.source + '</td><td>' + date + '</td></tr>');
-                });
-                */
-
                 $('#status-list').bootstrapTable("destroy");
                 $('#word-list').bootstrapTable("destroy");
                 initStatusTable();
@@ -461,12 +405,11 @@
                 
                 var url = baseSynonymUrl + wordValue;
 
-                //if (!isEmptyPattern) {
                 if (letterLength != 0) {                    
                     url += "/" + pattern;
                     console.log('using search url: ' + url);
                 } else {
-                    console.log('pattern is empty!');
+                    //console.log('pattern is empty!');
                 }
 
                 $.ajax({
@@ -608,6 +551,40 @@
                 return false; // avoid to execute the actual submit of the form.
             });
 
+            // setup editable
+            $.fn.editable.defaults.mode = 'inline';
+            $.fn.editableform.buttons  = '<button type="submit" class="btn btn-primary btn-sm editable-submit"><i class="fas fa-check"></i></button>' +
+            '<button type="button" class="btn btn-default btn-sm editable-cancel"><i class="fas fa-times"></i></button>';
+
+            $('#word-list').on('editable-save.bs.table', function(e, field, row, oldValue, $el){
+                //console.log(e);
+                //console.log(field);
+                //console.log(row);
+                //console.log(oldValue);
+                //console.log($el);
+
+                var url = baseWordUrl + row.wordId;
+                $.ajax({
+                    url: url,
+                    data: JSON.stringify(row),
+                    type: "PUT",
+                    dataType: "json", // this is for parsing received data
+                    contentType: "application/json; charset=UTF-8", // this is for sending data
+                    success: function(data){
+                        console.log(data);
+                    },
+                    error: function(error){
+                        console.log(error);                    
+                        row.value = oldValue;
+                        $('#word-list').bootstrapTable('updateCellById', {
+                            id: row.wordId,
+                            field: field,
+                            value: oldValue
+                        });                                                        
+                    }
+                });
+            });
+
 
             // if we have a search word, perform search
             if (!isNullOrWhitespace(word)) {
@@ -615,6 +592,23 @@
                 $("#word").val(word);            
 
                 var url = baseSynonymUrl + word;
+                
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    dataType: "json",
+                    success: function(data){
+                        displaySearchResults(data);
+                    },
+                    error: function(error){
+                        //console.log(error);
+                        displaySearchResults([]);
+                    }
+                });
+                
+            } else if (!isNullOrWhitespace(wordId)) {
+                
+                var url = baseSynonymByIdUrl + wordId;
                 
                 $.ajax({
                     url: url,

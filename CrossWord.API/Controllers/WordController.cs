@@ -166,10 +166,67 @@ namespace CrossWord.API.Controllers
                 return BadRequest();
             }
 
-            db.Entry(item).State = EntityState.Modified;
-            await db.SaveChangesAsync();
+            var alreadyExist = db.Words
+                                    .AsNoTracking()
+                                    .FirstOrDefault(a => a.Value == item.Value);
 
-            return NoContent();
+            if (alreadyExist != null)
+            {
+                // already have this entry, cannot create an duplicate
+
+                // find all the relations to this word.
+                var wordRelations = await db.WordRelations
+                    .AsNoTracking()
+                    .Where(e => id == e.WordFromId || id == e.WordToId)
+                    .ToListAsync();
+
+                if (wordRelations.Any())
+                {
+                    var allRelatedWordsIds = wordRelations
+                                                .SelectMany(w => new[] { w.WordFromId, w.WordToId })
+                                                .Distinct()
+                                                .Where(w => w != id && w != alreadyExist.WordId)
+                                                .OrderBy(w => w)
+                                                .ToList()
+                                                ;
+
+                    // create new relations to the original word
+                    var allWordRelationsFrom = allRelatedWordsIds.Select(wordFromId =>
+                        new WordRelation { WordFromId = wordFromId, WordToId = alreadyExist.WordId }
+                    );
+
+                    // add relation from each hint to word as well
+                    var allWordRelationsTo = allRelatedWordsIds.Select(wordToId =>
+                        new WordRelation { WordFromId = alreadyExist.WordId, WordToId = wordToId }
+                    );
+
+                    // all relations
+                    var allWordRelations = allWordRelationsFrom.Concat(allWordRelationsTo).Distinct();
+
+                    // which relations need to be added?
+                    var newWordRelations = allWordRelations.Where(x => !db.WordRelations.Any(z => z.WordFromId == x.WordFromId && z.WordToId == x.WordToId)).ToList();
+
+                    if (newWordRelations.Count > 0)
+                    {
+                        db.WordRelations.AddRange(newWordRelations);
+                    }
+
+                    // then delete the original relations
+                    db.WordRelations.RemoveRange(wordRelations);
+                }
+
+                // then delete the actual word
+                db.Words.Remove(item);
+                await db.SaveChangesAsync();
+
+                return Ok(alreadyExist);
+            }
+            else
+            {
+                db.Entry(item).State = EntityState.Modified;
+                await db.SaveChangesAsync();
+                return Ok(item);
+            }
         }
 
         // GET: api/synonyms/ord
@@ -202,6 +259,38 @@ namespace CrossWord.API.Controllers
             if (!wordRelations.Any())
             {
                 return NotFound($"No synonyms for '{word}' found");
+            }
+
+            return Ok(wordRelations);
+        }
+
+        // GET: api/synonymsbyid/id
+        [Authorize]
+        [HttpGet]
+        [Route("api/synonymsbyid/{id}")]
+        public IActionResult GetWordSynonyms(int id)
+        {
+            var word = db.Words.Find(id);
+
+            if (word == null)
+            {
+                return NotFound();
+            }
+
+            var wordRelations = db.WordRelations
+                                            .AsNoTracking()
+                                            .Where(w => ((w.WordFromId == id) || (w.WordToId == id)))
+                                            .SelectMany(w => new[] { w.WordFrom, w.WordTo })
+                                            .GroupBy(p => p.Value) // to make it distinct
+                                            .Select(g => g.First()) // to make it distinct
+                                            .Where(w => w.Value != word.Value)
+                                            .OrderBy(w => w.NumberOfLetters)
+                                            .ThenBy(w => w.Value)
+                                            ;
+
+            if (!wordRelations.Any())
+            {
+                return NotFound($"No synonyms for '{word.Value}' found");
             }
 
             return Ok(wordRelations);
