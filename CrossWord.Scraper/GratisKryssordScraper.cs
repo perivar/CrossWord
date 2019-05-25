@@ -85,7 +85,7 @@ namespace CrossWord.Scraper
                 using (var driver = ChromeDriverUtils.GetChromeDriver(true))
                 {
                     // set general timeout to long
-                    driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(60);
+                    driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(180);
 
                     // read all words with the letter count
                     // ReadWordsByAlphabeticOverview(letterCount, endLetterCount, driver, db, adminUser, doContinueWithLastWord);
