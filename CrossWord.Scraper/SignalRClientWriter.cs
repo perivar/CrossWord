@@ -15,6 +15,7 @@ namespace CrossWord.Scraper
         private bool HubConnectionStarted { get; set; }
         private bool FlushAfterEveryWrite { get; set; }
         private string Identifier { get; set; }
+        public string ExtraStatusInformation { get; set; }
 
         public SignalRClientWriter(string url) : this(url, null)
         {
@@ -43,6 +44,7 @@ namespace CrossWord.Scraper
                 var priority = Thread.CurrentThread.Priority;
 
                 HubConnection.InvokeAsync("Broadcast", Identifier, $"Thread: {id}, state: {state}, priority: {priority}");
+                if (ExtraStatusInformation != null) HubConnection.InvokeAsync("Broadcast", Identifier, $"Extra Information: {ExtraStatusInformation}");
             });
 
             // support self-signed SSL certificates - not working therefore disabled

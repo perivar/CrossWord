@@ -105,22 +105,23 @@ namespace CrossWord.Scraper
                 permutations = permutations.SelectMany(x => alphabet, (x, y) => x + y);
             }
 
-            permutations.Append("&");
-            permutations.Append("(");
-            permutations.Append(")");
-            permutations.Append("+");
-            permutations.Append(",");
-            permutations.Append("-");
-            permutations.Append("0");
-            permutations.Append("1");
-            permutations.Append("2");
-            permutations.Append("3");
-            permutations.Append("4");
-            permutations.Append("5");
-            permutations.Append("6");
-            permutations.Append("7");
-            permutations.Append("8");
-            permutations.Append("9");
+            var wordPermutationList = permutations.ToList();
+            wordPermutationList.Add("&");
+            wordPermutationList.Add("(");
+            wordPermutationList.Add(")");
+            wordPermutationList.Add("+");
+            wordPermutationList.Add(",");
+            wordPermutationList.Add("-");
+            wordPermutationList.Add("0");
+            wordPermutationList.Add("1");
+            wordPermutationList.Add("2");
+            wordPermutationList.Add("3");
+            wordPermutationList.Add("4");
+            wordPermutationList.Add("5");
+            wordPermutationList.Add("6");
+            wordPermutationList.Add("7");
+            wordPermutationList.Add("8");
+            wordPermutationList.Add("9");
 
             // use the letter count a little bit different when it comes to the alphabetic index:
             // letterCount is the index to start with divided out on the total alphabetic index
@@ -130,7 +131,6 @@ namespace CrossWord.Scraper
             // 2 is 250
             // 3 is 500
             // 4 is 750
-            var wordPermutationList = permutations.ToList();
             int length = wordPermutationList.Count;
             int startIndex = (int)(((double)length / (double)endLetterCount) * (letterCount - 1));
             int endIndex = (int)((((double)length / (double)endLetterCount) * letterCount) - 1);
@@ -140,8 +140,13 @@ namespace CrossWord.Scraper
             Log.Information("Processing alphabetic permutation search using {0}-{1} = {2}-{3} ({4} - {5}) ", letterCount, endLetterCount, startIndex, endIndex, startString, endString);
             writer.WriteLine("Processing alphabetic permutation search using {0}-{1} = {2}-{3} ({4} - {5}) ", letterCount, endLetterCount, startIndex, endIndex, startString, endString);
 
-            int curIndex = 0;
+            // add some extra status information to the writer
+            if (this.writer is SignalRClientWriter)
+            {
+                (this.writer as SignalRClientWriter).ExtraStatusInformation = string.Format("Processing alphabetic permutation search using {0}-{1} = {2}-{3} ({4} - {5}) ", letterCount, endLetterCount, startIndex, endIndex, startString, endString);
+            }
 
+            int curIndex = 0;
             foreach (var wordPermutation in wordPermutationList)
             {
                 string wordPattern = wordPermutation.Length == 1 && wordPermutation[0] < 45 ? string.Format("%{0:X}", (int)wordPermutation[0]) : wordPermutation;
@@ -150,12 +155,14 @@ namespace CrossWord.Scraper
                 if (curIndex < startIndex + 1)
                 {
                     Log.Information("Skipping pattern '{0}' until we reach index {1}: '{2}'. [{3}/{4}]", wordPattern, startIndex, startString, curIndex, length);
+                    writer.WriteLine("Skipping pattern '{0}' until we reach index {1}: '{2}'. [{3}/{4}]", wordPattern, startIndex, startString, curIndex, length);
                     continue;
                 }
                 else if (length != curIndex && curIndex == endIndex + 1) // stop at last index except very last character
                 {
                     // reached the end - quit
                     Log.Information("Quitting because we have reached the last index to process: {0} at index {1}.", wordPattern, curIndex);
+                    writer.WriteLine("Quitting because we have reached the last index to process: {0} at index {1}.", wordPattern, curIndex);
                     break;
                 }
 
@@ -166,6 +173,18 @@ namespace CrossWord.Scraper
                 }
 
                 var href = $"https://www.gratiskryssord.no/kryssordbok/?kart={wordPattern}#oppslag";
+#if DEBUG
+                if (wordPermutation == "xå")
+                {
+                    wordPattern = "kå";
+                    href = $"https://www.gratiskryssord.no/kryssordbok/?kart={wordPattern}#oppslag";
+                    lastWordString = WordDatabaseService.GetLastWordFromComment(db, source, wordPattern);
+                }
+                else if (wordPermutation == "&")
+                {
+                    // debugging - break here
+                }
+#endif
                 ReadWordsByWordUrl(wordPattern, href, driver, db, adminUser, lastWordString);
             }
         }
@@ -276,7 +295,7 @@ namespace CrossWord.Scraper
                 if (doSkip && lastWord != null && lastWord != wordText)
                 {
                     Log.Information("Skipping alphabetic word '{0}' until we find '{1}'", wordText, lastWord);
-                    // writer.WriteLine("Skipping alphabetic word '{0}' until we find '{1}'", wordText, lastWord);
+                    writer.WriteLine("Skipping alphabetic word '{0}' until we find '{1}'", wordText, lastWord);
                     continue;
                 }
                 doSkip = false; // make sure we don't skip on the next word after we have skipped
