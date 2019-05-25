@@ -15,6 +15,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using System.Globalization;
+using CrossWord.Scraper;
 
 namespace CrossWord.API.Controllers
 {
@@ -227,6 +228,32 @@ namespace CrossWord.API.Controllers
                 await db.SaveChangesAsync();
                 return Ok(item);
             }
+        }
+
+        // POST: api/words
+        [Authorize]
+        [HttpPost]
+        [Route("api/words")]
+        public async Task<ActionResult<Word>> PostWord(Word item)
+        {
+            // clean the item, we don't support related words in this way
+            item.RelatedFrom = null;
+            item.RelatedTo = null;
+
+            var wordText = item.Value;
+            item.NumberOfLetters = ScraperUtils.CountNumberOfLetters(wordText);
+            item.NumberOfWords = ScraperUtils.CountNumberOfWords(wordText);
+            item.Category = null;
+            item.CreatedDate = (item.CreatedDate == null ? DateTime.Now : item.CreatedDate);
+
+            // use the following statement so that User won't be inserted
+            item.User = new User() { UserId = 1 };
+            db.Entry(item.User).State = EntityState.Unchanged;
+
+            db.Words.Add(item);
+            await db.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetWord), new { id = item.WordId }, item);
         }
 
         // GET: api/synonyms/ord

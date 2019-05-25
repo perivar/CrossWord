@@ -147,7 +147,7 @@
                 });  
             }   
 
-            // init the word list bootstrap table
+            // init the word bootstrap table
             function initWordODataTable() {
                 var odataBaseUrl = /(.+)\/api\//.exec(baseUrl)[1];
                 $('#word-list').bootstrapTable({
@@ -213,6 +213,178 @@
                     ]
                 });  
             }   
+
+            // init the word synonym bootstrap table
+            function initWordSynonymODataTable(wordValue) {
+                var odataBaseUrl = /(.+)\/api\//.exec(baseUrl)[1];
+                var url = odataBaseUrl + "/odata/Words/Synonyms(Word='" + wordValue + "')";
+                //console.log(url);
+                $('#word-list').bootstrapTable({
+                    url: url,
+                    pagination: true,
+                    search: true,
+                    pageSize: 20,
+                    toolbar: '#remove',
+                    sidePagination: 'server',
+                    silentSort: false,
+                    sortOrder: 'asc',
+                    searchOnEnterKey: true,
+                    queryParams: function (params) {
+                        return {
+                            $filter: (params.search === "" ? undefined : "contains(Value,'" + params.search + "')"),
+                            $orderby: (params.sort === undefined ? 'numberOfLetters' : params.sort) + ' '  + (params.order === undefined ? 'desc' : params.order),
+                            $skip: params.offset,
+                            $top: params.limit,
+                            $count: true
+                        };
+                    },
+                    onAll: function() {
+                        var count = $('#word-list').bootstrapTable('getOptions').totalRows;
+                        if (letterCount === 0) {
+                            if (!isNullOrWhitespace(wordValue)) {
+                                $("#search-header").html('Fant <b>' + count + '</b> synonym til ' + wordValue);                
+                            } else {
+                                $("#search-header").html('Viser <b>' + count + '</b> siste ord.');
+                            }
+                        } else {
+                            var patternString = getPatternString($('#letter-buttons :input'));
+                            if (!isEmptyPattern(patternString)) {
+                                $("#search-header").html('Fant <b>' + count + '</b> synonymer til ' + wordValue + ' med bokstavene <b>' + patternString + '</b>');                        
+                            } else {
+                                $("#search-header").html('Fant <b>' + count + '</b> synonymer til ' + wordValue + ' med <b>' + letterCount + '</b> bokstaver');                        
+                            }
+                        }
+                    },
+                    responseHandler: function (res) {
+                        return {
+                            total: res["@@odata.count"],
+                            rows: res.value
+                        };
+                        },            
+                    columns: [
+                    {
+                        field: 'select',
+                        title: 'Velg',
+                        checkbox: true
+                    },
+                    {
+                        field: 'wordId',
+                        title: 'Id',
+                        sortable: true,                        
+                        formatter: linkFormatterById
+                    },
+                    {
+                        field: 'value',
+                        title: 'Synonym',
+                        sortable: true,
+                        editable: true
+                    }, {
+                        field: 'numberOfWords',
+                        title: 'Ant. Ord',
+                        sortable: true
+                    }, {
+                        field: 'numberOfLetters',
+                        title: 'Lengde',
+                        sortable: true
+                    }, {
+                        field: 'comment',
+                        title: 'Bruker',
+                        sortable: true
+                    }, {
+                        field: 'createdDate',
+                        title: 'Dato',
+                        sortable: true,
+                        formatter: dateFormat
+                    }
+                    ]
+                });  
+            }               
+
+            // init the word synonym pattern bootstrap table
+            function initWordSynonymPatternODataTable(wordValue, patternValue) {
+                var odataBaseUrl = /(.+)\/api\//.exec(baseUrl)[1];
+                var url = odataBaseUrl + "/odata/Words/Synonyms(Word='" + wordValue + "', Pattern='" + patternValue + "')";
+                //console.log(url);
+                $('#word-list').bootstrapTable({
+                    url: url,
+                    pagination: true,
+                    search: true,
+                    pageSize: 20,
+                    toolbar: '#remove',
+                    sidePagination: 'server',
+                    silentSort: false,
+                    sortOrder: 'asc',
+                    searchOnEnterKey: true,
+                    queryParams: function (params) {
+                        return {
+                            $filter: (params.search === "" ? undefined : "contains(Value,'" + params.search + "')"),
+                            $orderby: (params.sort === undefined ? 'numberOfLetters' : params.sort) + ' '  + (params.order === undefined ? 'desc' : params.order),
+                            $skip: params.offset,
+                            $top: params.limit,
+                            $count: true
+                        };
+                    },
+                    onAll: function() {
+                        var count = $('#word-list').bootstrapTable('getOptions').totalRows;
+                        if (letterCount === 0) {
+                            if (!isNullOrWhitespace(wordValue)) {
+                                $("#search-header").html('Fant <b>' + count + '</b> synonym til ' + wordValue);                
+                            } else {
+                                $("#search-header").html('Viser <b>' + count + '</b> siste ord.');
+                            }
+                        } else {
+                            var patternString = getPatternString($('#letter-buttons :input'));
+                            if (!isEmptyPattern(patternString)) {
+                                $("#search-header").html('Fant <b>' + count + '</b> synonymer til ' + wordValue + ' med bokstavene <b>' + patternString + '</b>');                        
+                            } else {
+                                $("#search-header").html('Fant <b>' + count + '</b> synonymer til ' + wordValue + ' med <b>' + letterCount + '</b> bokstaver');                        
+                            }
+                        }
+                    },
+                    responseHandler: function (res) {
+                        return {
+                            total: res["@@odata.count"],
+                            rows: res.value
+                        };
+                        },            
+                    columns: [
+                    {
+                        field: 'select',
+                        title: 'Velg',
+                        checkbox: true
+                    },
+                    {
+                        field: 'wordId',
+                        title: 'Id',
+                        sortable: true,                        
+                        formatter: linkFormatterById
+                    },
+                    {
+                        field: 'value',
+                        title: 'Synonym',
+                        sortable: true,
+                        editable: true
+                    }, {
+                        field: 'numberOfWords',
+                        title: 'Ant. Ord',
+                        sortable: true
+                    }, {
+                        field: 'numberOfLetters',
+                        title: 'Lengde',
+                        sortable: true
+                    }, {
+                        field: 'comment',
+                        title: 'Bruker',
+                        sortable: true
+                    }, {
+                        field: 'createdDate',
+                        title: 'Dato',
+                        sortable: true,
+                        formatter: dateFormat
+                    }
+                    ]
+                });  
+            }     
 
             // init the status list bootstrap table
             function initStatusTable() {
@@ -311,7 +483,7 @@
                 var wordValue = $("#word").val();
 
                 if (letterCount === 0) {
-                    if (!isNullOrWhitespace(word)) {
+                    if (!isNullOrWhitespace(wordValue)) {
                         $("#search-header").html('Fant <b>' + data.length + '</b> synonym til ' + wordValue);                
                     } else {
                         $("#search-header").html('Viser <b>' + data.length + '</b> siste ord.');
@@ -364,13 +536,13 @@
                     cache: false,
                     dataType: "json", // this is for parsing received data
                     contentType: "application/json; charset=UTF-8", // this is for sending data
-                    success: function(data){
+                    success: function(data) {
                         $table.bootstrapTable('remove', {
                             field: 'wordId',
                             values: ids
                         });
                     },
-                    error: function(error){
+                    error: function(error) {
                         console.log(error);
                     }
                 });
@@ -402,7 +574,17 @@
                         isEmptyPattern = false;
                     }
                 });          
-                
+
+                $('#status-list').bootstrapTable("destroy");
+                $('#word-list').bootstrapTable("destroy");
+
+                if (letterLength != 0) {                    
+                    initWordSynonymPatternODataTable(wordValue, pattern);
+                } else {
+                    initWordSynonymODataTable(wordValue);
+                }
+
+                /*                                
                 var url = baseSynonymUrl + wordValue;
 
                 if (letterLength != 0) {                    
@@ -416,14 +598,15 @@
                     url: url,
                     type: "GET",
                     dataType: "json",
-                    success: function(data){
+                    success: function(data) {
                         displaySearchResults(data);
                     },
-                    error: function(error){
+                    error: function(error) {
                         //console.log(error);
                         displaySearchResults([]);
                     }
                 });
+                */
 
                 return false; // avoid to execute the actual submit of the form.
             });
@@ -539,10 +722,10 @@
                     url: url,
                     type: "GET",
                     dataType: "json",
-                    success: function(data){
+                    success: function(data) {
                         displayStatesResults(data);
                     },
-                    error: function(error){
+                    error: function(error) {
                         //console.log(error);
                         displayStatesResults(data);
                     }
@@ -556,7 +739,7 @@
             $.fn.editableform.buttons  = '<button type="submit" class="btn btn-primary btn-sm editable-submit"><i class="fas fa-check"></i></button>' +
             '<button type="button" class="btn btn-default btn-sm editable-cancel"><i class="fas fa-times"></i></button>';
 
-            $('#word-list').on('editable-save.bs.table', function(e, field, row, oldValue, $el){
+            $('#word-list').on('editable-save.bs.table', function(e, field, row, oldValue, $el) {
                 //console.log(e);
                 //console.log(field);
                 //console.log(row);
@@ -570,10 +753,10 @@
                     type: "PUT",
                     dataType: "json", // this is for parsing received data
                     contentType: "application/json; charset=UTF-8", // this is for sending data
-                    success: function(data){
+                    success: function(data) {
                         console.log(data);
                     },
-                    error: function(error){
+                    error: function(error) {
                         console.log(error);                    
                         row.value = oldValue;
                         $('#word-list').bootstrapTable('updateCellById', {
@@ -597,10 +780,10 @@
                     url: url,
                     type: "GET",
                     dataType: "json",
-                    success: function(data){
+                    success: function(data) {
                         displaySearchResults(data);
                     },
-                    error: function(error){
+                    error: function(error) {
                         //console.log(error);
                         displaySearchResults([]);
                     }
@@ -608,20 +791,39 @@
                 
             } else if (!isNullOrWhitespace(wordId)) {
                 
+                http://localhost:8000/odata/Words(123)?%24select=Value
+                var odataBaseUrl = /(.+)\/api\//.exec(baseUrl)[1];     
+                var url = odataBaseUrl + '/odata/Words(' + wordId + ')?$select=Value';      
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    dataType: "json",
+                    success: function(data) {
+                        var word = data.value;
+                        $("#word").val(word);
+                        initWordSynonymODataTable(word);
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+
+                /*
                 var url = baseSynonymByIdUrl + wordId;
                 
                 $.ajax({
                     url: url,
                     type: "GET",
                     dataType: "json",
-                    success: function(data){
+                    success: function(data) {
                         displaySearchResults(data);
                     },
-                    error: function(error){
+                    error: function(error) {
                         //console.log(error);
                         displaySearchResults([]);
                     }
                 });
+                */
                 
             } else {
                 initWordODataTable();

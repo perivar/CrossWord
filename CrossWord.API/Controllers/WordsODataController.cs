@@ -76,26 +76,29 @@ namespace CrossWord.API.Controllers
         {
             word = word.ToUpper();
 
-            var wordResult = db.Words.Where(w => w.Value == word);
-            if (!wordResult.Any())
+            var wordElement = db.Words.AsNoTracking().FirstOrDefault(w => w.Value == word);
+            if (wordElement == null)
             {
                 return Enumerable.Empty<Word>().AsQueryable();
             }
 
-            var wordId = wordResult.First().WordId;
+            var wordId = wordElement.WordId;
 
-            var wordRelations = db.WordRelations
-                                            .AsNoTracking()
-                                            .Where(w => (w.WordFromId == wordId) || (w.WordToId == wordId))
-                                            .SelectMany(w => new[] { w.WordFrom, w.WordTo })
-                                            .GroupBy(p => p.Value) // to make it distinct
-                                            .Select(g => g.First()) // to make it distinct
-                                            .Where(w => w.Value != word)
-                                            ;
+            // It turned out that two separate queries with a union was much faster than trying to do this in SQL
+            var wordRelations1 = db.WordRelations
+                                             .AsNoTracking()
+                                             .Where(w => w.WordFromId == wordId)
+                                             .Select(a => a.WordTo);
+
+            var wordRelations2 = db.WordRelations
+                                             .AsNoTracking()
+                                             .Where(w => w.WordToId == wordId)
+                                             .Select(a => a.WordFrom);
+
+            var wordRelations = wordRelations1.Union(wordRelations2);
 
             return wordRelations.AsQueryable();
         }
-
 
         [HttpGet]
         [EnableQuery]
@@ -105,23 +108,38 @@ namespace CrossWord.API.Controllers
             word = word.ToUpper();
             pattern = pattern.ToUpper();
 
-            var wordResult = db.Words.Where(w => w.Value == word);
-            if (!wordResult.Any())
+            var wordElement = db.Words.AsNoTracking().FirstOrDefault(w => w.Value == word);
+            if (wordElement == null)
             {
                 return Enumerable.Empty<Word>().AsQueryable();
             }
 
-            var wordId = wordResult.First().WordId;
+            var wordId = wordElement.WordId;
 
-            var wordRelations = db.WordRelations
+            // It turned out that two separate queries with a union was much faster than trying to do this in SQL
+            var wordRelations1 = db.WordRelations
                                             .AsNoTracking()
-                                            .Where(w => ((w.WordFromId == wordId) || (w.WordToId == wordId))
-                                            && (EF.Functions.Like(w.WordFrom.Value, pattern) || EF.Functions.Like(w.WordTo.Value, pattern)))
-                                            .SelectMany(w => new[] { w.WordFrom, w.WordTo })
-                                            .GroupBy(p => p.Value) // to make it distinct
-                                            .Select(g => g.First()) // to make it distinct
-                                            .Where(w => w.Value != word && w.NumberOfLetters == pattern.Length) // ensure we only care about the correct values
-                                            ;
+                                            .Where(w =>
+                                                (
+                                                    (w.WordFromId == wordId)
+                                                    && (EF.Functions.Like(w.WordTo.Value, pattern))
+                                                    && (w.WordTo.NumberOfLetters == pattern.Length)
+                                                )
+                                            )
+                                            .Select(a => a.WordTo);
+
+            var wordRelations2 = db.WordRelations
+                                            .AsNoTracking()
+                                            .Where(w =>
+                                                (
+                                                    (w.WordToId == wordId)
+                                                    && (EF.Functions.Like(w.WordFrom.Value, pattern))
+                                                    && (w.WordFrom.NumberOfLetters == pattern.Length)
+                                                )
+                                            )
+                                            .Select(a => a.WordFrom);
+
+            var wordRelations = wordRelations1.Union(wordRelations2);
 
             return wordRelations.AsQueryable();
         }
