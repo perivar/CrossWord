@@ -28,6 +28,7 @@ using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using Microsoft.OData.Edm;
 using CrossWord.API.Configuration;
+using AutoMapper;
 
 namespace CrossWord.API
 {
@@ -128,6 +129,9 @@ namespace CrossWord.API
                         ClockSkew = TimeSpan.Zero // remove delay of token when expire
                     };
                 });
+
+            // add auto mapper
+            services.AddAutoMapper();
 
             // note: Endpoint Routing is enabled by default; however, it is unsupported by OData and MUST be false
             services.AddMvc(options =>

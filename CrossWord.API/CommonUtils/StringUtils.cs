@@ -381,6 +381,7 @@ namespace CommonUtils
         /// <param name="ignoreCase">whether to ignore case</param>
         /// <returns>Enum</returns>
         /// <example>
+        /// <![CDATA[
         /// DaysOfWeek d = StringToEnum<DaysOfWeek>("Monday");
         /// d is now DaysOfWeek.Monday
         ///
@@ -395,6 +396,7 @@ namespace CommonUtils
         /// We can get around this problem by first checking that the enum exists using Enum.IsDefined.
         /// if(Enum.IsDefined(typeof(DaysOfWeek), "Katillsday"))
         ///   StringToEnum<DaysOfWeek>("Katillsday");
+        /// ]]>
         /// </example>
         public static T StringToEnum<T>(string name, bool ignoreCase = true)
         {
@@ -641,8 +643,8 @@ namespace CommonUtils
 
         /// <summary>
         /// Checks if the string contains only ASCII printable characters.
-        /// 
-        /// code>null</code> will return <code>false</code>.
+        /// <![CDATA[
+        /// <code>null</code> will return <code>false</code>.
         /// An empty String ("") will return <code>true</code>.
         /// 
         /// <pre>
@@ -658,6 +660,7 @@ namespace CommonUtils
         /// StringUtils.IsAsciiPrintable("\u007f") = false
         /// StringUtils.IsAsciiPrintable("Ceki G\u00fclc\u00fc") = false
         /// </pre>
+        /// ]]>
         /// </summary>
         /// <param name="str">param str the string to check, may be null</param>
         /// <returns>return <code>true</code> if every character is in the range 32 thru 126</returns>
@@ -680,6 +683,7 @@ namespace CommonUtils
 
         /// <summary>
         /// Checks whether the character is ASCII 7 bit printable.
+        /// <![CDATA[
         /// <pre>
         ///   StringUtils.IsAsciiPrintable('a')  = true
         ///   StringUtils.IsAsciiPrintable('A')  = true
@@ -688,6 +692,7 @@ namespace CommonUtils
         ///   StringUtils.IsAsciiPrintable('\n') = false
         ///   StringUtils.IsAsciiPrintable('&copy;') = false
         /// </pre>
+        /// ]]>
         /// </summary>
         /// <param name="ch">the character to check</param>
         /// <returns>true if between 32 and 126 inclusive</returns>

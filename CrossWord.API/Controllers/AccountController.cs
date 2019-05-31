@@ -13,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using CrossWord.Scraper.MySQLDbService;
 using CrossWord.Scraper.MySQLDbService.Models;
 using CrossWord.API.Models;
+using AutoMapper;
 
 namespace CrossWord.API.Controllers
 {
@@ -26,36 +27,38 @@ namespace CrossWord.API.Controllers
         private readonly IConfiguration config;
         private readonly UserManager<IdentityUser> userManager;
         private readonly WordHintDbContext db;
+        private readonly IMapper mapper;
 
-        public AccountController(IConfiguration config, UserManager<IdentityUser> userManager, WordHintDbContext db)
+        public AccountController(IConfiguration config, UserManager<IdentityUser> userManager, WordHintDbContext db, IMapper mapper)
         {
             this.config = config;
             this.userManager = userManager;
             this.db = db;
+            this.mapper = mapper;
         }
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Register(UserModel user)
+        public async Task<IActionResult> Register(UserModel userModel)
         {
-            string username = user.Username;
-            string password = user.Password;
+            // map dto to entity and set id
+            var identityUser = mapper.Map<IdentityUser>(userModel);
+            identityUser.Id = null;
 
-            var userIdentity = new IdentityUser(username);
-            var result = await userManager.CreateAsync(userIdentity, password);
+            var result = await userManager.CreateAsync(identityUser, userModel.Password);
 
             if (result == IdentityResult.Success)
             {
-                return await Login(user);
+                return await Login(new UserNamePasswordModel() { UserName = userModel.UserName, Password = userModel.Password });
             }
             else return BadRequest(result);
         }
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(UserModel user)
+        public async Task<IActionResult> Login(UserNamePasswordModel user)
         {
-            string username = user.Username;
+            string username = user.UserName;
             string password = user.Password;
 
             // get the IdentityUser to verify
@@ -93,8 +96,16 @@ namespace CrossWord.API.Controllers
                     expires: expires,
                     signingCredentials: creds
                 );
+                var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
-                return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+                // return basic user info (without password) and token to store client side
+                var userModel = mapper.Map<UserModel>(userToVerify);
+                return Ok(new
+                {
+                    User = userModel,
+                    Claims = userClaims,
+                    Token = tokenString
+                });
             }
             else
             {
@@ -102,12 +113,11 @@ namespace CrossWord.API.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        [AllowAnonymous]
         public async Task<IActionResult> AddRole(RoleModel user)
         {
-            string username = user.Username;
-            string password = user.Password;
+            string username = user.UserName;
             string role = user.Role;
 
             // get the IdentityUser to verify
@@ -120,7 +130,7 @@ namespace CrossWord.API.Controllers
             }
 
             // check the credentials
-            if (await userManager.CheckPasswordAsync(userToVerify, password) && !string.IsNullOrEmpty(role))
+            if (!string.IsNullOrEmpty(role))
             {
                 var newRoleClaim = new Claim(ClaimTypes.Role, role);
 
@@ -146,9 +156,9 @@ namespace CrossWord.API.Controllers
         // GET: /Account/GenerateForgotPasswordToken
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult> GenerateForgotPasswordToken(string email)
+        public async Task<ActionResult> GenerateForgotPasswordToken(string username)
         {
-            var user = await userManager.FindByNameAsync(email);
+            var user = await userManager.FindByNameAsync(username);
             if (user == null)
             {
                 // Don't reveal that the user does not exist
@@ -160,30 +170,129 @@ namespace CrossWord.API.Controllers
         // GET: /Account/ResetPassword
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult> ResetPassword(string email, string password, string code)
+        public async Task<ActionResult> ResetPassword(string username, string password, string token)
         {
-            var user = await userManager.FindByNameAsync(email);
+            var user = await userManager.FindByNameAsync(username);
             if (user == null)
             {
                 // Don't reveal that the user does not exist
                 return BadRequest();
             }
-            var result = await userManager.ResetPasswordAsync(user, code, password);
-            if (result.Succeeded)
+            if (!string.IsNullOrEmpty(password))
             {
-                return Ok(result);
+                var updateResult = await userManager.ResetPasswordAsync(user, token, password);
+                if (updateResult.Succeeded)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(updateResult.Errors);
+                }
             }
             else
             {
-                return BadRequest();
+                return BadRequest("Password cannot be empty");
             }
         }
 
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        public string PingAdmin()
+        public IActionResult GetAll()
         {
-            return "Pong";
+            var users = userManager.Users;
+            var userModels = mapper.Map<IList<UserModel>>(users);
+            return Ok(userModels);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("{username}")]
+        public async Task<IActionResult> GetByName(string username)
+        {
+            var user = await userManager.FindByNameAsync(username);
+            if (user == null)
+            {
+                // Don't reveal that the user does not exist
+                return BadRequest();
+            }
+            var userClaims = await userManager.GetClaimsAsync(user);        // UserManager.GetClaimsAsync(user) queries the UserClaims table.            
+            var userModel = mapper.Map<UserModel>(user);
+            return Ok(new
+            {
+                User = userModel,
+                Claims = userClaims
+            });
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{username}")]
+        public async Task<IActionResult> Update(string username, [FromBody]UserModel userModel)
+        {
+            if (username != userModel.UserName)
+            {
+                return BadRequest();
+            }
+
+            var user = await userManager.FindByNameAsync(username);
+            if (user == null)
+            {
+                // Don't reveal that the user does not exist
+                return BadRequest();
+            }
+
+            // Update it with the values from the view model
+            user.UserName = userModel.UserName;
+            user.Email = userModel.Email;
+            user.PhoneNumber = userModel.PhoneNumber;
+
+            if (!string.IsNullOrEmpty(userModel.Password))
+            {
+                // Generate the reset token (this would generally be sent out as a query parameter as part of a 'reset' link in an email)
+                string resetToken = await userManager.GeneratePasswordResetTokenAsync(user);
+
+                // Use the reset token to verify the provenance of the reset request and reset the password.
+                var updateResult = await userManager.ResetPasswordAsync(user, resetToken, userModel.Password);
+
+                if (!updateResult.Succeeded)
+                {
+                    return BadRequest(updateResult.Errors);
+                }
+            }
+
+            try
+            {
+                await userManager.UpdateAsync(user);
+                var returnUser = mapper.Map<UserModel>(user);
+                return Ok(returnUser);
+            }
+            catch (Exception ex)
+            {
+                // return error message if there was an exception
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("{username}")]
+        public async Task<IActionResult> Delete(string username)
+        {
+            var user = await userManager.FindByNameAsync(username);
+            if (user == null)
+            {
+                // Don't reveal that the user does not exist
+                return BadRequest();
+            }
+
+            try
+            {
+                var deleteResult = await userManager.DeleteAsync(user);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                // return error message if there was an exception
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
