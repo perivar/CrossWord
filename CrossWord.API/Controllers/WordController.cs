@@ -224,6 +224,11 @@ namespace CrossWord.API.Controllers
             }
             else
             {
+                // make sure the counts are recalculated
+                var wordText = item.Value;
+                item.NumberOfLetters = ScraperUtils.CountNumberOfLetters(wordText);
+                item.NumberOfWords = ScraperUtils.CountNumberOfWords(wordText);
+
                 db.Entry(item).State = EntityState.Modified;
                 await db.SaveChangesAsync();
                 return Ok(item);

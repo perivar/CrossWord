@@ -755,6 +755,12 @@
                     contentType: "application/json; charset=UTF-8", // this is for sending data
                     success: function(data) {
                         console.log(data);
+                        row.numberOfLetters = data.numberOfLetters;
+                        row.numberOfWords = data.numberOfWords;
+                        $('#word-list').bootstrapTable('updateByUniqueId', {
+                            id: row.wordId,
+                            row: row
+                        });                                                        
                     },
                     error: function(error) {
                         console.log(error);                    

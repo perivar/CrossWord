@@ -283,6 +283,14 @@ namespace CrossWord.API.Controllers
                 return BadRequest();
             }
 
+            // don't delete admin users
+            var userClaims = await userManager.GetClaimsAsync(user);
+            var result = userClaims.FirstOrDefault(a => a.Value == "Admin");
+            if (result != null)
+            {
+                return BadRequest("Cannot delete Admin users!");
+            }
+
             try
             {
                 var deleteResult = await userManager.DeleteAsync(user);

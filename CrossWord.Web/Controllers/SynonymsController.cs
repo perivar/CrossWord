@@ -129,20 +129,26 @@ namespace CrossWord.Web.Controllers
             var authUrl = $"{apiBaseUrl}Account/Login";
 
             dynamic userModel = new JObject();
-            userModel.Username = apiUserEmail;
+            userModel.UserName = apiUserEmail;
             userModel.Password = apiPassword;
 
             string token = string.Empty;
             using (var httpClient = new HttpClient())
             {
-                using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, authUrl))
+                using (var request = new HttpRequestMessage(HttpMethod.Post, authUrl))
                 {
                     var stringContent = new StringContent(JsonConvert.SerializeObject(userModel), Encoding.UTF8, "application/json");
                     request.Content = stringContent;
 
-                    using (HttpResponseMessage response = httpClient.SendAsync(request, System.Threading.CancellationToken.None).Result)
+                    using (var response = httpClient.SendAsync(request, System.Threading.CancellationToken.None).Result)
                     {
-                        token = response.Content.ReadAsAsync<string>().Result;
+                        var content = response.Content.ReadAsStringAsync().Result;
+
+                        if (response.IsSuccessStatusCode == true)
+                        {
+                            dynamic obj = JsonConvert.DeserializeObject<dynamic>(content);
+                            token = obj.token;
+                        }
                     }
                 }
             }
