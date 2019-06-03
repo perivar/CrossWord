@@ -294,7 +294,7 @@ namespace CrossWord.API.Controllers
             try
             {
                 var deleteResult = await userManager.DeleteAsync(user);
-                return Ok();
+                return Ok(user.Id);
             }
             catch (Exception ex)
             {
