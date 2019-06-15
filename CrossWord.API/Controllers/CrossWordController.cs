@@ -84,6 +84,61 @@ namespace CrossWord.API.Controllers
             var watch = new Stopwatch();
             watch.Start();
 
+            CrossBoard generated = GetCrossboard();
+
+            CrossWordTimes crossword;
+            if (generated == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                crossword = generated.ToCrossWordModel(dictionary);
+            }
+
+            watch.Stop();
+            var responseTimeForCompleteRequest = watch.ElapsedMilliseconds;
+
+            crossword.Title = $"Generated in {responseTimeForCompleteRequest} milliseconds";
+
+            // make sure we use the right json serializer settings
+            return new JsonResult(crossword, CrossWordTimesConverter.Settings);
+        }
+
+        // GET: api/crosswordguardian
+        // [Authorize]
+        [HttpGet]
+        [Route("api/crosswordguardian")]
+        public IActionResult GetCrossWordGuardian()
+        {
+            // Start the stopwatch   
+            var watch = new Stopwatch();
+            watch.Start();
+
+            CrossBoard generated = GetCrossboard();
+
+            CrossWordGuardian crossword;
+            if (generated == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                crossword = generated.ToCrossWordModelGuardian(dictionary);
+            }
+
+            watch.Stop();
+            var responseTimeForCompleteRequest = watch.ElapsedMilliseconds;
+
+            crossword.Name = $"Generated in {responseTimeForCompleteRequest} milliseconds";
+
+            // make sure we use the right json serializer settings
+            return new JsonResult(crossword, CrossWordGuardianConverter.Settings);
+        }
+
+        private CrossBoard GetCrossboard()
+        {
+
             ICrossBoard board = null;
             var template = GetRandomCrosswordTemplateFromDb();
             if (template != null)
@@ -137,22 +192,7 @@ namespace CrossWord.API.Controllers
             board.Preprocess(dictionary);
 
             var generated = gen.Generate().FirstOrDefault() as CrossBoard;
-
-            CrossWordModel crossword;
-            if (generated == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                crossword = generated.ToCrossWordModel(dictionary);
-            }
-
-            watch.Stop();
-            var responseTimeForCompleteRequest = watch.ElapsedMilliseconds;
-
-            crossword.Title = $"Generated in {responseTimeForCompleteRequest} milliseconds";
-            return Ok(crossword);
+            return generated;
         }
 
         // GET: api/crosswords/5

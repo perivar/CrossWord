@@ -469,9 +469,9 @@ namespace CrossWord
             return description;
         }
 
-        public CrossWordModel ToCrossWordModel(ICrossDictionary dictionary)
+        public CrossWordTimes ToCrossWordModel(ICrossDictionary dictionary)
         {
-            var model = new CrossWordModel();
+            var model = new CrossWordTimes();
 
             var board = new char[_sizeX, _sizeY];
 
@@ -523,9 +523,12 @@ namespace CrossWord
                 // stringWriter.WriteLine("{0}<br>", p);
             }
 
-            // calculate grid numbers and build clues lists
-            var acrossList = new List<String>();
-            var downList = new List<String>();
+            // calculate grid numbers and build answer and clues lists
+            var acrossAnswerList = new List<String>();
+            var downAnswerList = new List<String>();
+            var acrossClueList = new List<String>();
+            var downClueList = new List<String>();
+
             model.Gridnums = new long[_sizeX * _sizeY];
             model.Circles = new long[_sizeX * _sizeY];
             var sortedPatterns = patterns.OrderBy(s => s.StartY).ThenBy(s => s.StartX);
@@ -558,11 +561,13 @@ namespace CrossWord
                 string clue = string.Format("{0}. {1}", gridNumber, description);
                 if (p.IsHorizontal)
                 {
-                    acrossList.Add(clue);
+                    acrossAnswerList.Add(word);
+                    acrossClueList.Add(clue);
                 }
                 else
                 {
-                    downList.Add(clue);
+                    downAnswerList.Add(word);
+                    downClueList.Add(clue);
                 }
 
                 // save last pattern to compare with
@@ -629,8 +634,88 @@ namespace CrossWord
             model.Size = new Size { Cols = _sizeX, Rows = _sizeY };
             // model.Notepad = "<br>" + stringWriter.ToString();
             model.Grid = grid.ToArray();
-            model.Clues = new Answers() { Across = acrossList.ToArray(), Down = downList.ToArray() };
+            model.Clues = new Answers() { Across = acrossClueList.ToArray(), Down = downClueList.ToArray() };
+            model.Answers = new Answers() { Across = acrossAnswerList.ToArray(), Down = downAnswerList.ToArray() };
             model.Shadecircles = false;
+
+            return model;
+        }
+
+        public CrossWordGuardian ToCrossWordModelGuardian(ICrossDictionary dictionary)
+        {
+            var model = new CrossWordGuardian();
+            var clueList = new List<IClue>();
+
+            var patterns = new List<CrossPattern>();
+
+            // across = horizontal
+            foreach (var p in _horizontalPatterns)
+            {
+                patterns.Add(p);
+            }
+
+            // down = vertical
+            foreach (var p in _verticalPatterns)
+            {
+                patterns.Add(p);
+            }
+
+            var sortedPatterns = patterns.OrderBy(s => s.StartY).ThenBy(s => s.StartX);
+            int gridNumber = 0;
+            CrossPattern lastPattern = null;
+            var coordinateMap = new Dictionary<CrossPattern, Coordinate>();
+
+            // when using a database - read in all descriptions once
+            dictionary.AddAllDescriptions(patterns.Select(a => a.GetWord()).ToList());
+
+            foreach (var p in sortedPatterns)
+            {
+                if (lastPattern != null && lastPattern.StartX == p.StartX && lastPattern.StartY == p.StartY)
+                {
+                    // patterns starts at same index
+                }
+                else
+                {
+                    // pattern start at new index, increment
+                    gridNumber++;
+                }
+
+                // store grid number as a part of the coordinate
+                coordinateMap.Add(p, new Coordinate(p.StartX, p.StartY, gridNumber));
+
+                // and store the clues
+                var word = p.GetWord();
+                var description = p.IsPuzzle ? "[PUZZLE]" : GetDescription(dictionary, word);
+
+                var clue = new IClue();
+                clue.Id = string.Format("{0}-{1}", gridNumber, p.IsHorizontal ? "across" : "down");
+                clue.Number = gridNumber;
+                clue.HumanNumber = gridNumber.ToString();
+                clue.Clue = string.Format("{0} ({1})", description, p.Length);
+                clue.Direction = p.IsHorizontal ? Direction.Across : Direction.Down;
+                clue.Length = p.Length;
+                clue.Group = new string[] { clue.Id };
+                clue.Position = new IPosition() { X = p.StartX, Y = p.StartY };
+                clue.Solution = word;
+                clue.SeparatorLocations = new SeparatorLocations();
+
+                clueList.Add(clue);
+
+                // save last pattern to compare with
+                lastPattern = p;
+            }
+
+            model.Id = null;
+            model.Name = "Generated Crossword";
+            model.Creator = new ICreator() { Name = "the amazing crossword generator", WebUrl = "" };
+            model.Entries = clueList.ToArray();
+            model.Dimensions = new IDimensions { Cols = _sizeX, Rows = _sizeY };
+            model.CrosswordType = CrosswordType.Quick;
+            model.SolutionAvailable = true;
+            model.Pdf = null;
+            model.Instructions = null;
+            model.Date = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            model.DateSolutionAvailable = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
             return model;
         }

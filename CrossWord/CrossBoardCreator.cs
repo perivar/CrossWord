@@ -29,9 +29,9 @@ namespace CrossWord
             return string.Format(CultureInfo.InvariantCulture, "{0:yyyy/MM/dd}", newDate);
         }
 
-        public static CrossWordModel GetCrossWordModelFromUrl(string url)
+        public static CrossWordTimes GetCrossWordModelFromUrl(string url)
         {
-            CrossWordModel model = null;
+            CrossWordTimes model = null;
             using (WebClient httpClient = new WebClient())
             {
                 if (url.ToLower().Equals("http-random"))
@@ -67,7 +67,7 @@ namespace CrossWord
                     }
                     sw.Stop();
 
-                    model = CrossWordModel.FromJson(jsonData);
+                    model = CrossWordTimes.FromJson(jsonData);
                 }
                 else
                 {
@@ -75,7 +75,7 @@ namespace CrossWord
                     {
                         // url = "https://raw.githubusercontent.com/doshea/nyt_crosswords/master/1997/03/13.json";
                         var jsonData = httpClient.DownloadString(url);
-                        model = CrossWordModel.FromJson(jsonData);
+                        model = CrossWordTimes.FromJson(jsonData);
                     }
                     catch (WebException e)
                     {

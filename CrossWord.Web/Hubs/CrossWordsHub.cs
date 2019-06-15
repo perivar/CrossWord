@@ -32,7 +32,7 @@ namespace CrossWord.Web.Hubs
                .SendAsync("SendStatus");
         }
 
-        public async Task SendCrossword(string name, CrossWordModel json)
+        public async Task SendCrossword(string name, CrossWordTimes json)
         {
             await Clients
                // Do not send to Caller:

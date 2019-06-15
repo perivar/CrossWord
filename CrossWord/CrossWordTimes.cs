@@ -1,14 +1,14 @@
 using System;
-using System.Collections.Generic;
-
 using System.Globalization;
-using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 namespace CrossWord.Models
 {
-    public partial class CrossWordModel
+    // This model is used by New York Times and XwordInfo
+    // see https://www.xwordinfo.com/JSON/
+    // and https://github.com/doshea/nyt_crosswords
+    public partial class CrossWordTimes
     {
         [JsonProperty("title")]
         public string Title { get; set; }
@@ -98,7 +98,7 @@ namespace CrossWord.Models
         public string Rbars { get; set; }
 
         [JsonProperty("shadecircles")]
-        [JsonConverter(typeof(ParseStringConverter))]
+        [JsonConverter(typeof(Boolean2StringJsonConverter))]
         public bool Shadecircles { get; set; }
 
         [JsonProperty("track")]
@@ -126,16 +126,16 @@ namespace CrossWord.Models
         public long Rows { get; set; }
     }
 
-    public partial class CrossWordModel
+    public partial class CrossWordTimes
     {
-        public static CrossWordModel FromJson(string json) => JsonConvert.DeserializeObject<CrossWordModel>(json, Converter.Settings);
+        public static CrossWordTimes FromJson(string json) => JsonConvert.DeserializeObject<CrossWordTimes>(json, CrossWordTimesConverter.Settings);
     }
 
-    public static class Serialize
+    public static class CrossWordTimesSerialize
     {
-        public static string ToJson(this CrossWordModel self) => JsonConvert.SerializeObject(self, Converter.Settings);
+        public static string ToJson(this CrossWordTimes self) => JsonConvert.SerializeObject(self, CrossWordTimesConverter.Settings);
 
-        public static CrossBoard ToCrossBoard(this CrossWordModel self)
+        public static CrossBoard ToCrossBoard(this CrossWordTimes self)
         {
             var board = new CrossBoard();
 
@@ -169,7 +169,7 @@ namespace CrossWord.Models
         }
     }
 
-    internal static class Converter
+    public static class CrossWordTimesConverter
     {
         public static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
         {
@@ -181,7 +181,7 @@ namespace CrossWord.Models
         };
     }
 
-    internal class ParseStringConverter : JsonConverter
+    internal class Boolean2StringJsonConverter : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(bool) || t == typeof(bool?);
 
@@ -210,6 +210,6 @@ namespace CrossWord.Models
             return;
         }
 
-        public static readonly ParseStringConverter Singleton = new ParseStringConverter();
+        public static readonly Boolean2StringJsonConverter Singleton = new Boolean2StringJsonConverter();
     }
 }
