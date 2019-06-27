@@ -88,7 +88,7 @@ namespace CrossWord.Scraper
 #if DEBUG
             startLetterCount = 4;
             endLetterCount = 4;
-            scraperSite = "GratisKryssord";
+            scraperSite = "Kryssord";
 #endif                    
 
             // using Parallel.ForEach

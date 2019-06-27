@@ -53,9 +53,9 @@ namespace CrossWord.Scraper
                     lastWordString = WordDatabaseService.GetLastWordFromLetterCount(db, source, letterCount);
                 }
 
-                // #if DEBUG
-                //     lastWordString = "PUFFINUS GRISEUS";
-                // #endif
+#if DEBUG
+                lastWordString = null;
+#endif
 
                 // if we didn't get back a word, use a pattern instead
                 if (lastWordString == null)
@@ -136,7 +136,7 @@ namespace CrossWord.Scraper
                             break;
                         }
 
-                        ReadWordsByWordPermutations(3, i, driver, db, adminUser, lastWordString);
+                        ReadWordsByWordPermutations(1, i, driver, db, adminUser, lastWordString);
                     }
                 }
             }
@@ -334,16 +334,19 @@ namespace CrossWord.Scraper
                 writer.WriteLine("Processing synonym search for '{0}' on page {1}", word.Value, page + 1);
 
                 // parse total number of words found
-                var wordCount = driver.FindElementOrNull(By.XPath("/html/body//div[@id='content']/h1/strong"));
+                var wordCountElement = driver.FindElementOrNull(By.XPath("/html/body//div[@id='content']/h1/strong"));
+
+                if (wordCountElement == null) break;
+                var wordCount = wordCountElement.Text;
 
                 // return if nothing was found
-                if (wordCount == null || wordCount.Text == "0")
+                if (wordCount == "0")
                 {
-                    break;
+                    return;
                 }
                 else
                 {
-                    var isNumeric = int.TryParse(wordCount.Text, out int n);
+                    var isNumeric = int.TryParse(wordCount, out int n);
                     if (isNumeric)
                     {
                         Log.Information("Found {0} synonyms when searching for '{1}' on page {2}", n, word.Value, page + 1);
