@@ -67,7 +67,10 @@
 </form>
 <br />
 <p class="lead" id="search-header"></p>
-<button id="remove" class="btn btn-danger" disabled>Delete</button>
+<div id="toolbar">
+    <button type="button" id="remove" class="btn btn-danger" disabled>Delete</button>
+    <button type="button" id="disconnect" class="btn btn-secondary" disabled>Disconnect</button>
+</div>
 <table class="table" id="word-list">
 </table>
 <table class="table" id="status-list">
@@ -107,7 +110,7 @@
                     pagination: true,
                     search: true,
                     pageSize: 50,
-                    toolbar: '#remove',
+                    toolbar: '#toolbar',
                     //clickToSelect: true,
                     columns: [
                     {
@@ -155,7 +158,7 @@
                     pagination: true,
                     search: true,
                     pageSize: 20,
-                    toolbar: '#remove',
+                    toolbar: '#toolbar',
                     sidePagination: 'server',
                     silentSort: false,
                     sortOrder: 'desc',
@@ -224,7 +227,7 @@
                     pagination: true,
                     search: true,
                     pageSize: 20,
-                    toolbar: '#remove',
+                    toolbar: '#toolbar',
                     sidePagination: 'server',
                     silentSort: false,
                     sortOrder: 'asc',
@@ -310,7 +313,7 @@
                     pagination: true,
                     search: true,
                     pageSize: 20,
-                    toolbar: '#remove',
+                    toolbar: '#toolbar',
                     sidePagination: 'server',
                     silentSort: false,
                     sortOrder: 'asc',
@@ -515,9 +518,13 @@
             // bootstrap-table DELETE functionality
             var $table = $('#word-list')
             var $remove = $('#remove')
+            var $disconnect = $('#disconnect')
 
-            $table.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {
-                $remove.prop('disabled', !$table.bootstrapTable('getSelections').length)
+            $table.on('check.bs.table uncheck.bs.table check-all.bs.table uncheck-all.bs.table', function () {               
+                $remove.prop('disabled', !$table.bootstrapTable('getSelections').length);
+
+                var wordValue = $("#word").val();
+                if (wordValue.length != 0) $disconnect.prop('disabled', !$table.bootstrapTable('getSelections').length);
             });
     
             $remove.click(function () {
@@ -548,6 +555,42 @@
                 });
 
                 $remove.prop('disabled', true);
+            });
+
+            $disconnect.click(function () {
+                var wordValue = $("#word").val();
+                var selects = $table.bootstrapTable('getSelections');                
+                var ids = $.map(selects, function (row) {
+                    return row.wordId;
+                });
+
+                //console.log(ids);
+                //if (wordId.length != 0) console.log('wordId ' + wordId);                
+                //if (wordValue.length != 0) console.log('wordValue ' + wordValue);                
+
+                var url = baseWordUrl + 'disconnect';
+                $.ajax({
+                    url: url,
+                    data: { 
+                        word: wordValue,
+                        id: ids
+                    },
+                    type: "GET",
+                    cache: false,
+                    dataType: "json", // this is for parsing received data
+                    contentType: "application/json; charset=UTF-8", // this is for sending data,
+                    traditional: true, // this is to support an array of ids in a GET request
+                    success: function(data) {
+                        $table.bootstrapTable('remove', {
+                            field: 'wordId',
+                            values: ids
+                        });
+                        $disconnect.prop('disabled', true);
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
             });
 
 			$("#submit-search").click(function() {

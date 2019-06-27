@@ -156,6 +156,61 @@ namespace CrossWord.API.Controllers
             return Ok(words);
         }
 
+        // GET: /api/words/disconnect?id=1&id=2&id=3
+        // [Authorize(Roles = "Admin")]
+        [Authorize]
+        [HttpGet]
+        [Route("api/words/disconnect")]
+        public async Task<IActionResult> Disconnect([FromQuery] string word, [FromQuery] int[] id)
+        {
+            if (word == null)
+            {
+                return NotFound();
+            }
+
+            word = word.ToUpper();
+
+            var wordResult = db.Words.Where(w => w.Value == word);
+            if (!wordResult.Any())
+            {
+                return NotFound(word);
+            }
+
+            var wordId = wordResult.First().WordId;
+
+            var words = await db.Words
+                .Where(e => id.Contains(e.WordId))
+                .ToListAsync();
+
+            if (words == null)
+            {
+                return NotFound();
+            }
+
+            // disconnect
+            var wordRelations = await db.WordRelations
+                .Where(
+                    (e =>
+                        (id.Contains(e.WordFromId) && e.WordToId == wordId)
+                        ||
+                        (id.Contains(e.WordToId) && e.WordFromId == wordId)
+                    )
+                )
+                .ToListAsync();
+
+            // delete the relations
+            db.WordRelations.RemoveRange(wordRelations);
+            await db.SaveChangesAsync();
+
+            return Ok(
+                new
+                {
+                    word = word,
+                    wordId = wordId,
+                    words = words,
+                });
+        }
+
         // PUT: /api/words/5
         [Authorize]
         [HttpPut]
