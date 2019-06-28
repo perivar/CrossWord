@@ -10,6 +10,10 @@ namespace CrossWord.Scraper.MySQLDbService.Models
         public virtual Word WordFrom { get; set; }
         public int WordToId { get; set; }
         public virtual Word WordTo { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public string Source { get; set; }
+        public string Comment { get; set; }
+
 
         public override string ToString()
         {

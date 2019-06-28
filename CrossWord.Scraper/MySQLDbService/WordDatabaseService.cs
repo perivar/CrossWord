@@ -166,6 +166,14 @@ namespace CrossWord.Scraper.MySQLDbService
 
             if (newWordRelations.Count > 0)
             {
+                // update the relations and set source and date
+                newWordRelations.All(c =>
+                {
+                    c.CreatedDate = DateTime.Now;
+                    c.Source = source;
+                    return true;
+                });
+
                 db.WordRelations.AddRange(newWordRelations);
                 db.SaveChanges();
 

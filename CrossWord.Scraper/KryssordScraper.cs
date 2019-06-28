@@ -1,14 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
+using System.Net;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using CrossWord.Scraper.MySQLDbService;
 using CrossWord.Scraper.MySQLDbService.Models;
+using HtmlAgilityPack;
 using Microsoft.EntityFrameworkCore;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -23,6 +21,7 @@ namespace CrossWord.Scraper
         string connectionString = null;
         string signalRHubURL = null;
         string source = null;
+        bool hasFoundLastWord = false;
 
         public KryssordScraper(string connectionString, string signalRHubURL, string siteUsername, string sitePassword, int letterCount, bool doContinueWithLastWord)
         {
@@ -54,29 +53,31 @@ namespace CrossWord.Scraper
                 }
 
 #if DEBUG
-                lastWordString = null;
+                // lastWordString = null;
 #endif
 
                 // if we didn't get back a word, use a pattern instead
                 if (lastWordString == null)
                 {
-                    switch (letterCount)
-                    {
-                        case 1:
-                            lastWordString = "a";
-                            break;
-                        case 2:
-                            lastWordString = "aa";
-                            break;
-                        case 3:
-                            lastWordString = "aaa";
-                            break;
-                        default:
-                            lastWordString = "aaa" + new string('?', letterCount - 3);
-                            break;
-                    }
+                    // switch (letterCount)
+                    // {
+                    //     case 1:
+                    //         lastWordString = "a";
+                    //         break;
+                    //     case 2:
+                    //         lastWordString = "aa";
+                    //         break;
+                    //     case 3:
+                    //         lastWordString = "aaa";
+                    //         break;
+                    //     default:
+                    //         lastWordString = "aaa" + new string('?', letterCount - 3);
+                    //         break;
+                    // }
 
-                    Log.Information("Could not find any words having '{0}' letters. Therefore using last word pattern '{1}'.", letterCount, lastWordString);
+                    // Log.Information("Could not find any words having '{0}' letters. Therefore using last word pattern '{1}'.", letterCount, lastWordString);
+
+                    hasFoundLastWord = true; // don't skip any words when the last word is empty
                 }
 
                 // Note! 
@@ -115,34 +116,47 @@ namespace CrossWord.Scraper
                     DoLogon(driver, siteUsername, sitePassword);
 
                     // read all one letter words
-                    if (lastWordString == null || lastWordString != null && letterCount == 1)
-                    {
-                        ReadWordsByWordPattern("1", driver, db, adminUser);
-                    }
+                    // if (lastWordString == null || lastWordString != null && letterCount == 1)
+                    // {
+                    //     ReadWordsByWordPattern(new WordPattern("a", 1, 1, lastWordString), driver, db, adminUser);
+                    // }
 
-                    // read all two letter words
-                    if (lastWordString == null || lastWordString != null && letterCount == 2)
-                    {
-                        ReadWordsByWordPermutations(2, 2, driver, db, adminUser, lastWordString);
-                    }
+                    // // read all two letter words
+                    // if (lastWordString == null || lastWordString != null && letterCount == 2)
+                    // {
+                    //     ReadWordsByWordPermutations(2, 2, driver, db, adminUser, lastWordString);
+                    // }
 
-                    // read 3 and more letter words
-                    for (int i = 3; i < 200; i++)
+                    // // read 3 and more letter words
+                    // for (int i = 3; i < 200; i++)
+                    // {
+                    //     // added break to support several docker instances scraping in swarms
+                    //     if (i > lastWordString.Length)
+                    //     {
+                    //         Log.Error("Warning! Quitting since the current letter length > letter count: {0} / {1}", i, letterCount);
+                    //         break;
+                    //     }
+
+                    //     // ReadWordsByWordPermutations(3, i, driver, db, adminUser, lastWordString);
+                    //     ReadWordsByWordPermutations2(i, driver, db, adminUser, lastWordString);
+                    // }
+
+                    for (int i = letterCount; i < 200; i++)
                     {
                         // added break to support several docker instances scraping in swarms
-                        if (i > lastWordString.Length)
+                        if (i > letterCount)
                         {
                             Log.Error("Warning! Quitting since the current letter length > letter count: {0} / {1}", i, letterCount);
                             break;
                         }
 
-                        ReadWordsByWordPermutations(1, i, driver, db, adminUser, lastWordString);
+                        ReadWordsByWordPermutations2(i, driver, db, adminUser, lastWordString);
                     }
                 }
             }
         }
 
-        private void DoLogon(IWebDriver driver, string siteUsername, string sitePassword)
+        private static void DoLogon(IWebDriver driver, string siteUsername, string sitePassword)
         {
             driver.Navigate().GoToUrl("https://www.kryssord.org/login.php");
 
@@ -170,8 +184,125 @@ namespace CrossWord.Scraper
             }
         }
 
-        private void ReadWordsByWordPermutations(int permutationSize, int letterLength, IWebDriver driver, WordHintDbContext db, User adminUser, string lastWord)
+        private int GetWordCountByPatternDummy(WordPattern wordPattern)
         {
+            Random rnd = new Random();
+            int randomInt = rnd.Next(1, 10);
+
+            // make every X a too high count 
+            if (randomInt == 9)
+            {
+                return rnd.Next(109, 500);
+            }
+            else
+            {
+                return rnd.Next(1, 108);
+            }
+        }
+
+        private Tuple<int, HtmlNode, string, int> GetWordCountByPattern(IWebDriver driver, WordPattern wordPattern)
+        {
+            // go to search result page            
+            var query = "";
+            int page = 0;
+            string url = string.Format("{0}?a={1}&b={2}&p={3}", "https://www.kryssord.org/search.php", query, wordPattern.Pattern, page);
+
+            var (count, node) = GetWordCountByWordPattern(driver, url);
+            return new Tuple<int, HtmlNode, string, int>(count, node, url, page);
+        }
+
+        private void ReadWordsByWordPermutations2(int letterLength, IWebDriver driver, WordHintDbContext db, User adminUser, string lastWord)
+        {
+            int wordLength = letterLength;
+
+            int depth = 1;
+
+            // if we are using only one letter, set the depth to zero to force the pattern to become ?
+            if (letterLength == 1)
+            {
+                depth = 0;
+            }
+
+            if (lastWord != null)
+            {
+                wordLength = lastWord.Length;
+
+                // if the word is longer than 3 characters, use the two first letters as pattern
+                if (wordLength > 2)
+                {
+                    depth = 2;
+                }
+            }
+
+            var permutations = GetPermutations(depth);
+
+
+            bool hasFound = false;
+            foreach (var permutation in permutations)
+            {
+                // skip until we reach last word beginning
+                if (lastWord != null)
+                {
+                    if (lastWord.ToLowerInvariant().StartsWith(permutation))
+                    {
+                        hasFound = true;
+                    }
+                }
+                else
+                {
+                    hasFound = true;
+                }
+
+                if (hasFound) ReadWordsByWordPermutationsRecursive(driver, new WordPattern(permutation, wordLength, depth, lastWord), db, adminUser);
+            }
+        }
+
+        // recursive function that progressively increases the depth if we get a too high word count
+        // but maximum 3 permutations (abc???)
+        private void ReadWordsByWordPermutationsRecursive(IWebDriver driver, WordPattern wordPattern, WordHintDbContext db, User adminUser)
+        {
+            // get word count
+            var (wordCount, node, url, page) = GetWordCountByPattern(driver, wordPattern);
+
+            if (wordCount == 0)
+            {
+                return;
+            }
+            else
+            {
+                Log.Information("Found {0} words when searching for '{1}' on page {2}", wordCount, wordPattern.Pattern, page + 1);
+                writer.WriteLine("Found {0} words when searching for '{1}' on page {2}", wordCount, wordPattern.Pattern, page + 1);
+            }
+
+            // if we get too many words back, try to increase the pattern depth
+            // but maximum 3 levels
+            if (wordCount <= 108 || wordPattern.Depth > 3)
+            {
+                if (wordPattern.Depth > 3)
+                {
+                    Log.Error("Warning! Pattern search for '{0}' has too many words: {2}", wordPattern.Pattern, wordCount);
+                }
+
+                // process each word found using the specified word pattern
+                ProcessWordsUntilEmpty(wordPattern, driver, db, adminUser, page, node, url);
+            }
+            else
+            {
+                // increment pattern
+                var childPatterns = wordPattern.GetWordPatternChildren();
+
+                // recursively process children patterns
+                foreach (var childPattern in childPatterns)
+                {
+                    ReadWordsByWordPermutationsRecursive(driver, childPattern, db, adminUser);
+                }
+            }
+        }
+
+        private static IEnumerable<string> GetPermutations(int permutationSize)
+        {
+            if (permutationSize <= 0) return new string[] { "?" };
+
             var alphabet = "abcdefghijklmnopqrstuvwxyzøæå";
             var permutations = alphabet.Select(x => x.ToString());
 
@@ -179,6 +310,13 @@ namespace CrossWord.Scraper
             {
                 permutations = permutations.SelectMany(x => alphabet, (x, y) => x + y);
             }
+
+            return permutations;
+        }
+
+        private void ReadWordsByWordPermutations(int permutationSize, int letterLength, IWebDriver driver, WordHintDbContext db, User adminUser, string lastWord)
+        {
+            var permutations = GetPermutations(permutationSize);
 
             bool hasFoundWord = false;
             foreach (var permutation in permutations)
@@ -230,69 +368,109 @@ namespace CrossWord.Scraper
 
                     if (hasFoundWord)
                     {
-                        ReadWordsByWordPattern(wordPattern, driver, db, adminUser);
+                        // ReadWordsByWordPattern(wordPattern, driver, db, adminUser);
+                        ReadWordsByWordPattern(new WordPattern(permutation, letterLength, 1, lastWord), driver, db, adminUser);
                     }
                 }
                 else
                 {
-                    ReadWordsByWordPattern(wordPattern, driver, db, adminUser);
+                    // ReadWordsByWordPattern(wordPattern, driver, db, adminUser);
+                    ReadWordsByWordPattern(new WordPattern(permutation, letterLength, 1, lastWord), driver, db, adminUser);
                 }
             }
         }
 
-        private void ReadWordsByWordPattern(string wordPattern, IWebDriver driver, WordHintDbContext db, User adminUser)
+        private static Tuple<int, HtmlNode> GetWordCountByWordPattern(IWebDriver driver, string url)
         {
-            // go to search result page            
-            var query = "";
-            int page = 0;
-            string url = string.Format("{0}?a={1}&b={2}&p={3}", "https://www.kryssord.org/search.php", query, wordPattern, page);
             driver.Navigate().GoToUrl(url);
 
+            // parse total number of words found
+            var documentNode = driver.GetDocumentNode();
+            var wordCountElement = documentNode.FindNode(By.XPath("/html/body//div[@id='content']/h1/strong"));
+
+            // return if nothing was found
+            if (wordCountElement == null)
+            {
+                return new Tuple<int, HtmlNode>(0, documentNode);
+            }
+
+            var wordCount = wordCountElement.InnerText.Trim();
+
+            // return if nothing was found
+            if (wordCount == "0")
+            {
+                return new Tuple<int, HtmlNode>(0, documentNode);
+            }
+            else
+            {
+                var isNumeric = int.TryParse(wordCount, out int n);
+                if (isNumeric)
+                {
+                    return new Tuple<int, HtmlNode>(n, documentNode);
+                }
+            }
+
+            return new Tuple<int, HtmlNode>(0, documentNode);
+        }
+
+        private void ReadWordsByWordPattern(WordPattern wordPattern, IWebDriver driver, WordHintDbContext db, User adminUser)
+        {
+            // get word count
+            var (count, documentNode, url, page) = GetWordCountByPattern(driver, wordPattern);
+
+            if (count == 0)
+            {
+                return;
+            }
+            else
+            {
+                Log.Information("Found {0} words when searching for '{1}' on page {2}", count, wordPattern.Pattern, page + 1);
+                writer.WriteLine("Found {0} words when searching for '{1}' on page {2}", count, wordPattern.Pattern, page + 1);
+
+                if (count > 108)
+                {
+                    Log.Error("Warning! Pattern search for '{0}' on page {1} has too many words: {2}", wordPattern.Pattern, page + 1, count);
+                }
+            }
+
+            ProcessWordsUntilEmpty(wordPattern, driver, db, adminUser, page, documentNode, url);
+
+        }
+
+        private void ProcessWordsUntilEmpty(WordPattern wordPattern, IWebDriver driver, WordHintDbContext db, User adminUser, int page, HtmlNode documentNode, string url)
+        {
             while (true)
             {
-                Log.Information("Processing pattern search for '{0}' on page {1}", wordPattern, page + 1);
-                writer.WriteLine("Processing pattern search for '{0}' on page {1}", wordPattern, page + 1);
-
-                // parse total number of words found
-                var wordCountElement = driver.FindElementOrNull(By.XPath("/html/body//div[@id='content']/h1/strong"));
-
-                if (wordCountElement == null) break;
-                var wordCount = wordCountElement.Text;
-
-                // return if nothing was found
-                if (wordCount == "0")
-                {
-                    return;
-                }
-                else
-                {
-                    var isNumeric = int.TryParse(wordCount, out int n);
-                    if (isNumeric)
-                    {
-                        Log.Information("Found {0} words when searching for '{1}' on page {2}", n, wordPattern, page + 1);
-                        writer.WriteLine("Found {0} words when searching for '{1}' on page {2}", n, wordPattern, page + 1);
-
-                        if (n > 108) Log.Error("Warning! Pattern search for '{0}' on page {1} has too many words: {2}", wordPattern, page + 1, n);
-                    }
-                }
+                Log.Information("Processing pattern search for '{0}' on page {1}", wordPattern.Pattern, page + 1);
+                writer.WriteLine("Processing pattern search for '{0}' on page {1}", wordPattern.Pattern, page + 1);
 
                 // parse all words
-                // var words = ReadWords(driver, adminUser);
-                var words = ReadWordsAgilityPack(driver, adminUser);
+                var words = ReadWordsAgilityPack(documentNode, adminUser);
+
                 foreach (var word in words)
                 {
-                    GetWordSynonyms(word, driver, db, adminUser);
+                    if (wordPattern.IsMatchLastWord)
+                    {
+                        Log.Information("The current pattern matches the last-word: {0} = {1}. Current word: {2}", wordPattern.Pattern, wordPattern.LastWord, word.Value);
+
+                        var wordRemoveDiacriticsToNorwegian = word.Value.RemoveDiacriticsToNorwegian();
+                        if (wordRemoveDiacriticsToNorwegian == wordPattern.LastWord)
+                        {
+                            Log.Information("The current word matches the last-word: {0} = {1}", word.Value, wordPattern.LastWord);
+                            hasFoundLastWord = true;
+                        }
+                    }
+
+                    if (hasFoundLastWord) GetWordSynonyms(word, driver, db, adminUser);
                 }
 
                 // go to next page if exist
-                var nextPageElement = FindNextPageOrNull(driver);
-                if (nextPageElement != null)
+                var (hasFoundNextPage, pageNumber, pageUrl, pageNode) = NavigateToNextPageIfExist(driver, documentNode);
+                if (hasFoundNextPage)
                 {
-                    // nextPageElement.Click();
-                    var nextPageUrl = nextPageElement.GetParent().GetAttribute("href");
-                    var urlParams = ExtractUrlParameters(nextPageUrl);
-                    page = urlParams.Item3;
-                    driver.Navigate().GoToUrl(nextPageUrl);
+                    url = pageUrl;
+                    page = pageNumber;
+                    documentNode = pageNode;
                 }
                 else
                 {
@@ -326,58 +504,24 @@ namespace CrossWord.Scraper
             var query = ScraperUtils.EscapeUrlString(word.Value);
             int page = 0;
             string url = string.Format("{0}?a={1}&b={2}&p={3}", "https://www.kryssord.org/search.php", query, wordPattern, page);
-            driver.Navigate().GoToUrl(url);
 
-            while (true)
+            var (count, documentNode) = GetWordCountByWordPattern(driver, url);
+            if (count == 0)
             {
-                Log.Information("Processing synonym search for '{0}' on page {1}", word.Value, page + 1);
-                writer.WriteLine("Processing synonym search for '{0}' on page {1}", word.Value, page + 1);
+                return;
+            }
+            else
+            {
+                Log.Information("Found {0} synonyms when searching for '{1}' on page {2}", count, word.Value, page + 1);
+                writer.WriteLine("Found {0} synonyms when searching for '{1}' on page {2}", count, word.Value, page + 1);
 
-                // parse total number of words found
-                var wordCountElement = driver.FindElementOrNull(By.XPath("/html/body//div[@id='content']/h1/strong"));
-
-                if (wordCountElement == null) break;
-                var wordCount = wordCountElement.Text;
-
-                // return if nothing was found
-                if (wordCount == "0")
+                if (count > 108)
                 {
-                    return;
-                }
-                else
-                {
-                    var isNumeric = int.TryParse(wordCount, out int n);
-                    if (isNumeric)
-                    {
-                        Log.Information("Found {0} synonyms when searching for '{1}' on page {2}", n, word.Value, page + 1);
-                        writer.WriteLine("Found {0} synonyms when searching for '{1}' on page {2}", n, word.Value, page + 1);
-
-
-                        if (n > 108) Log.Error("Warning! synonym search for '{0}' on page {1} has too many words: {2}", word.Value, page + 1, n);
-                    }
-                }
-
-                // parse all related words
-                // var relatedWords = ReadRelatedWords(driver, adminUser);
-                var relatedWords = ReadRelatedWordsAgilityPack(driver, adminUser);
-
-                // and add to database
-                WordDatabaseService.AddToDatabase(db, this.source, word, relatedWords, writer);
-
-                // go to next page if exist
-                var nextPageElement = FindNextPageOrNull(driver);
-                if (nextPageElement != null)
-                {
-                    var nextPageUrl = nextPageElement.GetParent().GetAttribute("href");
-                    var urlParams = ExtractUrlParameters(nextPageUrl);
-                    page = urlParams.Item3;
-                    driver.Navigate().GoToUrl(nextPageUrl);
-                }
-                else
-                {
-                    break;
+                    Log.Error("Warning! synonym search for '{0}' on page {1} has too many words: {2}", word.Value, page + 1, count);
                 }
             }
+
+            ProcessSynonymsUntilEmpty(word, driver, db, adminUser, page, documentNode, url);
 
             // now lets close our new tab
             chromeDriver.ExecuteScript("window.close();");
@@ -387,6 +531,60 @@ namespace CrossWord.Scraper
 
             // and have our WebDriver focus on the main document in the page to send commands to 
             chromeDriver.SwitchTo().DefaultContent();
+        }
+
+        private void ProcessSynonymsUntilEmpty(Word word, IWebDriver driver, WordHintDbContext db, User adminUser, int page, HtmlNode documentNode, string url)
+        {
+            while (true)
+            {
+                Log.Information("Processing synonym search for '{0}' on page {1}", word.Value, page + 1);
+                writer.WriteLine("Processing synonym search for '{0}' on page {1}", word.Value, page + 1);
+
+                // parse all related words
+                var relatedWords = ReadRelatedWordsAgilityPack(documentNode, adminUser);
+
+                // and add to database
+                WordDatabaseService.AddToDatabase(db, this.source, word, relatedWords, writer);
+
+                // go to next page if exist
+                var (hasFoundNextPage, pageNumber, pageUrl, pageNode) = NavigateToNextPageIfExist(driver, documentNode);
+                if (hasFoundNextPage)
+                {
+                    url = pageUrl;
+                    page = pageNumber;
+                    documentNode = pageNode;
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+
+        private static Tuple<bool, int, string, HtmlNode> NavigateToNextPageIfExist(IWebDriver driver, HtmlNode node)
+        {
+            var nextPageElement = node.FindNode(By.XPath("//div[@class='pages']/ul/li/a/span[contains(., 'Neste')]"));
+            if (nextPageElement != null)
+            {
+                var nextPageUrl = nextPageElement.ParentNode.Attributes["href"].Value;
+                var decodedeNextPageUrl = WebUtility.UrlDecode(nextPageUrl).Replace("&amp;", "&");
+
+                // set page number
+                var urlParams = ExtractUrlParameters(decodedeNextPageUrl);
+                int pageNumber = urlParams.Item3;
+
+                // append root: https://www.kryssord.org
+                decodedeNextPageUrl = "https://www.kryssord.org" + decodedeNextPageUrl;
+                driver.Navigate().GoToUrl(decodedeNextPageUrl);
+
+                var documentNode = driver.GetDocumentNode();
+
+                return new Tuple<bool, int, string, HtmlNode>(true, pageNumber, decodedeNextPageUrl, documentNode);
+            }
+            else
+            {
+                return new Tuple<bool, int, string, HtmlNode>(false, -1, null, null);
+            }
         }
 
         private IList<Word> ReadWords(IWebDriver driver, User adminUser)
@@ -421,9 +619,9 @@ namespace CrossWord.Scraper
             return wordListing;
         }
 
-        private IList<Word> ReadWordsAgilityPack(IWebDriver driver, User adminUser)
+        private IList<Word> ReadWordsAgilityPack(HtmlNode node, User adminUser)
         {
-            var tableRows = driver.FindNodes(By.XPath("/html/body//div[@class='results']/table/tbody/tr"));
+            var tableRows = node.FindNodes(By.XPath("/html/body//div[@class='results']/table/tbody/tr"));
 
             var wordListing = new List<Word>();
             foreach (var row in tableRows)
@@ -487,10 +685,10 @@ namespace CrossWord.Scraper
             return relatedWords;
         }
 
-        private IList<Word> ReadRelatedWordsAgilityPack(IWebDriver driver, User adminUser)
+        private IList<Word> ReadRelatedWordsAgilityPack(HtmlNode node, User adminUser)
         {
             // parse all related words
-            var tableRows = driver.FindNodes(By.XPath("/html/body//div[@class='results']/table/tbody/tr"));
+            var tableRows = node.FindNodes(By.XPath("/html/body//div[@class='results']/table/tbody/tr"));
 
             var relatedWords = new List<Word>();
             foreach (var row in tableRows)
@@ -543,6 +741,105 @@ namespace CrossWord.Scraper
             }
 
             return null;
+        }
+
+        class WordPattern
+        {
+            int IndentSize = 4;
+
+            public string Permutation { get; set; }
+            public int Depth { get; set; }
+            public int Length { get; set; }
+            public string LastWord { get; set; }
+
+            public string Pattern
+            {
+                get
+                {
+                    return Permutation.PadRight(Length, '?');
+                }
+            }
+
+            public WordPattern(string permutation, int length, int depth, string lastWord)
+            {
+                this.Permutation = permutation;
+                this.Length = length;
+                this.Depth = depth;
+                this.LastWord = lastWord;
+            }
+
+            public override string ToString()
+            {
+                var indent = new string(' ', (Depth - 1) * IndentSize);
+                return string.Format("{0}{1}: {2}", indent, Depth, Pattern);
+            }
+
+            public List<WordPattern> GetWordPatternChildren()
+            {
+                // if current Permutation is na?? 
+                // the permutations are:
+                // naa
+                // nab
+                // etc.
+                int permutationSize = Depth + 1;
+                int letterLength = Length;
+                string lastWord = LastWord;
+
+                var childWordPatterns = new List<WordPattern>();
+
+                var permutations = GetPermutations(permutationSize);
+
+                bool hasFoundWord = false;
+                foreach (var permutation in permutations)
+                {
+                    if (permutation.StartsWith(Permutation))
+                    {
+                        childWordPatterns.Add(new WordPattern(permutation, letterLength, permutationSize, lastWord));
+                        hasFoundWord = true;
+                    }
+                    else
+                    {
+                        // if we have found the word and it doesn't any longer start with the right letters, we have passed the pattern so break
+                        if (hasFoundWord) break;
+                    }
+                }
+
+                return childWordPatterns;
+            }
+
+            public bool IsMatchLastWord
+            {
+                get
+                {
+                    return IsMatch(this.LastWord);
+                }
+            }
+
+            public bool IsMatch(string word)
+            {
+                if (word == null) return false;
+
+                if (word.Length > Length)
+                {
+                    return false;
+                }
+                else if (word.Length < Length)
+                {
+                    return false;
+                }
+                else
+                {
+                    // same length so compare
+                    var patternRegexp = Pattern.Replace('?', '.');
+                    Match match = Regex.Match(word, patternRegexp, RegexOptions.IgnoreCase);
+                    if (match.Success)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
         }
     }
 }
