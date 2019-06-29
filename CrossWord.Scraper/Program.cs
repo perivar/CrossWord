@@ -86,9 +86,9 @@ namespace CrossWord.Scraper
             // options.MaxDegreeOfParallelism = 50; // seems to work better without a MaxDegreeOfParallelism number
 
 #if DEBUG
-            startLetterCount = 7;
-            endLetterCount = 7;
-            scraperSite = "Kryssord";
+            startLetterCount = 4;
+            endLetterCount = 4;
+            scraperSite = "NorwegianSynonyms";
 #endif                    
 
             // using Parallel.ForEach
@@ -107,6 +107,9 @@ namespace CrossWord.Scraper
                         break;
                     case "GratisKryssord":
                         actionsList.Add(() => { new GratisKryssordScraper(connectionString, signalRHubURL, local_i, endLetterCount, doContinueWithLastWord); });
+                        break;
+                    case "NorwegianSynonyms":
+                        actionsList.Add(() => { new NorwegianSynonymsScraper(connectionString, signalRHubURL, local_i, endLetterCount, doContinueWithLastWord); });
                         break;
                 }
             }

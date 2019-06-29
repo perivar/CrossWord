@@ -10,6 +10,27 @@ namespace CrossWord.Scraper.MySQLDbService
 {
     public static class WordDatabaseService
     {
+        public static string GetLastWordFromSource(WordHintDbContext db, string source)
+        {
+            Log.Information("Looking for last word from '{0}'", source);
+
+            var lastWord = db.States
+                    // .AsNoTracking()
+                    .OrderByDescending(w => w.CreatedDate)
+                    .FirstOrDefault(item => item.Source == source);
+
+            if (lastWord != null)
+            {
+                // detach in order to clean this from the db tracked cache
+                db.Entry(lastWord).State = EntityState.Detached;
+
+                Log.Information("Using the last word '{0}'", lastWord);
+                return lastWord.Word.RemoveDiacriticsToNorwegian();
+            }
+
+            return null;
+        }
+
         public static string GetLastWordFromLetterCount(WordHintDbContext db, string source, int letterCount)
         {
             if (letterCount > 0)
