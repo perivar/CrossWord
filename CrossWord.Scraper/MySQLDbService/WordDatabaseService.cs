@@ -169,13 +169,13 @@ namespace CrossWord.Scraper.MySQLDbService
             var allRelatedWords = existingRelatedWords.Concat(newRelatedWords);
             var allWordRelationsFrom = allRelatedWords.Select(hint =>
                 // only use the ids to speed things up
-                new WordRelation { WordFromId = word.WordId, WordToId = hint.WordId }
+                new WordRelation { WordFromId = word.WordId, WordToId = hint.WordId, Source = source, CreatedDate = DateTime.Now }
             );
 
             // add relation from each hint to word as well
             var allWordRelationsTo = allRelatedWords.Select(hint =>
                 // only use the ids to speed things up
-                new WordRelation { WordFromId = hint.WordId, WordToId = word.WordId }
+                new WordRelation { WordFromId = hint.WordId, WordToId = word.WordId, Source = source, CreatedDate = DateTime.Now }
             );
 
             // all relations
@@ -189,14 +189,6 @@ namespace CrossWord.Scraper.MySQLDbService
 
             if (newWordRelations.Count > 0)
             {
-                // update the relations and set source and date
-                // newWordRelations.All(c =>
-                // {
-                //     c.CreatedDate = DateTime.Now;
-                //     c.Source = source;
-                //     return true;
-                // });
-
                 db.WordRelations.AddRange(newWordRelations);
                 db.SaveChanges();
 
