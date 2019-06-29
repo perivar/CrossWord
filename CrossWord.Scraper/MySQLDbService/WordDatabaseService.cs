@@ -93,7 +93,8 @@ namespace CrossWord.Scraper.MySQLDbService
                 NumberOfLetters = ScraperUtils.CountNumberOfLetters(wordText),
                 NumberOfWords = ScraperUtils.CountNumberOfWords(wordText),
                 User = user,
-                CreatedDate = DateTime.Now
+                CreatedDate = DateTime.Now,
+                Source = source
             };
 
             // ensure related are all uppercase and distinct
@@ -107,7 +108,8 @@ namespace CrossWord.Scraper.MySQLDbService
                 NumberOfLetters = ScraperUtils.CountNumberOfLetters(hintText),
                 NumberOfWords = ScraperUtils.CountNumberOfWords(hintText),
                 User = user,
-                CreatedDate = DateTime.Now
+                CreatedDate = DateTime.Now,
+                Source = source
             });
 
             AddToDatabase(db, source, word, relatedWords);
@@ -188,12 +190,12 @@ namespace CrossWord.Scraper.MySQLDbService
             if (newWordRelations.Count > 0)
             {
                 // update the relations and set source and date
-                newWordRelations.All(c =>
-                {
-                    c.CreatedDate = DateTime.Now;
-                    c.Source = source;
-                    return true;
-                });
+                // newWordRelations.All(c =>
+                // {
+                //     c.CreatedDate = DateTime.Now;
+                //     c.Source = source;
+                //     return true;
+                // });
 
                 db.WordRelations.AddRange(newWordRelations);
                 db.SaveChanges();
