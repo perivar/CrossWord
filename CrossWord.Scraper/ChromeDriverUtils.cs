@@ -33,11 +33,13 @@ namespace CrossWord.Scraper
 
                 options.AddArguments("--headless");
                 // options.AddArguments("--disable-gpu"); // used to be required for headless on Windows but not anylonger, see crbug.com/737678.
-                // options.AddArguments("--no-sandbox"); // no-sandbox is not needed if you properly setup a user in the Linux container. See https://github.com/ebidel/lighthouse-ci/blob/master/builder/Dockerfile#L35-L40
+                options.AddArguments("--no-sandbox"); // no-sandbox is not needed if you properly setup a user in the Linux container. See https://github.com/ebidel/lighthouse-ci/blob/master/builder/Dockerfile#L35-L40
+							// however on CentOS it is for some reason needed anyway
                 options.AddArguments("--whitelisted-ips='127.0.0.1'"); // to remove error messages "[SEVERE]: bind() returned an error, errno=99: Cannot assign requested address (99)"
                 options.AddArguments("--disable-extensions");
                 options.AddArguments("--window-size=1920,1080");
                 options.AddArguments("--blink-settings=imagesEnabled=false"); // disable images
+                options.AddArguments("--disable-dev-shm-usage"); // DevToolsActivePort file doesn't exist on CentOS
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {

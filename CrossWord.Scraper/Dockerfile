@@ -14,7 +14,7 @@ RUN dotnet publish -c Release -o out
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/core/runtime:2.2
-# FROM mcr.microsoft.com/dotnet/core/sdk:2.2
+#FROM mcr.microsoft.com/dotnet/core/sdk:2.2
 
 # Install deps + add Chrome Stable + procps for the ps command
 RUN apt-get update && apt-get install -y \
@@ -60,3 +60,7 @@ RUN touch crossword_scraper_error.log
 
 # Change name of dll for your application 
 ENTRYPOINT ["dotnet", "CrossWord.Scraper.dll"]
+
+# Use this to debug the docker image - keeps it open instead of restarting it
+# It is smart to use this in combination with using the SDK version as the runtime image
+#CMD tail -f /dev/null
