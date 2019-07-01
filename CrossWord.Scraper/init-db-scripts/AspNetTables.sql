@@ -1,3 +1,6 @@
+create database dictionary;
+use dictionary;
+
 -- MySQL dump 10.13  Distrib 5.7.26, for Linux (x86_64)
 --
 -- Host: localhost    Database: dictionary
