@@ -49,9 +49,9 @@ services:
       - DATABASE=dictionary
       - ScraperSite=Kryssord # NorwegianSynonyms, Kryssord or KryssordHjelp or GratisKryssord
       - ScraperContinueLastWord=true
-      - ScraperStartLetterCount=5
-      - ScraperEndLetterCount=8
-      - SignalRHubURL=http://order.wazalo.com:5000/crosswords
+      - ScraperStartLetterCount=1
+      - ScraperEndLetterCount=10
+      - SignalRHubURL=http://116.203.83.168:5000/crosswords
     privileged: true
     cap_add:
       - "SYS_ADMIN"
@@ -69,7 +69,7 @@ services:
       dockerfile: CrossWord.Web/Dockerfile
     restart: always
     environment:
-      - ApiBaseUrl=http://order.wazalo.com:8000/api/
+      - ApiBaseUrl=http://116.203.83.168:8000/api/
       - ApiUserEmail=server@wazalo.com
       - ApiPassword=123ABCabc!
     expose:
