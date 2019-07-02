@@ -152,7 +152,11 @@ namespace CrossWord.Scraper
                             // store to database
                             if (hasFound)
                             {
-                                WordDatabaseService.AddToDatabase(db, source, adminUser, currentValue, currentList);
+                                // update that we are processing this word, ignore length and comment
+                                WordDatabaseService.UpdateState(db, source, new Word() { Value = currentValue.ToUpper(), Source = source, CreatedDate = DateTime.Now }, writer, true);
+
+                                // disable storing state since we are doing it manually above
+                                WordDatabaseService.AddToDatabase(db, source, adminUser, currentValue, currentList, writer, false);
 
                                 // if (writer != null) writer.WriteLine("Added '{0} => {1}'", currentValue, string.Join(",", currentList));
                                 if ((count % 10) == 0) if (writer != null) writer.WriteLine("[{0}] / [{1}]", count, totalCount);

@@ -77,7 +77,7 @@ namespace CrossWord.Scraper.MySQLDbService
             return null;
         }
 
-        public static void AddToDatabase(WordHintDbContext db, string source, User user, string wordText, IEnumerable<string> relatedValues)
+        public static void AddToDatabase(WordHintDbContext db, string source, User user, string wordText, IEnumerable<string> relatedValues, TextWriter writer = null, bool doStoreState = true)
         {
             // Note that  tracking should be disabled to speed things up
             // note that this doesn't load the virtual properties, but loads the object ids after a save
@@ -112,7 +112,7 @@ namespace CrossWord.Scraper.MySQLDbService
                 Source = source
             });
 
-            AddToDatabase(db, source, word, relatedWords);
+            AddToDatabase(db, source, word, relatedWords, writer, doStoreState);
         }
 
         public static void AddToDatabase(WordHintDbContext db, string source, Word word, IEnumerable<Word> relatedWords, TextWriter writer = null, bool doStoreState = true)
