@@ -21,7 +21,9 @@ namespace CrossWord.Scraper
         string connectionString = null;
         string signalRHubURL = null;
         string source = null;
-        bool hasFoundLastWord = false;
+        bool hasFoundPattern = false; // this is the first stage, we match the pattern
+        bool hasFoundLastWord = false; // this is the second stage, we not only match the pattern but the word as well
+        bool hasMissedLastWord = false; // if we have gone through both stages without finding the last word - then something failed!
 
         public KryssordScraper(string connectionString, string signalRHubURL, string siteUsername, string sitePassword, int letterCount, bool doContinueWithLastWord)
         {
@@ -240,6 +242,8 @@ namespace CrossWord.Scraper
             bool hasFound = false;
             foreach (var permutation in permutations)
             {
+                if (hasMissedLastWord) return;
+
                 // skip until we reach last word beginning
                 if (lastWord != null)
                 {
@@ -294,6 +298,8 @@ namespace CrossWord.Scraper
                 // recursively process children patterns
                 foreach (var childPattern in childPatterns)
                 {
+                    if (hasMissedLastWord) return;
+
                     ReadWordsByWordPermutationsRecursive(driver, childPattern, db, adminUser);
                 }
             }
@@ -452,12 +458,24 @@ namespace CrossWord.Scraper
                     if (wordPattern.IsMatchLastWord)
                     {
                         Log.Information("The current pattern matches the last-word: {0} = {1}. Current word: {2}", wordPattern.Pattern, wordPattern.LastWord, word.Value);
+                        hasFoundPattern = true;
 
                         var wordRemoveDiacriticsToNorwegian = word.Value.RemoveDiacriticsToNorwegian();
                         if (wordRemoveDiacriticsToNorwegian == wordPattern.LastWord)
                         {
                             Log.Information("The current word matches the last-word: {0} = {1}", word.Value, wordPattern.LastWord);
                             hasFoundLastWord = true;
+                        }
+                    }
+                    else
+                    {
+                        if (hasFoundPattern)
+                        {
+                            // if the pattern not any longer match, we never found the word - has it been deleted?
+                            Log.Error("Warning! The current pattern does not any longer match the last-word: {0} = {1}. Current word: {2}", wordPattern.Pattern, wordPattern.LastWord, word.Value);
+                            writer.WriteLine("Warning! The current pattern does not any longer match the last-word: {0} = {1}. Current word: {2}", wordPattern.Pattern, wordPattern.LastWord, word.Value);
+                            hasMissedLastWord = true;
+                            return;
                         }
                     }
 
