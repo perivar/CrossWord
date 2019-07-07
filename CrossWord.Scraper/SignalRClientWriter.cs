@@ -32,14 +32,17 @@ namespace CrossWord.Scraper
             .WithUrl(url)
             .ConfigureLogging(logging =>
             {
-                logging.SetMinimumLevel(LogLevel.Critical);
-
                 // Add Serilog
                 // make sure it has been configured first, like this somewhere
                 // Log.Logger = new LoggerConfiguration()
                 // ...
                 // .CreateLogger();
                 logging.AddSerilog(dispose: true);
+
+                // control verbosity
+                logging.SetMinimumLevel(LogLevel.Critical);
+                logging.AddFilter("Microsoft.AspNetCore.SignalR", LogLevel.Information);
+                logging.AddFilter("Microsoft.AspNetCore.Http.Connections", LogLevel.Information);
             })
             .Build();
 
