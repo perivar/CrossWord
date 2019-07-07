@@ -6,13 +6,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
+using Polly;
+using Serilog;
 
 namespace CrossWord.Scraper
 {
     public class SignalRClientWriter : TextWriter
     {
-        private HubConnection HubConnection { get; set; }
-        private bool HubConnectionStarted { get; set; }
+        private HubConnection SignalRConnection { get; set; }
         private bool FlushAfterEveryWrite { get; set; }
         private string Identifier { get; set; }
         public string ExtraStatusInformation { get; set; }
@@ -23,37 +24,86 @@ namespace CrossWord.Scraper
 
         public SignalRClientWriter(string url, string identifier)
         {
-            this.HubConnectionStarted = false;
             this.FlushAfterEveryWrite = false;
             this.Identifier = identifier != null ? identifier : "Robot";
 
             // https://docs.microsoft.com/en-us/aspnet/core/signalr/configuration?view=aspnetcore-2.1
-            HubConnection = new HubConnectionBuilder()
+            SignalRConnection = new HubConnectionBuilder()
             .WithUrl(url)
             .ConfigureLogging(logging =>
             {
                 logging.SetMinimumLevel(LogLevel.Critical);
-                logging.AddConsole();
+
+                // Add Serilog
+                // make sure it has been configured first, like this somewhere
+                // Log.Logger = new LoggerConfiguration()
+                // ...
+                // .CreateLogger();
+                logging.AddSerilog(dispose: true);
             })
             .Build();
 
-            HubConnection.On("SendStatus", () =>
-            {
-                var id = Thread.CurrentThread.ManagedThreadId;
-                var state = Thread.CurrentThread.ThreadState;
-                var priority = Thread.CurrentThread.Priority;
+            SignalRConnection.On("SendStatus", () =>
+           {
+               var id = Thread.CurrentThread.ManagedThreadId;
+               var state = Thread.CurrentThread.ThreadState;
+               var priority = Thread.CurrentThread.Priority;
+               var isAlive = Thread.CurrentThread.IsAlive;
 
-                HubConnection.InvokeAsync("Broadcast", Identifier, $"Thread: {id}, state: {state}, priority: {priority}");
-                if (ExtraStatusInformation != null) HubConnection.InvokeAsync("Broadcast", Identifier, $"Extra Information: {ExtraStatusInformation}");
-            });
-
-            // support self-signed SSL certificates - not working therefore disabled
-            // ServicePointManager.ServerCertificateValidationCallback +=
-            //       (sender, certificate, chain, sslPolicyErrors) => true;
+               SignalRConnection.InvokeAsync("Broadcast", Identifier, $"Thread: {id}, state: {state}, priority: {priority}, isAlive: {isAlive}");
+               if (ExtraStatusInformation != null) SignalRConnection.InvokeAsync("Broadcast", Identifier, $"Extra Information: {ExtraStatusInformation}");
+           });
 
             // open connection
-            CheckOrOpenConnection().GetAwaiter();
+            // use auto reconnect from here:
+            // https://www.radenkozec.com/net-core-signalr-automatic-reconnects/
+            OpenSignalRConnection();
         }
+
+        private async void OpenSignalRConnection()
+        {
+            var pauseBetweenFailures = TimeSpan.FromSeconds(10);
+            var retryPolicy = Policy
+                .Handle<Exception>()
+                .WaitAndRetryForeverAsync(i => pauseBetweenFailures,
+                (exception, timeSpan) =>
+                {
+                    Log.Error(exception.Message);
+                });
+
+            await retryPolicy.ExecuteAsync(async () =>
+            {
+                Log.Information("Trying to connect to SignalR server");
+                await TryOpenSignalRConnection();
+            });
+        }
+
+        private async Task TryOpenSignalRConnection()
+        {
+            Log.Information("Starting SignalR connection");
+
+            // this will throw an exception if it doesn't work and will be picked up by Polly's single exception type - Policy.Handle<Exception>()
+            await SignalRConnection.StartAsync();
+
+            // subscribe to the closed event
+            SignalRConnection.Closed += SignalRConnection_Closed;
+
+            Log.Information("SignalR connection established");
+        }
+
+        private async Task SignalRConnection_Closed(Exception arg)
+        {
+            Log.Information("SignalR connection is closed");
+            await SignalRConnection.StopAsync();
+
+            // unsubscribe so we don't have many many concurrent subscriptions to the same event for each 
+            // time we try to subscribe in TryOpenSignalRConnection()
+            SignalRConnection.Closed -= SignalRConnection_Closed;
+
+            OpenSignalRConnection();
+        }
+
+        public override Encoding Encoding => throw new System.NotImplementedException();
 
         public override async Task WriteAsync(string value)
         {
@@ -125,38 +175,15 @@ namespace CrossWord.Scraper
             // do nothing
         }
 
-        public override Encoding Encoding => throw new System.NotImplementedException();
-
-        private async Task CheckOrOpenConnection()
-        {
-            if (!HubConnectionStarted)
-            {
-                try
-                {
-                    await HubConnection.StartAsync();
-                    HubConnectionStarted = true;
-                }
-                catch (Exception ex)
-                {
-                    await Console.Error.WriteLineAsync(String.Format("Failed starting SignalR client: {0}", ex.Message));
-                }
-            }
-        }
-
         private async Task OutputMessage(string message)
         {
-            await CheckOrOpenConnection();
-
-            if (HubConnectionStarted)
+            try
             {
-                try
-                {
-                    await HubConnection.InvokeAsync("Broadcast", Identifier, message);
-                }
-                catch (Exception ex)
-                {
-                    await Console.Error.WriteLineAsync(String.Format("Failed sending message to SignalR Hub: {0}", ex.Message));
-                }
+                await SignalRConnection.InvokeAsync("Broadcast", Identifier, message);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(String.Format("Failed sending message to SignalR Hub: {0}", ex.Message));
             }
         }
     }
