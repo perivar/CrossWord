@@ -54,10 +54,12 @@ namespace CrossWord.Scraper
                if (ExtraStatusInformation != null) SignalRConnection.InvokeAsync("Broadcast", Identifier, $"Extra Information: {ExtraStatusInformation}");
            });
 
-            // listen to Broadcast events
+            // Ingore Broadcast events from the other SignalRClientWriter
+            // if we don't add this we get an error each time we receive a method this client doesn't know how to deal with.            
+            // i.e the Broadcast methods called from the Hub: Clients.All.SendAsync("Broadcast", user, message);
             SignalRConnection.On<string, string>("Broadcast", (user, message) =>
             {
-                Log.Information("{0} - Received Broadcast message: {1}, {2}", Identifier, user, message);
+                // ignore
             });
 
             // open connection
