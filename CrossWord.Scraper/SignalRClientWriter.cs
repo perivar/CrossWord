@@ -54,6 +54,12 @@ namespace CrossWord.Scraper
                if (ExtraStatusInformation != null) SignalRConnection.InvokeAsync("Broadcast", Identifier, $"Extra Information: {ExtraStatusInformation}");
            });
 
+            // listen to Broadcast events
+            SignalRConnection.On<string, string>("Broadcast", (user, message) =>
+            {
+                Log.Information("{0} - Received Broadcast message: {1}, {2}", Identifier, user, message);
+            });
+
             // open connection
             // use auto reconnect from here:
             // https://www.radenkozec.com/net-core-signalr-automatic-reconnects/
