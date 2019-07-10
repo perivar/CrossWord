@@ -25,7 +25,7 @@ namespace CrossWord.Scraper
         bool hasFoundLastWord = false; // this is the second stage, we not only match the pattern but the word as well
         bool hasMissedLastWord = false; // if we have gone through both stages without finding the last word - then something failed!
 
-        public KryssordScraper(string connectionString, string signalRHubURL, string siteUsername, string sitePassword, int letterCount, bool doContinueWithLastWord)
+        public KryssordScraper(string connectionString, string signalRHubURL, string siteUsername, string sitePassword, int letterCount, int endLetterCount, bool doContinueWithLastWord, bool isScraperSwarm)
         {
             this.connectionString = connectionString;
             this.signalRHubURL = signalRHubURL;
@@ -40,10 +40,10 @@ namespace CrossWord.Scraper
             // do this before this class is called instead
             // KillAllChromeDriverInstances();
 
-            DoScrape(siteUsername, sitePassword, letterCount, source, doContinueWithLastWord);
+            DoScrape(siteUsername, sitePassword, letterCount, endLetterCount, source, doContinueWithLastWord, isScraperSwarm);
         }
 
-        private void DoScrape(string siteUsername, string sitePassword, int letterCount, string source, bool doContinueWithLastWord)
+        private void DoScrape(string siteUsername, string sitePassword, int letterCount, int endLetterCount, string source, bool doContinueWithLastWord, bool isScraperSwarm)
         {
             var dbContextFactory = new DesignTimeDbContextFactory();
             using (var db = dbContextFactory.CreateDbContext(connectionString, Log.Logger))
@@ -68,8 +68,13 @@ namespace CrossWord.Scraper
                 // lastWordString = "ÅSTED FOR DRAMAET ROMEO OG JULIE";
                 // letterCount = 32;
 
-                lastWordString = "GUTTENAVN PÅ \"A\"";
-                letterCount = 16;
+                // lastWordString = "GUTTENAVN PÅ \"A\"";
+                // letterCount = 16;
+                // endLetterCount = 17;
+
+                lastWordString = "TALL SOM ANGIR FORHOLDET MELLOM ET LEGEMES HASTIGHET OG LYDENS";
+                letterCount = 62;
+                endLetterCount = 300;
 #endif
 
                 // don't skip any words when the last word is empty
@@ -113,10 +118,10 @@ namespace CrossWord.Scraper
                 {
                     DoLogon(driver, siteUsername, sitePassword);
 
-                    for (int i = letterCount; i < 200; i++)
+                    for (int i = letterCount; i < endLetterCount; i++)
                     {
                         // added break to support several docker instances scraping in swarms
-                        if (i > letterCount)
+                        if (isScraperSwarm && (i > letterCount))
                         {
                             Log.Error("Warning! Quitting since the current letter length > letter count: {0} / {1}", i, letterCount);
                             break;

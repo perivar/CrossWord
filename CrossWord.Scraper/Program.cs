@@ -78,8 +78,9 @@ namespace CrossWord.Scraper
             bool doContinueWithLastWord = GetConfigurationBoolValue(configuration, "ScraperContinueLastWord", true);
             int startLetterCount = GetConfigurationIntValue(configuration, "ScraperStartLetterCount", 1);
             int endLetterCount = GetConfigurationIntValue(configuration, "ScraperEndLetterCount", 20);
+            bool isScraperSwarm = GetConfigurationBoolValue(configuration, "ScraperSwarm", true);
 
-            Log.Error("Using scraper config - site: '{0}', continue with last word: '{1}', from/to letter count: {2}-{3}.", scraperSite, doContinueWithLastWord, startLetterCount, endLetterCount);
+            Log.Error("Using scraper config - site: '{0}', continue with last word: '{1}', from/to letter count: {2}-{3}. Swarming: {4}", scraperSite, doContinueWithLastWord, startLetterCount, endLetterCount, isScraperSwarm);
 
             // start several scrapers in parallell
             var options = new ParallelOptions();
@@ -89,32 +90,56 @@ namespace CrossWord.Scraper
             startLetterCount = 12;
             endLetterCount = 12;
             scraperSite = "Kryssord";
+            isScraperSwarm = false;
 #endif                    
 
-            // using Parallel.ForEach
-            var actionsList = new List<Action>();
-            for (int i = startLetterCount; i <= endLetterCount; i++)
+            if (isScraperSwarm)
             {
-                int local_i = i; // have to use local i to not use the same increment on all scrapers
+                // using Parallel.ForEach
+                var actionsList = new List<Action>();
+                for (int i = startLetterCount; i <= endLetterCount; i++)
+                {
+                    int local_i = i; // have to use local i to not use the same increment on all scrapers
+                    switch (scraperSite)
+                    {
+                        default:
+                        case "Kryssord":
+                            actionsList.Add(() => { new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, local_i, endLetterCount, doContinueWithLastWord, isScraperSwarm); });
+                            break;
+                        case "KryssordHjelp":
+                            actionsList.Add(() => { new KryssordHjelpScraper(connectionString, signalRHubURL, local_i, doContinueWithLastWord); });
+                            break;
+                        case "GratisKryssord":
+                            actionsList.Add(() => { new GratisKryssordScraper(connectionString, signalRHubURL, local_i, endLetterCount, doContinueWithLastWord); });
+                            break;
+                        case "NorwegianSynonyms":
+                            actionsList.Add(() => { new NorwegianSynonymsScraper(connectionString, signalRHubURL, local_i, endLetterCount, doContinueWithLastWord); });
+                            break;
+                    }
+                }
+
+                Parallel.ForEach<Action>(actionsList, options, (o => o()));
+            }
+            else
+            {
+                // run only one thread
                 switch (scraperSite)
                 {
                     default:
                     case "Kryssord":
-                        actionsList.Add(() => { new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, local_i, doContinueWithLastWord); });
+                        new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, startLetterCount, endLetterCount, doContinueWithLastWord, false);
                         break;
                     case "KryssordHjelp":
-                        actionsList.Add(() => { new KryssordHjelpScraper(connectionString, signalRHubURL, local_i, doContinueWithLastWord); });
+                        new KryssordHjelpScraper(connectionString, signalRHubURL, startLetterCount, doContinueWithLastWord);
                         break;
                     case "GratisKryssord":
-                        actionsList.Add(() => { new GratisKryssordScraper(connectionString, signalRHubURL, local_i, endLetterCount, doContinueWithLastWord); });
+                        new GratisKryssordScraper(connectionString, signalRHubURL, startLetterCount, endLetterCount, doContinueWithLastWord);
                         break;
                     case "NorwegianSynonyms":
-                        actionsList.Add(() => { new NorwegianSynonymsScraper(connectionString, signalRHubURL, local_i, endLetterCount, doContinueWithLastWord); });
+                        new NorwegianSynonymsScraper(connectionString, signalRHubURL, startLetterCount, endLetterCount, doContinueWithLastWord);
                         break;
                 }
             }
-
-            Parallel.ForEach<Action>(actionsList, options, (o => o()));
         }
 
         private static int GetConfigurationIntValue(IConfiguration configuration, string key, int defaultValue)
