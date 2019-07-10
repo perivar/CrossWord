@@ -72,8 +72,9 @@ namespace CrossWord.Scraper
                 // letterCount = 16;
                 // endLetterCount = 17;
 
-                lastWordString = "TALL SOM ANGIR FORHOLDET MELLOM ET LEGEMES HASTIGHET OG LYDENS";
-                letterCount = 62;
+                // lastWordString = "TALL SOM ANGIR FORHOLDET MELLOM ET LEGEMES HASTIGHET OG LYDENS";
+                lastWordString = "ÅPNINGSKONSERTSTYKKE";
+                letterCount = lastWordString.Length;
                 endLetterCount = 300;
 #endif
 
@@ -184,7 +185,10 @@ namespace CrossWord.Scraper
                 depth = 0;
             }
 
-            if (lastWord != null)
+            // set wordlength based on last word if we are not processing in swarm mode and are continuing
+            // to read patterns with increasing length
+            // this assumes that we found the last word for the first pattern match
+            if (!hasFoundLastWord && lastWord != null)
             {
                 wordLength = lastWord.Length;
 
@@ -205,7 +209,7 @@ namespace CrossWord.Scraper
                 if (hasMissedLastWord) return;
 
                 // skip until we reach last word beginning
-                if (lastWord != null)
+                if (!hasFoundLastWord && lastWord != null)
                 {
                     if (lastWord.ToLowerInvariant().StartsWith(permutation))
                     {
