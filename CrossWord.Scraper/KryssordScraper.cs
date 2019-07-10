@@ -62,8 +62,11 @@ namespace CrossWord.Scraper
                 // WILLY?R????????      gives WILLY RØGEBERG
                 // THORBJØRN?H???????   gives THORBJØRN HÅRSTAD
 
-                // lastWordString = "TRONSMOS VEG"; // word before TROND KJØLL
-                // letterCount = 12;
+                lastWordString = "TRONSMOS VEG"; // word before TROND KJØLL
+                letterCount = 12;
+
+                // lastWordString = "ÅSTED FOR DRAMAET ROMEO OG JULIE";
+                // letterCount = 32;
 #endif
 
                 // don't skip any words when the last word is empty
@@ -177,11 +180,12 @@ namespace CrossWord.Scraper
             {
                 wordLength = lastWord.Length;
 
+                // disabling this as it doesn't give any real benefits - only misses words that start with one character for high letter counts
                 // if the word is longer than 3 characters, use the two first letters as pattern
-                if (wordLength > 2)
-                {
-                    depth = 2;
-                }
+                // if (wordLength > 2)
+                // {
+                //     depth = 2;
+                // }
             }
 
             var permutations = GetPermutations(depth);
