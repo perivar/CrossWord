@@ -62,11 +62,14 @@ namespace CrossWord.Scraper
                 // WILLY?R????????      gives WILLY RØGEBERG
                 // THORBJØRN?H???????   gives THORBJØRN HÅRSTAD
 
-                lastWordString = "TRONSMOS VEG"; // word before TROND KJØLL
-                letterCount = 12;
+                // lastWordString = "TRONSMOS VEG"; // word before TROND KJØLL
+                // letterCount = 12;
 
                 // lastWordString = "ÅSTED FOR DRAMAET ROMEO OG JULIE";
                 // letterCount = 32;
+
+                lastWordString = "GUTTENAVN PÅ \"A\"";
+                letterCount = 16;
 #endif
 
                 // don't skip any words when the last word is empty
@@ -488,7 +491,10 @@ namespace CrossWord.Scraper
             if (nextPageElement != null)
             {
                 var nextPageUrl = nextPageElement.ParentNode.Attributes["href"].Value;
-                var decodedeNextPageUrl = WebUtility.UrlDecode(nextPageUrl).Replace("&amp;", "&");
+                var decodedeNextPageUrl = WebUtility.UrlDecode(nextPageUrl);
+                // fix some issues with the url decoding
+                decodedeNextPageUrl = decodedeNextPageUrl.Replace("&amp;", "&");
+                decodedeNextPageUrl = decodedeNextPageUrl.Replace("&quot;", "%22");
 
                 // set page number
                 var urlParams = ExtractUrlParameters(decodedeNextPageUrl);
@@ -545,6 +551,8 @@ namespace CrossWord.Scraper
             var tableRows = node.FindNodes(By.XPath("/html/body//div[@class='results']/table/tbody/tr"));
 
             var relatedWords = new List<Word>();
+            if (tableRows == null) return relatedWords;
+
             foreach (var row in tableRows)
             {
                 var rowTD = row.FindNodes(By.TagName("td"));
