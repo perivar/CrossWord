@@ -25,14 +25,14 @@ namespace CrossWord.Scraper
         bool hasFoundLastWord = false; // this is the second stage, we not only match the pattern but the word as well
         bool hasMissedLastWord = false; // if we have gone through both stages without finding the last word - then something failed!
 
-        public KryssordScraper(string connectionString, string signalRHubURL, string siteUsername, string sitePassword, int letterCount, int endLetterCount, bool doContinueWithLastWord, bool isScraperSwarm)
+        public KryssordScraper(string connectionString, string signalRHubURL, string siteUsername, string sitePassword, int startLetterCount, int endLetterCount, bool doContinueWithLastWord, bool isScraperSwarm)
         {
             this.connectionString = connectionString;
             this.signalRHubURL = signalRHubURL;
             this.source = "kryssord.org";
 
             // set writer identifier as pattern            
-            this.writer = new SignalRClientWriter(signalRHubURL, letterCount.ToString());
+            this.writer = new SignalRClientWriter(signalRHubURL, startLetterCount.ToString());
             writer.WriteLine("Starting {0} Scraper ....", this.source);
 
             // make sure that no chrome and chrome drivers are running
@@ -40,50 +40,14 @@ namespace CrossWord.Scraper
             // do this before this class is called instead
             // KillAllChromeDriverInstances();
 
-            DoScrape(siteUsername, sitePassword, letterCount, endLetterCount, source, doContinueWithLastWord, isScraperSwarm);
+            DoScrape(siteUsername, sitePassword, startLetterCount, endLetterCount, source, doContinueWithLastWord, isScraperSwarm);
         }
 
-        private void DoScrape(string siteUsername, string sitePassword, int letterCount, int endLetterCount, string source, bool doContinueWithLastWord, bool isScraperSwarm)
+        private void DoScrape(string siteUsername, string sitePassword, int startLetterCount, int endLetterCount, string source, bool doContinueWithLastWord, bool isScraperSwarm)
         {
             var dbContextFactory = new DesignTimeDbContextFactory();
             using (var db = dbContextFactory.CreateDbContext(connectionString, Log.Logger))
             {
-                string lastWordString = null;
-                if (doContinueWithLastWord)
-                {
-                    lastWordString = WordDatabaseService.GetLastWordFromLetterCount(db, source, letterCount);
-                }
-
-#if DEBUG
-                // some patterns give back a word with one less character than asked for - it seems the Ø is messing their system up
-                // UTF8 two byte problem?
-                // TROND?K?????         gives TROND KJØLL
-                // VEBJØRN?B????        gives VEBJØRN BERG
-                // WILLY?R????????      gives WILLY RØGEBERG
-                // THORBJØRN?H???????   gives THORBJØRN HÅRSTAD
-
-                // lastWordString = "TRONSMOS VEG"; // word before TROND KJØLL
-                // letterCount = 12;
-
-                // lastWordString = "ÅSTED FOR DRAMAET ROMEO OG JULIE";
-                // letterCount = 32;
-
-                // lastWordString = "GUTTENAVN PÅ \"A\"";
-                // letterCount = 16;
-                // endLetterCount = 17;
-
-                // lastWordString = "TALL SOM ANGIR FORHOLDET MELLOM ET LEGEMES HASTIGHET OG LYDENS";
-                lastWordString = "ÅPNINGSKONSERTSTYKKE";
-                letterCount = lastWordString.Length;
-                endLetterCount = 300;
-#endif
-
-                // don't skip any words when the last word is empty
-                if (lastWordString == null)
-                {
-                    hasFoundLastWord = true;
-                }
-
                 // Note! 
                 // the user needs to be added before we disable tracking and disable AutoDetectChanges
                 // otherwise this will crash
@@ -115,16 +79,58 @@ namespace CrossWord.Scraper
                 // this doesn't seem to work when adding new users all the time
                 db.ChangeTracker.AutoDetectChangesEnabled = false;
 
+#if DEBUG
+                // some patterns give back a word with one less character than asked for - it seems the Ø is messing their system up
+                // UTF8 two byte problem?
+                // TROND?K?????         gives TROND KJØLL
+                // VEBJØRN?B????        gives VEBJØRN BERG
+                // WILLY?R????????      gives WILLY RØGEBERG
+                // THORBJØRN?H???????   gives THORBJØRN HÅRSTAD
+
+                // lastWordString = "TRONSMOS VEG"; // word before TROND KJØLL
+                // letterCount = 12;
+
+                // lastWordString = "ÅSTED FOR DRAMAET ROMEO OG JULIE";
+                // letterCount = 32;
+
+                // lastWordString = "GUTTENAVN PÅ \"A\"";
+                // letterCount = 16;
+                // endLetterCount = 17;
+
+                // lastWordString = "TALL SOM ANGIR FORHOLDET MELLOM ET LEGEMES HASTIGHET OG LYDENS";
+                // lastWordString = "ÅPNINGSKONSERTSTYKKE";
+                // letterCount = lastWordString.Length;
+                // endLetterCount = 300;
+#endif
+
+
                 using (var driver = ChromeDriverUtils.GetChromeDriver(true))
                 {
                     DoLogon(driver, siteUsername, sitePassword);
 
-                    for (int i = letterCount; i < endLetterCount; i++)
+                    for (int i = startLetterCount; i < endLetterCount; i++)
                     {
-                        // added break to support several docker instances scraping in swarms
-                        if (isScraperSwarm && (i > letterCount))
+                        // reset global variables
+                        hasFoundPattern = false; // this is the first stage, we match the pattern
+                        hasFoundLastWord = false; // this is the second stage, we not only match the pattern but the word as well
+                        hasMissedLastWord = false;
+
+                        string lastWordString = null;
+                        if (doContinueWithLastWord)
                         {
-                            Log.Error("Warning! Quitting since the current letter length > letter count: {0} / {1}", i, letterCount);
+                            lastWordString = WordDatabaseService.GetLastWordFromLetterCount(db, source, i);
+                        }
+
+                        // don't skip any words when the last word is empty
+                        if (lastWordString == null)
+                        {
+                            hasFoundLastWord = true;
+                        }
+
+                        // added break to support several docker instances scraping in swarms
+                        if (isScraperSwarm && (i > startLetterCount))
+                        {
+                            Log.Error("Warning! Quitting since the current letter length > letter count: {0} / {1}", i, startLetterCount);
                             break;
                         }
 

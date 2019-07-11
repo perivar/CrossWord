@@ -40,9 +40,18 @@ namespace CrossWord.Scraper
                 logging.AddSerilog(dispose: true);
 
                 // control verbosity
-                logging.SetMinimumLevel(LogLevel.Critical);
-                logging.AddFilter("Microsoft.AspNetCore.SignalR", LogLevel.Information);
-                logging.AddFilter("Microsoft.AspNetCore.Http.Connections", LogLevel.Information);
+                // this doesn't work due to the serilog filter winning over these, probably because of this:
+                // https://github.com/serilog/serilog-extensions-logging/issues/114
+                // Filter rule selection:
+                // 1. Select rules for current logger type, if there is none, select ones without logger type specified
+                // 2. Select rules with longest matching categories
+                // 3. If there nothing matched by category take all rules without category
+                // 3. If there is only one rule use it's level and filter
+                // 4. If there are multiple rules use last
+                // 5. If there are no applicable rules use global minimal level
+                // logging.SetMinimumLevel(LogLevel.Critical);
+                // logging.AddFilter("Microsoft.AspNetCore.SignalR", LogLevel.Information);
+                // logging.AddFilter("Microsoft.AspNetCore.Http.Connections", LogLevel.Information);
             })
             .Build();
 
@@ -84,14 +93,14 @@ namespace CrossWord.Scraper
 
             await retryPolicy.ExecuteAsync(async () =>
             {
-                Log.Information("Trying to connect to SignalR server");
+                Log.Information("Trying to connect to SignalR server ...");
                 await TryOpenSignalRConnection();
             });
         }
 
         private async Task TryOpenSignalRConnection()
         {
-            Log.Information("Starting SignalR connection");
+            Log.Information("Starting SignalR connection ...");
 
             // this will throw an exception if it doesn't work and will be picked up by Polly's single exception type - Policy.Handle<Exception>()
             await SignalRConnection.StartAsync();
@@ -99,7 +108,7 @@ namespace CrossWord.Scraper
             // subscribe to the closed event
             SignalRConnection.Closed += SignalRConnection_Closed;
 
-            Log.Information("SignalR connection established");
+            Log.Information("SignalR connection established!");
         }
 
         private async Task SignalRConnection_Closed(Exception arg)

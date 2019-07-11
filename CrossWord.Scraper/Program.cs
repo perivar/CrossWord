@@ -87,8 +87,8 @@ namespace CrossWord.Scraper
             // options.MaxDegreeOfParallelism = 50; // seems to work better without a MaxDegreeOfParallelism number
 
 #if DEBUG
-            startLetterCount = 12;
-            endLetterCount = 12;
+            startLetterCount = 15;
+            endLetterCount = 20;
             scraperSite = "Kryssord";
             isScraperSwarm = false;
 #endif                    
