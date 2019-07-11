@@ -595,11 +595,6 @@ namespace CrossWord.Scraper
             return relatedWords;
         }
 
-        private static IWebElement FindNextPageOrNull(IWebDriver driver)
-        {
-            return driver.FindElementOrNull(By.XPath("//div[@class='pages']/ul/li/a/span[contains(., 'Neste')]"));
-        }
-
         private static Tuple<string, string, int> ExtractUrlParameters(string url)
         {
             // https://www.kryssord.org/search.php?a=10&b=&p=0
