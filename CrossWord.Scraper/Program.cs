@@ -89,7 +89,7 @@ namespace CrossWord.Scraper
 #if DEBUG
             startLetterCount = 1;
             endLetterCount = 4;
-            scraperSite = "GratisKryssord";
+            scraperSite = "KryssordScraperLatest";
             isScraperSwarm = false;
 #endif                    
 
@@ -128,6 +128,9 @@ namespace CrossWord.Scraper
                     default:
                     case "Kryssord":
                         new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, startLetterCount, endLetterCount, doContinueWithLastWord, false);
+                        break;
+                    case "KryssordScraperLatest":
+                        new KryssordScraperLatest(connectionString, signalRHubURL, siteUsername, sitePassword);
                         break;
                     case "KryssordHjelp":
                         new KryssordHjelpScraper(connectionString, signalRHubURL, startLetterCount, doContinueWithLastWord);
