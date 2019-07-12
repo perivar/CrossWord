@@ -341,7 +341,7 @@ namespace CrossWord.Scraper
                 var href = ahref.Attributes["href"].Value;
                 string url = $"https://www.kryssord.org{href}";
 
-                wordAndHrefs.Add((wordText, url));
+                if (!string.IsNullOrEmpty(wordText)) wordAndHrefs.Add((wordText, url));
             }
 
             wordAndHrefs = wordAndHrefs.Distinct().ToList(); // Note that this requires the object to implement IEquatable<> 
