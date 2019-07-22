@@ -26,7 +26,7 @@ services:
     command: [--default-authentication-plugin=mysql_native_password] # get rid of the Authentication plugin ‘caching_sha2_password’ cannot be loaded error
     volumes:
       - ./init-db-scripts/:/docker-entrypoint-initdb.d/ # reload using docker-compose down -v (Note that this deletes the volumes!)
-        # Also remember the 'create database <database>; use <database>;' lines in the sql files
+                                                        # Also remember the 'create database <database>; use <database>;' lines in the sql files
       - datafiles:/var/lib/mysql
     restart: always
     environment:
@@ -49,11 +49,12 @@ services:
       - DBUSER=root
       - DBPASSWORD=secret
       - DATABASE=dictionary
-      - ScraperSite=Kryssord # NorwegianSynonyms, Kryssord or KryssordHjelp or GratisKryssord
+      - ScraperSite=Kryssord # NorwegianSynonyms, Kryssord, KryssordLatest, KryssordHjelp or GratisKryssord
       - ScraperContinueLastWord=true
       - ScraperStartLetterCount=1
       - ScraperEndLetterCount=10
-      - KryssordLatest=false
+      - ScraperSwarm=true
+      - KryssordLatest=true
       - KryssordLatestDelaySeconds=60
       - SignalRHubURL=http://116.203.83.168:5000/crosswords
     privileged: true
