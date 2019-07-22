@@ -53,6 +53,8 @@ services:
       - ScraperContinueLastWord=true
       - ScraperStartLetterCount=1
       - ScraperEndLetterCount=10
+      - KryssordLatest=false
+      - KryssordLatestDelaySeconds=60
       - SignalRHubURL=http://116.203.83.168:5000/crosswords
     privileged: true
     cap_add:
