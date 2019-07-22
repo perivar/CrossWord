@@ -51,11 +51,11 @@ services:
       - DATABASE=dictionary
       - ScraperSite=Kryssord # NorwegianSynonyms, Kryssord, KryssordLatest, KryssordHjelp or GratisKryssord
       - ScraperContinueLastWord=true
-      - ScraperStartLetterCount=1
+      - ScraperStartLetterCount=3
       - ScraperEndLetterCount=10
       - ScraperSwarm=true
       - KryssordLatest=true
-      - KryssordLatestDelaySeconds=60
+      - KryssordLatestDelaySeconds=300
       - SignalRHubURL=http://116.203.83.168:5000/crosswords
     privileged: true
     cap_add:
@@ -88,7 +88,7 @@ services:
       context: ./../
       dockerfile: CrossWord.API/Dockerfile
     restart: always
-     links:
+    links:
       - smtp
     environment:
       - DBHOST=db
