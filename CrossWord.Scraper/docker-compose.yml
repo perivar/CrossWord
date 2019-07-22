@@ -25,8 +25,8 @@ services:
     image: mysql:8.0.15
     command: [--default-authentication-plugin=mysql_native_password] # get rid of the Authentication plugin ‘caching_sha2_password’ cannot be loaded error
     volumes:
-      - ./init-db-scripts/:/docker-entrypoint-initdb.d/ # reload using docker-compose down -v (Note that this deletes the volumes!) 
-                                                        # Also remember the 'create database <database>; use <database>;' lines in the sql files
+      - ./init-db-scripts/:/docker-entrypoint-initdb.d/ # reload using docker-compose down -v (Note that this deletes the volumes!)
+        # Also remember the 'create database <database>; use <database>;' lines in the sql files
       - datafiles:/var/lib/mysql
     restart: always
     environment:
@@ -85,6 +85,8 @@ services:
       context: ./../
       dockerfile: CrossWord.API/Dockerfile
     restart: always
+     links:
+      - smtp
     environment:
       - DBHOST=db
       - DBPORT=3360
@@ -95,6 +97,13 @@ services:
       - "8000"
     ports:
       - "8000:8000"
+
+  smtp:
+    container_name: crosswordapi.smtp
+    image: namshi/smtp
+    restart: always
+    ports:
+      - "25:25"
   #
   # https-portal:
   #   image: steveltn/https-portal:1

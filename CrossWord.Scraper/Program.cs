@@ -79,6 +79,8 @@ namespace CrossWord.Scraper
             int startLetterCount = GetConfigurationIntValue(configuration, "ScraperStartLetterCount", 1);
             int endLetterCount = GetConfigurationIntValue(configuration, "ScraperEndLetterCount", 20);
             bool isScraperSwarm = GetConfigurationBoolValue(configuration, "ScraperSwarm", true);
+            bool isKryssordLatest = GetConfigurationBoolValue(configuration, "KryssordLatest", false);
+            int KryssordLatestDelaySeconds = GetConfigurationIntValue(configuration, "KryssordLatestDelaySeconds", 60);
 
             Log.Error("Using scraper config - site: '{0}', continue with last word: '{1}', from/to letter count: {2}-{3}. Swarming: {4}", scraperSite, doContinueWithLastWord, startLetterCount, endLetterCount, isScraperSwarm);
 
@@ -118,29 +120,47 @@ namespace CrossWord.Scraper
                     }
                 }
 
+                // check if we should add a separate thread for kryssord.org latest
+                if (isKryssordLatest)
+                {
+                    Log.Error("Adding a separate swarm thread for kryssord.org latest");
+                    actionsList.Add(() => { new KryssordScraperLatest(connectionString, signalRHubURL, siteUsername, sitePassword); });
+                }
+
                 Parallel.ForEach<Action>(actionsList, options, (o => o()));
             }
             else
             {
-                // run only one thread
-                switch (scraperSite)
+                // check if we should add a separate thread for kryssord.org latest
+                if (isKryssordLatest)
                 {
-                    default:
-                    case "Kryssord":
-                        new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, startLetterCount, endLetterCount, doContinueWithLastWord, false);
-                        break;
-                    case "KryssordLatest":
-                        new KryssordScraperLatest(connectionString, signalRHubURL, siteUsername, sitePassword);
-                        break;
-                    case "KryssordHjelp":
-                        new KryssordHjelpScraper(connectionString, signalRHubURL, startLetterCount, doContinueWithLastWord);
-                        break;
-                    case "GratisKryssord":
-                        new GratisKryssordScraper(connectionString, signalRHubURL, startLetterCount, endLetterCount, doContinueWithLastWord);
-                        break;
-                    case "NorwegianSynonyms":
-                        new NorwegianSynonymsScraper(connectionString, signalRHubURL, startLetterCount, endLetterCount, doContinueWithLastWord);
-                        break;
+                    Log.Error("Runnign kryssord.org latest");
+                    new KryssordScraperLatest(connectionString, signalRHubURL, siteUsername, sitePassword);
+                    Task.Delay(TimeSpan.FromSeconds(KryssordLatestDelaySeconds)).Wait(); // Wait x seconds with blocking
+                }
+                else
+                {
+                    // run only one thread
+                    switch (scraperSite)
+                    {
+                        default:
+                        case "Kryssord":
+                            new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, startLetterCount, endLetterCount, doContinueWithLastWord, false);
+                            break;
+                        case "KryssordLatest":
+                            new KryssordScraperLatest(connectionString, signalRHubURL, siteUsername, sitePassword);
+                            Task.Delay(TimeSpan.FromSeconds(KryssordLatestDelaySeconds)).Wait(); // Wait x seconds with blocking
+                            break;
+                        case "KryssordHjelp":
+                            new KryssordHjelpScraper(connectionString, signalRHubURL, startLetterCount, doContinueWithLastWord);
+                            break;
+                        case "GratisKryssord":
+                            new GratisKryssordScraper(connectionString, signalRHubURL, startLetterCount, endLetterCount, doContinueWithLastWord);
+                            break;
+                        case "NorwegianSynonyms":
+                            new NorwegianSynonymsScraper(connectionString, signalRHubURL, startLetterCount, endLetterCount, doContinueWithLastWord);
+                            break;
+                    }
                 }
             }
         }
