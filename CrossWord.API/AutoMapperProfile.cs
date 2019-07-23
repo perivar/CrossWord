@@ -1,6 +1,7 @@
 using AutoMapper;
 using CrossWord.API.Models;
 using Microsoft.AspNetCore.Identity;
+using CrossWord.Scraper.MySQLDbService.Entities;
 
 namespace CrossWord.API
 {
@@ -8,8 +9,11 @@ namespace CrossWord.API
     {
         public AutoMapperProfile()
         {
-            CreateMap<IdentityUser, UserModel>();
-            CreateMap<UserModel, IdentityUser>();
+            CreateMap<ApplicationUser, UserModel>();
+            CreateMap<UserModel, ApplicationUser>();
+
+            CreateMap<ApplicationUser, UserModelRegister>();
+            CreateMap<UserModelRegister, ApplicationUser>();            
         }
     }
 }

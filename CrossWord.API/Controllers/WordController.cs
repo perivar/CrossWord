@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using CrossWord.Scraper.MySQLDbService;
 using CrossWord.Scraper.MySQLDbService.Models;
+using CrossWord.Scraper.MySQLDbService.Entities;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -26,11 +27,11 @@ namespace CrossWord.API.Controllers
     public class WordController : ControllerBase
     {
         private readonly IConfiguration config;
-        private readonly UserManager<IdentityUser> userManager;
+        private readonly UserManager<ApplicationUser> userManager;
         private readonly WordHintDbContext db;
         private readonly IApiDescriptionGroupCollectionProvider apiExplorer;
 
-        public WordController(IConfiguration config, UserManager<IdentityUser> userManager, WordHintDbContext db, IApiDescriptionGroupCollectionProvider apiExplorer)
+        public WordController(IConfiguration config, UserManager<ApplicationUser> userManager, WordHintDbContext db, IApiDescriptionGroupCollectionProvider apiExplorer)
         {
             this.config = config;
             this.userManager = userManager;

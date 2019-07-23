@@ -1,13 +1,15 @@
 using System;
-using CrossWord.Scraper.MySQLDbService.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
+using CrossWord.Scraper.MySQLDbService.Models;
+using CrossWord.Scraper.MySQLDbService.Entities;
+
 
 namespace CrossWord.Scraper.MySQLDbService
 {
-    public class WordHintDbContext : IdentityDbContext
+    public class WordHintDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<Word> Words { get; set; }
         public DbSet<WordRelation> WordRelations { get; set; }
@@ -15,6 +17,7 @@ namespace CrossWord.Scraper.MySQLDbService
         public DbSet<State> States { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<CrosswordTemplate> CrosswordTemplates { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         public WordHintDbContext()
             : base()
@@ -73,15 +76,22 @@ namespace CrossWord.Scraper.MySQLDbService
             modelBuilder.Entity<State>()
                         .Property(w => w.Word)
                         .HasAnnotation("MySql:Collation", "utf8mb4_0900_as_cs"); // Note! this only works with the Pomelo driver if overriding MySqlMigrationsSqlGenerator
-            
+
             modelBuilder.Entity<State>()
                         .Property(w => w.Comment)
                         .HasAnnotation("MySql:Collation", "utf8mb4_0900_as_cs"); // Note! this only works with the Pomelo driver if overriding MySqlMigrationsSqlGenerator
 
             // Save array of string in EntityFramework Core by using a private field to store the array as a string
             modelBuilder.Entity<CrosswordTemplate>()
-                       .Property<string>("GridCollection")
-                       .HasField("_grid");
+                        .Property<string>("GridCollection")
+                        .HasField("_grid");
+
+             // each User can have many entries in the RefreshTokens table
+            modelBuilder.Entity<ApplicationUser>()
+                        .HasMany(e => e.RefreshTokens)
+                        .WithOne(e => e.ApplicationUser)
+                        .HasForeignKey(e => e.ApplicationUserId)
+                        .IsRequired();
         }
     }
 }

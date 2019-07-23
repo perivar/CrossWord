@@ -15,6 +15,7 @@ using System.Linq;
 using System.Diagnostics;
 using System.Net;
 using CrossWord.Models;
+using CrossWord.Scraper.MySQLDbService.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -27,7 +28,7 @@ namespace CrossWord.API.Controllers
     public class CrossWordController : ControllerBase
     {
         private readonly IConfiguration config;
-        private readonly UserManager<IdentityUser> userManager;
+        private readonly UserManager<ApplicationUser> userManager;
         private readonly WordHintDbContext db;
         private readonly ICrossDictionary dictionary;
         private readonly ILogger logger;
@@ -36,7 +37,7 @@ namespace CrossWord.API.Controllers
         public IBackgroundTaskQueue Queue { get; }
 
         public CrossWordController(IConfiguration config,
-                                UserManager<IdentityUser> userManager,
+                                UserManager<ApplicationUser> userManager,
                                 WordHintDbContext db,
                                 ICrossDictionary dictionary,
                                 IBackgroundTaskQueue queue,

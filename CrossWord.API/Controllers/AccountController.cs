@@ -13,7 +13,10 @@ using Microsoft.IdentityModel.Tokens;
 using CrossWord.Scraper.MySQLDbService;
 using CrossWord.Scraper.MySQLDbService.Models;
 using CrossWord.API.Models;
+using CrossWord.Scraper.MySQLDbService.Entities;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using CrossWord.API.Services;
 
 namespace CrossWord.API.Controllers
 {
@@ -25,44 +28,46 @@ namespace CrossWord.API.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IConfiguration config;
-        private readonly UserManager<IdentityUser> userManager;
+        private readonly UserManager<ApplicationUser> userManager;
         private readonly WordHintDbContext db;
         private readonly IMapper mapper;
+        private readonly ITokenService tokenService;
 
-        public AccountController(IConfiguration config, UserManager<IdentityUser> userManager, WordHintDbContext db, IMapper mapper)
+        public AccountController(IConfiguration config, UserManager<ApplicationUser> userManager, WordHintDbContext db, IMapper mapper, ITokenService tokenService)
         {
             this.config = config;
             this.userManager = userManager;
             this.db = db;
             this.mapper = mapper;
+            this.tokenService = tokenService;
         }
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Register(UserModel userModel)
+        public async Task<IActionResult> Register(UserModelRegister userRegister)
         {
-            // map dto to entity and set id
-            var identityUser = mapper.Map<IdentityUser>(userModel);
-            identityUser.Id = null;
+            // map dto to entity
+            var ApplicationUser = mapper.Map<ApplicationUser>(userRegister);
 
-            var result = await userManager.CreateAsync(identityUser, userModel.Password);
+            var result = await userManager.CreateAsync(ApplicationUser, userRegister.Password);
 
             if (result == IdentityResult.Success)
             {
-                return await Login(new UserNamePasswordModel() { UserName = userModel.UserName, Password = userModel.Password });
+                return await Login(new UserModelLogin() { UserName = userRegister.UserName, Password = userRegister.Password });
             }
             else return BadRequest(result);
         }
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(UserNamePasswordModel user)
+        public async Task<IActionResult> Login(UserModelLogin userLogin)
         {
-            string username = user.UserName;
-            string password = user.Password;
+            string username = userLogin.UserName;
+            string password = userLogin.Password;
 
-            // get the IdentityUser to verify
-            var userToVerify = await userManager.FindByNameAsync(username);
+            // get the ApplicationUser to verify
+            //var userToVerify = await userManager.FindByNameAsync(username);
+            var userToVerify = userManager.Users.Include(b => b.RefreshTokens).Single(u => u.UserName == username);
 
             if (userToVerify == null)
             {
@@ -73,10 +78,10 @@ namespace CrossWord.API.Controllers
             // check the credentials
             if (await userManager.CheckPasswordAsync(userToVerify, password))
             {
-                var claims = new List<Claim>
+                var claims = new List<Claim>()
                 {
-                    new Claim(JwtRegisteredClaimNames.Sub, username),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                    new Claim(JwtRegisteredClaimNames.Sub, username), // The "sub" (subject) claim identifies the principal that is the subject of the JWT.
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // The "jti" (JWT ID) claim provides a unique identifier for the JWT.
                 };
 
                 // Adding roles code
@@ -85,18 +90,13 @@ namespace CrossWord.API.Controllers
                 // var roles = await userManager.GetRolesAsync(userToVerify);           // System.NotSupportedException: Store does not implement IUserRoleStore<TUser>.
                 claims.AddRange(userClaims);
 
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
-                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-                var expires = DateTime.Now.AddSeconds(Convert.ToDouble(config["Jwt:ExpireSeconds"]));
+                // generate access token
+                var accessToken = tokenService.GenerateAccessToken(claims);
 
-                var token = new JwtSecurityToken(
-                    issuer: config["Jwt:Issuer"],
-                    audience: config["Jwt:Audience"],
-                    claims: claims,
-                    expires: expires,
-                    signingCredentials: creds
-                );
-                var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+                // generate and add refresh token
+                var refreshToken = tokenService.GenerateRefreshToken();
+                userToVerify.AddRefreshToken(refreshToken, Request.HttpContext.Connection.RemoteIpAddress?.ToString());
+                await userManager.UpdateAsync(userToVerify);
 
                 // return basic user info (without password) and token to store client side
                 var userModel = mapper.Map<UserModel>(userToVerify);
@@ -104,13 +104,49 @@ namespace CrossWord.API.Controllers
                 {
                     User = userModel,
                     Claims = userClaims,
-                    Token = tokenString
+                    Token = accessToken,
+                    RefreshToken = refreshToken
                 });
             }
             else
             {
                 return BadRequest();
             }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> Refresh(string token, string refreshToken)
+        {
+            var principal = tokenService.GetPrincipalFromExpiredToken(token);
+
+            // invalid token/signing key was passed and we can't extract user claims
+            if (principal != null)
+            {
+                // The "sub" (subject) claim identifies the principal that is the subject of the JWT.
+                var userName = principal.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub);
+                if (userName != null)
+                {
+                    var user = userManager.Users.Include(b => b.RefreshTokens).SingleOrDefault(u => u.UserName == userName.Value);
+                    if (user != null && user.HasValidRefreshToken(refreshToken))
+                    {
+                        var newJwtToken = tokenService.GenerateAccessToken(principal.Claims);
+                        var newRefreshToken = tokenService.GenerateRefreshToken();
+
+                        user.RemoveRefreshToken(refreshToken); // delete the token we've exchanged
+                        user.AddRefreshToken(newRefreshToken, Request.HttpContext.Connection.RemoteIpAddress?.ToString());
+                        await userManager.UpdateAsync(user);
+
+                        return Ok(new
+                        {
+                            Token = newJwtToken,
+                            RefreshToken = newRefreshToken
+                        });
+                    }
+                }
+            }
+
+            return BadRequest();
         }
 
         [Authorize(Roles = "Admin")]
@@ -120,7 +156,7 @@ namespace CrossWord.API.Controllers
             string username = user.UserName;
             string role = user.Role;
 
-            // get the IdentityUser to verify
+            // get the ApplicationUser to verify
             var userToVerify = await userManager.FindByNameAsync(username);
 
             if (userToVerify == null)
@@ -200,7 +236,8 @@ namespace CrossWord.API.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var users = userManager.Users;
+            // loading navigational properties on users must be done manually
+            var users = userManager.Users.Include(a => a.RefreshTokens);
             var userModels = mapper.Map<IList<UserModel>>(users);
             return Ok(userModels);
         }
@@ -226,7 +263,7 @@ namespace CrossWord.API.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPut("{username}")]
-        public async Task<IActionResult> Update(string username, [FromBody]UserModel userModel)
+        public async Task<IActionResult> Update(string username, [FromBody]UserModelRegister userModel)
         {
             if (username != userModel.UserName)
             {

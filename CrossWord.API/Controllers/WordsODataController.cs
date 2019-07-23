@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using CrossWord.Scraper.MySQLDbService.Models;
+using CrossWord.Scraper.MySQLDbService.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Identity;
 using CrossWord.Scraper.MySQLDbService;
@@ -23,11 +24,11 @@ namespace CrossWord.API.Controllers
     public class WordsODataController : ODataController
     {
         private readonly IConfiguration config;
-        private readonly UserManager<IdentityUser> userManager;
+        private readonly UserManager<ApplicationUser> userManager;
         private readonly WordHintDbContext db;
         private readonly IApiDescriptionGroupCollectionProvider apiExplorer;
 
-        public WordsODataController(IConfiguration config, UserManager<IdentityUser> userManager, WordHintDbContext db, IApiDescriptionGroupCollectionProvider apiExplorer)
+        public WordsODataController(IConfiguration config, UserManager<ApplicationUser> userManager, WordHintDbContext db, IApiDescriptionGroupCollectionProvider apiExplorer)
         {
             this.config = config;
             this.userManager = userManager;
