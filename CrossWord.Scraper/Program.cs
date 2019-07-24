@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using CrossWord.Scraper.MySQLDbService;
 using Microsoft.EntityFrameworkCore;
@@ -80,7 +79,7 @@ namespace CrossWord.Scraper
             int endLetterCount = GetConfigurationIntValue(configuration, "ScraperEndLetterCount", 20);
             bool isScraperSwarm = GetConfigurationBoolValue(configuration, "ScraperSwarm", true);
             bool isKryssordLatest = GetConfigurationBoolValue(configuration, "KryssordLatest", false);
-            int KryssordLatestDelaySeconds = GetConfigurationIntValue(configuration, "KryssordLatestDelaySeconds", 60);
+            int kryssordLatestDelaySeconds = GetConfigurationIntValue(configuration, "KryssordLatestDelaySeconds", 60);
 
             Log.Error("Using scraper config - site: '{0}', continue with last word: '{1}', from/to letter count: {2}-{3}. Swarming: {4}", scraperSite, doContinueWithLastWord, startLetterCount, endLetterCount, isScraperSwarm);
 
@@ -89,11 +88,13 @@ namespace CrossWord.Scraper
             // options.MaxDegreeOfParallelism = 50; // seems to work better without a MaxDegreeOfParallelism number
 
 #if DEBUG
-            startLetterCount = 1;
-            endLetterCount = 4;
-            scraperSite = "KryssordLatest";
+            startLetterCount = 4;
+            endLetterCount = 8;
+            scraperSite = "Kryssord";
             isScraperSwarm = false;
-#endif                    
+            isKryssordLatest = true;
+            kryssordLatestDelaySeconds = 30;
+#endif
 
             if (isScraperSwarm)
             {
@@ -124,7 +125,7 @@ namespace CrossWord.Scraper
                 if (isKryssordLatest)
                 {
                     Log.Error("Adding a separate swarm thread for kryssord.org latest");
-                    actionsList.Add(() => { new KryssordScraperLatest(connectionString, signalRHubURL, siteUsername, sitePassword); });
+                    actionsList.Add(() => { new KryssordScraperLatest(connectionString, signalRHubURL, siteUsername, sitePassword, kryssordLatestDelaySeconds); });
                 }
 
                 Parallel.ForEach<Action>(actionsList, options, (o => o()));
@@ -134,9 +135,8 @@ namespace CrossWord.Scraper
                 // check if we should add a separate thread for kryssord.org latest
                 if (isKryssordLatest)
                 {
-                    Log.Error("Runnign kryssord.org latest");
-                    new KryssordScraperLatest(connectionString, signalRHubURL, siteUsername, sitePassword);
-                    Task.Delay(TimeSpan.FromSeconds(KryssordLatestDelaySeconds)).Wait(); // Wait x seconds with blocking
+                    Log.Error("Running kryssord.org latest");
+                    new KryssordScraperLatest(connectionString, signalRHubURL, siteUsername, sitePassword, kryssordLatestDelaySeconds);
                 }
                 else
                 {
@@ -146,10 +146,6 @@ namespace CrossWord.Scraper
                         default:
                         case "Kryssord":
                             new KryssordScraper(connectionString, signalRHubURL, siteUsername, sitePassword, startLetterCount, endLetterCount, doContinueWithLastWord, false);
-                            break;
-                        case "KryssordLatest":
-                            new KryssordScraperLatest(connectionString, signalRHubURL, siteUsername, sitePassword);
-                            Task.Delay(TimeSpan.FromSeconds(KryssordLatestDelaySeconds)).Wait(); // Wait x seconds with blocking
                             break;
                         case "KryssordHjelp":
                             new KryssordHjelpScraper(connectionString, signalRHubURL, startLetterCount, doContinueWithLastWord);

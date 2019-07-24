@@ -12,6 +12,8 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using Serilog;
+using System.Timers;
+using System.Threading;
 
 namespace CrossWord.Scraper
 {
@@ -22,7 +24,7 @@ namespace CrossWord.Scraper
         string signalRHubURL = null;
         string source = null;
 
-        public KryssordScraperLatest(string connectionString, string signalRHubURL, string siteUsername, string sitePassword)
+        public KryssordScraperLatest(string connectionString, string signalRHubURL, string siteUsername, string sitePassword, int kryssordLatestDelaySeconds)
         {
             this.connectionString = connectionString;
             this.signalRHubURL = signalRHubURL;
@@ -37,7 +39,13 @@ namespace CrossWord.Scraper
             // do this before this class is called instead
             // KillAllChromeDriverInstances();
 
-            DoScrape(siteUsername, sitePassword, source);
+            // run forever
+            while (true)
+            {
+                DoScrape(siteUsername, sitePassword, source);
+
+                Thread.Sleep(kryssordLatestDelaySeconds * 1000);
+            }
         }
 
         private void DoScrape(string siteUsername, string sitePassword, string source)
