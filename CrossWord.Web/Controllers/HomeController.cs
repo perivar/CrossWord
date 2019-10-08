@@ -36,6 +36,9 @@ namespace CrossWord.Web.Controllers
             // clear jwt token
             HttpContext.Session.Remove("token");
 
+            var signalRHubURL = _appConfig["SignalRHubURL"] ?? "http://localhost:8000/crosswordsignalrhub";
+            ViewData["SignalRHubURL"] = signalRHubURL;
+
             return View();
         }
 

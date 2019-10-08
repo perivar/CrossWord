@@ -27,9 +27,10 @@
     Javascripts section
     *@
     <script src="~/lib/signalr/signalr.min.js"></script>
-    <script>
+    <script>        
+        var signalRHubURL = "@ViewData["SignalRHubURL"]";
         var connection = new signalR.HubConnectionBuilder()
-            .withUrl("http://localhost:8000/crosswordsignalrhub")
+            .withUrl(signalRHubURL)
             .configureLogging(signalR.LogLevel.Information)
             .build();
         
