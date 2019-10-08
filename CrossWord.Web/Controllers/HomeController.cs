@@ -8,8 +8,6 @@ using CrossWord.Web.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.SignalR;
-using CrossWord.Web.Hubs;
 using Microsoft.AspNetCore.Http;
 
 namespace CrossWord.Web.Controllers
@@ -20,27 +18,24 @@ namespace CrossWord.Web.Controllers
         private readonly IApplicationLifetime _appLifetime;
         private readonly ILogger<HomeController> _logger;
         private readonly IConfiguration _appConfig;
-        private readonly IHubContext<CrossWordsHub> _hubContext;
 
         public HomeController(
            IHostingEnvironment hostingEnvironment,
            IApplicationLifetime appLifetime,
            ILogger<HomeController> logger,
-           IConfiguration configuration,
-           IHubContext<CrossWordsHub> hubContext)
+           IConfiguration configuration)
         {
             _hostingEnvironment = hostingEnvironment;
             _appLifetime = appLifetime;
             _logger = logger;
             _appConfig = configuration;
-            _hubContext = hubContext;
         }
 
         public IActionResult Index()
         {
             // clear jwt token
             HttpContext.Session.Remove("token");
-            
+
             return View();
         }
 

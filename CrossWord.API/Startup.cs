@@ -31,6 +31,7 @@ using Microsoft.OData.Edm;
 using CrossWord.API.Configuration;
 using AutoMapper;
 using CrossWord.API.Services;
+using CrossWord.API.Hubs;
 
 namespace CrossWord.API
 {
@@ -194,13 +195,14 @@ namespace CrossWord.API
 
             services.AddCors(o =>
             {
-                o.AddPolicy("Everything", p =>
-                {
-                    p.AllowAnyHeader()
-                        // .WithExposedHeaders("Token-Expired") // not needed
+                // When using "AllowCredentials()" we cannot use AllowAnyOrigin()
+                // instead the SetIsOriginAllowed(_ => true) is required.
+                o.AddPolicy("Everything", builder => builder
+                        .AllowAnyHeader()
                         .AllowAnyMethod()
-                        .AllowAnyOrigin();
-                });
+                        .SetIsOriginAllowed(_ => true)
+                        .AllowCredentials()
+                    );
             });
 
             // add Queued background tasks
@@ -209,6 +211,9 @@ namespace CrossWord.API
 
             // and a timed background task
             // services.AddHostedService<TimedHostedService>();
+
+            // Enable SignalR
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -246,6 +251,12 @@ namespace CrossWord.API
             app.UseAuthentication();
 
             app.UseCors("Everything");
+
+            // add signalr hub url
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<CrossWordSignalRHub>("/crosswordsignalrhub");
+            });
 
             // Add support for OData to MVC pipeline
             var models = modelBuilder.GetEdmModels(); // versioning API

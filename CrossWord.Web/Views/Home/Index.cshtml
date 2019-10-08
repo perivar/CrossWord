@@ -29,7 +29,7 @@
     <script src="~/lib/signalr/signalr.min.js"></script>
     <script>
         var connection = new signalR.HubConnectionBuilder()
-            .withUrl("/crosswords")
+            .withUrl("http://localhost:8000/crosswordsignalrhub")
             .configureLogging(signalR.LogLevel.Information)
             .build();
         

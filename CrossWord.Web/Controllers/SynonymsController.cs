@@ -8,8 +8,6 @@ using CrossWord.Web.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.SignalR;
-using CrossWord.Web.Hubs;
 using System.Net.Http;
 using System.Net;
 using Newtonsoft.Json;
@@ -25,20 +23,17 @@ namespace CrossWord.Web.Controllers
         private readonly IApplicationLifetime _appLifetime;
         private readonly ILogger<SynonymsController> _logger;
         private readonly IConfiguration _appConfig;
-        private readonly IHubContext<CrossWordsHub> _hubContext;
 
         public SynonymsController(
            IHostingEnvironment hostingEnvironment,
            IApplicationLifetime appLifetime,
            ILogger<SynonymsController> logger,
-           IConfiguration configuration,
-           IHubContext<CrossWordsHub> hubContext)
+           IConfiguration configuration)
         {
             _hostingEnvironment = hostingEnvironment;
             _appLifetime = appLifetime;
             _logger = logger;
             _appConfig = configuration;
-            _hubContext = hubContext;
         }
 
         [Route("synonyms")]

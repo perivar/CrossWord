@@ -35,7 +35,7 @@ namespace CrossWord.Scraper
                 // .WriteTo.Logger(l => l.Filter.ByIncludingOnly(e => e.Level == LogEventLevel.Error).WriteTo.File(DEFAULT_ERROR_LOG_PATH))
                 .CreateLogger();
 
-            var signalRHubURL = configuration["SignalRHubURL"] ?? "http://localhost:5000/crosswords";
+            var signalRHubURL = configuration["SignalRHubURL"] ?? "http://localhost:8000/crosswordsignalrhub";
 
             // start DOCKER on port 3360
             // docker run -p 3360:3306 --name mysqldb -e MYSQL_ROOT_PASSWORD=password -d mysql:8.0.15            

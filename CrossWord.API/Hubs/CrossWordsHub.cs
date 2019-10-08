@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using CrossWord.Models;
 using Microsoft.AspNetCore.SignalR;
 
-namespace CrossWord.Web.Hubs
+namespace CrossWord.API.Hubs
 {
-    public class CrossWordsHub : Hub
+    public class CrossWordSignalRHub : Hub
     {
         public async Task Broadcast(string name, string message)
         {

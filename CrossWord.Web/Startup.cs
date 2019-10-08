@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 using System.Threading.Tasks;
-using CrossWord.Web.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -47,9 +46,6 @@ namespace CrossWord.Web
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            // Enable SignalR
-            services.AddSignalR();
-
             services.AddCors(o =>
             {
                 o.AddPolicy("Everything", p =>
@@ -74,12 +70,6 @@ namespace CrossWord.Web
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
-            // add signalr hub url
-            app.UseSignalR(routes =>
-            {
-                routes.MapHub<CrossWordsHub>("/crosswords");
-            });
 
             // app.UseHttpsRedirection(); // disable to use within docker behind a proxy
             app.UseStaticFiles();
