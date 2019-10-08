@@ -56,7 +56,7 @@ services:
       - ScraperSwarm=true
       - KryssordLatest=true
       - KryssordLatestDelaySeconds=300
-      - SignalRHubURL=http://116.203.83.168:8000/crosswordsignalrhub
+      - SignalRHubURL=https://api.nerseth.com/crosswordsignalrhub
     privileged: true
     cap_add:
       - "SYS_ADMIN"
@@ -74,10 +74,10 @@ services:
       dockerfile: CrossWord.Web/Dockerfile
     restart: always
     environment:
-      - ApiBaseUrl=http://116.203.83.168:8000/api/
+      - ApiBaseUrl=https://api.nerseth.com/api/
       - ApiUserEmail=server@wazalo.com
       - ApiPassword=123ABCabc!
-      - SignalRHubURL=http://116.203.83.168:8000/crosswordsignalrhub
+      - SignalRHubURL=https://api.nerseth.com/crosswordsignalrhub
     expose:
       - "5000"
     ports:
@@ -108,17 +108,18 @@ services:
     restart: always
     ports:
       - "25:25"
-  
- https-portal:
+
+  https-portal:
     image: steveltn/https-portal:1    
     ports:
       - "80:80"
       - "443:443"
     links:
       - web
+      - api
     restart: always
     environment:
-      DOMAINS: "crossword.nerseth.com -> http://web:5000"
+      DOMAINS: "crossword.nerseth.com -> http://web:5000, api.nerseth.com -> http://api:8000"
       # STAGE: 'production'
       # DOMAINS: 'example.com -> http://web:5000'
       # STAGE: local # self signed certificate, note modify your hosts file to have example.com resolving to your docker host
