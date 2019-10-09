@@ -222,7 +222,8 @@ namespace CrossWord.API
                 .Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(proxy => proxy.Trim(' ', '\t', '\'', '"')).Where(s => s != string.Empty).ToList();
 
-            services.Configure<ForwardedHeadersOptions>(options =>{
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
                 options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
                 // options.ForwardedHeaders = ForwardedHeaders.All;
 
@@ -246,11 +247,11 @@ namespace CrossWord.API
             // If no ForwardedHeadersOptions are specified to the middleware, the default headers to forward are None.
             app.UseForwardedHeaders();
 
-            app.Use((context, next) =>
-            {
-                context.Request.Scheme = "https";
-                return next();
-            });            
+            // app.Use((context, next) =>
+            // {
+            //     context.Request.Scheme = "https";
+            //     return next();
+            // });            
 
             if (env.IsDevelopment())
             {
@@ -277,6 +278,12 @@ namespace CrossWord.API
 
             // Note! Therefore don't use EnsureDeleted() and EnsureCreated() but Migrate();
             db.Database.Migrate();
+
+            // this shouldn't be needed
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
 
             app.UseAuthentication();
 
