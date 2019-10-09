@@ -97,6 +97,7 @@ services:
       - DBUSER=root
       - DBPASSWORD=secret
       - DATABASE=dictionary
+      - KNOWNPROXIES=''
     expose:
       - "8000"
     ports:
