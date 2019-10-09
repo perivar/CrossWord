@@ -243,10 +243,6 @@ namespace CrossWord.API
                             , IApiVersionDescriptionProvider provider
                             )
         {
-            // Invoke the UseForwardedHeaders method in Startup.Configure before calling UseAuthentication or similar authentication scheme middleware.
-            // If no ForwardedHeadersOptions are specified to the middleware, the default headers to forward are None.
-            app.UseForwardedHeaders();
-
             // app.Use((context, next) =>
             // {
             //     context.Request.Scheme = "https";
@@ -279,12 +275,9 @@ namespace CrossWord.API
             // Note! Therefore don't use EnsureDeleted() and EnsureCreated() but Migrate();
             db.Database.Migrate();
 
-            // this shouldn't be needed
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
-            {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-            });
-
+            // Invoke the UseForwardedHeaders method in Startup.Configure before calling UseAuthentication or similar authentication scheme middleware.
+            // If no ForwardedHeadersOptions are specified to the middleware, the default headers to forward are None.
+            app.UseForwardedHeaders();
             app.UseAuthentication();
 
             app.UseCors("Everything");
