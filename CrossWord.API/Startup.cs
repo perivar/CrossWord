@@ -217,21 +217,21 @@ namespace CrossWord.API
             // https://blog.mindgaze.tech/2019/04/09/properly-configure-forwarded-headers-in-asp-net-core/            
             //  environment:
             //   - KNOWNPROXIES='10.0.0.1, 10.0.0.2'
-            var knownProxies = Configuration["KNOWNPROXIES"] ?? "";
-            var proxies = knownProxies
-                .Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(proxy => proxy.Trim(' ', '\t', '\'', '"')).Where(s => s != string.Empty).ToList();
+            // var knownProxies = Configuration["KNOWNPROXIES"] ?? "";
+            // var proxies = knownProxies
+            //     .Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries)
+            //     .Select(proxy => proxy.Trim(' ', '\t', '\'', '"')).Where(s => s != string.Empty).ToList();
 
-            services.Configure<ForwardedHeadersOptions>(options =>
-            {
-                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-                // options.ForwardedHeaders = ForwardedHeaders.All;
+            // services.Configure<ForwardedHeadersOptions>(options =>
+            // {
+            //     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            //     // options.ForwardedHeaders = ForwardedHeaders.All;
 
-                foreach (var proxy in proxies)
-                {
-                    options.KnownProxies.Add(IPAddress.Parse(proxy));
-                }
-            });
+            //     foreach (var proxy in proxies)
+            //     {
+            //         options.KnownProxies.Add(IPAddress.Parse(proxy));
+            //     }
+            // });
 
             // Enable SignalR
             services.AddSignalR();
@@ -257,6 +257,15 @@ namespace CrossWord.API
             }
             else
             {
+                // Invoke the UseForwardedHeaders method in Startup.Configure before calling UseAuthentication or similar authentication scheme middleware.
+                // If no ForwardedHeadersOptions are specified to the middleware, the default headers to forward are None.
+                app.UseForwardedHeaders(
+                    new ForwardedHeadersOptions
+                    {
+                        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+                    }
+                );
+
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
@@ -275,12 +284,9 @@ namespace CrossWord.API
             // Note! Therefore don't use EnsureDeleted() and EnsureCreated() but Migrate();
             db.Database.Migrate();
 
-            // Invoke the UseForwardedHeaders method in Startup.Configure before calling UseAuthentication or similar authentication scheme middleware.
-            // If no ForwardedHeadersOptions are specified to the middleware, the default headers to forward are None.
-            app.UseForwardedHeaders();
-            app.UseAuthentication();
-
             app.UseCors("Everything");
+
+            app.UseAuthentication();
 
             // add signalr hub url
             app.UseSignalR(routes =>
