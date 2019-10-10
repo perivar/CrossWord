@@ -9,7 +9,7 @@ volumes:
   datafiles:
 
 # Remember to start the network before running this file:
-# $ docker network create crosswordapi-net
+# $ docker network create crossword-net
 #
 # Then you can start each of the docker-compose.yml files like this:
 # $ docker-compose -f project_one/docker-compose.yml up -d
@@ -17,11 +17,11 @@ volumes:
 networks:
   default:
     external:
-      name: crosswordapi-net
+      name: crossword-net
 
 services:
   db:
-    container_name: crosswordapi.db
+    container_name: crossword.db
     image: mysql:8.0.15
     command: [--default-authentication-plugin=mysql_native_password] # get rid of the Authentication plugin ‘caching_sha2_password’ cannot be loaded error
     volumes:
@@ -38,7 +38,7 @@ services:
       - "3360:3360"
 
   scraper:
-    container_name: crosswordapi.scraper
+    container_name: crossword.scraper
     build:
       context: ./
       dockerfile: Dockerfile
@@ -68,7 +68,7 @@ services:
     shm_size: 2G
 
   web:
-    container_name: crosswordapi.web
+    container_name: crossword.web
     build:
       context: ./../
       dockerfile: CrossWord.Web/Dockerfile
@@ -84,7 +84,7 @@ services:
       - "5000:5000"
 
   api:
-    container_name: crosswordapi.api
+    container_name: crossword.api
     build:
       context: ./../
       dockerfile: CrossWord.API/Dockerfile
@@ -104,26 +104,26 @@ services:
       - "8000:8000"
 
   smtp:
-    container_name: crosswordapi.smtp
+    container_name: crossword.smtp
     image: namshi/smtp
     restart: always
     ports:
       - "25:25"
 
-  https-portal:
-    image: steveltn/https-portal:1    
-    ports:
-      - "80:80"
-      - "443:443"
-    links:
-      - web
-      - api
-    restart: always
-    environment:
-      DOMAINS: "crossword.nerseth.com -> http://web:5000, api.nerseth.com -> http://api:8000"
-      STAGE: 'production'
-      # DOMAINS: 'example.com -> http://web:5000'
-      # STAGE: local # self signed certificate, note modify your hosts file to have example.com resolving to your docker host
-      # c:\Windows\System32\Drivers\etc\hosts => 127.0.0.1           example.com
-      # FORCE_RENEW: 'true' # only force renew if certificates are not chained correctly. Run the container again with the force_renew setting ONCE
-      WEBSOCKET: "true"
+  # https-portal:
+  #   image: steveltn/https-portal:1    
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   links:
+  #     - web
+  #     - api
+  #   restart: always
+  #   environment:
+  #     DOMAINS: "crossword.nerseth.com -> http://web:5000, api.nerseth.com -> http://api:8000"
+  #     STAGE: 'production'
+  #     # DOMAINS: 'example.com -> http://web:5000'
+  #     # STAGE: local # self signed certificate, note modify your hosts file to have example.com resolving to your docker host
+  #     # c:\Windows\System32\Drivers\etc\hosts => 127.0.0.1           example.com
+  #     # FORCE_RENEW: 'true' # only force renew if certificates are not chained correctly. Run the container again with the force_renew setting ONCE
+  #     WEBSOCKET: "true"
