@@ -22,8 +22,8 @@ COPY CrossWord.API/appsettings.json /app
 # Set runtime image
 FROM mcr.microsoft.com/dotnet/core/aspnet:2.2 AS base
 WORKDIR /app
-ENV ASPNETCORE_URLS http://+:8000
-EXPOSE 8000
+# ENV ASPNETCORE_URLS http://+:8000
+# EXPOSE 8000
 
 # Copy to the app directory 
 COPY --from=publish /app .
