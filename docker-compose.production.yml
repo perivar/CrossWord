@@ -1,6 +1,9 @@
 version: "3"
 
 services:
+
+  # Note! the proxy and certbot services are only needed once when running the init-letsencrypt.sh script
+  # after the init letsencrypt script has been run succesfully - these should be disabled
   proxy:
     container_name: proxy
     build:
@@ -56,19 +59,19 @@ services:
       - db
       - api
     environment:
-      - DBHOST=db
-      - DBPORT=3360
-      - DBUSER=root
-      - DBPASSWORD=secret
-      - DATABASE=dictionary
-      - ScraperSite=Kryssord # NorwegianSynonyms, Kryssord, KryssordLatest, KryssordHjelp or GratisKryssord
-      - ScraperContinueLastWord=false
-      - ScraperStartLetterCount=3
-      - ScraperEndLetterCount=10
-      - ScraperSwarm=true
-      - KryssordLatest=true
-      - KryssordLatestDelaySeconds=300
-      - SignalRHubURL=https://api.nerseth.com/crosswordsignalrhub
+      DBHOST: db
+      DBPORT: 3360
+      DBUSER: root
+      DBPASSWORD: secret
+      DATABASE: dictionary
+      ScraperSite: Kryssord # NorwegianSynonyms, Kryssord, KryssordLatest, KryssordHjelp or GratisKryssord
+      ScraperContinueLastWord: false
+      ScraperStartLetterCount: 3
+      ScraperEndLetterCount: 10
+      ScraperSwarm: true
+      KryssordLatest: true
+      KryssordLatestDelaySeconds: 300
+      SignalRHubURL: https://api.nerseth.com/crosswordsignalrhub
     privileged: true
     cap_add:
       - "SYS_ADMIN"
@@ -88,10 +91,11 @@ services:
     depends_on:
       - api
     environment:
-      - ApiBaseUrl=https://api.nerseth.com/api/
-      - ApiUserEmail=server@wazalo.com
-      - ApiPassword=123ABCabc!
-      - SignalRHubURL=https://api.nerseth.com/crosswordsignalrhub
+      ASPNETCORE_ENVIRONMENT: 'Production'
+      ApiBaseUrl: https://api.nerseth.com/api/
+      ApiUserEmail: server@wazalo.com
+      ApiPassword: 123ABCabc!
+      SignalRHubURL: https://api.nerseth.com/crosswordsignalrhub
     expose:
       - "5000"
     ports:
@@ -107,12 +111,13 @@ services:
       - db
       - smtp
     environment:
-      - DBHOST=db
-      - DBPORT=3360
-      - DBUSER=root
-      - DBPASSWORD=secret
-      - DATABASE=dictionary
-      - KNOWNPROXIES=''
+      ASPNETCORE_ENVIRONMENT: 'Production'
+      DBHOST: db
+      DBPORT: 3360
+      DBUSER: root
+      DBPASSWORD: secret
+      DATABASE: dictionary
+      KNOWNPROXIES: ''
     expose:
       - "8000"
     ports:
