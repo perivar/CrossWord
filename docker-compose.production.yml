@@ -65,14 +65,14 @@ services:
       DBPASSWORD: secret
       DATABASE: dictionary
       ScraperSite: Kryssord # NorwegianSynonyms, Kryssord, KryssordLatest, KryssordHjelp or GratisKryssord
-      ScraperContinueLastWord: false
+      ScraperContinueLastWord: 'false'
       ScraperStartLetterCount: 3
       ScraperEndLetterCount: 10
-      ScraperSwarm: true
-      KryssordLatest: true
+      ScraperSwarm: 'true'
+      KryssordLatest: 'true'
       KryssordLatestDelaySeconds: 300
       SignalRHubURL: https://api.nerseth.com/crosswordsignalrhub
-    privileged: true
+    privileged: 'true'
     cap_add:
       - "SYS_ADMIN"
     volumes:
