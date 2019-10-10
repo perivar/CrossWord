@@ -49,8 +49,8 @@ services:
   scraper:
     container_name: crossword.scraper
     build:
-      context: ./CrossWord.Scraper
-      dockerfile: Dockerfile
+      context: ./
+      dockerfile: CrossWord.Scraper/Dockerfile
     restart: always
     depends_on:
       - db
@@ -82,8 +82,8 @@ services:
   web:
     container_name: crossword.web
     build:
-      context: ./CrossWord.Web
-      dockerfile: Dockerfile
+      context: ./
+      dockerfile: CrossWord.Web/Dockerfile
     restart: always
     depends_on:
       - api
@@ -100,8 +100,8 @@ services:
   api:
     container_name: crossword.api
     build:
-      context: ./CrossWord.API
-      dockerfile: Dockerfile
+      context: ./
+      dockerfile: CrossWord.API/Dockerfile
     restart: always
     depends_on:
       - db
