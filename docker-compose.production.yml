@@ -49,8 +49,8 @@ services:
   scraper:
     container_name: crossword.scraper
     build:
-      context: ./
-      dockerfile: CrossWord.Scraper/Dockerfile
+      context: ./CrossWord.Scraper
+      dockerfile: Dockerfile
     restart: always
     depends_on:
       - db
