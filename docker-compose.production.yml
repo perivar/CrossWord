@@ -91,7 +91,8 @@ services:
     depends_on:
       - api
     environment:
-      ASPNETCORE_ENVIRONMENT: 'Production'
+      ASPNETCORE_ENVIRONMENT: 'Production'      
+      ASPNETCORE_URLS: http://+:5000
       ApiBaseUrl: https://api.nerseth.com/api/
       ApiUserEmail: server@wazalo.com
       ApiPassword: 123ABCabc!
@@ -112,6 +113,7 @@ services:
       - smtp
     environment:
       ASPNETCORE_ENVIRONMENT: 'Production'
+      ASPNETCORE_URLS: http://+:8000
       DBHOST: db
       DBPORT: 3360
       DBUSER: root
