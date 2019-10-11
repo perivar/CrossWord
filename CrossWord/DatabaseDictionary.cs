@@ -96,6 +96,7 @@ namespace CrossWord
             }
         }
 
+        // This is intitialized from the API using services.AddSingleton<ICrossDictionary, DatabaseDictionary>();
         public DatabaseDictionary(ILoggerFactory logger, IServiceScopeFactory scopeFactory)
         {
             _logger = logger.CreateLogger("DatabaseDictionary");
@@ -128,7 +129,8 @@ namespace CrossWord
             stopwatch.Start();
 #endif
 
-            var wordIdsToExclude = WordDatabaseService.GetWordIdList(db, new List<string> { "BY", "NAVN", "ELV", "FJELL", "FORKORTELSE", "IATA-FLYPLASSKODE", "ISO-KODE" });
+            // var wordIdsToExclude = WordDatabaseService.GetWordIdList(db, new List<string> { "BY", "NAVN", "ELV", "FJELL", "FORKORTELSE", "IATA-FLYPLASSKODE", "ISO-KODE" });
+            var wordIdsToExclude = WordDatabaseService.GetWordIdList(db, new List<string> { "BY", "NAVN" });
 
             // search for all words
             var words = db.Words
@@ -184,7 +186,14 @@ namespace CrossWord
             stopwatch.Stop();
 
             // Write result.
-            _logger.LogDebug("ReadWordsIntoDatabase - Time elapsed: {0}", stopwatch.Elapsed);
+            if (_logger != null)
+            {
+                _logger.LogDebug("ReadWordsIntoDatabase - Time elapsed: {0}", stopwatch.Elapsed);
+            }
+            else
+            {
+                Console.WriteLine("ReadWordsIntoDatabase - Time elapsed: {0}", stopwatch.Elapsed);
+            }
 #endif
         }
 
@@ -243,7 +252,14 @@ namespace CrossWord
             stopwatch.Stop();
 
             // Write result.
-            _logger.LogDebug("ReadDescriptionsIntoDatabase - Time elapsed: {0}", stopwatch.Elapsed);
+            if (_logger != null)
+            {
+                _logger.LogDebug("ReadDescriptionsIntoDatabase - Time elapsed: {0}", stopwatch.Elapsed);
+            }
+            else
+            {
+                Console.WriteLine("ReadDescriptionsIntoDatabase - Time elapsed: {0}", stopwatch.Elapsed);
+            }
 #endif
         }
 

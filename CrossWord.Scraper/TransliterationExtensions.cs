@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CrossWord.Scraper
+namespace CrossWord.Scraper.Extensions
 {
     public static class TransliterationExtensions
     {

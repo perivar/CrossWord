@@ -14,6 +14,7 @@ using OpenQA.Selenium.Support.UI;
 using Serilog;
 using System.Timers;
 using System.Threading;
+using CrossWord.Scraper.Extensions;
 
 namespace CrossWord.Scraper
 {
@@ -150,7 +151,6 @@ namespace CrossWord.Scraper
 
         private Word ReadWordByWordText(IWebDriver driver, User adminUser, string wordText)
         {
-            Word word = null;
             string url = $"https://www.kryssord.org/search.php?a=&b={wordText}";
             driver.Navigate().GoToUrl(url);
             var documentNode = driver.GetDocumentNode();

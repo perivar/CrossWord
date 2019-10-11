@@ -34,6 +34,8 @@ using CrossWord.API.Services;
 using CrossWord.API.Hubs;
 using Microsoft.AspNetCore.HttpOverrides;
 using System.Net;
+using CrossWord.Scraper;
+using CrossWord.Scraper.Extensions;
 
 namespace CrossWord.API
 {
@@ -49,11 +51,11 @@ namespace CrossWord.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // output Config parameters to debug in Docker
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(Configuration)
                 .CreateLogger();
 
-            // output Config parameters to try to find out why it doesn't work in Docker
             foreach (var config in Configuration.AsEnumerable())
             {
                 Log.Information("{0}", config);
@@ -217,21 +219,18 @@ namespace CrossWord.API
             // https://blog.mindgaze.tech/2019/04/09/properly-configure-forwarded-headers-in-asp-net-core/            
             //  environment:
             //   - KNOWNPROXIES='10.0.0.1, 10.0.0.2'
-            // var knownProxies = Configuration["KNOWNPROXIES"] ?? "";
-            // var proxies = knownProxies
-            //     .Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries)
-            //     .Select(proxy => proxy.Trim(' ', '\t', '\'', '"')).Where(s => s != string.Empty).ToList();
+            var proxies = Configuration.GetArrayValues("KNOWNPROXIES", "");
 
-            // services.Configure<ForwardedHeadersOptions>(options =>
-            // {
-            //     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-            //     // options.ForwardedHeaders = ForwardedHeaders.All;
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 
-            //     foreach (var proxy in proxies)
-            //     {
-            //         options.KnownProxies.Add(IPAddress.Parse(proxy));
-            //     }
-            // });
+                foreach (var proxy in proxies)
+                {
+                    options.KnownProxies.Add(IPAddress.Parse(proxy));
+                }
+            });
 
             // Enable SignalR
             services.AddSignalR();
@@ -243,11 +242,13 @@ namespace CrossWord.API
                             , IApiVersionDescriptionProvider provider
                             )
         {
-            // app.Use((context, next) =>
+            // Invoke the UseForwardedHeaders method in Startup.Configure before calling UseAuthentication or similar authentication scheme middleware.
+            // If no ForwardedHeadersOptions are specified to the middleware, the default headers to forward are None.
+            // app.UseForwardedHeaders(new ForwardedHeadersOptions
             // {
-            //     context.Request.Scheme = "https";
-            //     return next();
-            // });            
+            //     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            // });
+            app.UseForwardedHeaders();
 
             if (env.IsDevelopment())
             {
@@ -257,15 +258,6 @@ namespace CrossWord.API
             }
             else
             {
-                // Invoke the UseForwardedHeaders method in Startup.Configure before calling UseAuthentication or similar authentication scheme middleware.
-                // If no ForwardedHeadersOptions are specified to the middleware, the default headers to forward are None.
-                app.UseForwardedHeaders(
-                    new ForwardedHeadersOptions
-                    {
-                        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-                    }
-                );
-
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();

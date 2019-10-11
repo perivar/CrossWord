@@ -56,7 +56,7 @@ services:
       - ScraperSwarm=true
       - KryssordLatest=true
       - KryssordLatestDelaySeconds=300
-      - SignalRHubURL=https://api.nerseth.com/crosswordsignalrhub
+      - SignalRHubURL=http://116.203.83.168:8000/crosswordsignalrhub
     privileged: true
     cap_add:
       - "SYS_ADMIN"
@@ -74,10 +74,12 @@ services:
       dockerfile: CrossWord.Web/Dockerfile
     restart: always
     environment:
-      - ApiBaseUrl=https://api.nerseth.com/api/
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:5000
+      - ApiBaseUrl=http://116.203.83.168:8000/api/
       - ApiUserEmail=server@wazalo.com
       - ApiPassword=123ABCabc!
-      - SignalRHubURL=https://api.nerseth.com/crosswordsignalrhub
+      - SignalRHubURL=http://116.203.83.168:8000/crosswordsignalrhub
     expose:
       - "5000"
     ports:
@@ -92,6 +94,8 @@ services:
     links:
       - smtp
     environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8000
       - DBHOST=db
       - DBPORT=3360
       - DBUSER=root

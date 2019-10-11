@@ -39,7 +39,6 @@ namespace CrossWord.Web.Controllers
         [Route("synonyms")]
         public IActionResult Index()
         {
-            // var apiBaseUrl = _appConfig["ApiBaseUrl"] ?? "http://order.wazalo.com:8000/api/";
             var apiBaseUrl = _appConfig["ApiBaseUrl"] ?? "http://localhost:8000/api/";
             var apiUserEmail = _appConfig["ApiUserEmail"] ?? "server@wazalo.com";
             var apiPassword = _appConfig["ApiPassword"] ?? "123ABCabc!";
@@ -66,7 +65,6 @@ namespace CrossWord.Web.Controllers
         [Route("synonyms/{word}")]
         public IActionResult Index(string word)
         {
-            // var apiBaseUrl = _appConfig["ApiBaseUrl"] ?? "http://order.wazalo.com:8000/api/";
             var apiBaseUrl = _appConfig["ApiBaseUrl"] ?? "http://localhost:8000/api/";
             var apiUserEmail = _appConfig["ApiUserEmail"] ?? "server@wazalo.com";
             var apiPassword = _appConfig["ApiPassword"] ?? "123ABCabc!";
@@ -94,7 +92,6 @@ namespace CrossWord.Web.Controllers
         [Route("synonymsbyid/{id}")]
         public IActionResult Index(int id)
         {
-            // var apiBaseUrl = _appConfig["ApiBaseUrl"] ?? "http://order.wazalo.com:8000/api/";
             var apiBaseUrl = _appConfig["ApiBaseUrl"] ?? "http://localhost:8000/api/";
             var apiUserEmail = _appConfig["ApiUserEmail"] ?? "server@wazalo.com";
             var apiPassword = _appConfig["ApiPassword"] ?? "123ABCabc!";

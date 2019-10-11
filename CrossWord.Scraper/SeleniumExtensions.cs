@@ -3,7 +3,7 @@ using System.Linq;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 
-namespace CrossWord.Scraper
+namespace CrossWord.Scraper.Extensions
 {
     public static class SeleniumExtensions
     {

@@ -5,7 +5,7 @@ using HtmlAgilityPack;
 using HtmlAgilityPack.CssSelectors.NetCore;
 using OpenQA.Selenium;
 
-namespace CrossWord.Scraper
+namespace CrossWord.Scraper.Extensions
 {
     public static class HtmlAgilityPackSeleniumExtensions
     {

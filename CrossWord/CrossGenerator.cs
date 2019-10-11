@@ -70,15 +70,15 @@ namespace CrossWord
                         succTrans.Sort(new CrossTransformationComparer()); // using the successfull transform with most ?!
 
                         // always use the first index (i.e. the one with the most possible adjacent hits)
-                        // var trans = succTrans[0];
-                        // history.Add(0);
+                        var trans = succTrans[0];
+                        history.Add(0);
 
                         // don't always use the "best" match to randomize the crossword better
-                        var lowestIndexToUse = 0;
-                        var highestIndexToUse = succTrans.Count > 10 ? 10 : succTrans.Count;
-                        int index = rnd.Next(lowestIndexToUse, highestIndexToUse);
-                        var trans = succTrans[index];
-                        history.Add(index);
+                        // var lowestIndexToUse = 0;
+                        // var highestIndexToUse = succTrans.Count > 10 ? 10 : succTrans.Count;
+                        // int index = rnd.Next(lowestIndexToUse, highestIndexToUse);
+                        // var trans = succTrans[index];
+                        // history.Add(index);
 
                         usedWords.Add(trans.Word);
                         trans.Transform(pattern);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using CrossWord.Scraper.Extensions;
 using CrossWord.Scraper.MySQLDbService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -74,12 +75,12 @@ namespace CrossWord.Scraper
 
             // read inn scraper info from environment variables (docker-compose)
             string scraperSite = configuration["ScraperSite"] ?? "Kryssord";
-            bool doContinueWithLastWord = GetConfigurationBoolValue(configuration, "ScraperContinueLastWord", true);
-            int startLetterCount = GetConfigurationIntValue(configuration, "ScraperStartLetterCount", 1);
-            int endLetterCount = GetConfigurationIntValue(configuration, "ScraperEndLetterCount", 20);
-            bool isScraperSwarm = GetConfigurationBoolValue(configuration, "ScraperSwarm", true);
-            bool isKryssordLatest = GetConfigurationBoolValue(configuration, "KryssordLatest", false);
-            int kryssordLatestDelaySeconds = GetConfigurationIntValue(configuration, "KryssordLatestDelaySeconds", 60);
+            bool doContinueWithLastWord = configuration.GetBoolValue("ScraperContinueLastWord", true);
+            int startLetterCount = configuration.GetIntValue("ScraperStartLetterCount", 1);
+            int endLetterCount = configuration.GetIntValue("ScraperEndLetterCount", 20);
+            bool isScraperSwarm = configuration.GetBoolValue("ScraperSwarm", true);
+            bool isKryssordLatest = configuration.GetBoolValue("KryssordLatest", false);
+            int kryssordLatestDelaySeconds = configuration.GetIntValue("KryssordLatestDelaySeconds", 60);
 
             Log.Error("Using scraper config - site: '{0}', continue with last word: '{1}', from/to letter count: {2}-{3}. Swarming: {4}", scraperSite, doContinueWithLastWord, startLetterCount, endLetterCount, isScraperSwarm);
 
@@ -159,22 +160,6 @@ namespace CrossWord.Scraper
                     }
                 }
             }
-        }
-
-        private static int GetConfigurationIntValue(IConfiguration configuration, string key, int defaultValue)
-        {
-            string stringValue = configuration[key] ?? defaultValue.ToString();
-            int returnValue = defaultValue;
-            int.TryParse(stringValue, out returnValue);
-            return returnValue;
-        }
-
-        private static bool GetConfigurationBoolValue(IConfiguration configuration, string key, bool defaultValue)
-        {
-            string stringValue = configuration[key] ?? defaultValue.ToString();
-            bool returnValue = defaultValue;
-            bool.TryParse(stringValue, out returnValue);
-            return returnValue;
         }
     }
 }

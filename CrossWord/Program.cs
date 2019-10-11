@@ -48,7 +48,7 @@ namespace CrossWord
             {
                 if (dictionaryFile.Equals("database"))
                 {
-                    dictionary = new DatabaseDictionary("server=localhost;database=dictionary;user=user;password=password;charset=utf8;", board.MaxWordLength);
+                    dictionary = new DatabaseDictionary("server=localhost;port=3306;database=dictionary;user=user;password=password;charset=utf8;", board.MaxWordLength);
                 }
                 else
                 {

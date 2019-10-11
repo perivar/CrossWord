@@ -20,7 +20,7 @@ namespace CrossWord
             while (true)
             {
                 hubConnection = new HubConnectionBuilder()
-                    .WithUrl("http://localhost:5000/crosswords")
+                    .WithUrl("http://localhost:8000/crosswordsignalrhub")
                     .ConfigureLogging(logging =>
                     {
                         logging.SetMinimumLevel(LogLevel.Information);

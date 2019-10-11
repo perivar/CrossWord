@@ -39,10 +39,11 @@
         // save the new york crossword url
         var nytUrl = "";
 
-        const connection = new signalR.HubConnectionBuilder()
-                .withUrl("/crosswords")
-                .configureLogging(signalR.LogLevel.Information)
-                .build();
+        var signalRHubURL = "@ViewData["SignalRHubURL"]";
+        var connection = new signalR.HubConnectionBuilder()
+            .withUrl(signalRHubURL)
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
 
         // listen to Progress events
         connection.on("SendCrossword", (user, puzzle) => {

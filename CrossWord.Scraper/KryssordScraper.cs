@@ -12,6 +12,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using Serilog;
+using CrossWord.Scraper.Extensions;
 
 namespace CrossWord.Scraper
 {

@@ -141,7 +141,8 @@ namespace CrossWord.API.Controllers
         {
 
             ICrossBoard board = null;
-            var template = GetRandomCrosswordTemplateFromDb();
+            // var template = GetRandomCrosswordTemplateFromDb();
+            CrosswordTemplate template = null;
             if (template != null)
             {
                 board = new CrossBoard();
