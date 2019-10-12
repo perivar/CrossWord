@@ -2,6 +2,36 @@ version: "3"
 
 services:
 
+  # Note! the proxy and certbot services are only needed once when running the init-letsencrypt.sh script
+  # after the init letsencrypt script has been run succesfully - these should be disabled
+  # proxy:
+  #   container_name: proxy
+  #   build:
+  #     context: ./nginx
+  #     dockerfile: Dockerfile
+  #   restart: unless-stopped
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   volumes:
+  #     - ./nginx/production:/etc/nginx/conf.d
+  #     - ./nginx/production/certbot/conf:/etc/letsencrypt
+  #     - ./nginx/production/certbot/www:/var/www/certbot
+  #   # networks:
+  #   #   - web
+  #   command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+
+  # certbot:
+  #   container_name: certbot
+  #   image: certbot/certbot
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./nginx/production/certbot/conf:/etc/letsencrypt
+  #     - ./nginx/production/certbot/www:/var/www/certbot
+  #   # networks:
+  #   #   - web
+  #   entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
   db:
     container_name: crossword.db
     image: mysql:8.0.15
@@ -41,7 +71,7 @@ services:
       ScraperSwarm: 'true'
       KryssordLatest: 'true'
       KryssordLatestDelaySeconds: 300
-      SignalRHubURL: https://api.nerseth.com/crosswordsignalrhub
+      SignalRHubURL: http://116.203.83.168:8000/crosswordsignalrhub
     privileged: 'true'
     cap_add:
       - "SYS_ADMIN"
@@ -63,10 +93,10 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: 'Production'      
       ASPNETCORE_URLS: http://+:5000
-      ApiBaseUrl: https://api.nerseth.com/api/
+      ApiBaseUrl: http://116.203.83.168:8000/api/
       ApiUserEmail: server@wazalo.com
       ApiPassword: 123ABCabc!
-      SignalRHubURL: https://api.nerseth.com/crosswordsignalrhub
+      SignalRHubURL: http://116.203.83.168:8000/crosswordsignalrhub
     expose:
       - "5000"
     ports:
