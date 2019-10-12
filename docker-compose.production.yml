@@ -2,143 +2,31 @@ version: "3"
 
 services:
 
-  # Note! the proxy and certbot services are only needed once when running the init-letsencrypt.sh script
-  # after the init letsencrypt script has been run succesfully - these should be disabled
-  # proxy:
-  #   container_name: proxy
-  #   build:
-  #     context: ./nginx
-  #     dockerfile: Dockerfile
-  #   restart: unless-stopped
-  #   ports:
-  #     - 80:80
-  #     - 443:443
-  #   volumes:
-  #     - ./nginx/production:/etc/nginx/conf.d
-  #     - ./nginx/production/certbot/conf:/etc/letsencrypt
-  #     - ./nginx/production/certbot/www:/var/www/certbot
-  #   # networks:
-  #   #   - web
-  #   command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
-
-  # certbot:
-  #   container_name: certbot
-  #   image: certbot/certbot
-  #   restart: unless-stopped
-  #   volumes:
-  #     - ./nginx/production/certbot/conf:/etc/letsencrypt
-  #     - ./nginx/production/certbot/www:/var/www/certbot
-  #   # networks:
-  #   #   - web
-  #   entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-
-  db:
-    container_name: crossword.db
-    image: mysql:8.0.15
-    command: [--default-authentication-plugin=mysql_native_password]      # get rid of the Authentication plugin ‘caching_sha2_password’ cannot be loaded error
-    volumes:
-      - ./CrossWord.Scraper/init-db-scripts/:/docker-entrypoint-initdb.d/ # reload using docker-compose down -v (Note that this deletes the volumes!)
-                                                                          # Also remember the 'create database <database>; use <database>;' lines in the sql files
-      - datafiles:/var/lib/mysql
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: secret
-      MYSQL_TCP_PORT: 3360
-    security_opt: # to fix the mbind: Operation not permitted log error
-      - seccomp:unconfined
-    ports:
-      - "3360:3360"
-
-  scraper:
-    container_name: crossword.scraper
+  # Note! The proxy and certbot services are only needed once when running the init-letsencrypt.sh script
+  # after the init letsencrypt script has been run succesfully, use the docker-compose in the nginx directory instead
+  proxy:
+    container_name: proxy
     build:
-      context: ./CrossWord.Scraper
+      context: ./nginx
       dockerfile: Dockerfile
-    restart: always
-    depends_on:
-      - db
-      - api
-    environment:
-      DBHOST: db
-      DBPORT: 3360
-      DBUSER: root
-      DBPASSWORD: secret
-      DATABASE: dictionary
-      ScraperSite: Kryssord # NorwegianSynonyms, Kryssord, KryssordLatest, KryssordHjelp or GratisKryssord
-      ScraperContinueLastWord: 'false'
-      ScraperStartLetterCount: 3
-      ScraperEndLetterCount: 10
-      ScraperSwarm: 'true'
-      KryssordLatest: 'true'
-      KryssordLatestDelaySeconds: 300
-      SignalRHubURL: https://api.nerseth.com/crosswordsignalrhub
-    privileged: 'true'
-    cap_add:
-      - "SYS_ADMIN"
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
     volumes:
-      # note: make sure the log file exists on the host - otherwise docker creates it as a directory, this is done in the Dockerfile
-      - ./CrossWord.Scraper/logs/crossword_scraper_error.log:/app/out/crossword_scraper_error.log
-      # see https://github.com/SeleniumHQ/docker-selenium/issues/79
-      - /dev/shm:/dev/shm
-    shm_size: 2G
+      - ./nginx/production:/etc/nginx/conf.d
+      - ./nginx/production/certbot/conf:/etc/letsencrypt
+      - ./nginx/production/certbot/www:/var/www/certbot
+    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
 
-  web:
-    container_name: crossword.web
-    build:
-      context: ./
-      dockerfile: CrossWord.Web/Dockerfile
-    restart: always
-    depends_on:
-      - api
-    environment:
-      ASPNETCORE_ENVIRONMENT: 'Production'      
-      ASPNETCORE_URLS: http://+:5000
-      ApiBaseUrl: https://api.nerseth.com/api/
-      ApiUserEmail: server@wazalo.com
-      ApiPassword: 123ABCabc!
-      SignalRHubURL: https://api.nerseth.com/crosswordsignalrhub
-    expose:
-      - "5000"
-    ports:
-      - "5000:5000"
-
-  api:
-    container_name: crossword.api
-    build:
-      context: ./
-      dockerfile: CrossWord.API/Dockerfile
-    restart: always
-    depends_on:
-      - db
-      - smtp
-    environment:
-      ASPNETCORE_ENVIRONMENT: 'Production'
-      ASPNETCORE_URLS: http://+:8000
-      DBHOST: db
-      DBPORT: 3360
-      DBUSER: root
-      DBPASSWORD: secret
-      DATABASE: dictionary
-      KNOWNPROXIES: ''
-    expose:
-      - "8000"
-    ports:
-      - "8000:8000"
-
-  smtp:
-    container_name: crossword.smtp
-    image: namshi/smtp
-    restart: always
-    ports:
-      - "25:25"
-
-# to access this volume from another docker-compose, use external and the name
-# datafiles:
-#     external:
-#       name: crosswordscraper_datafiles
-# see CrossWord.DbMigrate/docker-compose-yml
-volumes:
-  datafiles:
+  certbot:
+    container_name: certbot
+    image: certbot/certbot
+    restart: unless-stopped
+    volumes:
+      - ./nginx/production/certbot/conf:/etc/letsencrypt
+      - ./nginx/production/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
 # Remember to start the network before running this file:
 # $ docker network create crossword-net

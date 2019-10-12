@@ -1,6 +1,8 @@
 version: '3'
 
 services:
+
+  # Note! Use this after the init letsencrypt script has been run succesfully!
   proxy:
     container_name: proxy
     build:
@@ -14,8 +16,6 @@ services:
       - ./production:/etc/nginx/conf.d
       - ./production/certbot/conf:/etc/letsencrypt
       - ./production/certbot/www:/var/www/certbot
-    # networks:
-    #   - web
     command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
 
   certbot:
@@ -25,12 +25,7 @@ services:
     volumes:
       - ./production/certbot/conf:/etc/letsencrypt
       - ./production/certbot/www:/var/www/certbot
-    # networks:
-    #   - web
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-
-# networks:
-#   web:
 
 # Remember to start the network before running this file:
 # $ docker network create crossword-net
