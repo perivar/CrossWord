@@ -16,7 +16,7 @@ domains=(${@:3})
 rsa_key_size=4096
 data_path="./nginx/$1/certbot"
 email="$2" # Adding a valid address is strongly recommended
-staging=1 # Set to 1 if you're testing your setup to avoid hitting request limits
+staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
 
 
 if [ -d "$data_path/conf/live/" ]; then
