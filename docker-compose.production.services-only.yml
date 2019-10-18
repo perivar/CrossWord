@@ -2,35 +2,8 @@ version: "3"
 
 services:
 
-  # Note! This file is used by the letsencrypt init script and contains all the services and the proxy
-  proxy:
-    container_name: proxy
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - ./nginx/production:/etc/nginx/conf.d
-      - ./nginx/production/certbot/conf:/etc/letsencrypt
-      - ./nginx/production/certbot/www:/var/www/certbot
-    # networks:
-    #   - web
-    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
-
-  certbot:
-    container_name: certbot
-    image: certbot/certbot
-    restart: unless-stopped
-    volumes:
-      - ./nginx/production/certbot/conf:/etc/letsencrypt
-      - ./nginx/production/certbot/www:/var/www/certbot
-    # networks:
-    #   - web
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-
+  # Note! Use this after the init letsencrypt script has been run succesfully!
+  # Used for handling the services separate from the proxy and certbot docker containers
   db:
     container_name: crossword.db
     image: mysql:8.0.15

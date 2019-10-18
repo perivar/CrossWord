@@ -1,30 +1,35 @@
-version: '3'
+version: "3"
 
 services:
 
   # Note! Use this after the init letsencrypt script has been run succesfully!
+  # Used for handling the proxy separate from the other docker containers
   proxy:
     container_name: proxy
     build:
-      context: ./
+      context: ./nginx
       dockerfile: Dockerfile
-    restart: always
+    restart: unless-stopped
     ports:
       - 80:80
       - 443:443
     volumes:
-      - ./production:/etc/nginx/conf.d
-      - ./production/certbot/conf:/etc/letsencrypt
-      - ./production/certbot/www:/var/www/certbot
+      - ./nginx/production:/etc/nginx/conf.d
+      - ./nginx/production/certbot/conf:/etc/letsencrypt
+      - ./nginx/production/certbot/www:/var/www/certbot
+    # networks:
+    #   - web
     command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
 
   certbot:
     container_name: certbot
     image: certbot/certbot
-    restart: always
+    restart: unless-stopped
     volumes:
-      - ./production/certbot/conf:/etc/letsencrypt
-      - ./production/certbot/www:/var/www/certbot
+      - ./nginx/production/certbot/conf:/etc/letsencrypt
+      - ./nginx/production/certbot/www:/var/www/certbot
+    # networks:
+    #   - web
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
 # Remember to start the network before running this file:
