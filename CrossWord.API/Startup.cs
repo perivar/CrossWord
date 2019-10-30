@@ -199,14 +199,24 @@ namespace CrossWord.API
 
             services.AddCors(o =>
             {
-                // When using "AllowCredentials()" we cannot use AllowAnyOrigin()
-                // instead the SetIsOriginAllowed(_ => true) is required.
-                o.AddPolicy("Everything", builder => builder
+                o.AddPolicy("Everything", 
+                
+                    // When using "AllowCredentials()" we cannot use AllowAnyOrigin()
+                    // instead the SetIsOriginAllowed(_ => true) is required.
+                    // builder => builder
+                    //     .AllowAnyHeader()
+                    //     .AllowAnyMethod()
+                    //     .SetIsOriginAllowed(_ => true)
+                    //     .AllowCredentials()
+                    // );
+
+                    builder => builder
                         .AllowAnyHeader()
                         .AllowAnyMethod()
-                        .SetIsOriginAllowed(_ => true)
+                        .AllowAnyOrigin()
                         .AllowCredentials()
-                    );
+                        .WithExposedHeaders("WWW-Authenticate", "Token-Expired")
+                    ); 
             });
 
             // add Queued background tasks
