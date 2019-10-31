@@ -17,6 +17,8 @@ using CrossWord.Scraper.MySQLDbService.Entities;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using CrossWord.API.Services;
+using Microsoft.Net.Http.Headers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace CrossWord.API.Controllers
 {
@@ -118,7 +120,21 @@ namespace CrossWord.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Refresh(string token, string refreshToken)
         {
-            var principal = tokenService.GetPrincipalFromExpiredToken(token);
+            ClaimsPrincipal principal = null;
+            try
+            {
+                principal = tokenService.GetPrincipalFromExpiredToken(token);
+            }
+            catch (System.Exception e)
+            {
+                Response.Headers.TryAdd(HeaderNames.WWWAuthenticate,
+                new String[] {
+                            JwtBearerDefaults.AuthenticationScheme,
+                            "error=\"invalid_token\"",
+                            "error_description=\"" + e.Message + "\""
+                });
+                return BadRequest("Bad Token");
+            }
 
             // invalid token/signing key was passed and we can't extract user claims
             if (principal != null)
@@ -128,21 +144,44 @@ namespace CrossWord.API.Controllers
                 if (userName != null)
                 {
                     var user = userManager.Users.Include(b => b.RefreshTokens).SingleOrDefault(u => u.UserName == userName.Value);
-                    if (user != null && user.HasValidRefreshToken(refreshToken))
+                    RefreshToken refreshTokenObject = null;
+                    if (user != null && (refreshTokenObject = user.GetRefreshToken(refreshToken)) != null)
                     {
-                        var newJwtToken = tokenService.GenerateAccessToken(principal.Claims);
-                        var newRefreshToken = tokenService.GenerateRefreshToken();
-
-                        user.RemoveRefreshToken(refreshToken); // delete the token we've exchanged
-                        user.AddRefreshToken(newRefreshToken, Request.HttpContext.Connection.RemoteIpAddress?.ToString());
-                        await userManager.UpdateAsync(user);
-
-                        return Ok(new
+                        if (refreshTokenObject.Active)
                         {
-                            Token = newJwtToken,
-                            RefreshToken = newRefreshToken
+                            var newJwtToken = tokenService.GenerateAccessToken(principal.Claims);
+                            var newRefreshToken = tokenService.GenerateRefreshToken();
+
+                            user.RemoveRefreshToken(refreshToken); // delete the token we've exchanged
+                            user.AddRefreshToken(newRefreshToken, Request.HttpContext.Connection.RemoteIpAddress?.ToString());
+                            await userManager.UpdateAsync(user);
+
+                            return Ok(new
+                            {
+                                Token = newJwtToken,
+                                RefreshToken = newRefreshToken
+                            });
+                        }
+                        else
+                        {
+                            Response.Headers.TryAdd(HeaderNames.WWWAuthenticate,
+                            new String[] {
+                            JwtBearerDefaults.AuthenticationScheme,
+                            "error=\"invalid_token\"",
+                            "error_description=\"Invalid refresh token (expired): " + refreshTokenObject.Expires + "\""
+                            });
+                        }
+                    }
+                    else
+                    {
+                        Response.Headers.TryAdd(HeaderNames.WWWAuthenticate,
+                        new String[] {
+                            JwtBearerDefaults.AuthenticationScheme,
+                            "error=\"invalid_token\"",
+                            "error_description=\"Invalid refresh token (missing)\""
                         });
                     }
+                    return BadRequest("Bad Refresh Token");
                 }
             }
 

@@ -15,6 +15,11 @@ namespace CrossWord.Scraper.MySQLDbService.Entities
             RefreshTokens = new List<RefreshToken>();
         }
 
+        public RefreshToken GetRefreshToken(string refreshToken)
+        {
+            return RefreshTokens.FirstOrDefault(rt => rt.Token == refreshToken);
+        }
+
         public bool HasValidRefreshToken(string refreshToken)
         {
             return RefreshTokens.Any(rt => rt.Token == refreshToken && rt.Active);
