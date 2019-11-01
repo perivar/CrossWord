@@ -168,7 +168,7 @@ namespace CrossWord.API.Controllers
                             new String[] {
                             JwtBearerDefaults.AuthenticationScheme,
                             "error=\"invalid_token\"",
-                            "error_description=\"Refresh token expired: " + refreshTokenObject.Expires + "\""
+                            "error_description=\"Invalid refresh token (expired): " + refreshTokenObject.Expires + "\""
                             });
                             Response.Headers.Add("Refresh-Token-Expired", "true");
                         }
