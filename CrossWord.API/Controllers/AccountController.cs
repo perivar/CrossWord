@@ -133,7 +133,7 @@ namespace CrossWord.API.Controllers
                             "error=\"invalid_token\"",
                             "error_description=\"" + e.Message + "\""
                 });
-                return BadRequest("Bad Token");
+                Response.Headers.Add("Invalid-Token", "true");
             }
 
             // invalid token/signing key was passed and we can't extract user claims
@@ -168,8 +168,9 @@ namespace CrossWord.API.Controllers
                             new String[] {
                             JwtBearerDefaults.AuthenticationScheme,
                             "error=\"invalid_token\"",
-                            "error_description=\"Invalid refresh token (expired): " + refreshTokenObject.Expires + "\""
+                            "error_description=\"Refresh token expired: " + refreshTokenObject.Expires + "\""
                             });
+                            Response.Headers.Add("Refresh-Token-Expired", "true");
                         }
                     }
                     else
@@ -180,8 +181,8 @@ namespace CrossWord.API.Controllers
                             "error=\"invalid_token\"",
                             "error_description=\"Invalid refresh token (missing)\""
                         });
+                        Response.Headers.Add("Invalid-Refresh-Token", "true");
                     }
-                    return BadRequest("Bad Refresh Token");
                 }
             }
 

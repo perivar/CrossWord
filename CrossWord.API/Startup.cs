@@ -215,7 +215,7 @@ namespace CrossWord.API
                         .AllowAnyMethod()
                         .AllowAnyOrigin()
                         .AllowCredentials()
-                        .WithExposedHeaders("WWW-Authenticate", "Token-Expired")
+                        .WithExposedHeaders("WWW-Authenticate", "Token-Expired", "Refresh-Token-Expired", "Invalid-Token", "Invalid-Refresh-Token")
                     ); 
             });
 
