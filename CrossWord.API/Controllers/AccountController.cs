@@ -136,9 +136,10 @@ namespace CrossWord.API.Controllers
                 Response.Headers.Add("Invalid-Token", "true");
             }
 
-            // invalid token/signing key was passed and we can't extract user claims
             if (principal != null)
             {
+                // valid token/signing key was passed and we can extract user claims
+
                 // The "sub" (subject) claim identifies the principal that is the subject of the JWT.
                 var userName = principal.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub);
                 if (userName != null)
