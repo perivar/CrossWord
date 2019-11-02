@@ -118,8 +118,11 @@ namespace CrossWord.API.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> RefreshAccessToken(string token, string refreshToken)
+        public async Task<IActionResult> RefreshAccessToken(RefreshTokenModel tokens)
         {
+            string token = tokens.Token;
+            string refreshToken = tokens.RefreshToken;
+
             ClaimsPrincipal principal = null;
             try
             {
