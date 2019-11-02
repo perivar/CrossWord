@@ -118,7 +118,7 @@ namespace CrossWord.API.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Refresh(string token, string refreshToken)
+        public async Task<IActionResult> RefreshAccessToken(string token, string refreshToken)
         {
             ClaimsPrincipal principal = null;
             try
@@ -134,6 +134,7 @@ namespace CrossWord.API.Controllers
                             "error_description=\"" + e.Message + "\""
                 });
                 Response.Headers.Add("Invalid-Token", "true");
+                return BadRequest("Token exception: " + e.Message);
             }
 
             if (principal != null)
@@ -172,6 +173,7 @@ namespace CrossWord.API.Controllers
                             "error_description=\"Invalid refresh token (expired): " + refreshTokenObject.Expires + "\""
                             });
                             Response.Headers.Add("Refresh-Token-Expired", "true");
+                            return BadRequest("Refresh token expired");
                         }
                     }
                     else
@@ -183,11 +185,29 @@ namespace CrossWord.API.Controllers
                             "error_description=\"Invalid refresh token (missing)\""
                         });
                         Response.Headers.Add("Invalid-Refresh-Token", "true");
+                        return NotFound("Refresh token not found");
                     }
                 }
             }
-
             return BadRequest();
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> RevokeRefreshTokens(string username)
+        {
+            var user = userManager.Users.Include(b => b.RefreshTokens).SingleOrDefault(u => u.UserName == username);
+            if (user == null)
+            {
+                // Don't reveal that the user does not exist
+                return BadRequest();
+            }
+
+            // remove all refresh tokens
+            user.RefreshTokens = null;
+            await userManager.UpdateAsync(user);
+
+            return Ok($"Removed all refresh tokens for user: {user.Id}");
         }
 
         [Authorize(Roles = "Admin")]
