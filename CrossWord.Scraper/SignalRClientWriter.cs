@@ -155,11 +155,6 @@ namespace CrossWord.Scraper
             }
         }
 
-        public override async Task FlushAsync()
-        {
-            // do nothing
-        }
-
         public override void Write(string value)
         {
             OutputMessage(value).GetAwaiter();

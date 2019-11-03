@@ -43,9 +43,41 @@ namespace CrossWord.Scraper.Extensions
         {
             if (timeoutInSeconds > 0)
             {
-                WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(timeoutInSeconds));
-                wait.Until(ExpectedConditions.ElementIsVisible(by));
+                // WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(timeoutInSeconds));
+                // wait.Until(ExpectedConditions.ElementIsVisible(by));
+                driver.WaitUntilVisible(by, timeoutInSeconds);
             }
+        }
+
+        // use: element = driver.WaitUntilVisible(By.XPath("//input[@value='Save']"));
+        public static IWebElement WaitUntilVisible(
+            this IWebDriver driver,
+            By by,
+            int secondsTimeout = 10)
+        {
+            var wait = new WebDriverWait(driver, new TimeSpan(0, 0, secondsTimeout));
+            var element = wait.Until<IWebElement>((condition) =>
+            {
+                try
+                {
+                    var elementToBeDisplayed = driver.FindElement(by);
+                    if (elementToBeDisplayed.Displayed)
+                    {
+                        return elementToBeDisplayed;
+                    }
+                    return null;
+                }
+                catch (StaleElementReferenceException)
+                {
+                    return null;
+                }
+                catch (NoSuchElementException)
+                {
+                    return null;
+                }
+
+            });
+            return element;
         }
     }
 }
