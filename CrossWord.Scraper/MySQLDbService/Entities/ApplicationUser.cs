@@ -27,12 +27,12 @@ namespace CrossWord.Scraper.MySQLDbService.Entities
 
         public void AddRefreshToken(string token, string remoteIpAddress, double daysToExpire = 5)
         {
-            //if (RefreshTokens.Any(r => !string.IsNullOrEmpty(remoteIpAddress) && r.RemoteIpAddress == remoteIpAddress))
-            if (RefreshTokens.Any(r => r.ApplicationUserId == this.Id))
+            if (RefreshTokens.Any(r => !string.IsNullOrEmpty(remoteIpAddress) && r.RemoteIpAddress == remoteIpAddress))
+            // if (RefreshTokens.Any(r => r.ApplicationUserId == this.Id))
             {
                 // update existing
-                // var existingToken = RefreshTokens.First(a => a.RemoteIpAddress == remoteIpAddress);
-                var existingToken = RefreshTokens.First(a => a.ApplicationUserId == this.Id);
+                var existingToken = RefreshTokens.First(a => a.RemoteIpAddress == remoteIpAddress);
+                // var existingToken = RefreshTokens.First(a => a.ApplicationUserId == this.Id);
                 existingToken.RemoteIpAddress = remoteIpAddress;
                 existingToken.Token = token;
                 existingToken.Expires = DateTime.UtcNow.AddDays(daysToExpire);

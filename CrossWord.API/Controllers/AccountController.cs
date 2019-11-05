@@ -97,7 +97,9 @@ namespace CrossWord.API.Controllers
 
                 // generate and add refresh token
                 var refreshToken = tokenService.GenerateRefreshToken();
-                userToVerify.AddRefreshToken(refreshToken, Request.HttpContext.Connection.RemoteIpAddress?.ToString());
+
+                // HttpContext.Connection.RemoteIpAddress is set by XForwardedFor header
+                userToVerify.AddRefreshToken(refreshToken, Request.HttpContext?.Connection?.RemoteIpAddress?.ToString());
                 await userManager.UpdateAsync(userToVerify);
 
                 // return basic user info (without password) and token to store client side
@@ -158,7 +160,9 @@ namespace CrossWord.API.Controllers
                             var newRefreshToken = tokenService.GenerateRefreshToken();
 
                             user.RemoveRefreshToken(refreshToken); // delete the token we've exchanged
-                            user.AddRefreshToken(newRefreshToken, Request.HttpContext.Connection.RemoteIpAddress?.ToString());
+
+                            // HttpContext.Connection.RemoteIpAddress is set by XForwardedFor header
+                            user.AddRefreshToken(newRefreshToken, Request.HttpContext?.Connection?.RemoteIpAddress?.ToString());
                             await userManager.UpdateAsync(user);
 
                             return Ok(new
