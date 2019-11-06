@@ -47,12 +47,12 @@ namespace CrossWord.API.Controllers
         // GET: /Account/GetClientIPAddress
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult> GetClientIPAddress()
+        public ActionResult GetClientIPAddress()
         {
             var remoteIpAddress = HttpContext?.Connection?.RemoteIpAddress?.ToString();
             var xForwardedForHeader = HttpContext?.Request?.Headers["X-Forwarded-For"];
 
-            return Ok($"Remote IP Addres: {remoteIpAddress}. X-Forwarded-For: {xForwardedForHeader}");
+            return Ok($"Remote IP Addres: '{remoteIpAddress}'. X-Forwarded-For: '{xForwardedForHeader}'");
         }
 
         [HttpPost]
