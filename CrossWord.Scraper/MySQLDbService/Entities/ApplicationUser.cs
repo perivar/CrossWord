@@ -25,15 +25,18 @@ namespace CrossWord.Scraper.MySQLDbService.Entities
             return RefreshTokens.Any(rt => rt.Token == refreshToken && rt.Active);
         }
 
-        public void AddRefreshToken(string token, string remoteIpAddress, double daysToExpire = 5)
+        public void AddRefreshToken(string token, string remoteIpAddress, string userAgent, double daysToExpire = 5)
         {
-            if (RefreshTokens.Any(r => !string.IsNullOrEmpty(remoteIpAddress) && r.RemoteIpAddress == remoteIpAddress))
+            if (RefreshTokens.Any(r =>
+                (!string.IsNullOrEmpty(remoteIpAddress) && r.RemoteIpAddress == remoteIpAddress)
+                &&
+                (!string.IsNullOrEmpty(userAgent) && r.UserAgent == userAgent)
+            ))
             // if (RefreshTokens.Any(r => r.ApplicationUserId == this.Id))
             {
                 // update existing
-                var existingToken = RefreshTokens.First(a => a.RemoteIpAddress == remoteIpAddress);
+                var existingToken = RefreshTokens.First(a => a.RemoteIpAddress == remoteIpAddress && a.UserAgent == userAgent);
                 // var existingToken = RefreshTokens.First(a => a.ApplicationUserId == this.Id);
-                existingToken.RemoteIpAddress = remoteIpAddress;
                 existingToken.Token = token;
                 existingToken.Expires = DateTime.UtcNow.AddDays(daysToExpire);
                 existingToken.Modified = DateTime.UtcNow;
@@ -41,7 +44,7 @@ namespace CrossWord.Scraper.MySQLDbService.Entities
             else
             {
                 // add new
-                var newToken = new RefreshToken(token, DateTime.UtcNow.AddDays(daysToExpire), this, remoteIpAddress);
+                var newToken = new RefreshToken(token, DateTime.UtcNow.AddDays(daysToExpire), this, remoteIpAddress, userAgent);
                 newToken.Created = DateTime.UtcNow;
                 RefreshTokens.Add(newToken);
             }

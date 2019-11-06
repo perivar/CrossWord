@@ -13,23 +13,26 @@ namespace CrossWord.Scraper.MySQLDbService.Entities
         public DateTime Expires { get; set; }
         public bool Active => DateTime.UtcNow <= Expires;
         public string RemoteIpAddress { get; set; }
+        public string UserAgent { get; set; }
 
         internal RefreshToken() { /* Required by EF */ }
 
-        public RefreshToken(string token, DateTime expires, string userId, string remoteIpAddress)
+        public RefreshToken(string token, DateTime expires, string userId, string remoteIpAddress, string userAgent)
         {
             Token = token;
             Expires = expires;
             ApplicationUserId = userId;
             RemoteIpAddress = remoteIpAddress;
+            UserAgent = userAgent;
         }
 
-        public RefreshToken(string token, DateTime expires, ApplicationUser user, string remoteIpAddress)
+        public RefreshToken(string token, DateTime expires, ApplicationUser user, string remoteIpAddress, string userAgent)
         {
             Token = token;
             Expires = expires;
             ApplicationUser = user;
             RemoteIpAddress = remoteIpAddress;
+            UserAgent = userAgent;
         }
     }
 }

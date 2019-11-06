@@ -44,13 +44,22 @@ namespace CrossWord.API.Controllers
             this.tokenService = tokenService;
         }
 
-        // GET: /Account/GetClientIPAddress
+        // GET: /Account/ClientIPAddress
         [HttpGet]
         [AllowAnonymous]
-        public ActionResult GetClientIPAddress()
+        public ActionResult ClientIPAddress()
         {
             var remoteIpAddress = HttpContext.GetRemoteIPAddress(true).MapToIPv4().ToString();
             return Ok($"Remote IP Addres: '{remoteIpAddress}'");
+        }
+
+        // GET: /Account/UserAgent
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult UserAgent()
+        {
+            var userAgent = Request.Headers["User-Agent"];
+            return Ok($"User Agent: '{userAgent}'");
         }
 
         [HttpPost]
@@ -109,7 +118,8 @@ namespace CrossWord.API.Controllers
 
                 // HttpContext.Connection.RemoteIpAddress is set by XForwardedFor header
                 var remoteIpAddress = HttpContext.GetRemoteIPAddress(true).MapToIPv4().ToString();
-                userToVerify.AddRefreshToken(refreshToken, remoteIpAddress);
+                var userAgent = Request.Headers["User-Agent"].ToString();
+                userToVerify.AddRefreshToken(refreshToken, remoteIpAddress, userAgent);
                 await userManager.UpdateAsync(userToVerify);
 
                 // return basic user info (without password) and token to store client side
@@ -173,7 +183,8 @@ namespace CrossWord.API.Controllers
 
                             // HttpContext.Connection.RemoteIpAddress is set by XForwardedFor header
                             var remoteIpAddress = HttpContext.GetRemoteIPAddress(true).MapToIPv4().ToString();
-                            user.AddRefreshToken(newRefreshToken, remoteIpAddress);
+                            var userAgent = Request.Headers["User-Agent"].ToString();
+                            user.AddRefreshToken(newRefreshToken, remoteIpAddress, userAgent);
                             await userManager.UpdateAsync(user);
 
                             return Ok(new

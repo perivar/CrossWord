@@ -206,24 +206,18 @@ namespace CrossWord.API
                     // has been blocked by CORS policy: Response to preflight request doesn't pass access control check: 
                     // The value of the 'Access-Control-Allow-Origin' header in the response must not be the wildcard '*' 
                     // when the request's credentials mode is 'include'. 
+
                     // The credentials mode of requests initiated by the XMLHttpRequest is controlled by the withCredentials attribute.
                     // When using "AllowCredentials()" we cannot use AllowAnyOrigin()
                     // instead the SetIsOriginAllowed(_ => true) is required.
                     builder => builder
                         .AllowAnyHeader()
                         .AllowAnyMethod()
+                        // .AllowAnyOrigin()
                         .SetIsOriginAllowed(_ => true)
                         .AllowCredentials()
                         .WithExposedHeaders("WWW-Authenticate", "Token-Expired", "Refresh-Token-Expired", "Invalid-Token", "Invalid-Refresh-Token")
                     );
-
-                // builder => builder
-                //     .AllowAnyHeader()
-                //     .AllowAnyMethod()
-                //     .AllowAnyOrigin()
-                //     .AllowCredentials()
-                //     .WithExposedHeaders("WWW-Authenticate", "Token-Expired", "Refresh-Token-Expired", "Invalid-Token", "Invalid-Refresh-Token")
-                // ); 
             });
 
             // add Queued background tasks
@@ -234,6 +228,7 @@ namespace CrossWord.API
             // services.AddHostedService<TimedHostedService>();
 
             // https://blog.mindgaze.tech/2019/04/09/properly-configure-forwarded-headers-in-asp-net-core/            
+            // Use the following in docker-compose to set this parameter.
             //  environment:
             //   - KNOWNPROXIES='10.0.0.1, 10.0.0.2'
             var proxies = Configuration.GetArrayValues("KNOWNPROXIES", "");
@@ -259,12 +254,6 @@ namespace CrossWord.API
                             , IApiVersionDescriptionProvider provider
                             )
         {
-            // Invoke the UseForwardedHeaders method in Startup.Configure before calling UseAuthentication or similar authentication scheme middleware.
-            // If no ForwardedHeadersOptions are specified to the middleware, the default headers to forward are None.
-            // app.UseForwardedHeaders(new ForwardedHeadersOptions
-            // {
-            //     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-            // });
             app.UseForwardedHeaders();
 
             if (env.IsDevelopment())
