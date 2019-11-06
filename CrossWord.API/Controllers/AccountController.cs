@@ -44,6 +44,17 @@ namespace CrossWord.API.Controllers
             this.tokenService = tokenService;
         }
 
+        // GET: /Account/GetClientIPAddress
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<ActionResult> GetClientIPAddress()
+        {
+            var remoteIpAddress = HttpContext?.Connection?.RemoteIpAddress?.ToString();
+            var xForwardedForHeader = HttpContext?.Request?.Headers["X-Forwarded-For"];
+
+            return Ok($"Remote IP Addres: {remoteIpAddress}. X-Forwarded-For: {xForwardedForHeader}");
+        }
+
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Register(UserModelRegister userRegister)
@@ -99,7 +110,7 @@ namespace CrossWord.API.Controllers
                 var refreshToken = tokenService.GenerateRefreshToken();
 
                 // HttpContext.Connection.RemoteIpAddress is set by XForwardedFor header
-                userToVerify.AddRefreshToken(refreshToken, Request.HttpContext?.Connection?.RemoteIpAddress?.ToString());
+                userToVerify.AddRefreshToken(refreshToken, HttpContext?.Connection?.RemoteIpAddress?.ToString());
                 await userManager.UpdateAsync(userToVerify);
 
                 // return basic user info (without password) and token to store client side
@@ -162,7 +173,7 @@ namespace CrossWord.API.Controllers
                             user.RemoveRefreshToken(refreshToken); // delete the token we've exchanged
 
                             // HttpContext.Connection.RemoteIpAddress is set by XForwardedFor header
-                            user.AddRefreshToken(newRefreshToken, Request.HttpContext?.Connection?.RemoteIpAddress?.ToString());
+                            user.AddRefreshToken(newRefreshToken, HttpContext?.Connection?.RemoteIpAddress?.ToString());
                             await userManager.UpdateAsync(user);
 
                             return Ok(new
