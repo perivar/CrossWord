@@ -16,10 +16,15 @@ domains=(${@:3})
 rsa_key_size=4096
 data_path="./nginx/$1/certbot"
 email="$2" # Adding a valid address is strongly recommended
-
-# Enable staging mode if the passed parameter is 'staging'
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
-if [ $1 != "staging" ]; then staging=1; fi
+
+echo "### Creating crossword-net network ..."
+sudo docker network create crossword-net
+echo
+
+echo "### Starting base containers ..."
+sudo docker-compose -f docker-compose.$1.yml up --force-recreate -d
+echo
 
 if [ -d "$data_path/conf/live/" ]; then
   read -p "Existing data found. Continue and replace existing certificates? (y/N) " decision
@@ -31,9 +36,10 @@ fi
 if [ ! -e "$data_path/conf/options-ssl-nginx.conf" ] || [ ! -e "$data_path/conf/ssl-dhparams.pem" ]; then
   echo "### Downloading recommended TLS parameters ..."
   mkdir -p "$data_path/conf"
-  # don't need the below because using mozilla's ssl config
-  # curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/options-ssl-nginx.conf > "$data_path/conf/options-ssl-nginx.conf"
-  curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot/ssl-dhparams.pem > "$data_path/conf/ssl-dhparams.pem"
+  # don't need the options-ssl-nginx.conf line below because using mozilla's ssl config instead
+  # curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx.conf > "$data_path/conf/options-ssl-nginx.conf"
+  curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot/certbot/ssl-dhparams.pem > "$data_path/conf/ssl-dhparams.pem"
+
   echo
 fi
 
@@ -59,7 +65,7 @@ for domain in "${domains[@]}"; do
 done
 
 echo "### Starting nginx ..."
-docker-compose -f docker-compose.$1.yml up --force-recreate -d
+docker-compose -f docker-compose.$1.yml up --force-recreate -d proxy
 echo
 
 for domain in "${domains[@]}"; do
