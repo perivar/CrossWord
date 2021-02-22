@@ -17,6 +17,7 @@ services:
       - ./nginx/production:/etc/nginx/conf.d
       - ./nginx/production/certbot/conf:/etc/letsencrypt
       - ./nginx/production/certbot/www:/var/www/certbot
+      - ./nginx/production/niftycoin/www:/var/www/niftycoin
     # networks:
     #   - web
     command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
