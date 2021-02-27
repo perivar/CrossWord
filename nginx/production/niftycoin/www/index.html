@@ -1,3 +1,60 @@
-<html>
-<h1>NiftyCoin.org</h1>
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Get Started &#8211; niftycoin.org</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", sans-serif}
+h1 {letter-spacing: 2px; font-size: 50px!important;}
+img {margin-bottom: 12px}
+
+body, html {
+  height: 100%;
+  line-height: 1.8;
+}
+
+/* Full height image header */
+.bgimg-1 {
+  background-position: center;
+  background-size: cover;
+  background-image: url("https://www.w3schools.com/w3images/mac.jpg");
+  min-height: 20%;
+}
+</style>
+</head>
+<body>
+<header class="bgimg-1" style="padding:50px 16px; color:#fff!important;background-color:#0e9e9e!important">
+  <h1><center>Get Started with Nifties - #NFY<center></h1>
+</header>
+<h3>Mining NiftyCoin is fun and easy! In just a few steps, you can start earning #NFY by mining blocks on the niftycoin network!</h3>
+<p>You may have heard that mining cryptocurrency is a technical process that involves expensive hardware, except this is not necessarily true during the birth of a new blockchain. Since the niftycoin network is very new, the mining difficulty is currently easy enough to successfully mine on most modern CPUs.</p>
+<p><b>It is very possible to mine thousands of #NFY# (Nifties) today while this difficulty remains low.</b></p>
+<p>This article will cover to configuring the niftycoin wallet and mining script on Windows. If you are interested in running on Linux view the notes in the latest release for detailed instructions.</p>
+<p><a href="https://explorer.niftycoin.org/">NiftyCoin Explorer</a></p>
+<h2>Let&rsquo;s get started!</h2>
+<ol>
+<li>Begin by downloading the latest Windows release of <a href="niftycoin-release-0.2.zip">niftycoin</a>.<br /><br /></li>
+<li>Inside the .zip file you will notice the wallet program, niftycoin-qt.exe and a sample configuration name niftycoin.conf<br /><img src="niftycoin-1.png" /><br />Extract the contents of the .zip to a directory of your choice and run niftycoin-qt.exe.<br /><br />
+<li>You will notice that the application starts up and gives a message that it is attempting to connect to peers, this will not finish successfully until we apply a valid configuration to connect to existing nodes.<br /><br /></li>
+<li>As mentioned in step 1, when niftycoin-qt.exe is first run it will ask you to select a data directory, if you do not change the data directory and use the default settings, it will create a niftycoin directory in %AppData%/niftycoin. We need to navigate to the this directory OR the custom path that you chose on first launch and copy the niftycoin.conf file that was included in the original .zip file.  You will know you are in the right place because you should see the following files and folders (with exception of niftycoin.conf).
+<br /><img src="niftycoin-2.png" />
+<li>Now restart niftycoin-qt and the program will begin to synchronize with the niftycoin network. This can take a long time, please be patient and wait for the process to complete.<br /><br /></li>
+<li>To begin mining on your machine, simply double-click the mine.bat file included in the original .zip. This program and the niftycoin-qt wallet must be open at the same time in order to mine. 
+If you get lucky, you may start receiving notifications that you successfully mined a block!
+<br />
+(If you get errors you may need to copy niftycoin.conf to %appdata%/niftycoin OR modify mine.bat to use the -datadir parameter and point it at the directory chosen when you first launched the wallet.)
+<br /><img src="niftycoin-3.png" />
+</ol>
+<p>&nbsp;</p>
+<h2>Send and Recieve Nifties!</h2>
+<ol>
+<li>To obtain your wallet address, click on the &ldquo;Receive&rdquo; option in the niftycoin-qt wallet, the select &ldquo;Request Payment&rdquo;:
+<br /><img src="niftycoin-4.png" /></li>
+<li>A QR code and niftycoin address will appear on the screen, copy the section highlighted in yellow:</li>
+<br /><img src="niftycoin-5.png" />
+</ol>
+</body>
 </html>
