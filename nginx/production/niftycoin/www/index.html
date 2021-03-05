@@ -3,58 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Get Started &#8211; niftycoin.org</title>
+    <title>NiftyCoin - an art and media enabling blockchain and crypto solution</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
 <style>
 body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", sans-serif}
-h1 {letter-spacing: 2px; font-size: 50px!important;}
+h1 {letter-spacing: 2px; font-size: 40px!important;}
 img {margin-bottom: 12px}
 
 body, html {
   height: 100%;
   line-height: 1.8;
+  max-width: 1024px;
+  margin: auto;
 }
 
-/* Full height image header */
-.bgimg-1 {
-  background-position: center;
-  background-size: cover;
-  background-image: url("https://www.w3schools.com/w3images/mac.jpg");
-  min-height: 20%;
-}
 </style>
 </head>
 <body>
-<header class="bgimg-1" style="padding:50px 16px; color:#fff!important;background-color:#0e9e9e!important">
-  <h1><center>Get Started with Nifties - #NFY<center></h1>
-</header>
-<h3>Mining NiftyCoin is fun and easy! In just a few steps, you can start earning #NFY by mining blocks on the niftycoin network!</h3>
-<p>You may have heard that mining cryptocurrency is a technical process that involves expensive hardware, except this is not necessarily true during the birth of a new blockchain. Since the niftycoin network is very new, the mining difficulty is currently easy enough to successfully mine on most modern CPUs.</p>
-<p><b>It is very possible to mine thousands of #NFY# (Nifties) today while this difficulty remains low.</b></p>
-<p>This article will cover to configuring the niftycoin wallet and mining script on Windows. If you are interested in running on Linux view the notes in the latest release for detailed instructions.</p>
-<p><a href="https://explorer.niftycoin.org/">NiftyCoin Explorer</a></p>
-<h2>Let&rsquo;s get started!</h2>
-<ol>
-<li>Begin by downloading the latest Windows release of <a href="niftycoin-release-0.2.zip">niftycoin</a>.<br /><br /></li>
-<li>Inside the .zip file you will notice the wallet program, niftycoin-qt.exe and a sample configuration name niftycoin.conf<br /><img src="niftycoin-1.png" /><br />Extract the contents of the .zip to a directory of your choice and run niftycoin-qt.exe.<br /><br />
-<li>You will notice that the application starts up and gives a message that it is attempting to connect to peers, this will not finish successfully until we apply a valid configuration to connect to existing nodes.<br /><br /></li>
-<li>As mentioned in step 1, when niftycoin-qt.exe is first run it will ask you to select a data directory, if you do not change the data directory and use the default settings, it will create a niftycoin directory in %AppData%/niftycoin. We need to navigate to the this directory OR the custom path that you chose on first launch and copy the niftycoin.conf file that was included in the original .zip file.  You will know you are in the right place because you should see the following files and folders (with exception of niftycoin.conf).
-<br /><img src="niftycoin-2.png" />
-<li>Now restart niftycoin-qt and the program will begin to synchronize with the niftycoin network. This can take a long time, please be patient and wait for the process to complete.<br /><br /></li>
-<li>To begin mining on your machine, simply double-click the mine.bat file included in the original .zip. This program and the niftycoin-qt wallet must be open at the same time in order to mine. 
-If you get lucky, you may start receiving notifications that you successfully mined a block!
-<br />
-(If you get errors you may need to copy niftycoin.conf to %appdata%/niftycoin OR modify mine.bat to use the -datadir parameter and point it at the directory chosen when you first launched the wallet.)
-<br /><img src="niftycoin-3.png" />
-</ol>
+<h1>NiftyCoin - an art and media enabling blockchain and crypto solution <img src="https://explorer.niftycoin.org/images/logo.png" width="40"/></h1>
+<p><i class="far fa-heart fa-3x  text-info" style="float: left; margin-right:7px;"></i> NiftyCoin and the NiftyBlockchain is built upon the LiteCoin design, which again is a fork of BitCoin. NiftyCoin has been designed to enable persistant media and art content, so that they will forever be traceable, from birth, and whenever the media or art content changes hands.</p>
+<p>Therefore the storage capacity for each transaction has been increased beyond what BitCoin and LiteCoin can offer,&nbsp; and a best practice protocol has been designed to store either a reference or the actual content within the blockchain.</p>
+<p><strong>A whitepaper is in the works to describe this in detail.</strong></p>
 <p>&nbsp;</p>
-<h2>Send and Recieve Nifties!</h2>
-<ol>
-<li>To obtain your wallet address, click on the &ldquo;Receive&rdquo; option in the niftycoin-qt wallet, the select &ldquo;Request Payment&rdquo;:
-<br /><img src="niftycoin-4.png" /></li>
-<li>A QR code and niftycoin address will appear on the screen, copy the section highlighted in yellow:</li>
-<br /><img src="niftycoin-5.png" />
-</ol>
+<div>
+<i class="fas fa-palette fa-2x"></i>
+<i class="fas fa-photo-video fa-2x"></i>
+<i class="fas fa-compact-disc fa-2x"></i>
+<i class="fas fa-paint-brush fa-2x"></i>
+<i class="fas fa-edit fa-2x"></i>
+</div>
+<p>&nbsp</p>
+<h3>Protocol Information</h3>
+<p>Here are some highlevel protocol information (in the request for change NCE-02  <i class="fas fa-glasses"></i>)</p>
+<h4>Stored meta-data:</h4>
+<ul>
+<li>Main Artist / Designer / Creator (can be multiple)</li>
+<li>If more than one Artist / Designer / Creator - the redistribution share is denoted (will be used to share the proceeds every time a&nbsp; media or art piece is sold).&nbsp;</li>
+<li>Title of Art Piece / Design / Song / Sample</li>
+<li>For art / designs - Number of identical pieces (e.g. 1000)</li>
+<li>For art / design - What number of the art is this&nbsp; (e.g. numer 54 - out of the 1000 above)</li>
+<li>For music and sound samples - Reference to Album and index</li>
+<li>Agreed redistribution percentage to blockchain fascilitator&nbsp;</li>
+<li>Unique File Identity - from a proposed International Art and Media Database</li>
+</ul>
+<p>&nbsp;</p>
+<h4>Technical details:</h4>
+<table>
+<tbody>
+<tr>
+<td nowrap="nowrap"><strong>Field</strong></td>
+<td nowrap="nowrap"><strong>Size</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td nowrap="nowrap">Identifier</td>
+<td nowrap="nowrap">4 bytes</td>
+<td><code>NFTY</code> or <code>0x4e 0x46 0x54 0x59</code></td>
+</tr>
+<tr>
+<td nowrap="nowrap">Quantity multiple</td>
+<td nowrap="nowrap">4 bytes</td>
+<td>Multiply the asset quantity in display units by this number in order to calculate raw units. Display units are used for NiftyChain API calls, whereas raw units are used within transaction <code>OP_DROPs</code>. Stored as an unsigned 32-bit integer in small-endian order, e.g.: <code>0x64 0x00 0x00 0x00</code> = <code>100</code> for an asset where 1 raw unit = 0.01 display units.</td>
+</tr>
+<tr>
+<td nowrap="nowrap">Asset name</td>
+<td nowrap="nowrap">Variable</td>
+<td>Null-delimited name of asset, e.g. <code>0x61 0x73 0x73 0x65 0x74 0x31 0x00</code> for <code>asset1</code>.</td>
+</tr>
+<tr>
+<td style="text-align: center;" colspan="3"><em>Repeat the below for each additional asset property</em></td>
+</tr>
+<tr>
+<td nowrap="nowrap">Property key</td>
+<td nowrap="nowrap">Variable</td>
+<td>If the first byte of the key is <code>0x00</code>, it denotes a property with special meaning to NiftyChain, and the second byte gives the property type. For now, the only possible key is <code>0x00 0x02</code>, where a property value of <code>0x00</code> or <code>0x01</code> denotes whether the asset is open for reissuance. If the first byte of the property key is not <code>0x00</code>, it contains the null-delimited name of a user-defined custom field, e.g. <code>0x75 0x72 0x6c 0x00</code> for <code>url</code>.</td>
+</tr>
+<tr>
+<td nowrap="nowrap">Length</td>
+<td nowrap="nowrap">1-9 bytes</td>
+<td>Bitcoin-style <a href="https://en.bitcoin.it/wiki/Protocol_documentation#Variable_length_integer">variable-length integer</a> indicating the length of the property value in bytes.</td>
+</tr>
+<tr>
+<td nowrap="nowrap">Value</td>
+<td nowrap="nowrap">Variable</td>
+<td>The property&rsquo;s value as raw binary.</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p>For more information read our <a href="/gettingstarted.html">getting started pages</a></p> 
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
 </body>
 </html>

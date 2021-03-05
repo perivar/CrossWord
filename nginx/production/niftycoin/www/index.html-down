@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Get Started &#8211; niftycoin.org</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", sans-serif}
+h1 {letter-spacing: 2px; font-size: 50px!important;}
+img {margin-bottom: 12px}
+
+body, html {
+  height: 100%;
+  line-height: 1.8;
+}
+
+/* Full height image header */
+.bgimg-1 {
+  background-position: center;
+  background-size: cover;
+  background-image: url("https://www.w3schools.com/w3images/mac.jpg");
+  min-height: 20%;
+}
+</style>
+</head>
+<body>
+<header class="bgimg-1" style="padding:50px 16px; color:#fff!important;background-color:#0e9e9e!important">
+  <h1><center>Get Started with Nifties - #NFY<center></h1>
+</header>
+<h1>The NiftyCoin crypto currency is soon ready<h!>
+<h1>Right now we have to do some maintenance to the blockchain and it is therefore down!</h1>
+<p>Please be patient and we will soon be back!</p>
+</body>
+</html>
