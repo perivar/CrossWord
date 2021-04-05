@@ -33,15 +33,18 @@ body, html {
 <p>You may have heard that mining cryptocurrency is a technical process that involves expensive hardware, except this is not necessarily true during the birth of a new blockchain. Since the niftycoin network is very new, the mining difficulty is currently easy enough to successfully mine on most modern CPUs.</p>
 <p><b>It is very possible to mine thousands of #NFY# (Nifties) today while this difficulty remains low.</b></p>
 <p>This article will cover to configuring the niftycoin wallet and mining script on Windows. If you are interested in running on Linux view the notes in the latest release for detailed instructions.</p>
-<p><a href="https://explorer.niftycoin.org/">NiftyCoin Explorer</a></p>
+<p><a target="_new" href="https://explorer.niftycoin.org/">Our official NiftyCoin Explorer: explorer.niftycoin.org</a></p>
+<p><a target="_new" href="https://pool.niftycoin.org">Our official Mining Pool: pool.niftycoin.org</a></p>
+<p><a target="_new" href="https://github.com/niftycoin-project/niftycoin">Our official open source @ github.com</a></p>
 <h2>Let&rsquo;s get started!</h2>
 <ol>
-<li>Begin by downloading the latest Windows release of <a href="niftycoin-release-0.8.zip">niftycoin</a>.<br /><br /></li>
+<li>Begin by downloading the latest official Windows release of <a href="niftycoin-release-0.17.1.zip">niftycoin</a>.<br />(If you want another version - build it yourself at <a target="_new" href="https://github.com/niftycoin-project/niftycoin">https://github.com/niftycoin-project/niftycoin</a>)<br /></li>
 <li>Inside the .zip file you will notice the wallet program, niftycoin-qt.exe and a sample configuration name niftycoin.conf<br /><img src="niftycoin-1.png" /><br />Extract the contents of the .zip to a directory of your choice and run niftycoin-qt.exe.<br /><br />
 <li>You will notice that the application starts up and gives a message that it is attempting to connect to peers, this will not finish successfully until we apply a valid configuration to connect to existing nodes.<br /><br /></li>
 <li>As mentioned in step 1, when niftycoin-qt.exe is first run it will ask you to select a data directory, if you do not change the data directory and use the default settings, it will create a niftycoin directory in <p><code>%AppData%/niftycoin</code></p> We need to navigate to the this directory OR the custom path that you chose on first launch and copy the niftycoin.conf file that was included in the original .zip file.  You will know you are in the right place because you should see the following files and folders (with exception of niftycoin.conf).
 <br /><img src="niftycoin-2.png" />
 <li>Now restart niftycoin-qt and the program will begin to synchronize with the niftycoin network. This can take a long time, please be patient and wait for the process to complete.<br /><br /></li>
+<li><strong>UPDATED! Don't use the steps described below (Step 6. Using a mining pool will be much more profitable for you!</strong> Check out <a href="https://pool.niftycoin.org">pool.niftycoin.org</a></li>
 <li>To begin mining on your machine, simply double-click the mine.bat file included in the original .zip. This program and the niftycoin-qt wallet must be open at the same time in order to mine. 
 If you get lucky, you may start receiving notifications that you successfully mined a block!
 <br />
