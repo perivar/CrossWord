@@ -40,8 +40,20 @@ body {
 <i class="fas fa-paint-brush fa-2x"></i>
 <i class="fas fa-edit fa-2x"></i>
 </div>
-<p>&nbsp</p>
-<h3>Protocol Information</h3>
+<p>&nbsp;</p>
+<h3>High Level Background</h3>
+<p>Here are some highlevel background information about NiftyCoin and the NiftyCoin Blockchain</p>
+<ul>
+<li>NiftyCoin and NiftyCoin Blockchain is a fork of LiteCoin.</li>
+<li>LiteCoin is a fork of BitCoin but with Scrypt encryption support and larger volume of money (which should make transactions faster and cheaper).</li>
+<li>In addition the blockchain is enhanced to support NFTs and other Tokens, directly on the blockchain.</li>
+<li>NFTs support are based on SLP (Simple Ledger Protocol), and OP_RETURN method used by e.g. blockchain.com</li>
+<li>The NiftyCoin Blockchain NFT protocol extends the SLP protocol with meta-data described below.</li>
+<li>For technnical details about the original SLP protocol see <a href="https://slp.dev/">SLP DEV</a></li>
+<li>Note! that the original SLP NFT protocol does not support the Metadata that NiftyCoin supports!</li>
+</ul>
+<p>&nbsp;</p>
+<h3>NFT Protocol Information</h3>
 <p>Here are some highlevel protocol information (in the request for change NCE-02  <i class="fas fa-glasses"></i>)</p>
 <h4>Stored meta-data:</h4>
 <ul>
@@ -54,50 +66,6 @@ body {
 <li>Agreed redistribution percentage to blockchain fascilitator&nbsp;</li>
 <li>Unique File Identity - from a proposed International Art and Media Database</li>
 </ul>
-<p>&nbsp;</p>
-<h4>Technical details:</h4>
-<table>
-<tbody>
-<tr>
-<td nowrap="nowrap"><strong>Field</strong></td>
-<td nowrap="nowrap"><strong>Size</strong></td>
-<td><strong>Description</strong></td>
-</tr>
-<tr>
-<td nowrap="nowrap">Identifier</td>
-<td nowrap="nowrap">4 bytes</td>
-<td><code>NFTY</code> or <code>0x4e 0x46 0x54 0x59</code></td>
-</tr>
-<tr>
-<td nowrap="nowrap">Quantity multiple</td>
-<td nowrap="nowrap">4 bytes</td>
-<td>Multiply the asset quantity in display units by this number in order to calculate raw units. Display units are used for NiftyChain API calls, whereas raw units are used within transaction <code>OP_DROPs</code>. Stored as an unsigned 32-bit integer in small-endian order, e.g.: <code>0x64 0x00 0x00 0x00</code> = <code>100</code> for an asset where 1 raw unit = 0.01 display units.</td>
-</tr>
-<tr>
-<td nowrap="nowrap">Asset name</td>
-<td nowrap="nowrap">Variable</td>
-<td>Null-delimited name of asset, e.g. <code>0x61 0x73 0x73 0x65 0x74 0x31 0x00</code> for <code>asset1</code>.</td>
-</tr>
-<tr>
-<td style="text-align: center;" colspan="3"><em>Repeat the below for each additional asset property</em></td>
-</tr>
-<tr>
-<td nowrap="nowrap">Property key</td>
-<td nowrap="nowrap">Variable</td>
-<td>If the first byte of the key is <code>0x00</code>, it denotes a property with special meaning to NiftyChain, and the second byte gives the property type. For now, the only possible key is <code>0x00 0x02</code>, where a property value of <code>0x00</code> or <code>0x01</code> denotes whether the asset is open for reissuance. If the first byte of the property key is not <code>0x00</code>, it contains the null-delimited name of a user-defined custom field, e.g. <code>0x75 0x72 0x6c 0x00</code> for <code>url</code>.</td>
-</tr>
-<tr>
-<td nowrap="nowrap">Length</td>
-<td nowrap="nowrap">1-9 bytes</td>
-<td>Bitcoin-style <a href="https://en.bitcoin.it/wiki/Protocol_documentation#Variable_length_integer">variable-length integer</a> indicating the length of the property value in bytes.</td>
-</tr>
-<tr>
-<td nowrap="nowrap">Value</td>
-<td nowrap="nowrap">Variable</td>
-<td>The property&rsquo;s value as raw binary.</td>
-</tr>
-</tbody>
-</table>
 <p>&nbsp;</p>
 <p>For more information read our <a href="/gettingstarted.html">getting started pages</a></p> 
 <p>&nbsp;</p>
