@@ -10,12 +10,17 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
 
-# Install node-js and npm
-RUN apt-get update -yq \
-    && apt-get install curl gnupg -yq \
-    && curl -sL https://deb.nodesource.com/setup_11.x |  bash - \
-    && apt-get install nodejs -yq \
-    && rm -rf /var/lib/apt/lists/*
+# install NodeJS 13.x
+# see https://github.com/nodesource/distributions/blob/master/README.md#deb
+RUN apt-get update -yq 
+RUN apt-get upgrade -yq 
+RUN apt-get install build-essential -yq
+RUN apt-get install curl gnupg -yq
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
+RUN apt-get install -y nodejs
+RUN echo "NODE Version:" && node --version
+RUN echo "NPM Version:" && npm --version
+RUN rm -rf /var/lib/apt/lists/*
 
 WORKDIR /src
 COPY CrossWord.Web/CrossWord.Web.csproj CrossWord.Web/

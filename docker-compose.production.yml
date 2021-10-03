@@ -110,7 +110,7 @@ services:
       - smtp
     environment:
       ASPNETCORE_ENVIRONMENT: 'Production'
-      ASPNETCORE_URLS: http://+:8000
+      ASPNETCORE_URLS: http://+:8080
       DBHOST: db
       DBPORT: 3360
       DBUSER: root
@@ -118,9 +118,9 @@ services:
       DATABASE: dictionary
       KNOWNPROXIES: ''
     expose:
-      - "8000"
+      - "8080"
     ports:
-      - "8000:8000"
+      - "8080:8080"
 
   smtp:
     container_name: crossword.smtp

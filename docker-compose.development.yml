@@ -43,7 +43,7 @@ services:
       ScraperSwarm: 'true'
       KryssordLatest: 'true'
       KryssordLatestDelaySeconds: 300
-      SignalRHubURL: http://116.203.83.168:8000/crosswordsignalrhub
+      SignalRHubURL: http://116.203.83.168:8080/crosswordsignalrhub
     privileged: 'true'
     cap_add:
       - "SYS_ADMIN"
@@ -65,10 +65,10 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: 'Production'      
       ASPNETCORE_URLS: http://+:5000
-      ApiBaseUrl: http://116.203.83.168:8000/api/
+      ApiBaseUrl: http://116.203.83.168:8080/api/
       ApiUserEmail: server@wazalo.com
       ApiPassword: 123ABCabc!
-      SignalRHubURL: http://116.203.83.168:8000/crosswordsignalrhub
+      SignalRHubURL: http://116.203.83.168:8080/crosswordsignalrhub
     expose:
       - "5000"
     ports:
@@ -85,7 +85,7 @@ services:
       - smtp
     environment:
       ASPNETCORE_ENVIRONMENT: 'Production'
-      ASPNETCORE_URLS: http://+:8000
+      ASPNETCORE_URLS: http://+:8080
       DBHOST: db
       DBPORT: 3360
       DBUSER: root
@@ -93,9 +93,9 @@ services:
       DATABASE: dictionary
       KNOWNPROXIES: ''
     expose:
-      - "8000"
+      - "8080"
     ports:
-      - "8000:8000"
+      - "8080:8080"
 
   smtp:
     container_name: crossword.smtp
