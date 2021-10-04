@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,8 +30,19 @@ namespace CrossWord.Scraper
 
             // https://docs.microsoft.com/en-us/aspnet/core/signalr/configuration?view=aspnetcore-2.1
             SignalRConnection = new HubConnectionBuilder()
-            .WithUrl(url)
-            .ConfigureLogging(logging =>
+            .WithUrl(url, (opts) =>
+            {
+                opts.HttpMessageHandlerFactory = (message) =>
+                {
+                    if (message is HttpClientHandler clientHandler) {
+                        // always verify the SSL certificate
+                        clientHandler.ServerCertificateCustomValidationCallback +=
+                            (sender, certificate, chain, sslPolicyErrors) => { return true; };
+                    }
+                    return message;
+                };
+            })
+             .ConfigureLogging(logging =>
             {
                 // Add Serilog
                 // make sure it has been configured first, like this somewhere
