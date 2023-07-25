@@ -8,7 +8,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0"/>
-    <PackageReference Include="Selenium.Chrome.WebDriver" Version="77.0.0"/>
     <PackageReference Include="Selenium.Support" Version="3.141.0"/>
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0"/>
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.2.0"/>

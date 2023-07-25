@@ -43,6 +43,13 @@ namespace CrossWord.Scraper
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
+                // the nuget package Selenium.Chrome.WebDriver does not 
+                // support the latest chrome versions - so use manual download instead:
+                // scoop install chromedriver
+                // ^ this installs C:\Users\<username>\scoop\shims\chromedriver.exe
+                string userPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                chromeDriverPath = userPath + "/scoop/shims/";
+
                 driverExecutableFileName = "chromedriver.exe";
                 if (isHeadlessOnWindows) options.AddArguments("--headless");
                 options.AddArguments("--window-size=1920,1080");
