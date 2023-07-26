@@ -33,15 +33,15 @@ RUN set -ex; \
     # echo "deb http://archive.debian.org/debian stretch main" > /etc/apt/sources.list; \
     # echo "deb http://security.debian.org/debian-security bullseye-security main contrib non-free" >> /etc/apt/sources.list; \
     # to avoid timeout while installing packages
-    echo '\
-Acquire::Retries "100";\
-Acquire::https::Timeout "240";\
-Acquire::http::Timeout "240";\
-APT::Get::Assume-Yes "true";\
-APT::Install-Recommends "false";\
-APT::Install-Suggests "false";\
-Debug::Acquire::https "true";\
-' > /etc/apt/apt.conf.d/99custom; \
+#     echo '\
+# Acquire::Retries "100";\
+# Acquire::https::Timeout "240";\
+# Acquire::http::Timeout "240";\
+# APT::Get::Assume-Yes "true";\
+# APT::Install-Recommends "false";\
+# APT::Install-Suggests "false";\
+# Debug::Acquire::https "true";\
+# ' > /etc/apt/apt.conf.d/99custom; \
     apt-get update -y; \
     apt-get install -y gnupg wget curl unzip jq --no-install-recommends; \
     wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | \
@@ -49,7 +49,8 @@ Debug::Acquire::https "true";\
     chmod 644 /etc/apt/trusted.gpg.d/google.gpg; \
     echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list; \
     apt-get update -y; \
-    apt-get install -y google-chrome-stable; \
+    # install latest google chrome and procps for the ps command
+    apt-get install -y google-chrome-stable procps --no-install-recommends; \
     CHROME_VERSION=$(google-chrome --version); \
     CHROME_MAJOR_VERSION=$(google-chrome --version | sed 's/Google Chrome \([0-9]*\).*/\1/g'); \
     # CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/RELEASE_${CHROME_MAJOR_VERSION}"); \
@@ -68,21 +69,21 @@ Debug::Acquire::https "true";\
     CHROMEDRIVER_MAJOR_VERSION=$(chromedriver --version | sed 's/ChromeDriver \([0-9]*\).*/\1/g'); \
     echo "actual chromedriver version: $CHROMEDRIVER_MAJOR_VERSION"; \
     echo "**********************************************************"; \
-    if [ $CHROME_MAJOR_VERSION != $CHROMEDRIVER_MAJOR_VERSION ]; then echo "VERSION MISMATCH"; exit 1; fi; 
-    
+    if [ $CHROME_MAJOR_VERSION != $CHROMEDRIVER_MAJOR_VERSION ]; then echo "VERSION MISMATCH"; exit 1; fi; \
     # Purge all the things to keep the container as small as possible
-    # apt-get autoremove --purge -y \
-    #     unzip \
-    #     gnupg \
-    #     curl \
-    #     wget; \
-    # apt-get clean; \
-    # rm -rf \
-    #     /tmp/* \
-    #     /usr/share/doc/* \
-    #     /var/cache/* \
-    #     /var/lib/apt/lists/* \
-    #     /var/tmp/* 
+    apt-get autoremove --purge -y \
+        unzip \
+        gnupg \
+        curl \
+        wget \
+        jq; \
+    apt-get clean; \
+    rm -rf \
+        /tmp/* \
+        /usr/share/doc/* \
+        /var/cache/* \
+        /var/lib/apt/lists/* \
+        /var/tmp/*;
 
 # Copy and ensure the app directory is owned by the chrome user 
 COPY --from=build /app/ /app
