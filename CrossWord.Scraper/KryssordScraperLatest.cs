@@ -20,10 +20,10 @@ namespace CrossWord.Scraper
 {
     public class KryssordScraperLatest
     {
-        TextWriter writer = null;
-        string connectionString = null;
-        string signalRHubURL = null;
-        string source = null;
+        private readonly TextWriter writer = null;
+        private readonly string connectionString = null;
+        private readonly string signalRHubURL = null;
+        private readonly string source = null;
 
         public KryssordScraperLatest(string connectionString, string signalRHubURL, string siteUsername, string sitePassword, int kryssordLatestDelaySeconds)
         {
@@ -32,7 +32,7 @@ namespace CrossWord.Scraper
             this.source = "kryssord.org-latest";
 
             // set writer identifier as pattern            
-            this.writer = new SignalRClientWriter(signalRHubURL, this.source);
+            this.writer = new SignalRClientWriter(this.signalRHubURL, this.source);
             writer.WriteLine("Starting {0} Scraper ....", this.source);
 
             // make sure that no chrome and chrome drivers are running
@@ -85,7 +85,7 @@ namespace CrossWord.Scraper
                 // this doesn't seem to work when adding new users all the time
                 db.ChangeTracker.AutoDetectChangesEnabled = false;
 
-                using (var driver = ChromeDriverUtils.GetChromeDriver(true))
+                using (var driver = ChromeDriverUtils.GetChromeDriver())
                 {
                     DoLogon(driver, siteUsername, sitePassword);
 

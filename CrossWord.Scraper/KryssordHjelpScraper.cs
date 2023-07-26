@@ -1,11 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using CrossWord.Scraper.Extensions;
 using CrossWord.Scraper.MySQLDbService;
@@ -20,10 +16,10 @@ namespace CrossWord.Scraper
 {
     public class KryssordHjelpScraper
     {
-        TextWriter writer = null;
-        string connectionString = null;
-        string signalRHubURL = null;
-        string source = null;
+        private readonly TextWriter writer = null;
+        private readonly string connectionString = null;
+        private readonly string signalRHubURL = null;
+        private readonly string source = null;
 
         public KryssordHjelpScraper(string connectionString, string signalRHubURL, int letterCount, bool doContinueWithLastWord)
         {
@@ -32,7 +28,7 @@ namespace CrossWord.Scraper
             this.source = "kryssordhjelp.no";
 
             // set writer identifier as pattern            
-            this.writer = new SignalRClientWriter(signalRHubURL, letterCount.ToString());
+            this.writer = new SignalRClientWriter(this.signalRHubURL, letterCount.ToString());
             writer.WriteLine("Starting {0} Scraper ....", this.source);
 
             // make sure that no chrome and chrome drivers are running
@@ -104,7 +100,7 @@ namespace CrossWord.Scraper
                 // this doesn't seem to work when adding new users all the time
                 db.ChangeTracker.AutoDetectChangesEnabled = false;
 
-                using (var driver = ChromeDriverUtils.GetChromeDriver(true))
+                using (var driver = ChromeDriverUtils.GetChromeDriver())
                 {
                     // read all words with the letter count
                     ReadWordsByWordPermutations(letterCount, driver, db, adminUser, lastWordString);

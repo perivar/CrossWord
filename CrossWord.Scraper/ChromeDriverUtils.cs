@@ -1,18 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
-using CrossWord.Scraper.MySQLDbService;
-using CrossWord.Scraper.MySQLDbService.Models;
-using Microsoft.EntityFrameworkCore;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Support.UI;
 using Serilog;
 
 namespace CrossWord.Scraper
@@ -32,9 +24,9 @@ namespace CrossWord.Scraper
                 driverExecutableFileName = "chromedriver";
 
                 options.AddArguments("--headless");
-                // options.AddArguments("--disable-gpu"); // used to be required for headless on Windows but not anylonger, see crbug.com/737678.
+                // options.AddArguments("--disable-gpu"); // used to be required for headless on Windows but not any longer, see crbug.com/737678.
                 options.AddArguments("--no-sandbox"); // no-sandbox is not needed if you properly setup a user in the Linux container. See https://github.com/ebidel/lighthouse-ci/blob/master/builder/Dockerfile#L35-L40
-							// however on CentOS it is for some reason needed anyway
+				// however on CentOS it is for some reason needed anyway
                 options.AddArguments("--whitelisted-ips='127.0.0.1'"); // to remove error messages "[SEVERE]: bind() returned an error, errno=99: Cannot assign requested address (99)"
                 options.AddArguments("--disable-extensions");
                 options.AddArguments("--window-size=1920,1080");
@@ -74,7 +66,6 @@ namespace CrossWord.Scraper
 
         public static void KillAllChromeDriverInstances(bool doKillChromeOnWindows = false)
         {
-            System.Diagnostics.Process proc = new System.Diagnostics.Process();
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 var cmd = "taskkill /f /im chromedriver.exe";
@@ -101,7 +92,6 @@ namespace CrossWord.Scraper
                 Log.Debug("Killing Chromedriver on Windows: '{0}'", result);
 
                 process.Close();
-
 
                 // also kill Chrome
                 if (doKillChromeOnWindows)

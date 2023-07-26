@@ -13,10 +13,10 @@ namespace CrossWord.Scraper
 {
     public class NorwegianSynonymsScraper
     {
-        TextWriter writer = null;
-        string connectionString = null;
-        string signalRHubURL = null;
-        string source = null;
+        private readonly TextWriter writer = null;
+        private readonly string connectionString = null;
+        private readonly string signalRHubURL = null;
+        private readonly string source = null;
 
         const string JSON_URL = "https://raw.githubusercontent.com/ltgoslo/norwegian-synonyms/master/norwegian-synonyms.json";
 
@@ -27,7 +27,7 @@ namespace CrossWord.Scraper
             this.source = "norwegian-synonyms.json";
 
             // set writer identifier as pattern            
-            this.writer = new SignalRClientWriter(signalRHubURL, startLetterCount.ToString());
+            this.writer = new SignalRClientWriter(this.signalRHubURL, startLetterCount.ToString());
             writer.WriteLine("Starting {0} Scraper ....", this.source);
 
             if (startLetterCount != endLetterCount)
@@ -158,8 +158,8 @@ namespace CrossWord.Scraper
                                 // disable storing state since we are doing it manually above
                                 WordDatabaseService.AddToDatabase(db, source, adminUser, currentValue, currentList, writer, false);
 
-                                // if (writer != null) writer.WriteLine("Added '{0} => {1}'", currentValue, string.Join(",", currentList));
-                                if ((count % 10) == 0) if (writer != null) writer.WriteLine("[{0}] / [{1}]", count, totalCount);
+                                // writer?.WriteLine("Added '{0} => {1}'", currentValue, string.Join(",", currentList));
+                                if ((count % 10) == 0) writer?.WriteLine("[{0}] / [{1}]", count, totalCount);
                             }
 
                             //  and reset

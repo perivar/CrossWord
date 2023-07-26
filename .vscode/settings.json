@@ -1,3 +1,4 @@
 {
-    "dotnet.defaultSolution": "CrossWordCore.sln"
+    "dotnet.defaultSolution": "CrossWordCore.sln",
+    "cSpell.enabled": false
 }

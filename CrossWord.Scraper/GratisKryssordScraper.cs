@@ -16,10 +16,10 @@ namespace CrossWord.Scraper
 {
     public class GratisKryssordScraper
     {
-        TextWriter writer = null;
-        string connectionString = null;
-        string signalRHubURL = null;
-        string source = null;
+        private readonly TextWriter writer = null;
+        private readonly string connectionString = null;
+        private readonly string signalRHubURL = null;
+        private readonly string source = null;
 
         public GratisKryssordScraper(string connectionString, string signalRHubURL, int startLetterCount, int endLetterCount, bool doContinueWithLastWord)
         {
@@ -28,7 +28,7 @@ namespace CrossWord.Scraper
             this.source = "gratiskryssord.no";
 
             // set writer identifier as pattern            
-            this.writer = new SignalRClientWriter(signalRHubURL, startLetterCount.ToString());
+            this.writer = new SignalRClientWriter(this.signalRHubURL, startLetterCount.ToString());
             writer.WriteLine("Starting {0} Scraper ....", this.source);
 
             // make sure that no chrome and chrome drivers are running
@@ -75,7 +75,7 @@ namespace CrossWord.Scraper
                 // this doesn't seem to work when adding new users all the time
                 db.ChangeTracker.AutoDetectChangesEnabled = false;
 
-                using (var driver = ChromeDriverUtils.GetChromeDriver(true))
+                using (var driver = ChromeDriverUtils.GetChromeDriver())
                 {
                     // set general timeout to long
                     driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(180);

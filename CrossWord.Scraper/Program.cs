@@ -7,7 +7,6 @@ using CrossWord.Scraper.MySQLDbService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Serilog;
-using Serilog.Events;
 
 namespace CrossWord.Scraper
 {
@@ -95,6 +94,7 @@ namespace CrossWord.Scraper
             isScraperSwarm = false;
             isKryssordLatest = true;
             kryssordLatestDelaySeconds = 30;
+            doContinueWithLastWord = false;
 #endif
 
             if (isScraperSwarm)

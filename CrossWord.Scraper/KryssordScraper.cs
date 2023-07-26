@@ -18,10 +18,10 @@ namespace CrossWord.Scraper
 {
     public class KryssordScraper
     {
-        TextWriter writer = null;
-        string connectionString = null;
-        string signalRHubURL = null;
-        string source = null;
+        private readonly TextWriter writer = null;
+        private readonly string connectionString = null;
+        private readonly string signalRHubURL = null;
+        private readonly string source = null;
         bool hasFoundPattern = false; // this is the first stage, we match the pattern
         bool hasFoundLastWord = false; // this is the second stage, we not only match the pattern but the word as well
         bool hasMissedLastWord = false; // if we have gone through both stages without finding the last word - then something failed!
@@ -33,7 +33,7 @@ namespace CrossWord.Scraper
             this.source = "kryssord.org";
 
             // set writer identifier as pattern            
-            this.writer = new SignalRClientWriter(signalRHubURL, startLetterCount.ToString());
+            this.writer = new SignalRClientWriter(this.signalRHubURL, startLetterCount.ToString());
             writer.WriteLine("Starting {0} Scraper ....", this.source);
 
             // make sure that no chrome and chrome drivers are running
@@ -104,8 +104,7 @@ namespace CrossWord.Scraper
                 // endLetterCount = 300;
 #endif
 
-
-                using (var driver = ChromeDriverUtils.GetChromeDriver(true))
+                using (var driver = ChromeDriverUtils.GetChromeDriver())
                 {
                     DoLogon(driver, siteUsername, sitePassword);
 
@@ -384,7 +383,7 @@ namespace CrossWord.Scraper
 
                             if (wordPattern.Length > word.Value.Length)
                             {
-                                currentValue = currentValue + new string('?', wordPattern.Length - word.Value.Length);
+                                currentValue += new string('?', wordPattern.Length - word.Value.Length);
                             }
                             else
                             {
@@ -618,7 +617,7 @@ namespace CrossWord.Scraper
 
         class WordPattern
         {
-            int IndentSize = 4;
+            readonly int IndentSize = 4;
 
             public string Permutation { get; set; }
             public int Depth { get; set; }
