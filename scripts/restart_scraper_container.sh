@@ -6,6 +6,6 @@ docker ps -a
 
 echo "Restarting the scraper container"
 
-docker restart crosswordapi.scraper
+docker restart crossword.scraper
 
 docker ps -a

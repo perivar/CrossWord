@@ -4,5 +4,5 @@ clear
 
 echo "Entering the scraper container"
 
-docker exec --user root -it crosswordapi.scraper bash
+docker exec --user root -it crossword.scraper bash
 
