@@ -113,21 +113,3 @@ services:
     restart: always
     ports:
       - "25:25"
-
-  # https-portal:
-  #   image: steveltn/https-portal:1    
-  #   ports:
-  #     - "80:80"
-  #     - "443:443"
-  #   links:
-  #     - web
-  #     - api
-  #   restart: always
-  #   environment:
-  #     DOMAINS: "crossword.nerseth.com -> http://web:5000, api.nerseth.com -> http://api:8000"
-  #     STAGE: 'production'
-  #     # DOMAINS: 'example.com -> http://web:5000'
-  #     # STAGE: local # self signed certificate, note modify your hosts file to have example.com resolving to your docker host
-  #     # c:\Windows\System32\Drivers\etc\hosts => 127.0.0.1           example.com
-  #     # FORCE_RENEW: 'true' # only force renew if certificates are not chained correctly. Run the container again with the force_renew setting ONCE
-  #     WEBSOCKET: "true"
