@@ -3,24 +3,20 @@
 # OR use docker-compose
 
 # Set runtime image
-FROM mcr.microsoft.com/dotnet/core/aspnet:2.2 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
 # ENV ASPNETCORE_URLS http://+:5000
 # EXPOSE 5000
 
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
+# Add ASP.NET Core 2.2
+COPY --from=mcr.microsoft.com/dotnet/core/aspnet:2.2 /usr/share/dotnet /usr/share/dotnet
 
-# install NodeJS 13.x
-# see https://github.com/nodesource/distributions/blob/master/README.md#deb
-RUN apt-get update -yq 
-RUN apt-get upgrade -yq 
-RUN apt-get install build-essential -yq
-RUN apt-get install curl gnupg -yq
-RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
-RUN apt-get install -y nodejs
-RUN echo "NODE Version:" && node --version
-RUN echo "NPM Version:" && npm --version
-RUN rm -rf /var/lib/apt/lists/*
+# .NET Core SDK and Node.js images
+# https://github.com/DotNet-Docker-Images/dotnet-nodejs-docker/blob/master/Dockerfile
+FROM dotnetimages/microsoft-dotnet-core-sdk-nodejs:7.0_19.x AS build
+
+# Add .NET Core 2.2 SDK
+COPY --from=mcr.microsoft.com/dotnet/core/sdk:2.2 /usr/share/dotnet/sdk /usr/share/dotnet/sdk
 
 WORKDIR /src
 COPY CrossWord.Web/CrossWord.Web.csproj CrossWord.Web/
