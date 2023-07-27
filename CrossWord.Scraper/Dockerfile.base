@@ -52,7 +52,3 @@ RUN set -ex; \
         /var/cache/* \
         /var/lib/apt/lists/* \
         /var/tmp/*;
-
-# Use this to debug the docker image - keeps it open instead of restarting it
-# It is smart to use this in combination with using the SDK version as the runtime image
-CMD tail -f /dev/null

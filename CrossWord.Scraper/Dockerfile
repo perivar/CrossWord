@@ -10,7 +10,7 @@ COPY . ./
 RUN dotnet publish -c Release -o out
 
 # Build runtime image
-FROM perivar/dotnet/runtime-7-chromedriver
+FROM perivar/dotnet7runtime-chromedriver:latest
 
 # Add .NET Core 2.2
 # uncomment if you need the SDK also (unlikely):
