@@ -8,7 +8,7 @@ volumes:
       name: crosswordscraper_datafiles
 
 # Remember to start the network before running this file:
-# $ docker network create crosswordapi-net
+# $ docker network create mydockernet
 #
 # Then you can start each of the docker-compose.yml files like this:
 # $ docker-compose -f project_one/docker-compose.yml up -d
@@ -16,7 +16,7 @@ volumes:
 networks:
   default:
     external:
-      name: crosswordapi-net
+      name: mydockernet
 
 services:
   db:

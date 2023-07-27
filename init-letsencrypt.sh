@@ -18,8 +18,8 @@ data_path="./nginx/$1/certbot"
 email="$2" # Adding a valid address is strongly recommended
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
 
-echo "### Creating crossword-net network ..."
-sudo docker network create crossword-net
+echo "### Creating mydockernet network ..."
+sudo docker network create mydockernet
 echo
 
 echo "### Starting base containers ..."
