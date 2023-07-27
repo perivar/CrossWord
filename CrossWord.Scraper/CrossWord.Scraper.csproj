@@ -5,6 +5,7 @@
     <RuntimeFrameworkVersion>2.2.2</RuntimeFrameworkVersion>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <PublishChromeDriver>true</PublishChromeDriver>
+    <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0"/>
