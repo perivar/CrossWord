@@ -1,0 +1,1017 @@
+## using https://ssl-config.mozilla.org/ to generate the SSL config
+
+upstream crossword {
+    server web:5000;
+}
+
+upstream api {
+    server api:8080;
+}
+
+upstream app {
+    server crosswordfeud:3000;
+}
+
+upstream cam {
+    server camclient:4040;
+}
+
+upstream camapi {
+    server camapi:7070;
+}
+
+upstream niftyexplorer {
+    server explorer:3001;
+}
+
+upstream nomp {
+    server nomp:8888;
+}
+
+upstream niftifiedclient {
+    server niftyclient:5151;
+}
+
+upstream niftyapi {
+    server niftyapi:5050;
+}
+
+upstream niftymint {
+    # use internal port in docker-compose 3000, not the external port 3030
+    server niftymint:3000;
+}
+
+upstream niftyelectrumx {
+    server electrumx:50005;
+}
+
+# Port 80 redirect to https - crossword
+server {
+    listen 80;
+    listen [::]:80;
+    server_name crossword.nerseth.com;
+    server_tokens off;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+    
+    location / {        
+        # redirect all HTTP requests to HTTPS with a 301 Moved Permanently response.
+        return 301 https://$host$request_uri;
+    }
+}
+
+# Port 80 redirect to https - api
+server {
+    listen 80;
+    listen [::]:80;
+    server_name api.nerseth.com;
+    server_tokens off;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        # redirect all HTTP requests to HTTPS with a 301 Moved Permanently response.
+        return 301 https://$host$request_uri;
+    }
+}
+
+# Port 80 redirect to https - app
+server {
+    listen 80;
+    listen [::]:80;
+    server_name app.nerseth.com;
+    server_tokens off;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        # redirect all HTTP requests to HTTPS with a 301 Moved Permanently response.
+        return 301 https://$host$request_uri;
+    }
+}
+
+# Port 80 redirect to https - cam
+server {
+    listen 80;
+    listen [::]:80;
+    server_name cam.nerseth.com;
+    server_tokens off;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        # redirect all HTTP requests to HTTPS with a 301 Moved Permanently response.
+        return 301 https://$host$request_uri;
+    }
+}
+
+# Port 80 redirect to https - camapi
+server {
+    listen 80;
+    listen [::]:80;
+    server_name camapi.nerseth.com;
+    server_tokens off;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        # redirect all HTTP requests to HTTPS with a 301 Moved Permanently response.
+        return 301 https://$host$request_uri;
+    }
+}
+
+# Port 80 redirect to https - www.niftycoin.org, niftycoin.org
+server {
+    listen 80;
+    listen [::]:80;
+    server_name www.niftycoin.org niftycoin.org;
+    server_tokens off;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        # redirect all HTTP requests to HTTPS with a 301 Moved Permanently response.
+        return 301 https://$host$request_uri;
+    }
+}
+
+# Port 80 redirect to https - explorer.niftycoin.org
+server {
+    listen 80;
+    listen [::]:80;
+    server_name explorer.niftycoin.org;
+    server_tokens off;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        # redirect all HTTP requests to HTTPS with a 301 Moved Permanently response.
+        return 301 https://$host$request_uri;
+    }
+}
+
+# Port 80 redirect to https - electrumx.niftycoin.org
+server {
+    listen 80;
+    listen [::]:80;
+    server_name electrumx.niftycoin.org;
+    server_tokens off;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        # redirect all HTTP requests to HTTPS with a 301 Moved Permanently response.
+        return 301 https://$host$request_uri;
+    }
+}
+
+# Port 80 redirect to https - pool.niftycoin.org
+server {
+    listen 80;
+    listen [::]:80;
+    server_name pool.niftycoin.org;
+    server_tokens off;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        # redirect all HTTP requests to HTTPS with a 301 Moved Permanently response.
+        return 301 https://$host$request_uri;
+    }
+}
+
+# Port 80 redirect to https - api.niftycoin.org
+server {
+    listen 80;
+    listen [::]:80;
+    server_name api.niftycoin.org;
+    server_tokens off;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        # redirect all HTTP requests to HTTPS with a 301 Moved Permanently response.
+        return 301 https://$host$request_uri;
+    }
+}
+
+# Port 80 redirect to https - new.niftified.com
+server {
+    listen 80;
+    listen [::]:80;
+    server_name new.niftified.com;
+    server_tokens off;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        # redirect all HTTP requests to HTTPS with a 301 Moved Permanently response.
+        return 301 https://$host$request_uri;
+    }
+}
+
+# Port 80 redirect to https - mint.niftycoin.org
+server {
+    listen 80;
+    listen [::]:80;
+    server_name mint.niftycoin.org;
+    server_tokens off;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        # redirect all HTTP requests to HTTPS with a 301 Moved Permanently response.
+        return 301 https://$host$request_uri;
+    }
+}
+
+# Port 80 redirect to https - www.niftified.com, niftified.com, www.niftified.no, niftified.no
+server {
+    listen 80;
+    listen [::]:80;
+    server_name www.niftified.com niftified.com www.niftified.no niftified.no;
+    server_tokens off;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        # redirect all HTTP requests to HTTPS with a 301 Moved Permanently response.
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name crossword.nerseth.com;
+    server_tokens off;
+    proxy_ssl_server_name on;
+
+    # certs sent to the client in SERVER HELLO are concatenated in ssl_certificate
+    ssl_certificate /etc/letsencrypt/live/crossword.nerseth.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/crossword.nerseth.com/privkey.pem;
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:SSL:50m;
+    ssl_session_tickets off;
+
+    # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
+    # curl https://ssl-config.mozilla.org/ffdhe2048.txt > /path/to/dhparam.pem
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # intermediate configuration, tweaked
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers on; # Mozilla SSL Configuration Generator sets this to off
+
+    # HSTS (ngx_http_headers_module is required) (63072000 seconds = 24 months)
+    add_header Strict-Transport-Security "max-age=63072000" always;
+
+    # OCSP Stapling ---
+    # fetch OCSP records from URL in ssl_certificate and cache them
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+    # verify chain of trust of OCSP response using Root CA and Intermediate certs
+    ssl_trusted_certificate /etc/letsencrypt/live/crossword.nerseth.com/fullchain.pem;
+
+  	resolver 8.8.8.8; # google
+
+    location / {
+        proxy_pass                          http://crossword; # Internally route the request to our crossword upstream server defined at the top
+        proxy_cache_bypass	                $http_upgrade;
+        proxy_buffering                     off;
+
+        proxy_set_header Host				$host;
+        proxy_set_header X-Real-IP			$remote_addr;
+        proxy_set_header X-Forwarded-For	$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto	$scheme;
+        proxy_set_header X-Forwarded-Host	$host;
+        proxy_set_header X-Forwarded-Port	$server_port;
+
+        # WebSocket support
+        proxy_http_version	                1.1;
+        proxy_set_header Upgrade			$http_upgrade;
+        proxy_set_header Connection 		$http_connection;
+    }
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name api.nerseth.com;
+    server_tokens off;
+    proxy_ssl_server_name on;
+
+    ssl_certificate /etc/letsencrypt/live/api.nerseth.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/api.nerseth.com/privkey.pem;
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:SSL:50m;
+    ssl_session_tickets off;
+
+    # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
+    # curl https://ssl-config.mozilla.org/ffdhe2048.txt > /path/to/dhparam.pem
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # intermediate configuration, tweaked
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers on; # Mozilla SSL Configuration Generator sets this to off
+
+    # HSTS (ngx_http_headers_module is required) (63072000 seconds = 24 months)
+    add_header Strict-Transport-Security "max-age=63072000" always;
+
+    # OCSP Stapling ---
+    # fetch OCSP records from URL in ssl_certificate and cache them
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+    # verify chain of trust of OCSP response using Root CA and Intermediate certs
+    ssl_trusted_certificate /etc/letsencrypt/live/api.nerseth.com/fullchain.pem;
+
+  	resolver 8.8.8.8; # google
+
+    location / {
+        proxy_pass                          http://api; # Internally route the request to our api upstream server defined at the top
+        proxy_cache_bypass                  $http_upgrade;
+        proxy_buffering                     off;
+
+        proxy_set_header Host				$host;
+        proxy_set_header X-Real-IP			$remote_addr;
+        proxy_set_header X-Forwarded-For	$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto	$scheme;
+        proxy_set_header X-Forwarded-Host	$host;
+        proxy_set_header X-Forwarded-Port	$server_port;
+
+        # WebSocket support
+        proxy_http_version	                1.1;
+        proxy_set_header Upgrade			$http_upgrade;
+        proxy_set_header Connection 		$http_connection;
+    }
+}   
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name app.nerseth.com;
+    server_tokens off;
+    proxy_ssl_server_name on;
+
+    ssl_certificate /etc/letsencrypt/live/app.nerseth.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/app.nerseth.com/privkey.pem;
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:SSL:50m;
+    ssl_session_tickets off;
+
+    # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
+    # curl https://ssl-config.mozilla.org/ffdhe2048.txt > /path/to/dhparam.pem
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # intermediate configuration, tweaked
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers on; # Mozilla SSL Configuration Generator sets this to off
+
+    # HSTS (ngx_http_headers_module is required) (63072000 seconds = 24 months)
+    add_header Strict-Transport-Security "max-age=63072000" always;
+
+    # OCSP Stapling ---
+    # fetch OCSP records from URL in ssl_certificate and cache them
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+    # verify chain of trust of OCSP response using Root CA and Intermediate certs
+    ssl_trusted_certificate /etc/letsencrypt/live/app.nerseth.com/fullchain.pem;
+
+  	resolver 8.8.8.8; # google
+
+    location / {
+        proxy_pass                          http://app; # Internally route the request to our app upstream server defined at the top
+        proxy_cache_bypass                  $http_upgrade;
+        proxy_buffering                     off;
+
+        proxy_set_header Host				$host;
+        proxy_set_header X-Real-IP			$remote_addr;
+        proxy_set_header X-Forwarded-For	$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto	$scheme;
+        proxy_set_header X-Forwarded-Host	$host;
+        proxy_set_header X-Forwarded-Port	$server_port;
+
+        # WebSocket support
+        proxy_http_version	                1.1;
+        proxy_set_header Upgrade			$http_upgrade;
+        proxy_set_header Connection 		$http_connection;
+    }
+}   
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name cam.nerseth.com;
+    server_tokens off;
+    proxy_ssl_server_name on;
+
+    ssl_certificate /etc/letsencrypt/live/cam.nerseth.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/cam.nerseth.com/privkey.pem;
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:SSL:50m;
+    ssl_session_tickets off;
+
+    # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
+    # curl https://ssl-config.mozilla.org/ffdhe2048.txt > /path/to/dhparam.pem
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # intermediate configuration, tweaked
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers on; # Mozilla SSL Configuration Generator sets this to off
+
+    # HSTS (ngx_http_headers_module is required) (63072000 seconds = 24 months)
+    add_header Strict-Transport-Security "max-age=63072000" always;
+
+    # OCSP Stapling ---
+    # fetch OCSP records from URL in ssl_certificate and cache them
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+    # verify chain of trust of OCSP response using Root CA and Intermediate certs
+    ssl_trusted_certificate /etc/letsencrypt/live/cam.nerseth.com/fullchain.pem;
+
+  	resolver 8.8.8.8; # google
+
+    location / {
+        proxy_pass                          http://cam; # Internally route the request to our app upstream server defined at the top
+        proxy_cache_bypass                  $http_upgrade;
+        proxy_buffering                     off;
+
+        proxy_set_header Host				$host;
+        proxy_set_header X-Real-IP			$remote_addr;
+        proxy_set_header X-Forwarded-For	$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto	$scheme;
+        proxy_set_header X-Forwarded-Host	$host;
+        proxy_set_header X-Forwarded-Port	$server_port;
+
+        # WebSocket support
+        proxy_http_version	                1.1;
+        proxy_set_header Upgrade			$http_upgrade;
+        proxy_set_header Connection 		$http_connection;
+    }
+}   
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name camapi.nerseth.com;
+    server_tokens off;
+    proxy_ssl_server_name on;
+
+    ssl_certificate /etc/letsencrypt/live/camapi.nerseth.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/camapi.nerseth.com/privkey.pem;
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:SSL:50m;
+    ssl_session_tickets off;
+
+    # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
+    # curl https://ssl-config.mozilla.org/ffdhe2048.txt > /path/to/dhparam.pem
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # intermediate configuration, tweaked
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers on; # Mozilla SSL Configuration Generator sets this to off
+
+    # HSTS (ngx_http_headers_module is required) (63072000 seconds = 24 months)
+    add_header Strict-Transport-Security "max-age=63072000" always;
+
+    # OCSP Stapling ---
+    # fetch OCSP records from URL in ssl_certificate and cache them
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+    # verify chain of trust of OCSP response using Root CA and Intermediate certs
+    ssl_trusted_certificate /etc/letsencrypt/live/camapi.nerseth.com/fullchain.pem;
+
+  	resolver 8.8.8.8; # google
+
+    location / {
+        proxy_pass                          http://camapi; # Internally route the request to our app upstream server defined at the top
+        proxy_cache_bypass                  $http_upgrade;
+        proxy_buffering                     off;
+
+        proxy_set_header Host				$host;
+        proxy_set_header X-Real-IP			$remote_addr;
+        proxy_set_header X-Forwarded-For	$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto	$scheme;
+        proxy_set_header X-Forwarded-Host	$host;
+        proxy_set_header X-Forwarded-Port	$server_port;
+
+        # WebSocket support
+        proxy_http_version	                1.1;
+        proxy_set_header Upgrade			$http_upgrade;
+        proxy_set_header Connection 		$http_connection;
+    }
+}   
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name www.niftycoin.org;
+    server_tokens off;
+    proxy_ssl_server_name on;
+
+    ssl_certificate /etc/letsencrypt/live/www.niftycoin.org/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/www.niftycoin.org/privkey.pem;
+
+    rewrite ^/(.*) https://niftycoin.org/$1 permanent;
+}   
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name niftycoin.org;
+    server_tokens off;
+    proxy_ssl_server_name on;
+
+    ssl_certificate /etc/letsencrypt/live/niftycoin.org/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/niftycoin.org/privkey.pem;
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:SSL:50m;
+    ssl_session_tickets off;
+
+    # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
+    # curl https://ssl-config.mozilla.org/ffdhe2048.txt > /path/to/dhparam.pem
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # intermediate configuration, tweaked
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers on; # Mozilla SSL Configuration Generator sets this to off
+
+    # HSTS (ngx_http_headers_module is required) (63072000 seconds = 24 months)
+    add_header Strict-Transport-Security "max-age=63072000" always;
+
+    # OCSP Stapling ---
+    # fetch OCSP records from URL in ssl_certificate and cache them
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+    # verify chain of trust of OCSP response using Root CA and Intermediate certs
+    ssl_trusted_certificate /etc/letsencrypt/live/niftycoin.org/fullchain.pem;
+
+  	resolver 8.8.8.8; # google
+
+    location / {
+        root /var/www/niftycoin;
+    }
+}   
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name explorer.niftycoin.org;
+    server_tokens off;
+    proxy_ssl_server_name on;
+
+    ssl_certificate /etc/letsencrypt/live/explorer.niftycoin.org/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/explorer.niftycoin.org/privkey.pem;
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:SSL:50m;
+    ssl_session_tickets off;
+
+    # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
+    # curl https://ssl-config.mozilla.org/ffdhe2048.txt > /path/to/dhparam.pem
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # intermediate configuration, tweaked
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers on; # Mozilla SSL Configuration Generator sets this to off
+
+    # HSTS (ngx_http_headers_module is required) (63072000 seconds = 24 months)
+    add_header Strict-Transport-Security "max-age=63072000" always;
+
+    # OCSP Stapling ---
+    # fetch OCSP records from URL in ssl_certificate and cache them
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+    # verify chain of trust of OCSP response using Root CA and Intermediate certs
+    ssl_trusted_certificate /etc/letsencrypt/live/explorer.niftycoin.org/fullchain.pem;
+
+  	resolver 8.8.8.8; # google
+
+    location / {
+        proxy_pass                          http://niftyexplorer; # Internally route the request to our app upstream server defined at the top
+        proxy_cache_bypass                  $http_upgrade;
+        proxy_buffering                     off;
+
+        proxy_set_header Host				$host;
+        proxy_set_header X-Real-IP			$remote_addr;
+        proxy_set_header X-Forwarded-For	$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto	$scheme;
+        proxy_set_header X-Forwarded-Host	$host;
+        proxy_set_header X-Forwarded-Port	$server_port;
+
+        # WebSocket support
+        proxy_http_version	                1.1;
+        proxy_set_header Upgrade			$http_upgrade;
+        proxy_set_header Connection 		$http_connection;
+    }
+}   
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name electrumx.niftycoin.org;
+    server_tokens off;
+    proxy_ssl_server_name on;
+
+    ssl_certificate /etc/letsencrypt/live/electrumx.niftycoin.org/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/electrumx.niftycoin.org/privkey.pem;
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:SSL:50m;
+    ssl_session_tickets off;
+
+    # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
+    # curl https://ssl-config.mozilla.org/ffdhe2048.txt > /path/to/dhparam.pem
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # intermediate configuration, tweaked
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers on; # Mozilla SSL Configuration Generator sets this to off
+
+    # HSTS (ngx_http_headers_module is required) (63072000 seconds = 24 months)
+    add_header Strict-Transport-Security "max-age=63072000" always;
+
+    # OCSP Stapling ---
+    # fetch OCSP records from URL in ssl_certificate and cache them
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+    # verify chain of trust of OCSP response using Root CA and Intermediate certs
+    ssl_trusted_certificate /etc/letsencrypt/live/electrumx.niftycoin.org/fullchain.pem;
+
+  	resolver 8.8.8.8; # google
+
+    location / {
+        proxy_pass                          http://niftyelectrumx; # Internally route the request to our app upstream server defined at the top
+        proxy_cache_bypass                  $http_upgrade;
+        proxy_buffering                     off;
+
+        proxy_set_header Host				$host;
+        proxy_set_header X-Real-IP			$remote_addr;
+        proxy_set_header X-Forwarded-For	$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto	$scheme;
+        proxy_set_header X-Forwarded-Host	$host;
+        proxy_set_header X-Forwarded-Port	$server_port;
+
+        # WebSocket support
+        proxy_http_version	                1.1;
+        proxy_set_header Upgrade			$http_upgrade;
+        proxy_set_header Connection 		$http_connection;
+    }
+}   
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name pool.niftycoin.org;
+    server_tokens off;
+    proxy_ssl_server_name on;
+
+    ssl_certificate /etc/letsencrypt/live/pool.niftycoin.org/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/pool.niftycoin.org/privkey.pem;
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:SSL:50m;
+    ssl_session_tickets off;
+
+    # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
+    # curl https://ssl-config.mozilla.org/ffdhe2048.txt > /path/to/dhparam.pem
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # intermediate configuration, tweaked
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers on; # Mozilla SSL Configuration Generator sets this to off
+
+    # HSTS (ngx_http_headers_module is required) (63072000 seconds = 24 months)
+    add_header Strict-Transport-Security "max-age=63072000" always;
+
+    # OCSP Stapling ---
+    # fetch OCSP records from URL in ssl_certificate and cache them
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+    # verify chain of trust of OCSP response using Root CA and Intermediate certs
+    ssl_trusted_certificate /etc/letsencrypt/live/pool.niftycoin.org/fullchain.pem;
+
+  	resolver 8.8.8.8; # google
+
+    location / {
+        proxy_pass                          http://nomp; # Internally route the request to our app upstream server defined at the top
+        proxy_cache_bypass                  $http_upgrade;
+        proxy_buffering                     off;
+
+        proxy_set_header Host				$host;
+        proxy_set_header X-Real-IP			$remote_addr;
+        proxy_set_header X-Forwarded-For	$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto	$scheme;
+        proxy_set_header X-Forwarded-Host	$host;
+        proxy_set_header X-Forwarded-Port	$server_port;
+
+        # WebSocket support
+        proxy_http_version	                1.1;
+        proxy_set_header Upgrade			$http_upgrade;
+        proxy_set_header Connection 		$http_connection;
+    }
+}   
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name poolapi.niftycoin.org;
+    server_tokens off;
+    proxy_ssl_server_name on;
+
+    ssl_certificate /etc/letsencrypt/live/poolapi.niftycoin.org/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/poolapi.niftycoin.org/privkey.pem;
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:SSL:50m;
+    ssl_session_tickets off;
+
+    # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
+    # curl https://ssl-config.mozilla.org/ffdhe2048.txt > /path/to/dhparam.pem
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # intermediate configuration, tweaked
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers on; # Mozilla SSL Configuration Generator sets this to off
+
+    # HSTS (ngx_http_headers_module is required) (63072000 seconds = 24 months)
+    add_header Strict-Transport-Security "max-age=63072000" always;
+
+    # OCSP Stapling ---
+    # fetch OCSP records from URL in ssl_certificate and cache them
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+    # verify chain of trust of OCSP response using Root CA and Intermediate certs
+    ssl_trusted_certificate /etc/letsencrypt/live/poolapi.niftycoin.org/fullchain.pem;
+
+  	resolver 8.8.8.8; # google
+
+    location / {
+        proxy_pass                          http://nomp; # Internally route the request to our app upstream server defined at the top
+        proxy_cache_bypass                  $http_upgrade;
+        proxy_buffering                     off;
+
+        proxy_set_header Host				$host;
+        proxy_set_header X-Real-IP			$remote_addr;
+        proxy_set_header X-Forwarded-For	$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto	$scheme;
+        proxy_set_header X-Forwarded-Host	$host;
+        proxy_set_header X-Forwarded-Port	$server_port;
+
+        # WebSocket support
+        proxy_http_version	                1.1;
+        proxy_set_header Upgrade			$http_upgrade;
+        proxy_set_header Connection 		$http_connection;
+    }
+}   
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name api.niftycoin.org;
+    server_tokens off;
+    proxy_ssl_server_name on;
+
+    ssl_certificate /etc/letsencrypt/live/api.niftycoin.org/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/api.niftycoin.org/privkey.pem;
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:SSL:50m;
+    ssl_session_tickets off;
+
+    # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
+    # curl https://ssl-config.mozilla.org/ffdhe2048.txt > /path/to/dhparam.pem
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # intermediate configuration, tweaked
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers on; # Mozilla SSL Configuration Generator sets this to off
+
+    # HSTS (ngx_http_headers_module is required) (63072000 seconds = 24 months)
+    add_header Strict-Transport-Security "max-age=63072000" always;
+
+    # OCSP Stapling ---
+    # fetch OCSP records from URL in ssl_certificate and cache them
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+    # verify chain of trust of OCSP response using Root CA and Intermediate certs
+    ssl_trusted_certificate /etc/letsencrypt/live/api.niftycoin.org/fullchain.pem;
+
+  	resolver 8.8.8.8; # google
+
+    location / {
+        proxy_pass                          http://niftyapi; # Internally route the request to our app upstream server defined at the top
+        proxy_cache_bypass                  $http_upgrade;
+        proxy_buffering                     off;
+
+        proxy_set_header Host				$host;
+        proxy_set_header X-Real-IP			$remote_addr;
+        proxy_set_header X-Forwarded-For	$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto	$scheme;
+        proxy_set_header X-Forwarded-Host	$host;
+        proxy_set_header X-Forwarded-Port	$server_port;
+
+        # WebSocket support
+        proxy_http_version	                1.1;
+        proxy_set_header Upgrade			$http_upgrade;
+        proxy_set_header Connection 		$http_connection;
+    }
+}   
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name new.niftified.com;
+    server_tokens off;
+    proxy_ssl_server_name on;
+
+    ssl_certificate /etc/letsencrypt/live/new.niftified.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/new.niftified.com/privkey.pem;
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:SSL:50m;
+    ssl_session_tickets off;
+
+    # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
+    # curl https://ssl-config.mozilla.org/ffdhe2048.txt > /path/to/dhparam.pem
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # intermediate configuration, tweaked
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers on; # Mozilla SSL Configuration Generator sets this to off
+
+    # HSTS (ngx_http_headers_module is required) (63072000 seconds = 24 months)
+    add_header Strict-Transport-Security "max-age=63072000" always;
+
+    # OCSP Stapling ---
+    # fetch OCSP records from URL in ssl_certificate and cache them
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+    # verify chain of trust of OCSP response using Root CA and Intermediate certs
+    ssl_trusted_certificate /etc/letsencrypt/live/new.niftified.com/fullchain.pem;
+
+  	resolver 8.8.8.8; # google
+
+    location / {
+        proxy_pass                          http://niftifiedclient; # Internally route the request to our app upstream server defined at the top
+        proxy_cache_bypass                  $http_upgrade;
+        proxy_buffering                     off;
+
+        proxy_set_header Host				$host;
+        proxy_set_header X-Real-IP			$remote_addr;
+        proxy_set_header X-Forwarded-For	$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto	$scheme;
+        proxy_set_header X-Forwarded-Host	$host;
+        proxy_set_header X-Forwarded-Port	$server_port;
+
+        # WebSocket support
+        proxy_http_version	                1.1;
+        proxy_set_header Upgrade			$http_upgrade;
+        proxy_set_header Connection 		$http_connection;
+    }
+}   
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name mint.niftycoin.org;
+    server_tokens off;
+    proxy_ssl_server_name on;
+
+    ssl_certificate /etc/letsencrypt/live/mint.niftycoin.org/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/mint.niftycoin.org/privkey.pem;
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:SSL:50m;
+    ssl_session_tickets off;
+
+    # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
+    # curl https://ssl-config.mozilla.org/ffdhe2048.txt > /path/to/dhparam.pem
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # intermediate configuration, tweaked
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers on; # Mozilla SSL Configuration Generator sets this to off
+
+    # HSTS (ngx_http_headers_module is required) (63072000 seconds = 24 months)
+    add_header Strict-Transport-Security "max-age=63072000" always;
+
+    # OCSP Stapling ---
+    # fetch OCSP records from URL in ssl_certificate and cache them
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+    # verify chain of trust of OCSP response using Root CA and Intermediate certs
+    ssl_trusted_certificate /etc/letsencrypt/live/mint.niftycoin.org/fullchain.pem;
+
+  	resolver 8.8.8.8; # google
+
+    location / {
+        proxy_pass                          http://niftymint; # Internally route the request to our app upstream server defined at the top
+        proxy_cache_bypass                  $http_upgrade;
+        proxy_buffering                     off;
+
+        proxy_set_header Host				$host;
+        proxy_set_header X-Real-IP			$remote_addr;
+        proxy_set_header X-Forwarded-For	$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto	$scheme;
+        proxy_set_header X-Forwarded-Host	$host;
+        proxy_set_header X-Forwarded-Port	$server_port;
+
+        # WebSocket support
+        proxy_http_version	                1.1;
+        proxy_set_header Upgrade			$http_upgrade;
+        proxy_set_header Connection 		$http_connection;
+    }
+}   
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name www.niftified.com niftified.com www.niftified.no niftified.no;
+    server_tokens off;
+    proxy_ssl_server_name on;
+
+    if ($host = 'www.niftified.com') {
+        return 301 https://niftified.com$request_uri;
+    }
+
+    if ($host = 'www.niftified.no') {
+        return 301 https://niftified.no$request_uri;
+    }
+
+    ssl_certificate /etc/letsencrypt/live/niftified.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/niftified.com/privkey.pem;
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:SSL:50m;
+    ssl_session_tickets off;
+
+    # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
+    # curl https://ssl-config.mozilla.org/ffdhe2048.txt > /path/to/dhparam.pem
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # intermediate configuration, tweaked
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers on; # Mozilla SSL Configuration Generator sets this to off
+
+    # HSTS (ngx_http_headers_module is required) (63072000 seconds = 24 months)
+    add_header Strict-Transport-Security "max-age=63072000" always;
+
+    # OCSP Stapling ---
+    # fetch OCSP records from URL in ssl_certificate and cache them
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+    # verify chain of trust of OCSP response using Root CA and Intermediate certs
+    ssl_trusted_certificate /etc/letsencrypt/live/niftified.com/fullchain.pem;
+
+  	resolver 8.8.8.8; # google
+
+    location / {
+        root /var/www/niftified;
+    }
+}   
