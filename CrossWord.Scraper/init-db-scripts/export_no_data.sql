@@ -229,11 +229,11 @@ CREATE TABLE `Words` (
   CONSTRAINT `FK_Words_Categories_CategoryId` FOREIGN KEY (`CategoryId`) REFERENCES `Categories` (`CategoryId`) ON DELETE RESTRICT,
   CONSTRAINT `FK_Words_DictionaryUsers_UserId` FOREIGN KEY (`UserId`) REFERENCES `DictionaryUsers` (`UserId`) ON DELETE RESTRICT
 ) ENGINE=InnoDB AUTO_INCREMENT=784447 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 /*
  * The __EFMigrationsHistory section was created using:
  * mysqldump -P 3360 --protocol=tcp -uroot -psecret --compact dictionary __EFMigrationsHistory > export_efmigratonhistory.sql
  */
+/*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `__EFMigrationsHistory` (
