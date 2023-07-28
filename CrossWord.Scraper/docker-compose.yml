@@ -1,5 +1,9 @@
 version: "2"
 
+# this can be used to test and develop locally
+# start with:
+# docker compose up
+# 
 # to access this volume from another docker-compose, use external and the name
 # datafiles:
 #     external:
@@ -53,10 +57,10 @@ services:
       - ScraperContinueLastWord=false
       - ScraperStartLetterCount=3
       - ScraperEndLetterCount=10
-      - ScraperSwarm=true
+      - ScraperSwarm=false
       - KryssordLatest=true
       - KryssordLatestDelaySeconds=300
-      - SignalRHubURL=http://116.203.83.168:8000/crosswordsignalrhub
+      - SignalRHubURL=http://localhost:8000/crosswordsignalrhub
     privileged: true
     cap_add:
       - "SYS_ADMIN"
@@ -76,10 +80,10 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:5000
-      - ApiBaseUrl=http://116.203.83.168:8000/api/
+      - ApiBaseUrl=http://localhost:8000/api/
       - ApiUserEmail=server@wazalo.com
       - ApiPassword=123ABCabc!
-      - SignalRHubURL=http://116.203.83.168:8000/crosswordsignalrhub
+      - SignalRHubURL=http://localhost:8000/crosswordsignalrhub
     expose:
       - "5000"
     ports:

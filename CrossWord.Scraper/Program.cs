@@ -37,8 +37,11 @@ namespace CrossWord.Scraper
 
             var signalRHubURL = configuration["SignalRHubURL"] ?? "http://localhost:8000/crosswordsignalrhub";
 
-            // start DOCKER on port 3360
+            // either use mysql installed locally on port 3306 (default)
+            // or use Docker on port 3360
             // docker run -p 3360:3306 --name mysqldb -e MYSQL_ROOT_PASSWORD=password -d mysql:8.0.15            
+            // or 
+            // docker compose -f docker-compose.development.yml up db -d
 
             // Build database connection string
             var dbhost = configuration["DBHOST"] ?? "localhost";
