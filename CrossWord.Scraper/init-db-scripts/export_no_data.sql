@@ -1,7 +1,33 @@
+-- MySQL dump 10.14  Distrib 5.5.68-MariaDB, for Linux (x86_64)
+--
+-- Host: localhost    Database: dictionary
+-- ------------------------------------------------------
+-- Server version	8.0.15
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Current Database: `dictionary`
+--
 
 CREATE DATABASE /*!32312 IF NOT EXISTS*/ `dictionary` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */;
 
 USE `dictionary`;
+
+--
+-- Table structure for table `AspNetRoleClaims`
+--
+
+DROP TABLE IF EXISTS `AspNetRoleClaims`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `AspNetRoleClaims` (
@@ -14,6 +40,12 @@ CREATE TABLE `AspNetRoleClaims` (
   CONSTRAINT `FK_AspNetRoleClaims_AspNetRoles_RoleId` FOREIGN KEY (`RoleId`) REFERENCES `AspNetRoles` (`Id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `AspNetRoles`
+--
+
+DROP TABLE IF EXISTS `AspNetRoles`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `AspNetRoles` (
@@ -25,6 +57,12 @@ CREATE TABLE `AspNetRoles` (
   UNIQUE KEY `RoleNameIndex` (`NormalizedName`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `AspNetUserClaims`
+--
+
+DROP TABLE IF EXISTS `AspNetUserClaims`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `AspNetUserClaims` (
@@ -37,6 +75,12 @@ CREATE TABLE `AspNetUserClaims` (
   CONSTRAINT `FK_AspNetUserClaims_AspNetUsers_UserId` FOREIGN KEY (`UserId`) REFERENCES `AspNetUsers` (`Id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `AspNetUserLogins`
+--
+
+DROP TABLE IF EXISTS `AspNetUserLogins`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `AspNetUserLogins` (
@@ -49,6 +93,12 @@ CREATE TABLE `AspNetUserLogins` (
   CONSTRAINT `FK_AspNetUserLogins_AspNetUsers_UserId` FOREIGN KEY (`UserId`) REFERENCES `AspNetUsers` (`Id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `AspNetUserRoles`
+--
+
+DROP TABLE IF EXISTS `AspNetUserRoles`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `AspNetUserRoles` (
@@ -60,6 +110,12 @@ CREATE TABLE `AspNetUserRoles` (
   CONSTRAINT `FK_AspNetUserRoles_AspNetUsers_UserId` FOREIGN KEY (`UserId`) REFERENCES `AspNetUsers` (`Id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `AspNetUserTokens`
+--
+
+DROP TABLE IF EXISTS `AspNetUserTokens`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `AspNetUserTokens` (
@@ -71,6 +127,12 @@ CREATE TABLE `AspNetUserTokens` (
   CONSTRAINT `FK_AspNetUserTokens_AspNetUsers_UserId` FOREIGN KEY (`UserId`) REFERENCES `AspNetUsers` (`Id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `AspNetUsers`
+--
+
+DROP TABLE IF EXISTS `AspNetUsers`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `AspNetUsers` (
@@ -95,6 +157,12 @@ CREATE TABLE `AspNetUsers` (
   KEY `EmailIndex` (`NormalizedEmail`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Categories`
+--
+
+DROP TABLE IF EXISTS `Categories`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Categories` (
@@ -107,6 +175,12 @@ CREATE TABLE `Categories` (
   PRIMARY KEY (`CategoryId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `CrosswordTemplates`
+--
+
+DROP TABLE IF EXISTS `CrosswordTemplates`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `CrosswordTemplates` (
@@ -117,6 +191,12 @@ CREATE TABLE `CrosswordTemplates` (
   PRIMARY KEY (`CrosswordTemplateId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `DictionaryUsers`
+--
+
+DROP TABLE IF EXISTS `DictionaryUsers`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `DictionaryUsers` (
@@ -128,6 +208,12 @@ CREATE TABLE `DictionaryUsers` (
   PRIMARY KEY (`UserId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Hints`
+--
+
+DROP TABLE IF EXISTS `Hints`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Hints` (
@@ -143,6 +229,12 @@ CREATE TABLE `Hints` (
   CONSTRAINT `FK_Hints_Users_UserId` FOREIGN KEY (`UserId`) REFERENCES `Users` (`UserId`) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `RefreshTokens`
+--
+
+DROP TABLE IF EXISTS `RefreshTokens`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `RefreshTokens` (
@@ -159,6 +251,12 @@ CREATE TABLE `RefreshTokens` (
   CONSTRAINT `FK_RefreshTokens_AspNetUsers_ApplicationUserId` FOREIGN KEY (`ApplicationUserId`) REFERENCES `AspNetUsers` (`Id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=212 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `States`
+--
+
+DROP TABLE IF EXISTS `States`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `States` (
@@ -171,6 +269,12 @@ CREATE TABLE `States` (
   PRIMARY KEY (`StateId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=297 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Users`
+--
+
+DROP TABLE IF EXISTS `Users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Users` (
@@ -184,6 +288,12 @@ CREATE TABLE `Users` (
   PRIMARY KEY (`UserId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `WordHint`
+--
+
+DROP TABLE IF EXISTS `WordHint`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `WordHint` (
@@ -195,6 +305,12 @@ CREATE TABLE `WordHint` (
   CONSTRAINT `FK_WordHint_Words_WordId` FOREIGN KEY (`WordId`) REFERENCES `Words` (`WordId`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `WordRelations`
+--
+
+DROP TABLE IF EXISTS `WordRelations`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `WordRelations` (
@@ -209,6 +325,12 @@ CREATE TABLE `WordRelations` (
   CONSTRAINT `FK_WordRelations_Words_WordToId` FOREIGN KEY (`WordToId`) REFERENCES `Words` (`WordId`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `Words`
+--
+
+DROP TABLE IF EXISTS `Words`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Words` (
@@ -229,11 +351,13 @@ CREATE TABLE `Words` (
   CONSTRAINT `FK_Words_Categories_CategoryId` FOREIGN KEY (`CategoryId`) REFERENCES `Categories` (`CategoryId`) ON DELETE RESTRICT,
   CONSTRAINT `FK_Words_DictionaryUsers_UserId` FOREIGN KEY (`UserId`) REFERENCES `DictionaryUsers` (`UserId`) ON DELETE RESTRICT
 ) ENGINE=InnoDB AUTO_INCREMENT=784447 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*
- * The __EFMigrationsHistory section was created using:
- * mysqldump -P 3360 --protocol=tcp -uroot -psecret --compact dictionary __EFMigrationsHistory > export_efmigratonhistory.sql
- */
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `__EFMigrationsHistory`
+--
+
+DROP TABLE IF EXISTS `__EFMigrationsHistory`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `__EFMigrationsHistory` (
@@ -242,4 +366,14 @@ CREATE TABLE `__EFMigrationsHistory` (
   PRIMARY KEY (`MigrationId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO `__EFMigrationsHistory` VALUES ('20190310133646_InitialCreate','2.2.4-servicing-10062'),('20190401032038_AddedIdentity','2.2.4-servicing-10062'),('20190403004557_RenamedUserList','2.2.4-servicing-10062'),('20190414145821_SelfReference','2.2.4-servicing-10062'),('20190415231402_UserCleanup','2.2.4-servicing-10062'),('20190416160657_WordSourceComment','2.2.4-servicing-10062'),('20190423165133_State','2.2.4-servicing-10062'),('20190424190554_StateChanges','2.2.4-servicing-10062'),('20190428142018_CrosswordTemplate','2.2.4-servicing-10062'),('20190529170709_StatesCollations','2.2.4-servicing-10062'),('20190628212801_WordRelationDateAndComment','2.2.4-servicing-10062'),('20190723121503_ApplicationUserAndRefreshToken','2.2.6-servicing-10079'),('20191106214138_RefreshTokenWithUserAgent','2.2.6-servicing-10079');
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2023-07-28 20:58:40
