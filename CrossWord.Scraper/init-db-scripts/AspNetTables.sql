@@ -1,7 +1,7 @@
 create database dictionary;
 use dictionary;
 
--- MySQL dump 10.13  Distrib 5.7.26, for Linux (x86_64)
+-- MySQL dump 10.14  Distrib 5.5.68-MariaDB, for Linux (x86_64)
 --
 -- Host: localhost    Database: dictionary
 -- ------------------------------------------------------
@@ -201,6 +201,7 @@ CREATE TABLE `AspNetUsers` (
   `LockoutEnd` datetime(6) DEFAULT NULL,
   `LockoutEnabled` bit(1) NOT NULL,
   `AccessFailedCount` int(11) NOT NULL,
+  `FacebookId` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`Id`),
   UNIQUE KEY `UserNameIndex` (`NormalizedUserName`),
   KEY `EmailIndex` (`NormalizedEmail`)
@@ -213,7 +214,6 @@ CREATE TABLE `AspNetUsers` (
 
 LOCK TABLES `AspNetUsers` WRITE;
 /*!40000 ALTER TABLE `AspNetUsers` DISABLE KEYS */;
-INSERT INTO `AspNetUsers` VALUES ('aca764b2-daa5-4e83-b324-d917ddc4e649','server@wazalo.com','SERVER@WAZALO.COM','server@wazalo.com','SERVER@WAZALO.COM',_binary '\0','AQAAAAEAACcQAAAAEBdMXyAGbgVMn7CvKKOMoQCDsHgKr8lGhJclT/d5pzct5MNvFqAPvxfnAkFBMa80tg==','LBBO4S4QIMMX3OHEREHPT6WTGCTNSJHZ','be5aa732-230a-43f8-a724-37269f61ed07','',_binary '\0',_binary '\0',NULL,_binary '',0),('ec24a3dd-ec08-4344-a196-b6195f8275da','perivar@nerseth.com','PERIVAR@NERSETH.COM','perivar@nerseth.com','PERIVAR@NERSETH.COM',_binary '\0','AQAAAAEAACcQAAAAEKXOqMNU9vhnLMjrOYwg5YJlitmKCvbfdBgTCeqecI/aEpZZhxSsrrkF3IYGQD50BQ==','7Q3I2TKKAUGQJ3P6SFE3QB5P4OTJW5DA','7b92a0f2-9d89-4caf-a82e-ea5a63e1f6d2','90156615',_binary '\0',_binary '\0',NULL,_binary '',0);
+INSERT INTO `AspNetUsers` VALUES ('a1d9cd3c-02fc-4c05-a110-ae89684aa109','anne','ANNE','anne@nerseth.com','ANNE@NERSETH.COM','\0','AQAAAAEAACcQAAAAEFX7hkbOPHwB918ynv2SEAG7rPqn558Sb7PFF4y5OZzcgXvaCG7EI20pl5PWp9YzuQ==','MMHRVGIBYACLNOSPVPNV3K7CISAPP6P5','d437d84b-92e5-46ff-9fb8-f18d6b120deb','+47 41 31 88 53','\0','\0',NULL,'',0,NULL),('aca764b2-daa5-4e83-b324-d917ddc4e649','server@wazalo.com','SERVER@WAZALO.COM','server@wazalo.com','SERVER@WAZALO.COM','\0','AQAAAAEAACcQAAAAEBdMXyAGbgVMn7CvKKOMoQCDsHgKr8lGhJclT/d5pzct5MNvFqAPvxfnAkFBMa80tg==','LBBO4S4QIMMX3OHEREHPT6WTGCTNSJHZ','4901ecdc-b13e-4733-a6cf-c6d051f43cf4','','\0','\0',NULL,'',0,NULL),('d7f0224d-1d2c-4966-b9eb-40abce839658','annepanne@nerseth.com','ANNEPANNE@NERSETH.COM','anne@panne.com','ANNE@PANNE.COM','\0','AQAAAAEAACcQAAAAED4QDq3bR36TYCbwZTe+rvWszJ00qVReQ5y+n1cM6yKQ4ucybVNAPeUbZckLKkkglg==','E75VL7IXNJOYQ4CUEVJOWUQXHTEM7HLU','b58017cf-2d00-41af-bcf2-dae3295866ab','41    31 88 53','\0','\0',NULL,'',0,NULL),('ec24a3dd-ec08-4344-a196-b6195f8275da','perivar@nerseth.com','PERIVAR@NERSETH.COM','perivar@nerseth.com','PERIVAR@NERSETH.COM','\0','AQAAAAEAACcQAAAAEMAAvahPSQ+kFuq/+bYndoOfY+rWs12F7nLCJo1otYzrnegasfayV2OwWDrjz6DJnw==','7JKC3C7UTFOQCJBDP7UY42GJMR3HPFOE','16481565-6d05-4899-bed4-9e0ab6b5dd9c','90156615','\0','\0',NULL,'',0,NULL);
 /*!40000 ALTER TABLE `AspNetUsers` ENABLE KEYS */;
 UNLOCK TABLES;
-
