@@ -10,5 +10,4 @@ out.txt
 node_modules
 *.log
 */dist
-!/CrossWord.Scraper/logs/*.log
 certbot
