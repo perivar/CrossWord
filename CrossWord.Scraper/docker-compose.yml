@@ -2,7 +2,7 @@ version: "2"
 
 # this can be used to test and develop locally
 # start with:
-# docker compose up
+# docker compose up -d
 # 
 # to access this volume from another docker-compose, use external and the name
 # datafiles:
@@ -60,7 +60,7 @@ services:
       - ScraperSwarm=false
       - KryssordLatest=true
       - KryssordLatestDelaySeconds=300
-      - SignalRHubURL=http://localhost:8000/crosswordsignalrhub
+      - SignalRHubURL=http://localhost:8080/crosswordsignalrhub
     privileged: true
     cap_add:
       - "SYS_ADMIN"
@@ -78,12 +78,12 @@ services:
       dockerfile: CrossWord.Web/Dockerfile
     restart: always
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:5000
-      - ApiBaseUrl=http://localhost:8000/api/
+      - ApiBaseUrl=http://localhost:8080/api/
       - ApiUserEmail=server@wazalo.com
       - ApiPassword=123ABCabc!
-      - SignalRHubURL=http://localhost:8000/crosswordsignalrhub
+      - SignalRHubURL=http://localhost:8080/crosswordsignalrhub
     expose:
       - "5000"
     ports:
@@ -98,8 +98,8 @@ services:
     links:
       - smtp
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-      - ASPNETCORE_URLS=http://+:8000
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
       - DBHOST=db
       - DBPORT=3360
       - DBUSER=root
@@ -107,9 +107,9 @@ services:
       - DATABASE=dictionary
       - KNOWNPROXIES=''
     expose:
-      - "8000"
+      - "8080"
     ports:
-      - "8000:8000"
+      - "8080:8080"
 
   smtp:
     container_name: crossword.smtp
