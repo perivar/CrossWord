@@ -60,7 +60,7 @@ services:
       - ScraperSwarm=false
       - KryssordLatest=true
       - KryssordLatestDelaySeconds=300
-      - SignalRHubURL=http://localhost:8080/crosswordsignalrhub
+      - SignalRHubURL=http://crossword.api:8080/crosswordsignalrhub
     privileged: true
     cap_add:
       - "SYS_ADMIN"
