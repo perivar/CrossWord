@@ -43,7 +43,7 @@ services:
       ScraperSwarm: 'true'
       KryssordLatest: 'true'
       KryssordLatestDelaySeconds: 300
-      SignalRHubURL: http://localhost:8080/crosswordsignalrhub
+      SignalRHubURL: http://crossword.api:8080/crosswordsignalrhub
     privileged: 'true'
     cap_add:
       - "SYS_ADMIN"
@@ -66,7 +66,7 @@ services:
       ASPNETCORE_ENVIRONMENT: 'Development'
       ASPNETCORE_URLS: http://+:5000
       ApiBaseUrl: http://localhost:8080/api/
-      ApiBaseLocalUrl: http://api:8080/api/
+      ApiBaseLocalUrl: http://crossword.api:8080/api/
       ApiUserEmail: server@wazalo.com
       ApiPassword: 123ABCabc!
       SignalRHubURL: http://localhost:8080/crosswordsignalrhub
