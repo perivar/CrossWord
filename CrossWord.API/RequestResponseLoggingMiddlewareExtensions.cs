@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Builder;
-
 namespace CrossWord.API
 {
     public static class RequestResponseLoggingMiddlewareExtensions

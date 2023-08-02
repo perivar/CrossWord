@@ -4,7 +4,7 @@
 # see CrossWord.DbMigrate/docker-compose-yml
 
 # Set build image
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 
 WORKDIR /src
 COPY CrossWord.DbMigrate/CrossWord.DbMigrate.csproj CrossWord.DbMigrate/
@@ -17,7 +17,7 @@ WORKDIR /src/CrossWord.DbMigrate
 FROM build AS publish
 RUN dotnet publish "CrossWord.DbMigrate.csproj" -c Release -o /app
 
-FROM mcr.microsoft.com/dotnet/core/runtime:2.2 AS base
+FROM mcr.microsoft.com/dotnet/runtime:7.0 AS base
 WORKDIR /app
 COPY --from=publish /app .
 ENTRYPOINT ["dotnet", "CrossWord.DbMigrate.dll"]

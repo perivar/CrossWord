@@ -11,55 +11,55 @@ namespace CrossWord
 {
     public class DatabaseDictionary : ICrossDictionary
     {
+        WordFilter filter;
+        IList<string>[] words; // different array list for each word length
+        WordIndex[] indexes;
+        int maxWordLength; // longest possible word in number of characters
+        Dictionary<string, string> description;
+
+
+        readonly bool doSQLDebug = false;
+        readonly string connectionString;
+
+        private readonly IServiceScopeFactory scopeFactory;
+        private readonly ILogger logger;
+
         private WordHintDbContext CreateDbContext()
         {
-            if (_scopeFactory != null)
+            if (scopeFactory != null)
             {
-                var scope = _scopeFactory.CreateScope();
+                var scope = scopeFactory.CreateScope();
                 return scope.ServiceProvider.GetRequiredService<WordHintDbContext>();
             }
             else
             {
-                if (_doSQLDebug)
+                if (doSQLDebug)
                 {
                     var dbContextFactory = new DesignTimeDbContextFactory();
-                    return dbContextFactory.CreateDbContext(_connectionString, null);
+                    return dbContextFactory.CreateDbContext(connectionString, null);
                 }
                 else
                 {
                     var options = new DbContextOptionsBuilder<WordHintDbContext>();
-                    options.UseMySql(_connectionString);
+                    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
                     return new WordHintDbContext(options.Options);
                 }
             }
         }
 
-        WordFilter _filter;
-        IList<string>[] _words; // different array list for each word length
-        WordIndex[] _indexes;
-        int _maxWordLength; // longest possible word in number of characters
-        Dictionary<string, string> _description;
-
-
-        readonly bool _doSQLDebug = false;
-        readonly string _connectionString;
-
-        private readonly IServiceScopeFactory _scopeFactory;
-        private readonly ILogger _logger;
-
         public IEnumerable<string>[] Words
         {
-            get { return _words; }
+            get { return words; }
         }
 
         public IDictionary<string, string> Descriptions
         {
-            get { return _description; }
+            get { return description; }
         }
 
         public int MaxWordLength
         {
-            get { return _maxWordLength; }
+            get { return maxWordLength; }
         }
 
         public DatabaseDictionary(int maxWordLength)
@@ -69,25 +69,25 @@ namespace CrossWord
 
         private void InitDatabaseDictionary(int maxWordLength)
         {
-            _maxWordLength = maxWordLength;
-            _words = new List<string>[maxWordLength + 1];
-            for (int i = 1; i <= _maxWordLength; i++)
+            this.maxWordLength = maxWordLength;
+            words = new List<string>[maxWordLength + 1];
+            for (int i = 1; i <= this.maxWordLength; i++)
             {
-                _words[i] = new List<string>();
+                words[i] = new List<string>();
             }
-            _indexes = new WordIndex[maxWordLength + 1];
-            for (int i = 1; i <= _maxWordLength; i++)
+            indexes = new WordIndex[maxWordLength + 1];
+            for (int i = 1; i <= this.maxWordLength; i++)
             {
-                _indexes[i] = new WordIndex(i);
+                indexes[i] = new WordIndex(i);
             }
-            _filter = new WordFilter(1, maxWordLength);
-            _description = new Dictionary<string, string>();
+            filter = new WordFilter(1, maxWordLength);
+            description = new Dictionary<string, string>();
         }
 
         public DatabaseDictionary(string connectionString, int maxWordLength)
             : this(maxWordLength)
         {
-            this._connectionString = connectionString;
+            this.connectionString = connectionString;
             // this._doSQLDebug = true;
 
             using (var db = CreateDbContext())
@@ -99,8 +99,8 @@ namespace CrossWord
         // This is intitialized from the API using services.AddSingleton<ICrossDictionary, DatabaseDictionary>();
         public DatabaseDictionary(ILoggerFactory logger, IServiceScopeFactory scopeFactory)
         {
-            _logger = logger.CreateLogger("DatabaseDictionary");
-            _scopeFactory = scopeFactory;
+            this.logger = logger.CreateLogger("DatabaseDictionary");
+            this.scopeFactory = scopeFactory;
 
             ResetDictionary();
         }
@@ -123,7 +123,7 @@ namespace CrossWord
         {
 #if DEBUG
             // Create new stopwatch.
-            Stopwatch stopwatch = new Stopwatch();
+            Stopwatch stopwatch = new();
 
             // Begin timing.
             stopwatch.Start();
@@ -134,7 +134,7 @@ namespace CrossWord
 
             // search for all words
             var words = db.Words
-                .Where((w => (w.NumberOfWords == 1) && (w.NumberOfLetters <= _maxWordLength) && !wordIdsToExclude.Contains(w.WordId)))
+                .Where(w => (w.NumberOfWords == 1) && (w.NumberOfLetters <= maxWordLength) && !wordIdsToExclude.Contains(w.WordId))
                 .OrderBy(w => w.Value)
                 .Select(w => w.Value)
                 .AsNoTracking();
@@ -186,9 +186,9 @@ namespace CrossWord
             stopwatch.Stop();
 
             // Write result.
-            if (_logger != null)
+            if (logger != null)
             {
-                _logger.LogDebug("ReadWordsIntoDatabase - Time elapsed: {0}", stopwatch.Elapsed);
+                logger.LogDebug("ReadWordsIntoDatabase - Time elapsed: {0}", stopwatch.Elapsed);
             }
             else
             {
@@ -201,16 +201,16 @@ namespace CrossWord
         {
 #if DEBUG
             // Create new stopwatch.
-            Stopwatch stopwatch = new Stopwatch();
+            Stopwatch stopwatch = new();
 
             // Begin timing.
             stopwatch.Start();
 #endif
 
-            Random rnd = new Random();
+            Random rnd = new();
 
             // find out which words have already a description
-            var newWords = words.Where(value => !_description.Any(entry => entry.Key == value));
+            var newWords = words.Where(value => !description.Any(entry => entry.Key == value));
 
             // find the words in the database
             var existingWords = db.Words
@@ -252,9 +252,9 @@ namespace CrossWord
             stopwatch.Stop();
 
             // Write result.
-            if (_logger != null)
+            if (logger != null)
             {
-                _logger.LogDebug("ReadDescriptionsIntoDatabase - Time elapsed: {0}", stopwatch.Elapsed);
+                logger.LogDebug("ReadDescriptionsIntoDatabase - Time elapsed: {0}", stopwatch.Elapsed);
             }
             else
             {
@@ -273,24 +273,24 @@ namespace CrossWord
 
         public void AddDescription(string word, string description)
         {
-            _description[word] = description;
+            this.description[word] = description;
         }
 
         public bool TryGetDescription(string word, out string description)
         {
-            return _description.TryGetValue(word, out description);
+            return this.description.TryGetValue(word, out description);
         }
 
         public void AddWord(string aWord)
         {
-            if (!_filter.Filter(aWord)) return;
-            _indexes[aWord.Length].IndexWord(aWord, _words[aWord.Length].Count);
-            _words[aWord.Length].Add(aWord);
+            if (!filter.Filter(aWord)) return;
+            indexes[aWord.Length].IndexWord(aWord, words[aWord.Length].Count);
+            words[aWord.Length].Add(aWord);
         }
 
         public int GetWordOfLengthCount(int aLength)
         {
-            return _words[aLength].Count;
+            return words[aLength].Count;
         }
 
         static bool IsEmptyPattern(char[] aPattern)
@@ -307,9 +307,9 @@ namespace CrossWord
         {
             if (IsEmptyPattern(aPattern))
             {
-                return _words[aPattern.Length].Count;
+                return words[aPattern.Length].Count;
             }
-            var indexes = _indexes[aPattern.Length].GetMatchingIndexes(aPattern);
+            var indexes = this.indexes[aPattern.Length].GetMatchingIndexes(aPattern);
             return indexes != null ? indexes.Count : 0;
         }
 
@@ -317,14 +317,14 @@ namespace CrossWord
         {
             if (IsEmptyPattern(aPattern))
             {
-                matched.AddRange(_words[aPattern.Length]);
+                matched.AddRange(words[aPattern.Length]);
                 return;
             }
-            var indexes = _indexes[aPattern.Length].GetMatchingIndexes(aPattern);
+            var indexes = this.indexes[aPattern.Length].GetMatchingIndexes(aPattern);
             if (indexes == null) return;
             foreach (var idx in indexes)
             {
-                matched.Add(_words[aPattern.Length][idx]);
+                matched.Add(words[aPattern.Length][idx]);
             }
         }
 

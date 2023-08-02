@@ -15,7 +15,7 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build api",
-      "program": "${workspaceFolder}/CrossWord.API/bin/Debug/netcoreapp2.2/CrossWord.API.dll",
+      "program": "${workspaceFolder}/CrossWord.API/bin/Debug/net7.0/CrossWord.API.dll",
       "args": [],
       "cwd": "${workspaceFolder}/CrossWord.API",
       "stopAtEntry": false,
@@ -45,7 +45,7 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build web",
-      "program": "${workspaceFolder}/CrossWord.Web/bin/Debug/netcoreapp2.2/CrossWord.Web.dll",
+      "program": "${workspaceFolder}/CrossWord.Web/bin/Debug/net7.0/CrossWord.Web.dll",
       "args": [],
       "cwd": "${workspaceFolder}/CrossWord.Web",
       "stopAtEntry": false,
@@ -76,7 +76,7 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/CrossWord/bin/Debug/netcoreapp2.2/CrossWord.dll",
+      "program": "${workspaceFolder}/CrossWord/bin/Debug/net7.0/CrossWord.dll",
       "args": [],
       "cwd": "${workspaceFolder}/CrossWord",
       // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
@@ -96,7 +96,7 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/CrossWord/bin/Debug/netcoreapp2.2/CrossWord.dll",
+      "program": "${workspaceFolder}/CrossWord/bin/Debug/net7.0/CrossWord.dll",
       "args": [
         "-i",
         "${workspaceFolder}/templates/template1.txt",
@@ -117,7 +117,7 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/CrossWord/bin/Debug/netcoreapp2.2/CrossWord.dll",
+      "program": "${workspaceFolder}/CrossWord/bin/Debug/net7.0/CrossWord.dll",
       "args": [
         "-i",
         "${workspaceFolder}/templates/template2.txt",
@@ -138,7 +138,7 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/CrossWord/bin/Debug/netcoreapp2.2/CrossWord.dll",
+      "program": "${workspaceFolder}/CrossWord/bin/Debug/net7.0/CrossWord.dll",
       "args": [
         "-i",
         "${workspaceFolder}/templates/american.txt",
@@ -161,7 +161,7 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/CrossWord/bin/Debug/netcoreapp2.2/CrossWord.dll",
+      "program": "${workspaceFolder}/CrossWord/bin/Debug/net7.0/CrossWord.dll",
       "args": [
         "-i",
         "${workspaceFolder}/templates/perivar.txt",
@@ -182,7 +182,7 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/CrossWord/bin/Debug/netcoreapp2.2/CrossWord.dll",
+      "program": "${workspaceFolder}/CrossWord/bin/Debug/net7.0/CrossWord.dll",
       "args": [
         "-i",
         "${workspaceFolder}/templates/american.txt",
@@ -203,7 +203,7 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/CrossWord/bin/Debug/netcoreapp2.2/CrossWord.dll",
+      "program": "${workspaceFolder}/CrossWord/bin/Debug/net7.0/CrossWord.dll",
       "args": [
         "-i",
         "${workspaceFolder}/templates/american.txt",
@@ -226,7 +226,7 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/CrossWord/bin/Debug/netcoreapp2.2/CrossWord.dll",
+      "program": "${workspaceFolder}/CrossWord/bin/Debug/net7.0/CrossWord.dll",
       "args": [
         "-i",
         "${workspaceFolder}/templates/british.txt",
@@ -249,7 +249,7 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/CrossWord/bin/Debug/netcoreapp2.2/CrossWord.dll",
+      "program": "${workspaceFolder}/CrossWord/bin/Debug/net7.0/CrossWord.dll",
       "args": [
         "-i",
         "${workspaceFolder}/templates/british.txt",
@@ -272,7 +272,7 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/CrossWord/bin/Debug/netcoreapp2.2/CrossWord.dll",
+      "program": "${workspaceFolder}/CrossWord/bin/Debug/net7.0/CrossWord.dll",
       "args": [
         "-i",
         "${workspaceFolder}/templates/american.txt",
@@ -295,7 +295,7 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/CrossWord/bin/Debug/netcoreapp2.2/CrossWord.dll",
+      "program": "${workspaceFolder}/CrossWord/bin/Debug/net7.0/CrossWord.dll",
       "args": [
         "-i",
         "http-random",
@@ -318,7 +318,7 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/CrossWord/bin/Debug/netcoreapp2.2/CrossWord.dll",
+      "program": "${workspaceFolder}/CrossWord/bin/Debug/net7.0/CrossWord.dll",
       "args": [
         "-i",
         "https://raw.githubusercontent.com/doshea/nyt_crosswords/master/2002/12/08.json",
@@ -341,7 +341,7 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/CrossWord/bin/Debug/netcoreapp2.2/CrossWord.dll",
+      "program": "${workspaceFolder}/CrossWord/bin/Debug/net7.0/CrossWord.dll",
       "args": [
         "-i",
         "${workspaceFolder}/templates/template1.txt",
@@ -362,7 +362,7 @@
       "request": "launch",
       "preLaunchTask": "build scraper",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/CrossWord.Scraper/bin/Debug/netcoreapp2.2/CrossWord.Scraper.dll",
+      "program": "${workspaceFolder}/CrossWord.Scraper/bin/Debug/net7.0/CrossWord.Scraper.dll",
       "args": [],
       "cwd": "${workspaceFolder}/CrossWord.Scraper",
       // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
@@ -376,7 +376,7 @@
       "request": "launch",
       "preLaunchTask": "build dbmigrate",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/CrossWord.DbMigrate/bin/Debug/netcoreapp2.2/CrossWord.DbMigrate.dll",
+      "program": "${workspaceFolder}/CrossWord.DbMigrate/bin/Debug/net7.0/CrossWord.DbMigrate.dll",
       "args": [
         "STARTWORDINDEX=79000"
       ],

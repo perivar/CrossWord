@@ -59,7 +59,7 @@ namespace CrossWord.Scraper
         /// <returns>url escaped string</returns>
         public static string EscapeUrlString(string value)
         {
-            var isNumeric = int.TryParse(value, out int n);
+            var isNumeric = int.TryParse(value, out _);
             if (!isNumeric)
             {
                 return Uri.EscapeDataString(value);

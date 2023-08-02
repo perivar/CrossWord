@@ -3,7 +3,7 @@
 # OR use docker-compose
 
 # Set build image
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 
 WORKDIR /src
 COPY CrossWord.Scraper/CrossWord.Scraper.csproj CrossWord.Scraper/
@@ -20,7 +20,7 @@ RUN dotnet publish "CrossWord.API.csproj" -c Release -o /app
 COPY CrossWord.API/appsettings.json /app
 
 # Set runtime image
-FROM mcr.microsoft.com/dotnet/core/aspnet:2.2 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
 # ENV ASPNETCORE_URLS http://+:8000
 # EXPOSE 8000

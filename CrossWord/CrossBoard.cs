@@ -25,18 +25,28 @@ namespace CrossWord
             GridNumber = gridNumber;
         }
 
+        // https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/statements-expressions-operators/how-to-define-value-equality-for-a-type
         public bool Equals(Coordinate other)
         {
-            return (this.X == other.X && this.Y == other.Y);
+            if (other is null)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
+            if (this.GetType() != other.GetType())
+            {
+                return false;
+            }
+
+            return this.X == other.X && this.Y == other.Y;
         }
 
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals(obj as Coordinate);
-        }
+        public override bool Equals(object obj) => this.Equals(obj as Coordinate);
 
         public static bool operator ==(Coordinate obj1, Coordinate obj2)
         {

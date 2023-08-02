@@ -18,7 +18,7 @@ namespace CrossWord.Scraper.MySQLDbService
 
         public WordHintDbContext CreateDbContext()
         {
-            return CreateDbContext(new string[0]);
+            return CreateDbContext(Array.Empty<string>());
         }
 
         public WordHintDbContext CreateDbContext(string[] args)
@@ -43,14 +43,11 @@ namespace CrossWord.Scraper.MySQLDbService
             ILoggerFactory loggerFactory = new LoggerFactory();
 
             // this is only null when called from 'dotnet ef migrations ...'
-            if (log == null)
-            {
-                log = new Serilog.LoggerConfiguration()
+            log ??= new LoggerConfiguration()
                     .MinimumLevel.Debug()
                     .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                     .WriteTo.Console()
                     .CreateLogger();
-            }
 
             var options = new DbContextOptionsBuilder<WordHintDbContext>();
 
@@ -66,10 +63,9 @@ namespace CrossWord.Scraper.MySQLDbService
             }
 
             string connectionString = GetConnectionString(args);
-            Log.Information($"Using connection string {connectionString}");
+            Log.Information($"Using connection string: {connectionString}");
 
-            options.UseMySql(connectionString); // default added as Scoped
-            // options.UseSqlite(connectionString); // default added as Scoped
+            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)); // default added as Scoped
 
             return new WordHintDbContext(options.Options);
         }
@@ -81,19 +77,19 @@ namespace CrossWord.Scraper.MySQLDbService
         /// <example>var args = new string[] { $"ConnectionStrings:DefaultConnection=server=localhost;database=dictionary;user=user;password=password;charset=utf8;" };</example>
         private static string GetConnectionString(string[] args)
         {
-            Dictionary<string, string> inMemoryCollection = new Dictionary<string, string>();
+            Dictionary<string, string> inMemoryCollection = new();
 
             if (args.Any())
             {
                 // Connection strings has keys like "ConnectionStrings:DefaultConnection" 
                 // and values like "Data Source=C:\\Users\\pnerseth\\My Projects\\fingerprint.db" for Sqlite
                 // or
-                // server=localhost;database=dictionary;user=user;password=password;charset=utf8; for Mysql
+                // server=localhost;port=3360;database=dictionary;user=root;password=secret;charset=utf8; for Mysql
                 Log.Information($"Searching for '{CONNECTION_STRING_KEY}' within passed arguments: {string.Join(", ", args)}");
                 var match = args.FirstOrDefault(s => s.Contains($"ConnectionStrings:{CONNECTION_STRING_KEY}"));
                 if (match != null)
                 {
-                    Regex pattern = new Regex($"(?<name>ConnectionStrings:{CONNECTION_STRING_KEY})=(?<value>.+?)$");
+                    Regex pattern = new($"(?<name>ConnectionStrings:{CONNECTION_STRING_KEY})=(?<value>.+?)$");
 
                     inMemoryCollection = Enumerable.ToDictionary(
                       Enumerable.Cast<Match>(pattern.Matches(match)),
@@ -103,7 +99,7 @@ namespace CrossWord.Scraper.MySQLDbService
             }
             else
             {
-                Log.Information($"Searching for '{CONNECTION_STRING_KEY}' in {Directory.GetCurrentDirectory()} => appsettings.json");
+                Log.Information($"Searching for '{CONNECTION_STRING_KEY}' in {Directory.GetCurrentDirectory()} => appsettings(.Development).json");
             }
 
             var configurationBuilder = new ConfigurationBuilder()

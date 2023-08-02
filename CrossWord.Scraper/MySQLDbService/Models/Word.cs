@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CrossWord.Scraper.MySQLDbService.Models
 {
@@ -12,7 +11,7 @@ namespace CrossWord.Scraper.MySQLDbService.Models
         public int NumberOfLetters { get; set; }
         public int NumberOfWords { get; set; }
         public User User { get; set; }
-        public DateTime CreatedDate { get; set; }
+        public DateTime? CreatedDate { get; set; }
         public string Source { get; set; }
         public string Comment { get; set; }
         public Category Category { get; set; }
@@ -33,7 +32,28 @@ namespace CrossWord.Scraper.MySQLDbService.Models
         }
 
         // implemented IEquatable in order to use Distinct
-        public bool Equals(Word other) => this.Value == other.Value;
+        // https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/statements-expressions-operators/how-to-define-value-equality-for-a-type
+        public bool Equals(Word other)
+        {
+            if (other is null)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
+            if (this.GetType() != other.GetType())
+            {
+                return false;
+            }
+
+            return this.Value == other.Value;
+        }
+
         public override int GetHashCode() => this.WordId;
+        public override bool Equals(object obj) => this.Equals(obj as Word);
     }
 }

@@ -1,34 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using CrossWord.Web.Models;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
 
 namespace CrossWord.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
-        private readonly IApplicationLifetime _appLifetime;
-        private readonly ILogger<HomeController> _logger;
-        private readonly IConfiguration _appConfig;
+        private readonly IHostEnvironment hostingEnvironment;
+        private readonly IHostApplicationLifetime appLifetime;
+        private readonly ILogger<HomeController> logger;
+        private readonly IConfiguration appConfig;
 
         public HomeController(
-           IHostingEnvironment hostingEnvironment,
-           IApplicationLifetime appLifetime,
+           IHostEnvironment  hostingEnvironment,
+           IHostApplicationLifetime appLifetime,
            ILogger<HomeController> logger,
            IConfiguration configuration)
         {
-            _hostingEnvironment = hostingEnvironment;
-            _appLifetime = appLifetime;
-            _logger = logger;
-            _appConfig = configuration;
+            this.hostingEnvironment = hostingEnvironment;
+            this.appLifetime = appLifetime;
+            this.logger = logger;
+            appConfig = configuration;
         }
 
         public IActionResult Index()
@@ -36,7 +32,7 @@ namespace CrossWord.Web.Controllers
             // clear jwt token
             HttpContext.Session.Remove("token");
 
-            var signalRHubURL = _appConfig["SignalRHubURL"] ?? "http://localhost:8000/crosswordsignalrhub";
+            var signalRHubURL = appConfig["SignalRHubURL"] ?? "http://localhost:8000/crosswordsignalrhub";
             ViewData["SignalRHubURL"] = signalRHubURL;
 
             return View();

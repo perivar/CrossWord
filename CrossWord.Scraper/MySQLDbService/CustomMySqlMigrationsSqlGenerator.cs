@@ -1,12 +1,10 @@
-using System;
-using System.Linq;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
+using Microsoft.EntityFrameworkCore.Update;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure.Internal;
+using Pomelo.EntityFrameworkCore.MySql.Migrations;
 using Serilog;
-using Serilog.Events;
 
 namespace CrossWord.Scraper.MySQLDbService
 {
@@ -14,40 +12,34 @@ namespace CrossWord.Scraper.MySQLDbService
     {
         public CustomMySqlMigrationsSqlGenerator(
                     MigrationsSqlGeneratorDependencies dependencies,
-                    IMigrationsAnnotationProvider migrationsAnnotations,
-                    IMySqlOptions options)
-                    : base(dependencies, migrationsAnnotations, options)
+                    ICommandBatchPreparer commandBatchPreparer,
+                    IMySqlOptions options
+                    )
+                    : base(dependencies, commandBatchPreparer, options)
         {
         }
 
         // test this with: dotnet ef migrations script
         // and adding debug statements to builder.append()
         protected override void ColumnDefinition(
-                    string schema,
-                    string table,
-                    string name,
-                    Type clrType,
-                    string type,
-                    bool? unicode,
-                    int? maxLength,
-                    bool? fixedLength,
-                    bool rowVersion,
-                    bool nullable,
-                    object defaultValue,
-                    string defaultValueSql,
-                    string computedColumnSql,
-                    bool identity,
-                    IAnnotatable annotatable,
-                    IModel model,
-                    MigrationCommandListBuilder builder)
+            string schema,
+            string table,
+            string name,
+            ColumnOperation operation,
+            IModel model,
+            MigrationCommandListBuilder builder)
         {
+            // Log.Information("CustomMySqlMigrationsSqlGenerator: ColumnDefinition for {0}: {1} [{2}]", table, name, string.Join(";", operation.GetAnnotations().Select(x => x.Name)));
 
-            base.ColumnDefinition(schema, table, name, clrType, type, unicode, maxLength, fixedLength, rowVersion, nullable, defaultValue, defaultValueSql, computedColumnSql, identity, annotatable, model, builder);
+            base.ColumnDefinition(schema, table, name, operation, model, builder);
 
-            var annotation = annotatable.GetAnnotations().FirstOrDefault(a => a.Name.Equals("MySql:Collation"));
+            // use the old "MySql:Collation" since this is what is used in WordHintDbContext
+            var annotationName = "MySql:Collation";
+            var annotation = operation.FindAnnotation(annotationName);
             if (annotation != null)
             {
                 string collateValue = annotation.Value.ToString();
+                Log.Information("CustomMySqlMigrationsSqlGenerator: Found {0} for {1}:{2}, fixing COLLATE: {3}", annotationName, table, name, collateValue);
 
                 builder.Append(string.Format(" COLLATE {0}", collateValue));
             }
@@ -71,6 +63,8 @@ namespace CrossWord.Scraper.MySQLDbService
             // SO HARDCODE A FIX!
             if (alterColumnOperation.Table == "Words" && alterColumnOperation.Name == "Value")
             {
+                Log.Information("CustomMySqlMigrationsSqlGenerator: Found AlterColumn for {0}:{1}, fixing COLLATE utf8mb4_0900_as_cs", alterColumnOperation.Table, alterColumnOperation.Name);
+
                 builder
                         .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(alterColumnOperation.Name))
                         .Append(" varchar(255) NULL COLLATE utf8mb4_0900_as_cs")
@@ -84,17 +78,6 @@ namespace CrossWord.Scraper.MySQLDbService
                     alterColumnOperation.Schema,
                     alterColumnOperation.Table,
                     alterColumnOperation.Name,
-                    alterColumnOperation.ClrType,
-                    alterColumnOperation.ColumnType,
-                    alterColumnOperation.IsUnicode,
-                    alterColumnOperation.MaxLength,
-                    alterColumnOperation.IsFixedLength,
-                    alterColumnOperation.IsRowVersion,
-                    alterColumnOperation.IsNullable,
-                    alterColumnOperation.DefaultValue,
-                    alterColumnOperation.DefaultValueSql,
-                    alterColumnOperation.ComputedColumnSql,
-                    /*identity:*/ false,
                     alterColumnOperation,
                     model,
                     builder);

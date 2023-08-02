@@ -1,11 +1,7 @@
-using System;
-using System.Linq;
 using System.Net;
 
-using Microsoft.AspNetCore.Http;
-
 namespace CrossWord.API
-{        
+{
     public static class HttpContextExtensions
     {
         /// <summary>
@@ -20,7 +16,7 @@ namespace CrossWord.API
             {
                 // CF-Connecting-IP is used by CloudFlare
                 // X-Forwarded-For is used by proxies to forward the real ip
-                string header = (context.Request.Headers["CF-Connecting-IP"].FirstOrDefault() ?? context.Request.Headers["X-Forwarded-For"].FirstOrDefault());
+                string header = context.Request.Headers["CF-Connecting-IP"].FirstOrDefault() ?? context.Request.Headers["X-Forwarded-For"].FirstOrDefault();
                 if (IPAddress.TryParse(header, out IPAddress ip))
                 {
                     return ip;

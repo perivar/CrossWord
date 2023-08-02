@@ -1,23 +1,10 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using System.Security.Claims;
-using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Identity;
-using System.Threading.Tasks;
 using CrossWord.Scraper.MySQLDbService;
 using CrossWord.Scraper.MySQLDbService.Models;
-using System.Linq;
 using System.Diagnostics;
-using System.Net;
 using CrossWord.Models;
 using CrossWord.Scraper.MySQLDbService.Entities;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace CrossWord.API.Controllers
 {
@@ -68,7 +55,7 @@ namespace CrossWord.API.Controllers
             int total = db.CrosswordTemplates.Count();
             if (total == 0) return null;
 
-            Random r = new Random();
+            Random r = new();
             int offset = r.Next(0, total);
 
             var result = db.CrosswordTemplates.Skip(offset).FirstOrDefault();

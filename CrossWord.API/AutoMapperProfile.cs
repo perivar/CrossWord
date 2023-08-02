@@ -1,6 +1,5 @@
 using AutoMapper;
 using CrossWord.API.Models;
-using Microsoft.AspNetCore.Identity;
 using CrossWord.Scraper.MySQLDbService.Entities;
 
 namespace CrossWord.API

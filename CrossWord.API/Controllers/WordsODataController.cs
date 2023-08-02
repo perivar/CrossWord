@@ -1,26 +1,19 @@
-using System;
-using Microsoft.AspNet.OData;
-using Microsoft.AspNet.OData.Routing;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Linq;
 using CrossWord.Scraper.MySQLDbService.Models;
 using CrossWord.Scraper.MySQLDbService.Entities;
-using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Identity;
 using CrossWord.Scraper.MySQLDbService;
-using static Microsoft.AspNet.OData.Query.AllowedQueryOptions;
-using static Microsoft.AspNetCore.Http.StatusCodes;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.Extensions.Primitives;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNet.OData;
 
 namespace CrossWord.API.Controllers
 {
     [Produces("application/json")]
+    [ApiController] // The [ApiController] attribute makes attribute routing a requirement.
     [ApiVersion("1.0")]
-    [ODataRoutePrefix("Words")]
+    [ApiExplorerSettings(IgnoreApi = false)]
+    [Route("odata/Words")]
     public class WordsODataController : ODataController
     {
         private readonly IConfiguration config;
@@ -38,7 +31,7 @@ namespace CrossWord.API.Controllers
 
         [HttpGet]
         [EnableQuery]
-        [ODataRoute]
+        [Route("")]
         public IQueryable<Word> Get()
         {
             if (!Request.Query.ContainsKey("$top"))
@@ -59,8 +52,8 @@ namespace CrossWord.API.Controllers
 
         [HttpGet]
         [EnableQuery]
-        [ODataRoute("({key})")]
-        public SingleResult<Word> Get([FromODataUri] int key)
+        [Route("({key:int})")]
+        public SingleResult<Word> Get([FromRoute] int key)
         {
             var word = db.Words
                             .AsNoTracking()
@@ -72,8 +65,8 @@ namespace CrossWord.API.Controllers
 
         [HttpGet]
         [EnableQuery]
-        [ODataRoute("Synonyms(Word={word})")]
-        public IQueryable<Word> GetSynonyms([FromODataUri] string word)
+        [Route("Synonyms(Word={word})")]
+        public IQueryable<Word> GetSynonyms([FromRoute] string word)
         {
             word = word.ToUpper();
 
@@ -103,8 +96,8 @@ namespace CrossWord.API.Controllers
 
         [HttpGet]
         [EnableQuery]
-        [ODataRoute("Synonyms(Word={word}, Pattern={pattern})")]
-        public IQueryable<Word> GetSynonyms([FromODataUri] string word, [FromODataUri] string pattern)
+        [Route("Synonyms(Word={word})/Pattern={pattern}")]
+        public IQueryable<Word> GetSynonyms([FromRoute] string word, [FromRoute] string pattern)
         {
             word = word.ToUpper();
             pattern = pattern.ToUpper();
@@ -119,31 +112,30 @@ namespace CrossWord.API.Controllers
 
             // It turned out that two separate queries with a union was much faster than trying to do this in SQL
             var wordRelations1 = db.WordRelations
-                                            .AsNoTracking()
-                                            .Where(w =>
-                                                (
-                                                    (w.WordFromId == wordId)
-                                                    && (EF.Functions.Like(w.WordTo.Value, pattern))
-                                                    && (w.WordTo.NumberOfLetters == pattern.Length)
-                                                )
+                                        .AsNoTracking()
+                                        .Where(w =>
+                                            (
+                                                (w.WordFromId == wordId)
+                                                && EF.Functions.Like(w.WordTo.Value, pattern)
+                                                && (w.WordTo.NumberOfLetters == pattern.Length)
                                             )
-                                            .Select(a => a.WordTo);
+                                        )
+                                        .Select(a => a.WordTo);
 
             var wordRelations2 = db.WordRelations
-                                            .AsNoTracking()
-                                            .Where(w =>
-                                                (
-                                                    (w.WordToId == wordId)
-                                                    && (EF.Functions.Like(w.WordFrom.Value, pattern))
-                                                    && (w.WordFrom.NumberOfLetters == pattern.Length)
-                                                )
+                                        .AsNoTracking()
+                                        .Where(w =>
+                                            (
+                                                (w.WordToId == wordId)
+                                                && EF.Functions.Like(w.WordFrom.Value, pattern)
+                                                && (w.WordFrom.NumberOfLetters == pattern.Length)
                                             )
-                                            .Select(a => a.WordFrom);
+                                        )
+                                        .Select(a => a.WordFrom);
 
             var wordRelations = wordRelations1.Union(wordRelations2);
 
             return wordRelations.AsQueryable();
         }
-
     }
 }

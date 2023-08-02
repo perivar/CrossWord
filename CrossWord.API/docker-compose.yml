@@ -1,6 +1,13 @@
 version: "2"
 
-# access the mysql db volume created by a different docker-compose.yml file by using external and the name
+# this can be used to test and develop locally
+# first initialize the database and the db volume in the CrossWord.Scraper directory:
+#   docker compose up db -d
+#   docker compose down
+# then start the database here:
+#   docker compose up db -d
+
+# to access the mysql db volume created by a different docker-compose.yml file by using external and the name
 # see CrossWord.Scraper/docker-compose-yml
 volumes:
   datafiles:

@@ -306,7 +306,7 @@
             // init the word synonym pattern bootstrap table
             function initWordSynonymPatternODataTable(wordValue, patternValue) {
                 var odataBaseUrl = /(.+)\/api\//.exec(baseUrl)[1];
-                var url = odataBaseUrl + "/odata/Words/Synonyms(Word='" + wordValue + "', Pattern='" + patternValue + "')";
+                var url = odataBaseUrl + "/odata/Words/Synonyms(Word=" + wordValue + ")/Pattern=" + patternValue;
                 //console.log(url);
                 $('#word-list').bootstrapTable({
                     url: url,

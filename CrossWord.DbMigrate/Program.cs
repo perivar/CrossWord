@@ -10,32 +10,32 @@ namespace CrossWord.DbMigrate
 {
     class Program
     {
-        static Scraper.MySQLDbService.WordHintDbContext CreateDbContext(string dbConnectionString, bool doDebug = false)
+        static Scraper.MySQLDbService.WordHintDbContext CreateDbContext(string connectionString, bool doDebug = false)
         {
             if (doDebug)
             {
                 var dbContextFactory = new Scraper.MySQLDbService.DesignTimeDbContextFactory();
-                return dbContextFactory.CreateDbContext(dbConnectionString, null);
+                return dbContextFactory.CreateDbContext(connectionString, null);
             }
             else
             {
                 var options = new DbContextOptionsBuilder<Scraper.MySQLDbService.WordHintDbContext>();
-                options.UseMySql(dbConnectionString);
+                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
                 return new Scraper.MySQLDbService.WordHintDbContext(options.Options);
             }
         }
 
-        static WordHintDbContextOrig CreateDbContextOrig(string dbOrigConnectionString, bool doDebug = false)
+        static WordHintDbContextOrig CreateDbContextOrig(string connectionString, bool doDebug = false)
         {
             if (doDebug)
             {
                 var dbContextFactoryOrig = new DesignTimeDbContextFactoryOrig();
-                return dbContextFactoryOrig.CreateDbContext(dbOrigConnectionString, null);
+                return dbContextFactoryOrig.CreateDbContext(connectionString, null);
             }
             else
             {
                 var options = new DbContextOptionsBuilder<WordHintDbContextOrig>();
-                options.UseMySql(dbOrigConnectionString);
+                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
                 return new WordHintDbContextOrig(options.Options);
             }
         }

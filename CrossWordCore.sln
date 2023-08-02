@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26403.7
@@ -11,13 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp", "TestApp\TestApp.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "CrossWord.Test\Test.csproj", "{F2C79498-4BCB-4A1B-B292-AE9684EF66DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrossWord.Web", "CrossWord.Web\CrossWord.Web.csproj", "{B33A5F5F-D650-4E8F-9AF1-745BD493255C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrossWord.Web", "CrossWord.Web\CrossWord.Web.csproj", "{B33A5F5F-D650-4E8F-9AF1-745BD493255C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrossWord.Scraper", "CrossWord.Scraper\CrossWord.Scraper.csproj", "{27269B5E-8DE3-45F0-BA29-8E2A69520E26}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrossWord.Scraper", "CrossWord.Scraper\CrossWord.Scraper.csproj", "{27269B5E-8DE3-45F0-BA29-8E2A69520E26}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrossWord.API", "CrossWord.API\CrossWord.API.csproj", "{AF8E4F14-00E1-4E3B-B7EB-1D7DE32E2747}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrossWord.API", "CrossWord.API\CrossWord.API.csproj", "{AF8E4F14-00E1-4E3B-B7EB-1D7DE32E2747}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrossWord.DbMigrate", "CrossWord.DbMigrate\CrossWord.DbMigrate.csproj", "{75329F57-9C53-48CD-A7FE-75A80EB6EA8F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrossWord.DbMigrate", "CrossWord.DbMigrate\CrossWord.DbMigrate.csproj", "{75329F57-9C53-48CD-A7FE-75A80EB6EA8F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

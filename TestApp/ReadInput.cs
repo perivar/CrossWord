@@ -4,25 +4,25 @@ namespace CrossWord.TestApp
 {
     public class ReadInput
     {
-        readonly CommandStore _commandStore;
-        bool _shouldStop;
+        readonly CommandStore commandStore;
+        bool shouldStop;
 
-        public ReadInput(CommandStore aCommandStore)
+        public ReadInput(CommandStore commandStore)
         {
-            _commandStore = aCommandStore;
+            this.commandStore = commandStore;
         }
 
         public bool ShouldStop
         {
-            set { _shouldStop = value; }
+            set { shouldStop = value; }
         }
 
         public void Run()
         {
-            while (! _shouldStop)
+            while (! shouldStop)
             {
-                String command = Console.ReadLine();
-                _commandStore.AddCommand(command);
+                string command = Console.ReadLine();
+                commandStore.AddCommand(command);
             }
         }
     }

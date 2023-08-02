@@ -1,20 +1,14 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-
 namespace CrossWord.API
 {
     public class QueuedHostedService : BackgroundService
     {
-        private readonly ILogger _logger;
+        private readonly ILogger logger;
 
         public QueuedHostedService(IBackgroundTaskQueue taskQueue,
             ILoggerFactory loggerFactory)
         {
-            TaskQueue = taskQueue;
-            _logger = loggerFactory.CreateLogger<QueuedHostedService>();
+            this.TaskQueue = taskQueue;
+            this.logger = loggerFactory.CreateLogger<QueuedHostedService>();
         }
 
         public IBackgroundTaskQueue TaskQueue { get; }
@@ -22,7 +16,7 @@ namespace CrossWord.API
         protected async override Task ExecuteAsync(
             CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Queued Hosted Service is starting.");
+            logger.LogInformation("Queued Hosted Service is starting.");
 
             while (!cancellationToken.IsCancellationRequested)
             {
@@ -34,12 +28,12 @@ namespace CrossWord.API
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex,
+                    logger.LogError(ex,
                        $"Error occurred executing {nameof(workItem)}.");
                 }
             }
 
-            _logger.LogInformation("Queued Hosted Service is stopping.");
+            logger.LogInformation("Queued Hosted Service is stopping.");
         }
     }
 }

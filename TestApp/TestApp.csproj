@@ -1,11 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputType>exe</OutputType>
   </PropertyGroup>
-
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <DebugType>portable</DebugType>
     <AssemblyName>CrossWord.TestApp</AssemblyName>
     <PackageId>Test</PackageId>
@@ -14,13 +12,10 @@
     <OutputTypeEx>exe</OutputTypeEx>
     <StartupObject />
   </PropertyGroup>
-
   <ItemGroup>
     <Reference Include="netstandard" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\CrossWord\CrossWord.csproj" />
   </ItemGroup>
-
 </Project>

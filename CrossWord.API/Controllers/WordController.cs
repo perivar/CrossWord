@@ -1,18 +1,9 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using System.Security.Claims;
-using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Identity;
-using System.Threading.Tasks;
 using CrossWord.Scraper.MySQLDbService;
 using CrossWord.Scraper.MySQLDbService.Models;
 using CrossWord.Scraper.MySQLDbService.Entities;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using System.Globalization;
@@ -206,9 +197,9 @@ namespace CrossWord.API.Controllers
             return Ok(
                 new
                 {
-                    word = word,
-                    wordId = wordId,
-                    words = words,
+                    word,
+                    wordId,
+                    words,
                 });
         }
 
@@ -305,7 +296,7 @@ namespace CrossWord.API.Controllers
             item.NumberOfLetters = ScraperUtils.CountNumberOfLetters(wordText);
             item.NumberOfWords = ScraperUtils.CountNumberOfWords(wordText);
             item.Category = null;
-            item.CreatedDate = (item.CreatedDate == null ? DateTime.Now : item.CreatedDate);
+            item.CreatedDate = item.CreatedDate == null ? DateTime.Now : item.CreatedDate;
 
             // use the following statement so that User won't be inserted
             item.User = new User() { UserId = 1 };
@@ -335,7 +326,7 @@ namespace CrossWord.API.Controllers
 
             var wordRelations = db.WordRelations
                                             .AsNoTracking()
-                                            .Where(w => ((w.WordFromId == wordId) || (w.WordToId == wordId)))
+                                            .Where(w => (w.WordFromId == wordId) || (w.WordToId == wordId))
                                             .SelectMany(w => new[] { w.WordFrom, w.WordTo })
                                             .GroupBy(p => p.Value) // to make it distinct
                                             .Select(g => g.First()) // to make it distinct
@@ -367,7 +358,7 @@ namespace CrossWord.API.Controllers
 
             var wordRelations = db.WordRelations
                                             .AsNoTracking()
-                                            .Where(w => ((w.WordFromId == id) || (w.WordToId == id)))
+                                            .Where(w => (w.WordFromId == id) || (w.WordToId == id))
                                             .SelectMany(w => new[] { w.WordFrom, w.WordTo })
                                             .GroupBy(p => p.Value) // to make it distinct
                                             .Select(g => g.First()) // to make it distinct
@@ -439,7 +430,7 @@ namespace CrossWord.API.Controllers
             //     .AsNoTracking();
 
             // sort in memory since the collation will not work
-            CultureInfo culture = new CultureInfo("no");
+            CultureInfo culture = new("no");
             var stateResult = db.States
                 .AsNoTracking()
                 .AsEnumerable() // force sorting in memory since the string comparer isn't supported directly in ef core

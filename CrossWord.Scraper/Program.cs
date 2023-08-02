@@ -12,8 +12,8 @@ namespace CrossWord.Scraper
 {
     public class Program
     {
-        const string DEFAULT_LOG_PATH = "crossword_scraper.log";
-        const string DEFAULT_ERROR_LOG_PATH = "crossword_scraper_error.log";
+        // const string DEFAULT_LOG_PATH = "crossword_scraper.log";
+        // const string DEFAULT_ERROR_LOG_PATH = "crossword_scraper_error.log";
 
         static void Main(string[] args)
         {
@@ -37,11 +37,14 @@ namespace CrossWord.Scraper
 
             var signalRHubURL = configuration["SignalRHubURL"] ?? "http://localhost:8000/crosswordsignalrhub";
 
-            // either use mysql installed locally on port 3306 (default)
-            // or use Docker on port 3360
+            // either use a local mysql install running on port 3306 (default)
+            // or use Docker:
+            // spinning up directly on port 3360
             // docker run -p 3360:3306 --name mysqldb -e MYSQL_ROOT_PASSWORD=password -d mysql:8.0.15            
-            // or 
-            // docker compose -f docker-compose.development.yml up db -d
+            // or use docker compose to init with data on port 3360
+            // docker compose up db -d
+            // and enter using
+            // docker exec -it crossword.db mysql -uroot -psecret dictionary
 
             // Build database connection string
             var dbhost = configuration["DBHOST"] ?? "localhost";
@@ -132,7 +135,7 @@ namespace CrossWord.Scraper
                     actionsList.Add(() => { new KryssordScraperLatest(connectionString, signalRHubURL, siteUsername, sitePassword, kryssordLatestDelaySeconds); });
                 }
 
-                Parallel.ForEach<Action>(actionsList, options, (o => o()));
+                Parallel.ForEach(actionsList, options, o => o());
             }
             else
             {

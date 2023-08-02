@@ -1,4 +1,3 @@
-using System;
 using Microsoft.AspNet.OData.Query;
 using Microsoft.OData.UriParser;
 

@@ -1,35 +1,34 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
-    <RuntimeFrameworkVersion>2.2.2</RuntimeFrameworkVersion>
+    <TargetFramework>net7.0</TargetFramework>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <PublishChromeDriver>true</PublishChromeDriver>
     <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Selenium.WebDriver" Version="3.141.0"/>
-    <PackageReference Include="Selenium.Support" Version="3.141.0"/>
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0"/>
-    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.2.0"/>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.4"/>
-    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1"/>
-    <PackageReference Include="Serilog.Sinks.File" Version="4.0.0"/>
-    <PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.0"/>
-    <PackageReference Include="Serilog.Extensions.Logging" Version="2.0.2"/>
-    <PackageReference Include="Serilog.Settings.Configuration" Version="3.0.1"/>
-    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.2.0"/>
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0"/>
-    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="2.2.0"/>
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.2.0"/>
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="1.1.0"/>
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.2.0"/>
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="2.2.0"/>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.16"/>
-    <PackageReference Include="HtmlAgilityPack.CssSelectors.NetCore" Version="1.2.1"/>
-    <PackageReference Include="Polly" Version="7.1.1"/>
+    <PackageReference Include="Selenium.WebDriver" Version="4.11.0" />
+    <PackageReference Include="Selenium.Support" Version="4.11.0" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.0" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="7.0.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="7.0.0" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.51" />
+    <PackageReference Include="HtmlAgilityPack.CssSelectors.NetCore" Version="1.2.1" />
+    <PackageReference Include="Polly" Version="7.2.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="appsettings.json" CopyToOutputDirectory="Always"/>
+    <None Include="appsettings.json" CopyToOutputDirectory="Always" />
   </ItemGroup>
 </Project>

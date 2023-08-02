@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-
-using System.IO;
-using System.Text;
+﻿using System.Text;
 using System.Globalization;
 using System.Text.RegularExpressions;
-
-using System.Linq;
 using System.Security.Cryptography;
 
 namespace CommonUtils
@@ -59,14 +53,14 @@ namespace CommonUtils
                 sb = new StringBuilder();
             }
 
-            foreach (String s in splittedPhrase)
+            foreach (string s in splittedPhrase)
             {
                 char[] splittedPhraseChars = s.ToCharArray();
                 if (splittedPhraseChars.Length > 0)
                 {
-                    splittedPhraseChars[0] = ((new String(splittedPhraseChars[0], 1)).ToUpper().ToCharArray())[0];
+                    splittedPhraseChars[0] = new string(splittedPhraseChars[0], 1).ToUpper().ToCharArray()[0];
                 }
-                sb.Append(new String(splittedPhraseChars));
+                sb.Append(new string(splittedPhraseChars));
             }
             return sb.ToString();
         }
@@ -89,17 +83,15 @@ namespace CommonUtils
         /// <returns>the uint number</returns>
         public static uint HexStringToUint(string hexString)
         {
-            uint color;
-
             if (hexString.StartsWith("0x", StringComparison.CurrentCultureIgnoreCase))
             {
                 hexString = hexString.Substring(2);
             }
 
-            bool parsedSuccessfully = uint.TryParse(hexString,
+            _ = uint.TryParse(hexString,
                                                     NumberStyles.HexNumber,
                                                     CultureInfo.CurrentCulture,
-                                                    out color);
+                                                    out uint color);
             return color;
         }
 
@@ -110,7 +102,7 @@ namespace CommonUtils
         /// <returns>hex string on the format 0x00</returns>
         public static string ToHexString(uint c)
         {
-            string s = String.Format("0x{0:X}", c);
+            string s = string.Format("0x{0:X}", c);
             return s;
         }
 
@@ -122,7 +114,7 @@ namespace CommonUtils
         public static string ToHexString(byte b)
         {
             char c = (char)b;
-            string s = String.Format("{0,0:X2}", (int)c);
+            string s = string.Format("{0,0:X2}", (int)c);
             return s;
         }
 
@@ -156,7 +148,7 @@ namespace CommonUtils
 
                 // append the text chunk after the hex chunk
                 strb.Append("    ");
-                strb.Append(text.ToString());
+                strb.Append(text);
             }
             return strb.ToString();
         }
@@ -349,7 +341,7 @@ namespace CommonUtils
         /// Return current timestamp (i.e. Now)
         /// </summary>
         /// <returns>string representation of current time</returns>
-        public static String GetCurrentTimestamp()
+        public static string GetCurrentTimestamp()
         {
             return GetTimestamp(DateTime.Now);
         }
@@ -359,7 +351,7 @@ namespace CommonUtils
         /// </summary>
         /// <param name="value">datetime value</param>
         /// <returns>string</returns>
-        public static String GetTimestamp(this DateTime value)
+        public static string GetTimestamp(this DateTime value)
         {
             return value.ToString("yyyyMMddHHmmssffff");
         }
@@ -446,7 +438,7 @@ namespace CommonUtils
         }
 
         /// <summary>
-        /// Convert Binary String to hex representation
+        /// Convert Binary string to hex representation
         /// </summary>
         /// <param name="binary">binary string</param>
         /// <returns>hexadecimal string representation</returns>
@@ -485,7 +477,7 @@ namespace CommonUtils
         }
 
         /// <summary>
-        /// Convert Binary String to integer
+        /// Convert Binary string to integer
         /// </summary>
         /// <param name="binary">binary string</param>
         /// <returns>integer value</returns>
@@ -507,7 +499,7 @@ namespace CommonUtils
         }
 
         /// <summary>
-        /// Convert Binary String to ulong
+        /// Convert Binary string to ulong
         /// </summary>
         /// <param name="binary">binary string</param>
         /// <returns>ulong value</returns>
@@ -580,7 +572,7 @@ namespace CommonUtils
 
             // Split the string into words.
             string[] words = the_string.Split(
-                new char[] { },
+                Array.Empty<char>(),
                 StringSplitOptions.RemoveEmptyEntries);
 
             // Combine the words.
@@ -628,7 +620,6 @@ namespace CommonUtils
         /// <returns>everything in a string after a search word is found</returns>
         public static string GetStringAfterSearchWord(string fullString, string searchfor)
         {
-
             // we could have used regexp but this method is faster and safer
             string stringAfterSearchWord = "";
             int ix = fullString.IndexOf(searchfor, StringComparison.Ordinal);
@@ -645,7 +636,7 @@ namespace CommonUtils
         /// Checks if the string contains only ASCII printable characters.
         /// <![CDATA[
         /// <code>null</code> will return <code>false</code>.
-        /// An empty String ("") will return <code>true</code>.
+        /// An empty string ("") will return <code>true</code>.
         /// 
         /// <pre>
         /// StringUtils.IsAsciiPrintable(null)     = false
@@ -664,7 +655,7 @@ namespace CommonUtils
         /// </summary>
         /// <param name="str">param str the string to check, may be null</param>
         /// <returns>return <code>true</code> if every character is in the range 32 thru 126</returns>
-        public static bool IsAsciiPrintable(String str)
+        public static bool IsAsciiPrintable(string str)
         {
             if (str == null)
             {

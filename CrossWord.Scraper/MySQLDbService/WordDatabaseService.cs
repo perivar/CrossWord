@@ -123,7 +123,7 @@ namespace CrossWord.Scraper.MySQLDbService
             // db.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
             if (word == null || word != null && word.Value == null) return;
-            if (relatedWords == null || relatedWords != null && relatedWords.Count() == 0) return;
+            if (relatedWords == null || relatedWords != null && !relatedWords.Any()) return;
 
             // check if word already exists
             var existingWord = db.Words.Where(w => w.Value == word.Value).FirstOrDefault();
@@ -159,11 +159,11 @@ namespace CrossWord.Scraper.MySQLDbService
                 db.Words.AddRange(newRelatedWords);
                 db.SaveChanges();
 
-                if (writer != null) writer.WriteLine("Added '{0}'", string.Join(",", newRelatedWords.Select(i => i.Value).ToArray()));
+                writer?.WriteLine("Added '{0}'", string.Join(",", newRelatedWords.Select(i => i.Value).ToArray()));
             }
             else
             {
-                if (writer != null) writer.WriteLine("Skipped adding '{0}'", string.Join(",", existingRelatedWords.Select(i => i.Value).ToArray()));
+                writer?.WriteLine("Skipped adding '{0}'", string.Join(",", existingRelatedWords.Select(i => i.Value).ToArray()));
             }
 
             // what relations needs to be added?
@@ -196,12 +196,12 @@ namespace CrossWord.Scraper.MySQLDbService
                 if (db.ChangeTracker.QueryTrackingBehavior == QueryTrackingBehavior.NoTracking)
                 {
                     // without tracking we don't have the word value, so use only the wordids
-                    if (writer != null) writer.WriteLine("Related '{0}' to '{1}'", string.Join(",", newWordRelations.Select(i => i.WordToId).ToArray().Distinct()), word.Value);
+                    writer?.WriteLine("Related '{0}' to '{1}'", string.Join(",", newWordRelations.Select(i => i.WordToId).ToArray().Distinct()), word.Value);
                 }
                 else
                 {
                     // with tracking we can output the actual words
-                    if (writer != null) writer.WriteLine("Related '{0}' to '{1}'", string.Join(",", newWordRelations.Select(i => i.WordTo.Value).ToArray().Distinct()), word.Value);
+                    writer?.WriteLine("Related '{0}' to '{1}'", string.Join(",", newWordRelations.Select(i => i.WordTo.Value).ToArray().Distinct()), word.Value);
                 }
             }
             else
@@ -209,12 +209,12 @@ namespace CrossWord.Scraper.MySQLDbService
                 if (db.ChangeTracker.QueryTrackingBehavior == QueryTrackingBehavior.NoTracking)
                 {
                     // without tracking we don't have the word value, so use only the wordids
-                    if (writer != null) writer.WriteLine("Skipped relating '{0}' to '{1}'", string.Join(",", existingWordRelations.Select(i => i.WordToId).ToArray().Distinct()), word.Value);
+                    writer?.WriteLine("Skipped relating '{0}' to '{1}'", string.Join(",", existingWordRelations.Select(i => i.WordToId).ToArray().Distinct()), word.Value);
                 }
                 else
                 {
                     // with tracking we can output the actual words
-                    if (writer != null) writer.WriteLine("Skipped relating '{0}' to '{1}'", string.Join(",", existingWordRelations.Select(i => i.WordTo.Value).ToArray().Distinct()), word.Value);
+                    writer?.WriteLine("Skipped relating '{0}' to '{1}'", string.Join(",", existingWordRelations.Select(i => i.WordTo.Value).ToArray().Distinct()), word.Value);
                 }
             }
         }
@@ -249,7 +249,7 @@ namespace CrossWord.Scraper.MySQLDbService
                 // add state
                 db.States.Update(stateEntity);
 
-                if (writer != null) writer.WriteLine("Updated state with '{0}' as last processed word for '{1}' letters with  source '{2}'.", wordText, wordLength, source);
+                writer?.WriteLine("Updated state with '{0}' as last processed word for '{1}' letters with  source '{2}'.", wordText, wordLength, source);
             }
             else
             {
@@ -265,7 +265,7 @@ namespace CrossWord.Scraper.MySQLDbService
                 // add new state
                 db.States.Add(stateEntity);
 
-                if (writer != null) writer.WriteLine("Added state with '{0}' as last processed word for '{1}' letters with  source '{2}'.", wordText, wordLength, source);
+                writer?.WriteLine("Added state with '{0}' as last processed word for '{1}' letters with  source '{2}'.", wordText, wordLength, source);
             }
 
             // Save changes in database

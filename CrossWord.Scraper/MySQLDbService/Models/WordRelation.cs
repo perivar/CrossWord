@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CrossWord.Scraper.MySQLDbService.Models
 {
@@ -21,7 +19,27 @@ namespace CrossWord.Scraper.MySQLDbService.Models
         }
 
         // implemented IEquatable in order to use Distinct
-        public bool Equals(WordRelation other) => this.WordFromId == other.WordFromId && this.WordToId == other.WordToId;
+        // https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/statements-expressions-operators/how-to-define-value-equality-for-a-type
+        public bool Equals(WordRelation other)
+        {
+            if (other is null)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
+            if (this.GetType() != other.GetType())
+            {
+                return false;
+            }
+
+            return this.WordFromId == other.WordFromId && this.WordToId == other.WordToId;
+        }
         public override int GetHashCode() => (new { this.WordFromId, this.WordToId }).GetHashCode();
+        public override bool Equals(object obj) => this.Equals(obj as WordRelation);
     }
 }

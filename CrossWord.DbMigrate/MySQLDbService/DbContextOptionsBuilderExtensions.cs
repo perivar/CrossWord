@@ -16,14 +16,14 @@ namespace CrossWord.DbMigrate.MySQLDbService
 
                 if (throwOnQueryWarnings)
                 {
-                    warnings.Throw(RelationalEventId.QueryClientEvaluationWarning);
-                    warnings.Throw(RelationalEventId.QueryPossibleExceptionWithAggregateOperator);
+                    // warnings.Throw(RelationalEventId.QueryClientEvaluationWarning);
+                    // warnings.Throw(RelationalEventId.QueryPossibleExceptionWithAggregateOperator);
                     warnings.Throw(RelationalEventId.QueryPossibleUnintendedUseOfEqualsWarning);
                 }
                 else
                 {
-                    warnings.Log(RelationalEventId.QueryClientEvaluationWarning);
-                    warnings.Log(RelationalEventId.QueryPossibleExceptionWithAggregateOperator);
+                    // warnings.Log(RelationalEventId.QueryClientEvaluationWarning);
+                    // warnings.Log(RelationalEventId.QueryPossibleExceptionWithAggregateOperator);
                     warnings.Log(RelationalEventId.QueryPossibleUnintendedUseOfEqualsWarning);
                 }
             });

@@ -1,17 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
-using System.Threading.Tasks;
-using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using CrossWord.Scraper.MySQLDbService;
-using CrossWord.Scraper.MySQLDbService.Models;
 using CrossWord.API.Models;
 using CrossWord.Scraper.MySQLDbService.Entities;
 using AutoMapper;

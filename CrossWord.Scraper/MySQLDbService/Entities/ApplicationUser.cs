@@ -28,9 +28,9 @@ namespace CrossWord.Scraper.MySQLDbService.Entities
         public void AddRefreshToken(string token, string remoteIpAddress, string userAgent, double daysToExpire = 5)
         {
             if (RefreshTokens.Any(r =>
-                (!string.IsNullOrEmpty(remoteIpAddress) && r.RemoteIpAddress == remoteIpAddress)
+                !string.IsNullOrEmpty(remoteIpAddress) && r.RemoteIpAddress == remoteIpAddress
                 &&
-                (!string.IsNullOrEmpty(userAgent) && r.UserAgent == userAgent)
+                !string.IsNullOrEmpty(userAgent) && r.UserAgent == userAgent
             ))
             // if (RefreshTokens.Any(r => r.ApplicationUserId == this.Id))
             {
@@ -44,8 +44,10 @@ namespace CrossWord.Scraper.MySQLDbService.Entities
             else
             {
                 // add new
-                var newToken = new RefreshToken(token, DateTime.UtcNow.AddDays(daysToExpire), this, remoteIpAddress, userAgent);
-                newToken.Created = DateTime.UtcNow;
+                var newToken = new RefreshToken(token, DateTime.UtcNow.AddDays(daysToExpire), this, remoteIpAddress, userAgent)
+                {
+                    Created = DateTime.UtcNow
+                };
                 RefreshTokens.Add(newToken);
             }
         }

@@ -88,11 +88,11 @@ namespace CrossWord.Scraper
 
         private void ReadWordsFromUrl(WordHintDbContext db, User adminUser, string lastWord)
         {
-            using (WebClient client = new WebClient())
+            using (WebClient client = new())
             using (Stream stream = client.OpenRead(JSON_URL))
-            using (StreamReader streamReader = new StreamReader(stream))
+            using (StreamReader streamReader = new(stream))
 
-            using (JsonTextReader reader = new JsonTextReader(streamReader))
+            using (JsonTextReader reader = new(streamReader))
             {
                 reader.SupportMultipleContent = true;
 
@@ -193,8 +193,8 @@ namespace CrossWord.Scraper
 
                     WordDatabaseService.AddToDatabase(db, source, adminUser, currentValue, currentList);
 
-                    // if (writer != null) writer.WriteLine("Added '{0} => {1}'", currentValue, string.Join(",", currentList));
-                    if (writer != null) writer.WriteLine("[{0}] / [{1}]", count, totalCount);
+                    // writer?.WriteLine("Added '{0} => {1}'", currentValue, string.Join(",", currentList));
+                    writer?.WriteLine("[{0}] / [{1}]", count, totalCount);
                 }
             }
             */

@@ -1,13 +1,5 @@
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using CommonUtils;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
-using Microsoft.Extensions.Logging;
 
 namespace CrossWord.API
 {
@@ -15,20 +7,20 @@ namespace CrossWord.API
     {
         const int MAX_BYTES_TO_READ = 50;
 
-        private readonly RequestDelegate _next;
-        private readonly ILogger _logger;
+        private readonly RequestDelegate next;
+        private readonly ILogger logger;
 
-        public RequestResponseLoggingMiddleware(RequestDelegate _next,
+        public RequestResponseLoggingMiddleware(RequestDelegate next,
                                                 ILoggerFactory loggerFactory)
         {
-            this._next = _next;
-            this._logger = loggerFactory
+            this.next = next;
+            this.logger = loggerFactory
                       .CreateLogger<RequestResponseLoggingMiddleware>();
         }
 
         public async Task Invoke(HttpContext context)
         {
-            _logger.LogDebug(await FormatRequest(context.Request));
+            logger.LogDebug(await FormatRequest(context.Request));
 
             // Copy a pointer to the original response body stream
             var originalBodyStream = context.Response.Body;
@@ -40,10 +32,10 @@ namespace CrossWord.API
                 context.Response.Body = responseBody;
 
                 // Continue down the Middleware pipeline, eventually returning to this class
-                await _next(context);
+                await next(context);
 
                 // Format the response from the server
-                _logger.LogDebug(await FormatResponse(context.Response));
+                logger.LogDebug(await FormatResponse(context.Response));
 
                 // Changing the response body is not allowed on a 204 ?!
                 // if (context.Response.StatusCode != 204)
@@ -54,9 +46,9 @@ namespace CrossWord.API
         private async Task<string> FormatRequest(HttpRequest request)
         {
             // This line allows us to set the reader for the request back at the beginning of its stream.
-            request.EnableRewind();
+            request.EnableBuffering(); // in dotnet core 2.2 this is request.EnableRewind();
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             sb.AppendLine("-------HTTP REQUEST INFORMATION-------");
             sb.AppendLine($"{request.Scheme} {request.Host}{request.Path} {request.QueryString}");
 
@@ -80,7 +72,7 @@ namespace CrossWord.API
             var buffer = new byte[length];
 
             // ... copy the request stream into the new buffer.
-            await request.Body.ReadAsync(buffer, 0, buffer.Length);
+            await request.Body.ReadAsync(buffer);
 
             // we convert the byte[] into a string using UTF8 encoding...
             var bodyAsText = Encoding.UTF8.GetString(buffer);
@@ -122,9 +114,9 @@ namespace CrossWord.API
                 // await response.Body.CopyToAsync(memStream);
 
                 // only read the first bytes
-                if ((bytesRead = await response.Body.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                if ((bytesRead = await response.Body.ReadAsync(buffer)) > 0)
                 {
-                    await memStream.WriteAsync(buffer, 0, bytesRead);
+                    await memStream.WriteAsync(buffer.AsMemory(0, bytesRead));
                     await memStream.FlushAsync();
                 }
 

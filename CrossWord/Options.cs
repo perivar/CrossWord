@@ -138,8 +138,8 @@ namespace NDesk.Options
     public class OptionValueCollection : IList, IList<string>
     {
 
-        List<string> values = new List<string>();
-        OptionContext c;
+        readonly List<string> values = new();
+        readonly OptionContext c;
 
         internal OptionValueCollection(OptionContext c)
         {
@@ -234,8 +234,8 @@ namespace NDesk.Options
         private Option option;
         private string name;
         private int index;
-        private OptionSet set;
-        private OptionValueCollection c;
+        readonly private OptionSet set;
+        readonly private OptionValueCollection c;
 
         public OptionContext(OptionSet set)
         {
@@ -281,10 +281,11 @@ namespace NDesk.Options
 
     public abstract class Option
     {
-        string prototype, description;
-        string[] names;
-        OptionValueType type;
-        int count;
+        private readonly string prototype;
+        private readonly string description;
+        readonly string[] names;
+        readonly OptionValueType type;
+        readonly int count;
         string[] separators;
 
         protected Option(string prototype, string description)
@@ -377,7 +378,7 @@ namespace NDesk.Options
         private OptionValueType ParsePrototype()
         {
             char type = '\0';
-            List<string> seps = new List<string>();
+            List<string> seps = new();
             for (int i = 0; i < names.Length; ++i)
             {
                 string name = names[i];
@@ -427,15 +428,15 @@ namespace NDesk.Options
                     case '{':
                         if (start != -1)
                             throw new ArgumentException(
-                                    string.Format("Ill-formed name/value separator found in \"{0}\".", name),
-                                    "prototype");
+                                string.Format("Ill-formed name/value separator found in \"{0}\".", name),
+                                "prototype");
                         start = i + 1;
                         break;
                     case '}':
                         if (start == -1)
                             throw new ArgumentException(
-                                    string.Format("Ill-formed name/value separator found in \"{0}\".", name),
-                                    "prototype");
+                                string.Format("Ill-formed name/value separator found in \"{0}\".", name),
+                                "prototype");
                         seps.Add(name.Substring(start, i - start));
                         start = -1;
                         break;
@@ -447,8 +448,8 @@ namespace NDesk.Options
             }
             if (start != -1)
                 throw new ArgumentException(
-                        string.Format("Ill-formed name/value separator found in \"{0}\".", name),
-                        "prototype");
+                    string.Format("Ill-formed name/value separator found in \"{0}\".", name),
+                    "prototype");
         }
 
         public void Invoke(OptionContext c)
@@ -581,7 +582,7 @@ namespace NDesk.Options
         {
             if (option == null)
                 throw new ArgumentNullException("option");
-            List<string> added = new List<string>(option.Names.Length);
+            List<string> added = new(option.Names.Length);
             try
             {
                 // KeyedCollection.InsertItem/SetItem handle the 0th name.
@@ -927,7 +928,7 @@ namespace NDesk.Options
 
                 List<string> lines = GetLines(localizer(GetDescription(p.Description)));
                 o.WriteLine(lines[0]);
-                string prefix = new string(' ', OptionWidth + 2);
+                string prefix = new(' ', OptionWidth + 2);
                 for (int i = 1; i < lines.Count; ++i)
                 {
                     o.Write(prefix);
@@ -1016,7 +1017,7 @@ namespace NDesk.Options
                 do
                 {
                     start = description.IndexOf(nameStart[i], j);
-                } while (start >= 0 && j != 0 ? description[j++ - 1] == '{' : false);
+                } while (start >= 0 && j != 0 && description[j++ - 1] == '{');
                 if (start == -1)
                     continue;
                 int end = description.IndexOf("}", start);
@@ -1031,7 +1032,7 @@ namespace NDesk.Options
         {
             if (description == null)
                 return string.Empty;
-            StringBuilder sb = new StringBuilder(description.Length);
+            StringBuilder sb = new(description.Length);
             int start = -1;
             for (int i = 0; i < description.Length; ++i)
             {
@@ -1056,7 +1057,7 @@ namespace NDesk.Options
                         }
                         else
                         {
-                            sb.Append(description.Substring(start, i - start));
+                            sb.Append(description.AsSpan(start, i - start));
                             start = -1;
                         }
                         break;

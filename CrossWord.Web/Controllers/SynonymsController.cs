@@ -1,53 +1,48 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using CrossWord.Web.Models;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http;
-using System.Net;
 using Newtonsoft.Json;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
 
 namespace CrossWord.Web.Controllers
 {
     public class SynonymsController : Controller
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
-        private readonly IApplicationLifetime _appLifetime;
-        private readonly ILogger<SynonymsController> _logger;
-        private readonly IConfiguration _appConfig;
+        private readonly IHostEnvironment hostingEnvironment;
+        private readonly IHostApplicationLifetime appLifetime;
+        private readonly ILogger<SynonymsController> logger;
+        private readonly IConfiguration appConfig;
 
         public SynonymsController(
-           IHostingEnvironment hostingEnvironment,
-           IApplicationLifetime appLifetime,
+           IHostEnvironment  hostingEnvironment,
+           IHostApplicationLifetime appLifetime,
            ILogger<SynonymsController> logger,
            IConfiguration configuration)
         {
-            _hostingEnvironment = hostingEnvironment;
-            _appLifetime = appLifetime;
-            _logger = logger;
-            _appConfig = configuration;
+            this.hostingEnvironment = hostingEnvironment;
+            this.appLifetime = appLifetime;
+            this.logger = logger;
+            appConfig = configuration;
         }
 
         [Route("synonyms")]
         public IActionResult Index()
         {
-            var apiBaseUrl = _appConfig["ApiBaseUrl"] ?? "http://localhost:8000/api/";
-            var apiUserEmail = _appConfig["ApiUserEmail"] ?? "server@wazalo.com";
-            var apiPassword = _appConfig["ApiPassword"] ?? "123ABCabc!";
+            var apiBaseUrl = appConfig["ApiBaseUrl"] ?? "http://localhost:8000/api/";
+            var apiUserEmail = appConfig["ApiUserEmail"] ?? "server@wazalo.com";
+            var apiPassword = appConfig["ApiPassword"] ?? "123ABCabc!";
 
             ViewData["ApiBaseUrl"] = apiBaseUrl;
             ViewData["ApiUserEmail"] = apiUserEmail;
             ViewData["ApiPassword"] = apiPassword;
 
-            string token = null;
+            string token;
             if (HttpContext.Session.GetString("token") == null)
             {
                 token = GetJwtToken(apiBaseUrl, apiUserEmail, apiPassword);
@@ -65,16 +60,16 @@ namespace CrossWord.Web.Controllers
         [Route("synonyms/{word}")]
         public IActionResult Index(string word)
         {
-            var apiBaseUrl = _appConfig["ApiBaseUrl"] ?? "http://localhost:8000/api/";
-            var apiUserEmail = _appConfig["ApiUserEmail"] ?? "server@wazalo.com";
-            var apiPassword = _appConfig["ApiPassword"] ?? "123ABCabc!";
+            var apiBaseUrl = appConfig["ApiBaseUrl"] ?? "http://localhost:8000/api/";
+            var apiUserEmail = appConfig["ApiUserEmail"] ?? "server@wazalo.com";
+            var apiPassword = appConfig["ApiPassword"] ?? "123ABCabc!";
 
             ViewData["ApiBaseUrl"] = apiBaseUrl;
             ViewData["ApiUserEmail"] = apiUserEmail;
             ViewData["ApiPassword"] = apiPassword;
             ViewData["Word"] = word;
 
-            string token = null;
+            string token;
             if (HttpContext.Session.GetString("token") == null)
             {
                 token = GetJwtToken(apiBaseUrl, apiUserEmail, apiPassword);
@@ -92,16 +87,16 @@ namespace CrossWord.Web.Controllers
         [Route("synonymsbyid/{id}")]
         public IActionResult Index(int id)
         {
-            var apiBaseUrl = _appConfig["ApiBaseUrl"] ?? "http://localhost:8000/api/";
-            var apiUserEmail = _appConfig["ApiUserEmail"] ?? "server@wazalo.com";
-            var apiPassword = _appConfig["ApiPassword"] ?? "123ABCabc!";
+            var apiBaseUrl = appConfig["ApiBaseUrl"] ?? "http://localhost:8000/api/";
+            var apiUserEmail = appConfig["ApiUserEmail"] ?? "server@wazalo.com";
+            var apiPassword = appConfig["ApiPassword"] ?? "123ABCabc!";
 
             ViewData["ApiBaseUrl"] = apiBaseUrl;
             ViewData["ApiUserEmail"] = apiUserEmail;
             ViewData["ApiPassword"] = apiPassword;
             ViewData["WordId"] = id;
 
-            string token = null;
+            string token;
             if (HttpContext.Session.GetString("token") == null)
             {
                 token = GetJwtToken(apiBaseUrl, apiUserEmail, apiPassword);

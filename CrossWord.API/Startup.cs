@@ -1,41 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Swashbuckle.AspNetCore.Swagger;
 using Serilog;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.AspNet.OData.Extensions;
-using Microsoft.AspNet.OData.Builder;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using CrossWord.Scraper.MySQLDbService;
-using CrossWord.Scraper.MySQLDbService.Models;
 using CrossWord.Scraper.MySQLDbService.Entities;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json;
-using Microsoft.OData.Edm;
-using CrossWord.API.Configuration;
-using AutoMapper;
 using CrossWord.API.Services;
 using CrossWord.API.Hubs;
 using Microsoft.AspNetCore.HttpOverrides;
 using System.Net;
-using CrossWord.Scraper;
 using CrossWord.Scraper.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNet.OData.Extensions;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNet.OData.Builder;
+using CrossWord.API.Configuration;
 
 namespace CrossWord.API
 {
@@ -61,6 +42,8 @@ namespace CrossWord.API
                 Log.Information("{0}", config);
             }
 
+            services.AddProblemDetails();
+
             // had to add this to get the error on startup away (since the _LoginPartial.cshtml is using SignInManager)
             // todo: should probably just remove all that stuff from _LoginPartial.cshtml
             services.AddScoped<SignInManager<ApplicationUser>, SignInManager<ApplicationUser>>();
@@ -73,11 +56,17 @@ namespace CrossWord.API
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.None;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            // start DOCKER on port 3360
-            // docker run -p 3360:3306 --name mysqldb -e MYSQL_ROOT_PASSWORD=secret -d mysql:8.0.15
+            // either use a local mysql install running on port 3306 (default)
+            // or use Docker:
+            // spinning up directly on port 3360
+            // docker run -p 3360:3306 --name mysqldb -e MYSQL_ROOT_PASSWORD=password -d mysql:8.0.15            
+            // or use docker compose to init with data on port 3360
+            // docker compose up db -d
+            // and enter using
+            // docker exec -it crosswordapi.db mysql -uroot -psecret dictionary
 
             // Build database connection string
             var dbhost = Configuration["DBHOST"] ?? "localhost";
@@ -88,9 +77,12 @@ namespace CrossWord.API
 
             services.AddDbContext<WordHintDbContext>(options =>
             {
-                options.UseMySql($"server={dbhost}; user={dbuser}; pwd={dbpassword}; "
-                    + $"port={dbport}; database={database}; charset=utf8;");
+                string connectionString = $"server={dbhost}; user={dbuser}; pwd={dbpassword}; "
+                    + $"port={dbport}; database={database}; charset=utf8;";
+                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
             });
+
+            services.AddDatabaseDeveloperPageExceptionFilter();
 
             // Singleton objects are the same for every object and every request.
             // for this to be able to use the database
@@ -120,13 +112,7 @@ namespace CrossWord.API
             // ===== Add Jwt Authentication ========
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
             services
-                .AddAuthentication(options =>
-                {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
-                })
+                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(configureOptions =>
                 {
                     // Gets or sets if HTTPS is required for the metadata address or authority. 
@@ -175,27 +161,6 @@ namespace CrossWord.API
 
             // add auto mapper
             services.AddAutoMapper(typeof(Startup), typeof(AutoMapperProfile));
-
-            // note: Endpoint Routing is enabled by default; however, it is unsupported by OData and MUST be false
-            services.AddMvc(options =>
-                {
-                    options.EnableEndpointRouting = false; // TODO: Remove when OData does not causes exceptions anymore
-                })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .AddJsonOptions(opt =>
-                {
-                    opt.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                    // opt.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-                    // opt.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
-                    // opt.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
-                    // opt.SerializerSettings.MetadataPropertyHandling = MetadataPropertyHandling.Ignore;
-                    opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                })
-                ;
-
-            // Register the Swagger generator and enable OData
-            // services.AddODataSwaggerDocumentation();
-            services.AddODataVersioningSwaggerDocumentation();
 
             services.AddCors(o =>
             {
@@ -246,21 +211,26 @@ namespace CrossWord.API
 
             // Enable SignalR
             services.AddSignalR();
+
+            // Register the Swagger generator and enable OData
+            services.AddODataSwaggerDocumentation(); // camelCase: false
+            // services.AddODataVersioningSwaggerDocumentation(); // camelCase: false
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, WordHintDbContext db
-                            , VersionedODataModelBuilder modelBuilder
-                            , IApiVersionDescriptionProvider provider
-                            )
+        // https://github.com/rgudkov-uss/aspnetcore-net6-odata-swagger-versioned/blob/main/WebApiTest6/Program.cs
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, WordHintDbContext db
+            // , VersionedODataModelBuilder modelBuilder, IApiVersionDescriptionProvider provider
+        )
         {
+            // Configure the HTTP request pipeline.
             app.UseForwardedHeaders();
 
+            // if using WebApplication app, use app.Environment.IsDevelopment()
             if (env.IsDevelopment())
             {
                 app.UseRequestResponseLogging();
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
             }
             else
             {
@@ -270,8 +240,14 @@ namespace CrossWord.API
             }
 
             // app.UseHttpsRedirection(); // disable to use within docker behind a proxy
+
+            app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+
+            // if using WebApplication app, use:
+            // using (var scope = app.Services.CreateScope()) 
+            // var db = scope.ServiceProvider.GetRequiredService<WordHintDbContext>();
 
             // You would either call EnsureCreated() or Migrate(). 
             // EnsureCreated() is an alternative that completely skips the migrations pipeline and just creates a database that matches you current model. 
@@ -284,53 +260,63 @@ namespace CrossWord.API
 
             app.UseCors("Everything");
 
+            app.UseRouting();
+
             app.UseAuthentication();
 
-            // add signalr hub url
-            app.UseSignalR(routes =>
-            {
-                routes.MapHub<CrossWordSignalRHub>("/crosswordsignalrhub");
-            });
+            app.UseAuthorization();
 
-            // Add support for OData to MVC pipeline
-            var models = modelBuilder.GetEdmModels(); // versioning API
-            // var model = WordModelConfiguration.GetEdmModel(new ODataConventionModelBuilder()); // single odata API
-            app.UseMvc(routes =>
+            app.UseEndpoints(endpoints =>
             {
-                // routes.MapRoute(
-                //     name: "default",
-                //     template: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.SetTimeZoneInfo(TimeZoneInfo.Utc);
+
+                // add signalr hub url
+                endpoints.MapHub<CrossWordSignalRHub>("/crosswordsignalrhub");
+
+                // this automatically maps all the controllers with [ApiController] and [Route] attributes
+                endpoints.MapControllers();
+
+                // Add support for OData to app pipeline
+
+                // add the odata route automatically
+                endpoints.EnableDependencyInjection();
 
                 // setup odata filters
-                routes.Select().Expand().Filter().OrderBy().MaxTop(300).Count();
+                endpoints.Select().Expand().Filter().OrderBy().MaxTop(300).Count();
+
+                // Note! I am unable to get MapVersionedODataRoute working with Swagger!
+                // However using the non-versioned swagger support and MapODataRoute works!
+                // make sure to comment out the versioned methods from this configure method
+
+                // var modelBuilder = app.Services.GetRequiredService<VersionedODataModelBuilder>();
+                // Note! WordModelConfiguration is injected automatically if VersionedODataModelBuilder modelBuilder is added to this Configure methods
+                // var models = modelBuilder.GetEdmModels(); // versioning API
+                // endpoints.MapControllerRoute(
+                //     name: "default",
+                //     pattern: "{controller=Home}/{action=Index}/{id?}");
 
                 // version with query parameter
-                routes.MapVersionedODataRoutes(
-                    routeName: "odata",
-                    routePrefix: "odata",
-                    models: models);
+                // endpoints.MapVersionedODataRoute(
+                //     routeName: "odata",
+                //     routePrefix: "odata",
+                //     models: models);
 
                 // version by path
-                // routes.MapVersionedODataRoutes(
+                // endpoints.MapVersionedODataRoute(
                 //     routeName: "odata-bypath",
                 //     routePrefix: "odata/v{version:apiVersion}",
                 //     models: models);
 
                 // setup non-versioned odata route
-                // routes.MapODataServiceRoute("odata", "odata", model);
-
-                // Error: Cannot find the services container for the non-OData route. 
-                // This can occur when using OData components on the non-OData route and is usually a configuration issue. 
-                // Call EnableDependencyInjection() to enable OData components on non-OData routes. 
-                // This may also occur when a request was mistakenly handled by the ASP.NET Core routing layer instead of the OData routing layer, 
-                // for instance the URL does not include the OData route prefix configured via a call to MapODataServiceRoute().
-                // Workaround: https://github.com/OData/WebApi/issues/1175
-                // routes.EnableDependencyInjection();
+                // add odata routes manually
+                // to support routes: /odata/ and /odata/$metadata
+                var model = WordModelConfiguration.GetEdmModel(new ODataConventionModelBuilder()); // single odata API
+                endpoints.MapODataRoute("odata", "odata", model);
             });
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
-            app.UseODataVersioningSwaggerDocumentation(modelBuilder, provider);
-            // app.UseSwaggerDocumentation();
+            app.UseODataSwaggerDocumentation();
+            // app.UseODataVersioningSwaggerDocumentation(provider);
         }
     }
 }

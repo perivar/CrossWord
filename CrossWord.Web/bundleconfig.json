@@ -104,7 +104,7 @@
   },
   {
     "outputFileName": "wwwroot/lib/signalr/signalr.js",
-    "inputFiles": ["node_modules/@aspnet/signalr/dist/browser/signalr.js"],
+    "inputFiles": ["node_modules/@microsoft/signalr/dist/browser/signalr.js"],
     "minify": {
       "enabled": false,
       "renameLocals": false,
@@ -113,7 +113,7 @@
   },
   {
     "outputFileName": "wwwroot/lib/signalr/signalr.min.js",
-    "inputFiles": ["node_modules/@aspnet/signalr/dist/browser/signalr.min.js"],
+    "inputFiles": ["node_modules/@microsoft/signalr/dist/browser/signalr.min.js"],
     "minify": {
       "enabled": false,
       "renameLocals": false,

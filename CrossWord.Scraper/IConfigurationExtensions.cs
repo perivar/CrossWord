@@ -17,8 +17,7 @@ namespace CrossWord.Scraper.Extensions
         public static int GetIntValue(this IConfiguration configuration, string key, int defaultValue)
         {
             string stringValue = configuration[key] ?? defaultValue.ToString();
-            int returnValue = defaultValue;
-            int.TryParse(stringValue, out returnValue);
+            _ = int.TryParse(stringValue, out int returnValue);
             return returnValue;
         }
 
@@ -32,8 +31,7 @@ namespace CrossWord.Scraper.Extensions
         public static bool GetBoolValue(this IConfiguration configuration, string key, bool defaultValue)
         {
             string stringValue = configuration[key] ?? defaultValue.ToString();
-            bool returnValue = defaultValue;
-            bool.TryParse(stringValue, out returnValue);
+            _ = bool.TryParse(stringValue, out bool returnValue);
             return returnValue;
         }
 

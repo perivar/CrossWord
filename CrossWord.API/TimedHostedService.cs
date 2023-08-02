@@ -1,32 +1,26 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using CrossWord.Models;
 using CrossWord.Scraper.MySQLDbService;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace CrossWord.API
 {
     internal class TimedHostedService : IHostedService, IDisposable
     {
-        private readonly ILogger _logger;
-        private Timer _timer;
+        private readonly ILogger logger;
+        private Timer timer;
 
         public IServiceProvider Services { get; }
 
         public TimedHostedService(IServiceProvider services, ILogger<TimedHostedService> logger)
         {
-            Services = services;
-            _logger = logger;
+            this.Services = services;
+            this.logger = logger;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Timed Background Service is starting.");
+            logger.LogInformation("Timed Background Service is starting.");
 
-            _timer = new Timer(DoWork, null, TimeSpan.Zero,
+            timer = new Timer(DoWork, null, TimeSpan.Zero,
                 TimeSpan.FromSeconds(10));
 
             return Task.CompletedTask;
@@ -34,7 +28,7 @@ namespace CrossWord.API
 
         private void DoWork(object state)
         {
-            _logger.LogInformation("Timed Background Service is working.");
+            logger.LogInformation("Timed Background Service is working.");
 
             using (var scope = Services.CreateScope())
             {
@@ -47,7 +41,7 @@ namespace CrossWord.API
                     var board = model.ToCrossBoard();
 
                     // add in database
-                    var newTemplate = new CrossWord.Scraper.MySQLDbService.Models.CrosswordTemplate()
+                    var newTemplate = new Scraper.MySQLDbService.Models.CrosswordTemplate()
                     {
                         Rows = model.Size.Rows,
                         Cols = model.Size.Cols,
@@ -59,25 +53,24 @@ namespace CrossWord.API
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex,
-                        "An error occurred writing to the " +
-                        $"database. Error: {ex.Message}");
+                    logger.LogError(ex,
+                        $"An error occurred writing to the database. Error: {ex.Message}");
                 }
             }
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Timed Background Service is stopping.");
+            logger.LogInformation("Timed Background Service is stopping.");
 
-            _timer?.Change(Timeout.Infinite, 0);
+            timer?.Change(Timeout.Infinite, 0);
 
             return Task.CompletedTask;
         }
 
         public void Dispose()
         {
-            _timer?.Dispose();
+            timer?.Dispose();
         }
     }
 }

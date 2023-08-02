@@ -17,7 +17,7 @@ FROM mcr.microsoft.com/dotnet/runtime:7.0
 # Add .NET Core 2.2
 # uncomment if you need the SDK also (unlikely):
 # COPY --from=mcr.microsoft.com/dotnet/core/sdk:2.2 /usr/share/dotnet/sdk /usr/share/dotnet/sdk
-COPY --from=mcr.microsoft.com/dotnet/core/runtime:2.2 /usr/share/dotnet /usr/share/dotnet
+# COPY --from=mcr.microsoft.com/dotnet/core/runtime:2.2 /usr/share/dotnet /usr/share/dotnet
 
 # Install Chrome Stable and the related version of ChromeDriver
 # https://gist.github.com/varyonic/dea40abcf3dd891d204ef235c6e8dd79

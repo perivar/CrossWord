@@ -1,11 +1,9 @@
-using System;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using CrossWord.Scraper.MySQLDbService.Models;
 using CrossWord.Scraper.MySQLDbService.Entities;
-
+using Serilog;
 
 namespace CrossWord.Scraper.MySQLDbService
 {
@@ -29,17 +27,18 @@ namespace CrossWord.Scraper.MySQLDbService
         {
         }
 
-        // models for raw sql queries, i.e. FromSql queries
-        public DbQuery<WordRelationQueryModel> WordRelationQueryModels { get; set; }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            Log.Information("WordHintDbContext: OnConfiguring()");
             base.OnConfiguring(optionsBuilder);
+
+            Log.Information("WordHintDbContext: Replacing built-in generator with CustomMySqlMigrationsSqlGenerator");
             optionsBuilder.ReplaceService<IMigrationsSqlGenerator, CustomMySqlMigrationsSqlGenerator>();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            Log.Information("WordHintDbContext: OnModelCreating()");
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<WordRelation>()
@@ -69,22 +68,26 @@ namespace CrossWord.Scraper.MySQLDbService
             // ensure the value field is accent sensitive and case sensitive
             modelBuilder.Entity<Word>()
                         .Property(w => w.Value)
-                        .HasAnnotation("MySql:Collation", "utf8mb4_0900_as_cs"); // Note! this only works with the Pomelo driver if overriding MySqlMigrationsSqlGenerator
+                        // .HasAnnotation("MySql:Collation", "utf8mb4_0900_as_cs"); // Note! this only works with the Pomelo driver if overriding ColumnDefinition in MySqlMigrationsSqlGenerator
+                        .UseCollation("utf8mb4_0900_as_cs");
 
             // ensure the Source field is accent sensitive and case sensitive
             // Note! this didn't actually do anything - had to add the collation manually in StatesCollation -> Up(MigrationBuilder migrationBuilder)
             modelBuilder.Entity<State>()
                         .Property(w => w.Word)
-                        .HasAnnotation("MySql:Collation", "utf8mb4_0900_as_cs"); // Note! this only works with the Pomelo driver if overriding MySqlMigrationsSqlGenerator
+                        // .HasAnnotation("MySql:Collation", "utf8mb4_0900_as_cs"); // Note! this only works with the Pomelo driver if overriding ColumnDefinition in MySqlMigrationsSqlGenerator
+                        .UseCollation("utf8mb4_0900_as_cs");
 
             modelBuilder.Entity<State>()
                         .Property(w => w.Comment)
-                        .HasAnnotation("MySql:Collation", "utf8mb4_0900_as_cs"); // Note! this only works with the Pomelo driver if overriding MySqlMigrationsSqlGenerator
+                        // .HasAnnotation("MySql:Collation", "utf8mb4_0900_as_cs"); // Note! this only works with the Pomelo driver if overriding ColumnDefinition in MySqlMigrationsSqlGenerator
+                        .UseCollation("utf8mb4_0900_as_cs");
 
             // Save array of string in EntityFramework Core by using a private field to store the array as a string
             modelBuilder.Entity<CrosswordTemplate>()
-                        .Property<string>("GridCollection")
-                        .HasField("_grid");
+                        .Property<string>("_grid") // Name of field
+                        .UsePropertyAccessMode(PropertyAccessMode.Field) // Access mode type
+                        .HasColumnName("GridCollection"); // Db column name
 
              // each User can have many entries in the RefreshTokens table
             modelBuilder.Entity<ApplicationUser>()

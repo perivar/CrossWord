@@ -7,6 +7,7 @@ namespace CrossWord.API.Configuration
 {
     /// <summary>
     /// Represents the model configuration for words.
+    /// This is injected automatically in Startup Configure using VersionedODataModelBuilder modelBuilder
     /// </summary>
     public class WordModelConfiguration : IModelConfiguration
     {
@@ -15,38 +16,24 @@ namespace CrossWord.API.Configuration
         /// </summary>
         /// <param name="builder">The <see cref="ODataModelBuilder">builder</see> used to apply configurations.</param>
         /// <param name="apiVersion">The <see cref="ApiVersion">API version</see> associated with the <paramref name="builder"/>.</param>
-        public void Apply(ODataModelBuilder builder, ApiVersion apiVersion)
+        public void Apply(ODataModelBuilder builder, ApiVersion apiVersion, string? routePrefix)
         {
-            var word = builder.EntitySet<Word>("Words").EntityType;
-            word.HasKey(o => o.WordId);
+            builder.EntitySet<Word>("Words").EntityType.HasKey(o => o.WordId);
 
-            // bind a function to the words odata controller
-            // GET /odata/Words/Synonyms(Word='FORFATTER')?$select=WordId,Value&$top=20&orderby=WordId%20desc
-            // GET /odata/Words/Synonyms(Word='FORFATTER')?$apply=groupby((Value))&$top=100&$count=true
-            var function = builder
-                .EntityType<Word>().Collection // bound to Word, comment to make it unbounded
-                .Function("Synonyms")
-                // .ReturnsCollection<Word>() // use when unbounded
-                .ReturnsCollectionFromEntitySet<Word>("Words") // Bound to the Words odata controller
-                .Parameter<string>("Word");
-
-            // bind a function to the words odata controller
-            // GET /odata/Words/Synonyms(Word='FORFATTER', Pattern='_____')?$select=WordId,Value&$top=20&orderby=WordId%20desc
-            // GET /odata/Words/Synonyms(Word='FORFATTER', Pattern='_____')?$apply=groupby((Value))&$top=100&$count=true
-            var functionWithPattern = builder
-                            .EntityType<Word>().Collection // bound to Word, comment to make it unbounded
-                            .Function("Synonyms")
-                            // .ReturnsCollection<Word>() // use when unbounded
-                            .ReturnsCollectionFromEntitySet<Word>("Words") // Bound to the Words odata controller
-                            ;
-            functionWithPattern.Parameter<string>("Word");
-            functionWithPattern.Parameter<string>("Pattern");
+            BindFunctions(builder);
         }
 
         public static IEdmModel GetEdmModel(ODataModelBuilder builder)
         {
-            builder.EntitySet<Word>("Words");
+            builder.EntitySet<Word>("Words").EntityType.HasKey(o => o.WordId);
 
+            BindFunctions(builder);
+
+            return builder.GetEdmModel();
+        }
+
+        public static void BindFunctions(ODataModelBuilder builder)
+        {
             // bind a function to the words odata controller
             // GET /odata/Words/Synonyms(Word='FORFATTER')?$select=WordId,Value&$top=20&orderby=WordId%20desc
             // GET /odata/Words/Synonyms(Word='FORFATTER')?$apply=groupby((Value))&$top=100&$count=true
@@ -54,22 +41,21 @@ namespace CrossWord.API.Configuration
                 .EntityType<Word>().Collection // bound to Word, comment to make it unbounded
                 .Function("Synonyms")
                 // .ReturnsCollection<Word>() // use when unbounded
-                .ReturnsCollectionFromEntitySet<Word>("Words") // Bound to the Words odata controller
-                .Parameter<string>("Word");
+                .ReturnsCollectionFromEntitySet<Word>("Words") // Bound to the Words odata controller                
+                ;
+            function.Parameter<string>("Word");
 
             // bind a function to the words odata controller
             // GET /odata/Words/Synonyms(Word='FORFATTER', Pattern='_____')?$select=WordId,Value&$top=20&orderby=WordId%20desc
             // GET /odata/Words/Synonyms(Word='FORFATTER', Pattern='_____')?$apply=groupby((Value))&$top=100&$count=true
             var functionWithPattern = builder
-                            .EntityType<Word>().Collection // bound to Word, comment to make it unbounded
-                            .Function("Synonyms")
-                            // .ReturnsCollection<Word>() // use when unbounded
-                            .ReturnsCollectionFromEntitySet<Word>("Words") // Bound to the Words odata controller
-                            ;
+                .EntityType<Word>().Collection // bound to Word, comment to make it unbounded
+                .Function("Synonyms")
+                // .ReturnsCollection<Word>() // use when unbounded
+                .ReturnsCollectionFromEntitySet<Word>("Words") // Bound to the Words odata controller
+                ;
             functionWithPattern.Parameter<string>("Word");
             functionWithPattern.Parameter<string>("Pattern");
-
-            return builder.GetEdmModel();
         }
     }
 }

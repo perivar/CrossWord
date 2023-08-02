@@ -4,41 +4,41 @@ namespace CrossWord.TestApp
 {
     public class CommandStore
     {
-        readonly IList<string> _commandQueue;
-        readonly object _lockObject = new object();
-        readonly object _outLockObject = new object();
-        int _count;
+        readonly IList<string> commandQueue;
+        readonly object lockObject = new();
+        readonly object outLockObject = new();
+        int count;
 
         public CommandStore()
         {
-            _commandQueue = new List<string>();
-            _count = 0;
+            commandQueue = new List<string>();
+            count = 0;
         }
 
         public int Count
         {
-            get { return _count; }
+            get { return count; }
         }
 
         public void AddCommand(string aCommand)
         {
-            lock (_lockObject)
+            lock (lockObject)
             {
-                _commandQueue.Add(aCommand);
-                _count++;
+                commandQueue.Add(aCommand);
+                count++;
             }
         }
 
         public string PopCommand()
         {
             string result = null;
-            lock (_lockObject)
+            lock (lockObject)
             {
-                if (_commandQueue.Count > 0)
+                if (commandQueue.Count > 0)
                 {
-                    result = _commandQueue[0];
-                    _commandQueue.RemoveAt(0);
-                    _count--;
+                    result = commandQueue[0];
+                    commandQueue.RemoveAt(0);
+                    count--;
                 }
             }
             return result;
@@ -46,7 +46,7 @@ namespace CrossWord.TestApp
 
         public object Lock
         {
-            get { return _outLockObject; }
+            get { return outLockObject; }
         }
     }
 }
