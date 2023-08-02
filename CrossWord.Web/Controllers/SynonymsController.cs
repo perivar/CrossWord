@@ -35,6 +35,7 @@ namespace CrossWord.Web.Controllers
         public IActionResult Index()
         {
             var apiBaseUrl = appConfig["ApiBaseUrl"] ?? "http://localhost:8000/api/";
+            var apiBaseLocalUrl = appConfig["ApiBaseLocalUrl"] ?? apiBaseUrl; // to support localhost in docker
             var apiUserEmail = appConfig["ApiUserEmail"] ?? "server@wazalo.com";
             var apiPassword = appConfig["ApiPassword"] ?? "123ABCabc!";
 
@@ -45,7 +46,7 @@ namespace CrossWord.Web.Controllers
             string token;
             if (HttpContext.Session.GetString("token") == null)
             {
-                token = GetJwtToken(apiBaseUrl, apiUserEmail, apiPassword);
+                token = GetJwtToken(apiBaseLocalUrl, apiUserEmail, apiPassword);
                 if (token != null) HttpContext.Session.SetString("token", token);
             }
             else
@@ -61,6 +62,7 @@ namespace CrossWord.Web.Controllers
         public IActionResult Index(string word)
         {
             var apiBaseUrl = appConfig["ApiBaseUrl"] ?? "http://localhost:8000/api/";
+            var apiBaseLocalUrl = appConfig["ApiBaseLocalUrl"] ?? apiBaseUrl; // to support localhost in docker
             var apiUserEmail = appConfig["ApiUserEmail"] ?? "server@wazalo.com";
             var apiPassword = appConfig["ApiPassword"] ?? "123ABCabc!";
 
@@ -72,7 +74,7 @@ namespace CrossWord.Web.Controllers
             string token;
             if (HttpContext.Session.GetString("token") == null)
             {
-                token = GetJwtToken(apiBaseUrl, apiUserEmail, apiPassword);
+                token = GetJwtToken(apiBaseLocalUrl, apiUserEmail, apiPassword);
                 if (token != null) HttpContext.Session.SetString("token", token);
             }
             else
@@ -88,6 +90,7 @@ namespace CrossWord.Web.Controllers
         public IActionResult Index(int id)
         {
             var apiBaseUrl = appConfig["ApiBaseUrl"] ?? "http://localhost:8000/api/";
+            var apiBaseLocalUrl = appConfig["ApiBaseLocalUrl"] ?? apiBaseUrl; // to support localhost in docker
             var apiUserEmail = appConfig["ApiUserEmail"] ?? "server@wazalo.com";
             var apiPassword = appConfig["ApiPassword"] ?? "123ABCabc!";
 
@@ -99,7 +102,7 @@ namespace CrossWord.Web.Controllers
             string token;
             if (HttpContext.Session.GetString("token") == null)
             {
-                token = GetJwtToken(apiBaseUrl, apiUserEmail, apiPassword);
+                token = GetJwtToken(apiBaseLocalUrl, apiUserEmail, apiPassword);
                 if (token != null) HttpContext.Session.SetString("token", token);
             }
             else
