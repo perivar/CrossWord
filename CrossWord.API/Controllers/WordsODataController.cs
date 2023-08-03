@@ -13,8 +13,6 @@ namespace CrossWord.API.Controllers
 {
     [Produces("application/json")]
     [ApiController]
-    [ApiExplorerSettings(IgnoreApi = false)]
-    [Route("odata/Words")]
     public class WordsODataController : ODataController
     {
         private readonly IConfiguration config;
@@ -32,7 +30,7 @@ namespace CrossWord.API.Controllers
 
         [HttpGet]
         [EnableQuery]
-        [Route("")]
+        [Route("odata/Words")]
         public IQueryable<Word> Get()
         {
             if (!Request.Query.ContainsKey("$top"))
@@ -53,7 +51,8 @@ namespace CrossWord.API.Controllers
 
         [HttpGet]
         [EnableQuery]
-        [Route("({key})")]
+        [Route("odata/Words({key})")]
+        [Route("odata/Words/{key}")]
         public SingleResult<Word> Get([FromRoute] int key)
         {
             var word = db.Words
@@ -66,7 +65,7 @@ namespace CrossWord.API.Controllers
 
         [HttpGet]
         [EnableQuery]
-        [Route("Synonyms(Word={word})")]
+        [Route("odata/Words/Synonyms(Word={word})")]
         public IQueryable<Word> GetSynonyms([FromRoute] string word)
         {
             word = word.ToUpper();
@@ -97,7 +96,7 @@ namespace CrossWord.API.Controllers
 
         [HttpGet]
         [EnableQuery]
-        [Route("SynonymsPattern(Word={word}, Pattern={pattern})")]
+        [Route("odata/Words/SynonymsPattern(Word={word}, Pattern={pattern})")]
         public IQueryable<Word> GetSynonymsPattern([FromRoute] string word, [FromRoute] string pattern)
         {
             word = word.ToUpper();
