@@ -5,13 +5,14 @@ using Microsoft.AspNetCore.Identity;
 using CrossWord.Scraper.MySQLDbService;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNet.OData;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
+using Microsoft.AspNetCore.OData.Query;
+using Microsoft.AspNetCore.OData.Results;
 
 namespace CrossWord.API.Controllers
 {
     [Produces("application/json")]
-    [ApiController] // The [ApiController] attribute makes attribute routing a requirement.
-    [ApiVersion("1.0")]
+    [ApiController]
     [ApiExplorerSettings(IgnoreApi = false)]
     [Route("odata/Words")]
     public class WordsODataController : ODataController

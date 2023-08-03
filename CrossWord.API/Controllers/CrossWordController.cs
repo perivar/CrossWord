@@ -10,7 +10,6 @@ namespace CrossWord.API.Controllers
 {
     [Produces("application/json")]
     [ApiController]
-    [ApiVersion("1.0")]
     // [Route("api/[controller]/[action]")] // disable the default route and use method specific routes instead
     public class CrossWordController : ControllerBase
     {

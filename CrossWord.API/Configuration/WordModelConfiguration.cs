@@ -1,30 +1,18 @@
 using CrossWord.Scraper.MySQLDbService.Models;
-using Microsoft.AspNet.OData.Builder;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.OData.Edm;
+using Microsoft.OData.ModelBuilder;
 
 namespace CrossWord.API.Configuration
 {
     /// <summary>
     /// Represents the model configuration for words.
-    /// This is injected automatically in Startup Configure using VersionedODataModelBuilder modelBuilder
     /// </summary>
-    public class WordModelConfiguration : IModelConfiguration
+    public class WordModelConfiguration
     {
-        /// <summary>
-        /// Applies model configurations using the provided builder for the specified API version.
-        /// </summary>
-        /// <param name="builder">The <see cref="ODataModelBuilder">builder</see> used to apply configurations.</param>
-        /// <param name="apiVersion">The <see cref="ApiVersion">API version</see> associated with the <paramref name="builder"/>.</param>
-        public void Apply(ODataModelBuilder builder, ApiVersion apiVersion, string? routePrefix)
+        public static IEdmModel GetEdmModel(ODataConventionModelBuilder builder)
         {
-            builder.EntitySet<Word>("Words").EntityType.HasKey(o => o.WordId);
-
-            BindFunctions(builder);
-        }
-
-        public static IEdmModel GetEdmModel(ODataModelBuilder builder)
-        {
+            builder.EnableLowerCamelCase(); // turn on "lower camel case" for the whole model 
+            
             builder.EntitySet<Word>("Words").EntityType.HasKey(o => o.WordId);
 
             BindFunctions(builder);

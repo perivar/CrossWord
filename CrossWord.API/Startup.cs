@@ -13,10 +13,10 @@ using CrossWord.Scraper.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNet.OData.Extensions;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.AspNet.OData.Builder;
 using CrossWord.API.Configuration;
+using Microsoft.OData.ModelBuilder;
+using Microsoft.AspNetCore.OData;
+using System.Text.Json;
 
 namespace CrossWord.API
 {
@@ -41,6 +41,9 @@ namespace CrossWord.API
             {
                 Log.Information("{0}", config);
             }
+
+            // configure the edm model for odata
+            var model = WordModelConfiguration.GetEdmModel(new ODataConventionModelBuilder());
 
             services.AddProblemDetails();
 
@@ -162,6 +165,32 @@ namespace CrossWord.API
             // add auto mapper
             services.AddAutoMapper(typeof(Startup), typeof(AutoMapperProfile));
 
+            services.AddControllers()
+            .AddJsonOptions(options =>
+                {
+                    // turn on camel case for non EDM controllers, see EnableLowerCamelCase() for EDM models
+                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                    options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
+                    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                    // options.JsonSerializerOptions.WriteIndented = true; // disable indented to save bandwidth and align with odata defaults
+                })
+            .AddOData(
+                options =>
+                {
+                    options.Select().Filter().OrderBy().Expand().Count().SetMaxTop(300);
+                    options.AddRouteComponents("odata", model);
+                });
+
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            services.AddEndpointsApiExplorer();
+            services.AddSwaggerGen(c =>
+            {
+                // Add support for OData-like REST endpoint with [EnableQuery]
+                c.OperationFilter<ODataOperationFilter>();
+
+                c.EnableBearingAuthentication();
+            });
+
             services.AddCors(o =>
             {
                 o.AddPolicy("Everything",
@@ -211,17 +240,11 @@ namespace CrossWord.API
 
             // Enable SignalR
             services.AddSignalR();
-
-            // Register the Swagger generator and enable OData
-            services.AddODataSwaggerDocumentation(); // camelCase: false
-            // services.AddODataVersioningSwaggerDocumentation(); // camelCase: false
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         // https://github.com/rgudkov-uss/aspnetcore-net6-odata-swagger-versioned/blob/main/WebApiTest6/Program.cs
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, WordHintDbContext db
-            // , VersionedODataModelBuilder modelBuilder, IApiVersionDescriptionProvider provider
-        )
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, WordHintDbContext db)
         {
             // Configure the HTTP request pipeline.
             app.UseForwardedHeaders();
@@ -239,15 +262,22 @@ namespace CrossWord.API
                 app.UseHsts();
             }
 
+            // Use odata route debug, /$odata
+            app.UseODataRouteDebug();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.DefaultModelsExpandDepth(-1); // hides schemas dropdown
+                options.EnableTryItOutByDefault();
+            });
+
             // app.UseHttpsRedirection(); // disable to use within docker behind a proxy
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-
-            // if using WebApplication app, use:
-            // using (var scope = app.Services.CreateScope()) 
-            // var db = scope.ServiceProvider.GetRequiredService<WordHintDbContext>();
 
             // You would either call EnsureCreated() or Migrate(). 
             // EnsureCreated() is an alternative that completely skips the migrations pipeline and just creates a database that matches you current model. 
@@ -268,55 +298,12 @@ namespace CrossWord.API
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.SetTimeZoneInfo(TimeZoneInfo.Utc);
-
                 // add signalr hub url
                 endpoints.MapHub<CrossWordSignalRHub>("/crosswordsignalrhub");
 
                 // this automatically maps all the controllers with [ApiController] and [Route] attributes
                 endpoints.MapControllers();
-
-                // Add support for OData to app pipeline
-
-                // add the odata route automatically
-                endpoints.EnableDependencyInjection();
-
-                // setup odata filters
-                endpoints.Select().Expand().Filter().OrderBy().MaxTop(300).Count();
-
-                // Note! I am unable to get MapVersionedODataRoute working with Swagger!
-                // However using the non-versioned swagger support and MapODataRoute works!
-                // make sure to comment out the versioned methods from this configure method
-
-                // var modelBuilder = app.Services.GetRequiredService<VersionedODataModelBuilder>();
-                // Note! WordModelConfiguration is injected automatically if VersionedODataModelBuilder modelBuilder is added to this Configure methods
-                // var models = modelBuilder.GetEdmModels(); // versioning API
-                // endpoints.MapControllerRoute(
-                //     name: "default",
-                //     pattern: "{controller=Home}/{action=Index}/{id?}");
-
-                // version with query parameter
-                // endpoints.MapVersionedODataRoute(
-                //     routeName: "odata",
-                //     routePrefix: "odata",
-                //     models: models);
-
-                // version by path
-                // endpoints.MapVersionedODataRoute(
-                //     routeName: "odata-bypath",
-                //     routePrefix: "odata/v{version:apiVersion}",
-                //     models: models);
-
-                // setup non-versioned odata route
-                // add odata routes manually
-                // to support routes: /odata/ and /odata/$metadata
-                var model = WordModelConfiguration.GetEdmModel(new ODataConventionModelBuilder()); // single odata API
-                endpoints.MapODataRoute("odata", "odata", model);
             });
-
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
-            app.UseODataSwaggerDocumentation();
-            // app.UseODataVersioningSwaggerDocumentation(provider);
         }
     }
 }

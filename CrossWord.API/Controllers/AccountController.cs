@@ -16,8 +16,6 @@ namespace CrossWord.API.Controllers
 {
     [Produces("application/json")]
     [ApiController] // Note this breaks HttpPost parameters that are not a model, like a Login method with username and password as string parameters
-    // [ApiVersionNeutral]
-    [ApiVersion("1.0")] // this attribute isn't required, but it's easier to understand
     [Route("api/[controller]/[action]")]
     public class AccountController : ControllerBase
     {
