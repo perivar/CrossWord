@@ -12,11 +12,6 @@ RUN dotnet publish -c Release -o out
 # Build runtime image
 FROM perivar/dotnet7runtime-chromedriver:latest
 
-# Add .NET Core 2.2
-# uncomment if you need the SDK also (unlikely):
-# COPY --from=mcr.microsoft.com/dotnet/core/sdk:2.2 /usr/share/dotnet/sdk /usr/share/dotnet/sdk
-# COPY --from=mcr.microsoft.com/dotnet/core/runtime:2.2 /usr/share/dotnet /usr/share/dotnet
-
 # Copy and ensure the app directory is owned by the chrome user 
 COPY --from=build /app/ /app
 WORKDIR /app/out
