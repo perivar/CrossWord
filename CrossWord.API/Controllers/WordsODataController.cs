@@ -53,7 +53,7 @@ namespace CrossWord.API.Controllers
 
         [HttpGet]
         [EnableQuery]
-        [Route("({key)")]
+        [Route("({key})")]
         public SingleResult<Word> Get([FromRoute] int key)
         {
             var word = db.Words
