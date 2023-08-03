@@ -42,7 +42,11 @@ namespace TodoApi
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(c =>
+            {
+                // Add support for OData-like REST endpoint with [EnableQuery]
+                c.OperationFilter<ODataOperationFilter>();
+            });
             services.AddCors(option =>
             {
                 option.AddPolicy("Everything",
