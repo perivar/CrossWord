@@ -13,9 +13,6 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="netstandard" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\CrossWord\CrossWord.csproj" />
   </ItemGroup>
 </Project>

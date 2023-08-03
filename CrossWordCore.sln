@@ -1,4 +1,4 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26403.7
@@ -18,6 +18,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrossWord.API", "CrossWord.API\CrossWord.API.csproj", "{AF8E4F14-00E1-4E3B-B7EB-1D7DE32E2747}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CrossWord.DbMigrate", "CrossWord.DbMigrate\CrossWord.DbMigrate.csproj", "{75329F57-9C53-48CD-A7FE-75A80EB6EA8F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoApi", "TodoApi\TodoApi.csproj", "{9DC0EBED-58EA-4019-95D9-07C249FE9134}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +55,10 @@ Global
 		{75329F57-9C53-48CD-A7FE-75A80EB6EA8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75329F57-9C53-48CD-A7FE-75A80EB6EA8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75329F57-9C53-48CD-A7FE-75A80EB6EA8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DC0EBED-58EA-4019-95D9-07C249FE9134}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DC0EBED-58EA-4019-95D9-07C249FE9134}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DC0EBED-58EA-4019-95D9-07C249FE9134}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DC0EBED-58EA-4019-95D9-07C249FE9134}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
