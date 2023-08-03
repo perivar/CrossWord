@@ -1,43 +1,16 @@
-using Microsoft.AspNetCore.OData;
-using Microsoft.OData.ModelBuilder;
-using TodoApi.Models;
+using Microsoft.AspNetCore;
 
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var modelBuilder = new ODataConventionModelBuilder();
-modelBuilder.EntityType<Order>();
-modelBuilder.EntitySet<Customer>("Customers");
-
-builder.Services.AddControllers().AddOData(
-    options => options.Select().Filter().OrderBy().Expand().Count().SetMaxTop(null).AddRouteComponents(
-        "odata",
-        modelBuilder.GetEdmModel()));
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+namespace TodoApi
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            CreateWebHostBuilder(args).Build().Run();
+        }
+
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+            WebHost.CreateDefaultBuilder(args)
+                .UseStartup<Startup>();
+    }
 }
-
-// app.UseHttpsRedirection();
-
-app.MapControllers();
-
-app.UseRouting();
-
-app.UseAuthorization();
-
-app.Run();
-
-
-
