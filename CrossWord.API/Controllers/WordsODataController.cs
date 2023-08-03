@@ -97,8 +97,8 @@ namespace CrossWord.API.Controllers
 
         [HttpGet]
         [EnableQuery]
-        [Route("Synonyms(Word={word})/Pattern={pattern}")]
-        public IQueryable<Word> GetSynonyms([FromRoute] string word, [FromRoute] string pattern)
+        [Route("SynonymsPattern(Word={word}, Pattern={pattern})")]
+        public IQueryable<Word> GetSynonymsPattern([FromRoute] string word, [FromRoute] string pattern)
         {
             word = word.ToUpper();
             pattern = pattern.ToUpper();

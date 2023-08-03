@@ -34,11 +34,11 @@ namespace CrossWord.API.Configuration
             function.Parameter<string>("Word");
 
             // bind a function to the words odata controller
-            // GET /odata/Words/Synonyms(Word='FORFATTER', Pattern='_____')?$select=WordId,Value&$top=20&orderby=WordId%20desc
-            // GET /odata/Words/Synonyms(Word='FORFATTER', Pattern='_____')?$apply=groupby((Value))&$top=100&$count=true
+            // GET /odata/Words/SynonymsPattern(Word='FORFATTER', Pattern='_____')?$select=WordId,Value&$top=20&orderby=WordId%20desc
+            // GET /odata/Words/SynonymsPattern(Word='FORFATTER', Pattern='_____')?$apply=groupby((Value))&$top=100&$count=true
             var functionWithPattern = builder
                 .EntityType<Word>().Collection // bound to Word, comment to make it unbounded
-                .Function("Synonyms")
+                .Function("SynonymsPattern")
                 // .ReturnsCollection<Word>() // use when unbounded
                 .ReturnsCollectionFromEntitySet<Word>("Words") // Bound to the Words odata controller
                 ;
