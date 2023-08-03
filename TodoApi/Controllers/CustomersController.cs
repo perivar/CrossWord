@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
@@ -10,8 +7,8 @@ namespace TodoApi.Controllers;
 
 public class CustomersController : ODataController
 {
-    private static Random random = new Random();
-    private static List<Customer> customers = new List<Customer>(
+    private static readonly Random random = new();
+    private static readonly List<Customer> customers = new(
         Enumerable.Range(1, 3).Select(idx => new Customer
         {
             Id = idx,
