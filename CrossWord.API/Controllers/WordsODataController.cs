@@ -11,8 +11,6 @@ using Microsoft.AspNetCore.OData.Results;
 
 namespace CrossWord.API.Controllers
 {
-    [Produces("application/json")]
-    [ApiController]
     public class WordsODataController : ODataController
     {
         private readonly IConfiguration config;
@@ -28,44 +26,31 @@ namespace CrossWord.API.Controllers
             this.apiExplorer = apiExplorer;
         }
 
-        [HttpGet]
-        [EnableQuery]
-        [Route("odata/Words")]
+        [EnableQuery(PageSize = 20)]
+        [HttpGet("odata/Words")]
+        [HttpGet("odata/Words/$count")]
         public IQueryable<Word> Get()
         {
-            if (!Request.Query.ContainsKey("$top"))
-            {
-                // make sure we always limit somewhat so that we don't ask for the full database
-                return db.Words
-                        .AsNoTracking()
-                        .Take(50)
-                        .AsQueryable();
-            }
-            else
-            {
-                return db.Words
-                        .AsNoTracking()
-                        .AsQueryable();
-            }
+            return db.Words
+                    .AsNoTracking()
+                    .AsQueryable();
         }
 
-        [HttpGet]
         [EnableQuery]
-        [Route("odata/Words({key})")]
-        [Route("odata/Words/{key}")]
-        public SingleResult<Word> Get([FromRoute] int key)
+        [HttpGet("odata/Words({id})")]
+        [HttpGet("odata/Words/{id}")]
+        public SingleResult<Word> Get([FromRoute] int id)
         {
             var word = db.Words
                             .AsNoTracking()
-                            .Where(w => w.WordId == key)
+                            .Where(w => w.WordId == id)
                             .AsQueryable();
 
             return new SingleResult<Word>(word);
         }
 
-        [HttpGet]
         [EnableQuery]
-        [Route("odata/Words/Synonyms(Word={word})")]
+        [HttpGet("odata/Words/Synonyms(Word={word})")]
         public IQueryable<Word> GetSynonyms([FromRoute] string word)
         {
             word = word.ToUpper();
@@ -94,9 +79,8 @@ namespace CrossWord.API.Controllers
             return wordRelations.AsQueryable();
         }
 
-        [HttpGet]
         [EnableQuery]
-        [Route("odata/Words/SynonymsPattern(Word={word}, Pattern={pattern})")]
+        [HttpGet("odata/Words/SynonymsPattern(Word={word}, Pattern={pattern})")]
         public IQueryable<Word> GetSynonymsPattern([FromRoute] string word, [FromRoute] string pattern)
         {
             word = word.ToUpper();
