@@ -1,62 +1,49 @@
-using System.Collections.Generic;
 using System.IO;
 
-namespace CrossWord
+namespace CrossWord;
+
+public enum Constants
 {
-    public enum Constants
+    Unbounded = 999999999,
+}
+
+public enum Orientation : byte
+{
+    Horizontal = 0,
+    Vertical = 1,
+}
+
+public struct StartWord
+{
+    public int StartX { get; set; }
+    public int StartY { get; set; }
+}
+
+public interface ICrossBoard
+{
+    //initialization phase
+    void AddStartWord(StartWord aStartWord);
+
+    void AddStartWord(int aX, int aY)
     {
-        Unbounded = 999999999,
+        var sw = new StartWord { StartX = aX, StartY = aY };
+        AddStartWord(sw);
     }
 
-    public enum Orientation : byte
-    {
-        Horizontal = 0,
-        Vertical = 1,
-    }
+    void Preprocess(ICrossDictionary aDict);
 
-    public struct StartWord
-    {
-        string[] _label; // one for each Orientation
-        public int StartX { get; set; }
+    int MaxWordLength { get; }
 
-        public int StartY { get; set; }
+    //enumerate patterns
+    int GetPatternCount();
+    CrossPattern GetCrossPattern(int aIndex);
 
-        public string[] Label
-        {
-            get { return _label ?? (_label = new string[2]); }
-        }
+    CrossPattern? GetMostConstrainedPattern(ICrossDictionary aDict);
 
-        public override string ToString()
-        {
-            return string.Format("X: {0}, Y: {1}, Label: {2}", StartX, StartY, Label);
-        }
-    }
+    void WriteTo(StreamWriter writer);
+    void WritePatternsTo(StreamWriter writer);
+    void WritePatternsTo(StreamWriter writer, ICrossDictionary dictionary);
+    void CheckPatternValidity();
 
-    public interface ICrossBoard
-    {
-        //initialization phase
-        void SetBoardSize(int aX, int aY);
-        void AddStartWord(StartWord aStartWord);
-        void AddStartWord(int aX, int aY);
-        void Preprocess(ICrossDictionary aDict);
-
-        int MaxWordLength { get; }
-
-        //enumerate patterns
-        int GetPatternCount();
-        CrossPattern GetCrossPattern(int aIndex);
-        IList<CrossPattern> CrossPatterns { get; }
-
-        CrossPattern GetMostConstrainedPattern(ICrossDictionary aDict);
-
-        //get pattern at given position
-        CrossPattern GetCrossPattern(int aStartX, int aStartY, Orientation aOrientation);
-
-        void WriteTo(StreamWriter writer);
-        void WritePatternsTo(StreamWriter writer);
-        void WritePatternsTo(StreamWriter writer, ICrossDictionary dictionary);
-        void CheckPatternValidity();
-
-        ICrossBoard Clone();
-    }
+    ICrossBoard Clone();
 }

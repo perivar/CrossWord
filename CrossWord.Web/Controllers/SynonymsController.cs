@@ -9,6 +9,7 @@ using System.Text;
 using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
+using System.Threading;
 
 namespace CrossWord.Web.Controllers
 {
@@ -114,7 +115,7 @@ namespace CrossWord.Web.Controllers
             return View();
         }
 
-        private string GetJwtToken(string apiBaseUrl, string apiUserEmail, string apiPassword)
+        private static string GetJwtToken(string apiBaseUrl, string apiUserEmail, string apiPassword)
         {
             var authUrl = $"{apiBaseUrl}Account/Login";
 
@@ -125,21 +126,17 @@ namespace CrossWord.Web.Controllers
             string token = string.Empty;
             using (var httpClient = new HttpClient())
             {
-                using (var request = new HttpRequestMessage(HttpMethod.Post, authUrl))
+                using var request = new HttpRequestMessage(HttpMethod.Post, authUrl);
+                var stringContent = new StringContent(JsonConvert.SerializeObject(userModel), Encoding.UTF8, "application/json");
+                request.Content = stringContent;
+
+                using var response = httpClient.SendAsync(request, CancellationToken.None).Result;
+                var content = response.Content.ReadAsStringAsync().Result;
+
+                if (response.IsSuccessStatusCode == true)
                 {
-                    var stringContent = new StringContent(JsonConvert.SerializeObject(userModel), Encoding.UTF8, "application/json");
-                    request.Content = stringContent;
-
-                    using (var response = httpClient.SendAsync(request, System.Threading.CancellationToken.None).Result)
-                    {
-                        var content = response.Content.ReadAsStringAsync().Result;
-
-                        if (response.IsSuccessStatusCode == true)
-                        {
-                            dynamic obj = JsonConvert.DeserializeObject<dynamic>(content);
-                            token = obj.token;
-                        }
-                    }
+                    dynamic obj = JsonConvert.DeserializeObject<dynamic>(content);
+                    token = obj.token;
                 }
             }
 

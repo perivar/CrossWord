@@ -3,74 +3,74 @@ using CrossWord.Scraper.MySQLDbService;
 
 namespace CrossWord.API
 {
-    internal class TimedHostedService : IHostedService, IDisposable
+    public class TimedHostedService : BackgroundService
     {
-        private readonly ILogger logger;
-        private Timer timer;
+        private readonly ILogger<TimedHostedService> _logger;
+        private int _executionCount;
 
         public IServiceProvider Services { get; }
 
         public TimedHostedService(IServiceProvider services, ILogger<TimedHostedService> logger)
         {
-            this.Services = services;
-            this.logger = logger;
+            Services = services;
+            _logger = logger;
         }
 
-        public Task StartAsync(CancellationToken cancellationToken)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            logger.LogInformation("Timed Background Service is starting.");
+            _logger.LogInformation("Timed Hosted Service running.");
 
-            timer = new Timer(DoWork, null, TimeSpan.Zero,
-                TimeSpan.FromSeconds(10));
+            // When the timer should have no due-time, then do the work once now.
+            await DoWork();
 
-            return Task.CompletedTask;
-        }
+            using PeriodicTimer timer = new(TimeSpan.FromSeconds(1));
 
-        private void DoWork(object state)
-        {
-            logger.LogInformation("Timed Background Service is working.");
-
-            using (var scope = Services.CreateScope())
+            try
             {
-                var scopedServices = scope.ServiceProvider;
-                var db = scopedServices.GetRequiredService<WordHintDbContext>();
-
-                try
+                while (await timer.WaitForNextTickAsync(stoppingToken))
                 {
-                    var model = CrossBoardCreator.GetCrossWordModelFromUrl("http-random");
-                    var board = model.ToCrossBoard();
-
-                    // add in database
-                    var newTemplate = new Scraper.MySQLDbService.Models.CrosswordTemplate()
-                    {
-                        Rows = model.Size.Rows,
-                        Cols = model.Size.Cols,
-                        Grid = model.Grid
-                    };
-
-                    db.CrosswordTemplates.Add(newTemplate);
-                    db.SaveChangesAsync();
+                    await DoWork();
                 }
-                catch (Exception ex)
-                {
-                    logger.LogError(ex,
-                        $"An error occurred writing to the database. Error: {ex.Message}");
-                }
+            }
+            catch (OperationCanceledException)
+            {
+                _logger.LogInformation("Timed Hosted Service is stopping.");
             }
         }
 
-        public Task StopAsync(CancellationToken cancellationToken)
+        private async Task<int> DoWork()
         {
-            logger.LogInformation("Timed Background Service is stopping.");
+            int count = Interlocked.Increment(ref _executionCount);
 
-            timer?.Change(Timeout.Infinite, 0);
+            _logger.LogInformation("Timed Hosted Service is working. Count: {Count}", count);
 
-            return Task.CompletedTask;
-        }
+            using var scope = Services.CreateScope();
+            var scopedServices = scope.ServiceProvider;
+            var db = scopedServices.GetRequiredService<WordHintDbContext>();
 
-        public void Dispose()
-        {
-            timer?.Dispose();
+            try
+            {
+                var model = await CrossBoardCreator.GetCrossWordModelFromUrlAsync("http-random");
+                var board = model.ToCrossBoard();
+
+                // add in database
+                var newTemplate = new Scraper.MySQLDbService.Models.CrosswordTemplate()
+                {
+                    Rows = model.Size.Rows,
+                    Cols = model.Size.Cols,
+                    Grid = model.Grid
+                };
+
+                db.CrosswordTemplates.Add(newTemplate);
+                return await db.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,
+                    $"An error occurred writing to the database. Error: {ex.Message}");
+            }
+
+            return -1;
         }
     }
 }

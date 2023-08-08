@@ -49,7 +49,7 @@ namespace CrossWord.API.Controllers
             return Ok("CrossWordDictionary was updated");
         }
 
-        private CrosswordTemplate GetRandomCrosswordTemplateFromDb()
+        private CrosswordTemplate? GetRandomCrosswordTemplateFromDb()
         {
             int total = db.CrosswordTemplates.Count();
             if (total == 0) return null;
@@ -65,13 +65,13 @@ namespace CrossWord.API.Controllers
         // [Authorize]
         [HttpGet]
         [Route("api/crosswords")]
-        public IActionResult GetCrossWords()
+        public async Task<IActionResult> GetCrossWords()
         {
             // Start the stopwatch   
             var watch = new Stopwatch();
             watch.Start();
 
-            CrossBoard generated = GetCrossboard();
+            CrossBoard generated = await GetCrossboard();
 
             CrossWordTimes crossword;
             if (generated == null)
@@ -96,13 +96,13 @@ namespace CrossWord.API.Controllers
         // [Authorize]
         [HttpGet]
         [Route("api/crosswordguardian")]
-        public IActionResult GetCrossWordGuardian()
+        public async Task<IActionResult> GetCrossWordGuardian()
         {
             // Start the stopwatch   
             var watch = new Stopwatch();
             watch.Start();
 
-            CrossBoard generated = GetCrossboard();
+            CrossBoard generated = await GetCrossboard();
 
             CrossWordGuardian crossword;
             if (generated == null)
@@ -123,20 +123,17 @@ namespace CrossWord.API.Controllers
             return new JsonResult(crossword, CrossWordGuardianConverter.Settings);
         }
 
-        private CrossBoard GetCrossboard()
+        private async Task<CrossBoard> GetCrossboard()
         {
-
-            ICrossBoard board = null;
             // var template = GetRandomCrosswordTemplateFromDb();
-            CrosswordTemplate template = null;
+            CrosswordTemplate? template = null;
+            ICrossBoard board;
             if (template != null)
             {
-                board = new CrossBoard();
-
                 int cols = (int)template.Cols;
                 int rows = (int)template.Rows;
 
-                board.SetBoardSize(cols, rows);
+                board = new CrossBoard(cols, rows);
 
                 int n = 0;
                 for (int row = 0; row < rows; row++)
@@ -161,7 +158,7 @@ namespace CrossWord.API.Controllers
             }
             else
             {
-                var model = CrossBoardCreator.GetCrossWordModelFromUrl("http-random");
+                var model = await CrossBoardCreator.GetCrossWordModelFromUrlAsync("http-random");
                 board = model.ToCrossBoard();
 
                 // add in database
@@ -179,7 +176,7 @@ namespace CrossWord.API.Controllers
             var gen = new CrossGenerator(dictionary, board);
             board.Preprocess(dictionary);
 
-            var generated = gen.Generate().FirstOrDefault() as CrossBoard;
+            var generated = gen.Generate(CancellationToken.None).FirstOrDefault() as CrossBoard;
             return generated;
         }
 
@@ -187,16 +184,13 @@ namespace CrossWord.API.Controllers
         // [Authorize]
         [HttpGet]
         [Route("api/crosswords/{id}")]
-        public IActionResult GetCrossWord(long id)
-        {
-            return NotFound();
-        }
+        public IActionResult GetCrossWord(long id) => NotFound();
 
         // GET: api/templates/generate
         // [Authorize]
         [HttpGet]
         [Route("api/templates/generate")]
-        public IActionResult GenerateTemplates()
+        public async Task<IActionResult> GenerateTemplates()
         {
             Queue.QueueBackgroundWorkItem(async token =>
             {
@@ -211,7 +205,7 @@ namespace CrossWord.API.Controllers
 
                     try
                     {
-                        var model = CrossBoardCreator.GetCrossWordModelFromUrl("http-random");
+                        var model = await CrossBoardCreator.GetCrossWordModelFromUrlAsync("http-random");
                         var board = model.ToCrossBoard();
 
                         // add in database
@@ -223,7 +217,7 @@ namespace CrossWord.API.Controllers
                         };
 
                         db.CrosswordTemplates.Add(newTemplate);
-                        await db.SaveChangesAsync();
+                        await db.SaveChangesAsync(CancellationToken.None);
                     }
                     catch (Exception ex)
                     {

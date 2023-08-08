@@ -14,62 +14,62 @@ namespace CrossWord.Models
     public partial class CrossWordGuardian
     {
         [JsonProperty("id")]
-        public string Id { get; set; }
+        public string? Id { get; set; }
         [JsonProperty("number")]
         public long Number { get; set; }
         [JsonProperty("name")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
         [JsonProperty("creator")]
-        public ICreator Creator { get; set; }
+        public ICreator? Creator { get; set; }
         [JsonProperty("date")]
         public long Date { get; set; }
         [JsonProperty("entries")]
-        public IClue[] Entries { get; set; }
+        public IClue[]? Entries { get; set; }
         [JsonProperty("solutionAvailable")]
         public bool SolutionAvailable { get; set; }
         [JsonProperty("dateSolutionAvailable")]
         public long DateSolutionAvailable { get; set; }
         [JsonProperty("dimensions")]
-        public IDimensions Dimensions { get; set; }
+        public IDimensions? Dimensions { get; set; }
         [JsonProperty("crosswordType")]
         public CrosswordType CrosswordType { get; set; }
         [JsonProperty("pdf")]
-        public string Pdf { get; set; }
+        public string? Pdf { get; set; }
         [JsonProperty("instructions")]
-        public string Instructions { get; set; }
+        public string? Instructions { get; set; }
     }
 
     public partial class IClue
     {
         [JsonProperty("id")]
-        public string Id { get; set; }                                  // '1-across',
+        public string? Id { get; set; }                                  // '1-across',
         [JsonProperty("number")]
         public long Number { get; set; }                                // 1
         [JsonProperty("humanNumber")]
-        public string HumanNumber { get; set; }                         // '1'
+        public string? HumanNumber { get; set; }                         // '1'
         [JsonProperty("clue")]
-        public string Clue { get; set; }                                // 'Toy on a string (2-2)'
+        public string? Clue { get; set; }                                // 'Toy on a string (2-2)'
         [JsonProperty("direction")]
         public Direction Direction { get; set; }                        // 'across'
         [JsonProperty("length")]
         public long Length { get; set; }                                // 4
         [JsonProperty("group")]
-        public string[] Group { get; set; }                             // ['1-across']
+        public string[]? Group { get; set; }                             // ['1-across']
         [JsonProperty("position")]
-        public IPosition Position { get; set; }                         // { x: 0, y: 0 }
+        public IPosition? Position { get; set; }                         // { x: 0, y: 0 }
         [JsonProperty("separatorLocations")]
-        public SeparatorLocations SeparatorLocations { get; set; }      // { '-': [2] }
+        public SeparatorLocations? SeparatorLocations { get; set; }      // { '-': [2] }
         [JsonProperty("solution")]
-        public string Solution { get; set; }                            // YOYO
+        public string? Solution { get; set; }                            // YOYO
     }
 
     public partial class ICreator
     {
         [JsonProperty("name")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [JsonProperty("webUrl")]
-        public string WebUrl { get; set; }
+        public string? WebUrl { get; set; }
     }
 
     public partial class IDimensions
@@ -93,10 +93,10 @@ namespace CrossWord.Models
     public partial class SeparatorLocations
     {
         [JsonProperty("-")]
-        public int[] Dashes;
+        public int[]? Dashes;
 
         [JsonProperty(",")]
-        public int[] Commas;
+        public int[]? Commas;
     }
 
 
@@ -147,7 +147,7 @@ namespace CrossWord.Models
 
     public static class CrossWordGuardianConverter
     {
-        public static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
+        public static readonly JsonSerializerSettings Settings = new()
         {
             NullValueHandling = NullValueHandling.Ignore,
             MetadataPropertyHandling = MetadataPropertyHandling.Ignore,

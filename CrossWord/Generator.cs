@@ -14,7 +14,7 @@ namespace CrossWord
         public static async Task GenerateCrosswordsAsync(ICrossBoard board, ICrossDictionary dictionary, string puzzle, CancellationToken cancellationToken)
         {
             // Keep trying to until we can start
-            HubConnection hubConnection = null;
+            HubConnection? hubConnection = null;
             while (true)
             {
                 hubConnection = new HubConnectionBuilder()
@@ -28,12 +28,12 @@ namespace CrossWord
 
                 try
                 {
-                    await hubConnection.StartAsync();
+                    await hubConnection.StartAsync(cancellationToken);
                     break;
                 }
                 catch (Exception)
                 {
-                    await Task.Delay(1000);
+                    await Task.Delay(1000, cancellationToken);
                 }
             }
 
@@ -76,7 +76,7 @@ namespace CrossWord
                     // limit
                     int generatedCount = 0;
 
-                    var generated = gen.Generate();
+                    var generated = gen.Generate(cancellationToken);
                     foreach (var solution in generated)
                     {
                         cancellationToken.ThrowIfCancellationRequested();
@@ -93,7 +93,7 @@ namespace CrossWord
                 var gen = new CrossGenerator(dictionary, board);
                 board.Preprocess(dictionary);
 
-                var crosswords = gen.Generate();
+                var crosswords = gen.Generate(cancellationToken);
 
                 // limit
                 int generatedCount = 0;

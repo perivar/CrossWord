@@ -2,162 +2,122 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace CrossWord.TestApp
+namespace CrossWord.TestApp;
+
+class Program
 {
-    static class Program
+    readonly CommandStore _commandStore;
+
+    public Program()
     {
-        static CommandStore commandStore;
+        _commandStore = new CommandStore();
+    }
 
-        static void CreateCross(ICrossBoard cb)
+    async Task<CrossGenerator> CreateGeneratorAsync(string file, string dictFile)
+    {
+        var cb = await CrossBoardCreator.CreateFromFileAsync(file);
+        var dict = new Dictionary(dictFile, cb.MaxWordLength);
+        cb.Preprocess(dict);
+        var gen = new CrossGenerator(dict, cb);
+        gen.Watcher += GeneratorWatcher;
+        return gen;
+    }
+
+    StreamWriter OpenConsoleWriter()
+    {
+        var w = new StreamWriter(Console.OpenStandardOutput()) { AutoFlush = true };
+        return w;
+    }
+
+    void GeneratorWatcher(CrossGenerator generator)
+    {
+        while (_commandStore.Count > 0)
         {
-            const int sizex = 11;
-            const int sizey = 15;
-            cb.SetBoardSize(sizex, sizey);
-            for (int i = 0; i < sizey; i++)
+            var command = _commandStore.PopCommand();
+            if (command == null) break;
+            if (command.Equals("h"))
             {
-                cb.AddStartWord(0, i);
+                //write help
+                Console.WriteLine("Commands help: ");
+                Console.WriteLine("h - show this help");
+                Console.WriteLine("d - display cross");
+                Console.WriteLine("p - display patterns");
+                Console.WriteLine("c - check");
             }
-            for (int i = 1; i < sizex; i++)
+            else if (command.Equals("d"))
             {
-                cb.AddStartWord(i, 0);
+                using (var w = OpenConsoleWriter())
+                    generator.Board.WriteTo(w);
             }
-            cb.AddStartWord(7, 1);
-            cb.AddStartWord(4, 3);
-            cb.AddStartWord(3, 4);
-            cb.AddStartWord(6, 4);
-            cb.AddStartWord(7, 5);
-            cb.AddStartWord(4, 6);
-            cb.AddStartWord(1, 7);
-            cb.AddStartWord(5, 7);
-            cb.AddStartWord(9, 7);
-            cb.AddStartWord(10, 7);
-            cb.AddStartWord(8, 8);
-            cb.AddStartWord(3, 9);
-            cb.AddStartWord(6, 9);
-            cb.AddStartWord(4, 10);
-            cb.AddStartWord(7, 10);
-            cb.AddStartWord(8, 11);
-            cb.AddStartWord(5, 12);
-            cb.AddStartWord(6, 13);
-            cb.AddStartWord(6, 14);
-            cb.AddStartWord(10, 14);
-        }
-
-        static void OldTest()
-        {
-            //prepare cross board
-            ICrossBoard cb = new CrossBoard();
-            CreateCross(cb);
-            var dict = new Dictionary("../../../dict/cz", cb.MaxWordLength);
-            cb.Preprocess(dict);
-
-            CrossPattern cp = cb.GetCrossPattern(32);
-            CrossTransformation trans = cp.TryFill(null, "ADELAVOJTAHELA".AsSpan(), dict); //length 14
-            trans.Transform(cp);
-        }
-
-        static CrossGenerator CreateGenerator(string file, string dictFile, CommandStore commands)
-        {
-            DateTime startTime = DateTime.Now;
-            var cb = CrossBoardCreator.CreateFromFile(file);
-            var dict = new Dictionary(dictFile, cb.MaxWordLength);
-            cb.Preprocess(dict);
-            var gen = new CrossGenerator(dict, cb);
-            gen.Watcher += GeneratorWatcher;
-            return gen;
-        }
-
-        static StreamWriter OpenConsoleWriter()
-        {
-            var w = new StreamWriter(Console.OpenStandardOutput()) { AutoFlush = true };
-            return w;
-        }
-
-        static void GeneratorWatcher(CrossGenerator generator)
-        {
-            while (commandStore.Count > 0)
+            else if (command.Equals("p"))
             {
-                string command = commandStore.PopCommand();
-                if (command == null) break;
-                if (command.Equals("h"))
-                {
-                    //write help
-                    Console.WriteLine("Commands help: ");
-                    Console.WriteLine("h - show this help");
-                    Console.WriteLine("d - display cross");
-                    Console.WriteLine("p - display patterns");
-                    Console.WriteLine("c - check");
-                }
-                else if (command.Equals("d"))
-                {
-                    using (var w = OpenConsoleWriter())
-                        generator.Board.WriteTo(w);
-                }
-                else if (command.Equals("p"))
-                {
-                    using (var w = OpenConsoleWriter())
-                        generator.Board.WritePatternsTo(w);
-                }
-                else if (command.Equals("c"))
-                {
-                    generator.Board.CheckPatternValidity();
-                }
-                else
-                {
-                    Console.WriteLine("unknown command: {0}", command);
-                }
+                using (var w = OpenConsoleWriter())
+                    generator.Board.WritePatternsTo(w);
+            }
+            else if (command.Equals("c"))
+            {
+                generator.Board.CheckPatternValidity();
+            }
+            else
+            {
+                Console.WriteLine("unknown command: {0}", command);
             }
         }
+    }
 
-        public static void GenerateAndOutput(CrossGenerator generator, CommandStore commands, int maxSolutionsCount)
+    void GenerateAndOutput(CrossGenerator generator, CommandStore commands, int maxSolutionsCount)
+    {
+        int solutionsCount = 0;
+        foreach (var solution in generator.Generate(CancellationToken.None))
         {
-            int solutionsCount = 0;
-            foreach (var solution in generator.Generate())
-            {
-                lock (commands.Lock)
-                {
-                    Console.WriteLine($"Solution {solutionsCount} found:");
-                    using (var w = OpenConsoleWriter())
-                        solution.WriteTo(w);
-                }
-                if (++solutionsCount == maxSolutionsCount)
-                    break;
-            }
-            if (solutionsCount == 0)
-                Console.WriteLine("Solution not found:");
-        }
+            // lock (commands.Lock)
+            // {
+            //     Console.WriteLine($"Solution {solutionsCount} found:");
+            //     using (var w = OpenConsoleWriter())
+            //         solution.WriteTo(w);
+            // }
 
-        public static void Main(string[] args)
+            if (++solutionsCount == maxSolutionsCount) break;
+        }
+        Console.WriteLine($"{solutionsCount} solutions found.");
+    }
+
+    async Task RunAsync()
+    {
+        Console.WriteLine("Starting");
+        DateTime startTime = DateTime.Now;
+
+        var generators = new List<CrossGenerator>
         {
-            Console.WriteLine("Starting");
-            DateTime startTime = DateTime.Now;
+            await CreateGeneratorAsync("../templates/template1.txt", "../dict/cz"),
+            await CreateGeneratorAsync("../templates/template2.txt", "../dict/words"),
+            await CreateGeneratorAsync("../templates/template3.txt", "../dict/words"),
+            await CreateGeneratorAsync("../templates/template4.txt", "../dict/cz"),
+            await CreateGeneratorAsync("../templates/american.txt", "../dict/words"),
+            await CreateGeneratorAsync("../templates/british.txt", "../dict/words"),
+            await CreateGeneratorAsync("../templates/japanese.txt", "../dict/words")
+        };
+        //command reader
+        const int maxSolutionsCount = 10000;
+        var ri = new ReadInput(_commandStore);
+        var t = Task.Run(() => ri.Run());
 
-            commandStore = new CommandStore();
-            var generators = new List<CrossGenerator>
-                {
-                    CreateGenerator("../templates/template1.txt", "../dict/cz", commandStore),
-                    CreateGenerator("../templates/template2.txt", "../dict/words", commandStore),
-                    CreateGenerator("../templates/template3.txt", "../dict/words", commandStore),
-                    CreateGenerator("../templates/template4.txt", "../dict/cz", commandStore),
-                    CreateGenerator("../templates/american.txt", "../dict/words", commandStore),
-                    CreateGenerator("../templates/british.txt", "../dict/words", commandStore),
-                    CreateGenerator("../templates/japanese.txt", "../dict/words", commandStore)
-                };
-            //command reader
-            const int maxSolutionsCount = 3;
-            var ri = new ReadInput(commandStore);
-            Task.Run(() => ri.Run());
+        var tasks =
+            generators.Select(gen1 => Task.Factory.StartNew(() =>
+                GenerateAndOutput(gen1, _commandStore, maxSolutionsCount))).ToArray();
+        Task.WaitAll(tasks);
+        ri.ShouldStop = true;
 
-            var tasks =
-                generators.Select(gen1 => Task.Factory.StartNew(() =>
-                GenerateAndOutput(gen1, commandStore, maxSolutionsCount))).ToArray();
-            Task.WaitAll(tasks);
-            ri.ShouldStop = true;
+        TimeSpan timeSpan = DateTime.Now - startTime;
+        Console.WriteLine("Time elapsed: {0}", timeSpan);
+    }
 
-            TimeSpan timeSpan = DateTime.Now - startTime;
-            Console.WriteLine("Time elapsed: {0}", timeSpan);
-        }
+
+    public static async Task Main(string[] args)
+    {
+        await new Program().RunAsync();
     }
 }

@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+  <PropertyGroup Label="Configuration">
     <OutputType>exe</OutputType>
   </PropertyGroup>
   <PropertyGroup>
@@ -11,8 +11,9 @@
     <ApplicationIcon />
     <OutputTypeEx>exe</OutputTypeEx>
     <StartupObject />
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CrossWord\CrossWord.csproj" />
+    <ProjectReference Include="../CrossWord/CrossWord.csproj" />
   </ItemGroup>
 </Project>
