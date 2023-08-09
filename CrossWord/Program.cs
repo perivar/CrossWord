@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using CrossWord.Scraper.MySQLDbService;
 using CrossWord.Scraper.MySQLDbService.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using Serilog;
 
@@ -16,9 +18,21 @@ namespace CrossWord
     {
         public static int Main(string[] args)
         {
-            Console.WriteLine("Puzzle generator app");
+            var configuration = new ConfigurationBuilder()
+                                    .SetBasePath(Directory.GetCurrentDirectory())
+                                    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                                    .AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true)
+                                    .AddCommandLine(args)
+                                    .AddEnvironmentVariables()
+                                    .Build();
 
-            if (!ParseInput(args, out string inputFile, out string outputFile, out string puzzle, out string dictionaryFile))
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(configuration)
+                .CreateLogger();
+
+            Log.Information("Starting Puzzle generator app ver. {0} ", "1.0");
+
+            if (!ParseInput(args, out string? inputFile, out string? outputFile, out string? puzzle, out string? dictionaryFile))
             {
                 return 1;
             }
@@ -36,7 +50,7 @@ namespace CrossWord
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Cannot load crossword layout from file {inputFile}.", e);
+                Log.Error($"Cannot load crossword layout from file {inputFile}.", e);
                 return 2;
             }
 
@@ -45,7 +59,18 @@ namespace CrossWord
             {
                 if (dictionaryFile.Equals("database"))
                 {
-                    dictionary = new DatabaseDictionary("server=localhost;port=3306;database=dictionary;user=user;password=password;charset=utf8;", board.MaxWordLength);
+                    const string CONNECTION_STRING_KEY = "DefaultConnection";
+                    var connectionString = configuration.GetConnectionString(CONNECTION_STRING_KEY);
+                    if (string.IsNullOrEmpty(connectionString))
+                    {
+                        throw new Exception(string.Format("Cannot use database without a configured connection string! (looking for key: {0})", CONNECTION_STRING_KEY));
+                    }
+                    else
+                    {
+                        Log.Information("Using database with connection string: {0}", connectionString);
+                        var loggerFactory = new LoggerFactory().AddSerilog(Log.Logger);
+                        dictionary = new DatabaseDictionary(connectionString, board.MaxWordLength, loggerFactory);
+                    }
                 }
                 else
                 {
@@ -54,7 +79,7 @@ namespace CrossWord
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Cannot load dictionary from file {dictionaryFile}.", e);
+                Log.Error($"Cannot load dictionary from file {dictionaryFile}.", e);
                 return 3;
             }
 
@@ -69,7 +94,8 @@ namespace CrossWord
                                 CancellationToken token = tokenSource.Token;
                                 try
                                 {
-                                    await Generator.GenerateCrosswordsAsync(board, dictionary, puzzle, token);
+                                    var signalRHubURL = configuration["SignalRHubURL"] ?? "http://localhost:8000/crosswordsignalrhub";
+                                    await Generator.GenerateCrosswordsAsync(board, dictionary, puzzle, signalRHubURL, token);
                                 }
                                 catch (OperationCanceledException)
                                 {
@@ -175,13 +201,13 @@ namespace CrossWord
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"Generating crossword has failed. (${e.Message})");
+                    Log.Error($"Generating crossword has failed. (${e.Message})");
                     return 4;
                 }
 
                 if (resultBoard == null)
                 {
-                    Console.WriteLine("No solution has been found.");
+                    Log.Error("No solution has been found.");
                     return 5;
                 }
 
@@ -191,18 +217,17 @@ namespace CrossWord
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"Saving result crossword to file {outputFile} has failed: {e.Message}.");
+                    Log.Error($"Saving result crossword to file {outputFile} has failed: {e.Message}.");
                     return 6;
                 }
             }
             return 0;
         }
 
-        static bool ParseInput(IEnumerable<string> args, out string inputFile, out string outputFile, out string puzzle,
-            out string dictionary)
+        static bool ParseInput(IEnumerable<string> args, out string? inputFile, out string? outputFile, out string? puzzle, out string? dictionary)
         {
             bool help = false;
-            string i = null, o = null, p = null, d = null;
+            string? i = null, o = null, p = null, d = null;
             var optionSet = new NDesk.Options.OptionSet
                                 {
                                     { "i|input=", "(input file)", v => i = v },

@@ -18,15 +18,18 @@ public class DatabaseDictionary : ICrossDictionary
     int _maxWordLength; // longest possible word in number of characters
 
     readonly bool doSQLDebug = false;
-    readonly string connectionString;
+    readonly string? connectionString;
 
-    private readonly IServiceScopeFactory scopeFactory;
-    private readonly ILogger logger;
+    private readonly IServiceScopeFactory? scopeFactory;
+    private readonly ILogger? logger;
 
     private WordHintDbContext CreateDbContext()
     {
+        if (logger != null) logger.LogInformation("DatabaseDictionary: CreateDbContext()");
+
         if (scopeFactory != null)
         {
+            if (logger != null) logger.LogDebug("Getting WordHintDbContext using scopeFactory.");
             var scope = scopeFactory.CreateScope();
             return scope.ServiceProvider.GetRequiredService<WordHintDbContext>();
         }
@@ -34,11 +37,13 @@ public class DatabaseDictionary : ICrossDictionary
         {
             if (doSQLDebug)
             {
+                if (logger != null) logger.LogDebug("Getting WordHintDbContext using DesignTimeDbContextFactory.");
                 var dbContextFactory = new DesignTimeDbContextFactory();
                 return dbContextFactory.CreateDbContext(connectionString, null);
             }
             else
             {
+                if (logger != null) logger.LogDebug("Getting WordHintDbContext using DbContextOptionsBuilder.");
                 var options = new DbContextOptionsBuilder<WordHintDbContext>();
                 options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
                 return new WordHintDbContext(options.Options);
@@ -58,11 +63,6 @@ public class DatabaseDictionary : ICrossDictionary
 
     public DatabaseDictionary(int maxWordLength)
     {
-        InitDatabaseDictionary(maxWordLength);
-    }
-
-    private void InitDatabaseDictionary(int maxWordLength)
-    {
         _maxWordLength = maxWordLength;
         _words = new List<string>[maxWordLength + 1];
         for (int i = 1; i <= maxWordLength; i++)
@@ -80,29 +80,33 @@ public class DatabaseDictionary : ICrossDictionary
         _description = new Dictionary<string, string>();
     }
 
-    public DatabaseDictionary(string connectionString, int maxWordLength)
+    public DatabaseDictionary(string connectionString, int maxWordLength, ILoggerFactory loggerFactory)
         : this(maxWordLength)
     {
         this.connectionString = connectionString;
         // this._doSQLDebug = true;
+
+        logger = loggerFactory.CreateLogger("DatabaseDictionary");
+        if (logger != null) logger.LogInformation("Initializing Database Dictionary");
 
         using var db = CreateDbContext();
         ReadWordsIntoDatabase(db);
     }
 
     // This is intitialized from the API using services.AddSingleton<ICrossDictionary, DatabaseDictionary>();
-    public DatabaseDictionary(ILoggerFactory logger, IServiceScopeFactory scopeFactory)
+    public DatabaseDictionary(ILoggerFactory logger, IServiceScopeFactory scopeFactory, int maxWordLength = 25)
+    : this(maxWordLength)
     {
         this.logger = logger.CreateLogger("DatabaseDictionary");
+        if (this.logger != null) this.logger.LogInformation("Initializing Database Dictionary");
+
         this.scopeFactory = scopeFactory;
 
-        ResetDictionary();
+        ResetDictionary(maxWordLength);
     }
 
     public void ResetDictionary(int maxWordLength = 25)
     {
-        InitDatabaseDictionary(maxWordLength);
-
         using var db = CreateDbContext();
         ReadWordsIntoDatabase(db);
 
@@ -113,6 +117,8 @@ public class DatabaseDictionary : ICrossDictionary
 
     private void ReadWordsIntoDatabase(WordHintDbContext db)
     {
+        if (logger != null) logger.LogInformation("Reading words into database");
+
 #if DEBUG
         // Create new stopwatch.
         Stopwatch stopwatch = new();

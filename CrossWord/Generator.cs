@@ -11,14 +11,14 @@ namespace CrossWord
     {
         private const int MAX_GENERATOR_COUNT = 10;
 
-        public static async Task GenerateCrosswordsAsync(ICrossBoard board, ICrossDictionary dictionary, string puzzle, CancellationToken cancellationToken)
+        public static async Task GenerateCrosswordsAsync(ICrossBoard board, ICrossDictionary dictionary, string puzzle, string signalRHubURL, CancellationToken cancellationToken)
         {
             // Keep trying to until we can start
             HubConnection? hubConnection = null;
             while (true)
             {
                 hubConnection = new HubConnectionBuilder()
-                    .WithUrl("http://localhost:8000/crosswordsignalrhub")
+                    .WithUrl(signalRHubURL)
                     .ConfigureLogging(logging =>
                     {
                         logging.SetMinimumLevel(LogLevel.Information);
