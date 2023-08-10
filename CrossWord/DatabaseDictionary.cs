@@ -25,7 +25,7 @@ public class DatabaseDictionary : ICrossDictionary
 
     private WordHintDbContext CreateDbContext()
     {
-        if (logger != null) logger.LogInformation("DatabaseDictionary: CreateDbContext()");
+        if (logger != null) logger.LogInformation("CreateDbContext()");
 
         if (scopeFactory != null)
         {
@@ -86,7 +86,7 @@ public class DatabaseDictionary : ICrossDictionary
         this.connectionString = connectionString;
         // this._doSQLDebug = true;
 
-        logger = loggerFactory.CreateLogger("DatabaseDictionary");
+        logger = loggerFactory.CreateLogger<DatabaseDictionary>();
         if (logger != null) logger.LogInformation("Initializing Database Dictionary");
 
         using var db = CreateDbContext();
@@ -94,13 +94,13 @@ public class DatabaseDictionary : ICrossDictionary
     }
 
     // This is intitialized from the API using services.AddSingleton<ICrossDictionary, DatabaseDictionary>();
-    public DatabaseDictionary(ILoggerFactory logger, IServiceScopeFactory scopeFactory, int maxWordLength = 25)
+    public DatabaseDictionary(ILoggerFactory loggerFactory, IServiceScopeFactory scopeFactory, int maxWordLength = 25)
     : this(maxWordLength)
     {
-        this.logger = logger.CreateLogger("DatabaseDictionary");
-        if (this.logger != null) this.logger.LogInformation("Initializing Database Dictionary");
-
         this.scopeFactory = scopeFactory;
+
+        logger = loggerFactory.CreateLogger("DatabaseDictionary");
+        if (logger != null) logger.LogInformation("Initializing Database Dictionary");
 
         ResetDictionary(maxWordLength);
     }

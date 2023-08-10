@@ -89,7 +89,7 @@ namespace CrossWord.API
 
             // Singleton objects are the same for every object and every request.
             // for this to be able to use the database
-            // add a constructor that takes (ILoggerFactory logger, IServiceScopeFactory scopeFactory)
+            // add a constructor that takes (ILoggerFactory loggerFactory, IServiceScopeFactory scopeFactory)
             // and instantiate the database whenever needed
             // using (var scope = scopeFactory.CreateScope())
             // {

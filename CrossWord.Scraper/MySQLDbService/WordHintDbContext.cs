@@ -9,6 +9,8 @@ namespace CrossWord.Scraper.MySQLDbService
 {
     public class WordHintDbContext : IdentityDbContext<ApplicationUser>
     {
+        private ILogger logger;
+
         public DbSet<Word> Words { get; set; }
         public DbSet<WordRelation> WordRelations { get; set; }
         public DbSet<User> DictionaryUsers { get; set; }
@@ -16,6 +18,13 @@ namespace CrossWord.Scraper.MySQLDbService
         public DbSet<Category> Categories { get; set; }
         public DbSet<CrosswordTemplate> CrosswordTemplates { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+
+        private void InitLoggerIfNull()
+        {
+            if (logger == null) {
+                logger = Log.ForContext<WordHintDbContext>();
+            }
+        }
 
         public WordHintDbContext()
             : base()
@@ -29,16 +38,20 @@ namespace CrossWord.Scraper.MySQLDbService
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            Log.Information("WordHintDbContext: OnConfiguring()");
+            InitLoggerIfNull();
+
+            if (logger != null) logger.Information("OnConfiguring()");
             base.OnConfiguring(optionsBuilder);
 
-            Log.Information("WordHintDbContext: Replacing built-in generator with CustomMySqlMigrationsSqlGenerator");
+            if (logger != null) logger.Information("Replacing built-in generator with CustomMySqlMigrationsSqlGenerator");
             optionsBuilder.ReplaceService<IMigrationsSqlGenerator, CustomMySqlMigrationsSqlGenerator>();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            Log.Information("WordHintDbContext: OnModelCreating()");
+            InitLoggerIfNull();
+
+            if (logger != null) logger.Information("OnModelCreating()");
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<WordRelation>()
@@ -89,7 +102,7 @@ namespace CrossWord.Scraper.MySQLDbService
                         .UsePropertyAccessMode(PropertyAccessMode.Field) // Access mode type
                         .HasColumnName("GridCollection"); // Db column name
 
-             // each User can have many entries in the RefreshTokens table
+            // each User can have many entries in the RefreshTokens table
             modelBuilder.Entity<ApplicationUser>()
                         .HasMany(e => e.RefreshTokens)
                         .WithOne(e => e.ApplicationUser)

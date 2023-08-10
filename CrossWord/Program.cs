@@ -50,7 +50,7 @@ namespace CrossWord
             }
             catch (Exception e)
             {
-                Log.Error($"Cannot load crossword layout from file {inputFile}.", e);
+                Log.Error(e, $"Cannot load crossword layout from file {inputFile}.");
                 return 2;
             }
 
@@ -79,7 +79,7 @@ namespace CrossWord
             }
             catch (Exception e)
             {
-                Log.Error($"Cannot load dictionary from file {dictionaryFile}.", e);
+                Log.Error(e, $"Cannot load dictionary from file {dictionaryFile}.");
                 return 3;
             }
 
@@ -201,7 +201,7 @@ namespace CrossWord
                 }
                 catch (Exception e)
                 {
-                    Log.Error($"Generating crossword has failed. (${e.Message})");
+                    Log.Error(e, $"Generating crossword has failed.");
                     return 4;
                 }
 
@@ -217,7 +217,7 @@ namespace CrossWord
                 }
                 catch (Exception e)
                 {
-                    Log.Error($"Saving result crossword to file {outputFile} has failed: {e.Message}.");
+                    Log.Error(e, $"Saving result crossword to file {outputFile} has failed.");
                     return 6;
                 }
             }

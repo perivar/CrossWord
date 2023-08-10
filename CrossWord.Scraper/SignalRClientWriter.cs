@@ -1,12 +1,10 @@
 using System;
 using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
-using Microsoft.Extensions.Logging;
 using Polly;
 using Serilog;
 
@@ -25,8 +23,8 @@ namespace CrossWord.Scraper
 
         public SignalRClientWriter(string url, string identifier)
         {
-            this.FlushAfterEveryWrite = false;
-            this.Identifier = identifier != null ? identifier : "Robot";
+            FlushAfterEveryWrite = false;
+            Identifier = identifier != null ? identifier : "Robot";
 
             // https://docs.microsoft.com/en-us/aspnet/core/signalr/configuration?view=aspnetcore-2.1
             SignalRConnection = new HubConnectionBuilder()
@@ -210,7 +208,7 @@ namespace CrossWord.Scraper
             }
             catch (Exception ex)
             {
-                Log.Error(String.Format("Failed sending message to SignalR Hub: {0}", ex.Message));
+                Log.Error(string.Format("Failed sending message to SignalR Hub: {0}", ex.Message));
             }
         }
     }
