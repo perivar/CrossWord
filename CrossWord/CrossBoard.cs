@@ -5,7 +5,6 @@ using System.Text;
 using System.Linq;
 using CrossWord.Models;
 
-
 namespace CrossWord;
 
 public class Coordinate : IEquatable<Coordinate>, IComparable<Coordinate>
@@ -414,12 +413,12 @@ public class CrossBoard : ICrossBoard
 
     private static string GetDescription(ICrossDictionary dictionary, string word)
     {
-        if (!dictionary.TryGetDescription(word, out string description))
+        if (!dictionary.TryGetDescription(word, out string? description))
         {
             description = "[PUZZLE]";
         }
 
-        return description;
+        return description!;
     }
 
     public CrossWordTimes ToCrossWordModel(ICrossDictionary dictionary)
@@ -640,17 +639,20 @@ public class CrossBoard : ICrossBoard
             var word = p.GetWord();
             var description = p.IsPuzzle ? "[PUZZLE]" : GetDescription(dictionary, word);
 
-            var clue = new IClue();
-            clue.Id = string.Format("{0}-{1}", gridNumber, p.IsHorizontal ? "across" : "down");
-            clue.Number = gridNumber;
-            clue.HumanNumber = gridNumber.ToString();
-            clue.Clue = string.Format("{0} ({1})", description, p.Length);
-            clue.Direction = p.IsHorizontal ? Direction.Across : Direction.Down;
-            clue.Length = p.Length;
-            clue.Group = new string[] { clue.Id };
-            clue.Position = new IPosition() { X = p.StartX, Y = p.StartY };
-            clue.Solution = word;
-            clue.SeparatorLocations = new SeparatorLocations();
+            var clueId = string.Format("{0}-{1}", gridNumber, p.IsHorizontal ? "across" : "down");
+            var clue = new IClue
+            {
+                Id = clueId,
+                Number = gridNumber,
+                HumanNumber = gridNumber.ToString(),
+                Clue = string.Format("{0} ({1})", description, p.Length),
+                Direction = p.IsHorizontal ? Direction.Across : Direction.Down,
+                Length = p.Length,
+                Group = new string[] { clueId },
+                Position = new IPosition() { X = p.StartX, Y = p.StartY },
+                Solution = word,
+                SeparatorLocations = new SeparatorLocations(),
+            };
 
             clueList.Add(clue);
 

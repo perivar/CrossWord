@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace CrossWord
 {
@@ -13,6 +14,10 @@ namespace CrossWord
 
         public static async Task GenerateCrosswordsAsync(ICrossBoard board, ICrossDictionary dictionary, string puzzle, string signalRHubURL, CancellationToken cancellationToken)
         {
+            Log.Debug("GenerateCrosswordsAsync()");
+
+            Log.Information("Trying to connect to SignalR Hub @ {0}", signalRHubURL);
+
             // Keep trying to until we can start
             HubConnection? hubConnection = null;
             while (true)
@@ -29,6 +34,7 @@ namespace CrossWord
                 try
                 {
                     await hubConnection.StartAsync(cancellationToken);
+                    await hubConnection.InvokeAsync("Broadcast", "Generator", "GenerateCrosswordsAsync");
                     break;
                 }
                 catch (Exception)
@@ -36,6 +42,8 @@ namespace CrossWord
                     await Task.Delay(1000, cancellationToken);
                 }
             }
+
+            Log.Information("Succesfully connected to SignalR Hub @ {0}", signalRHubURL);
 
             try
             {
@@ -49,10 +57,12 @@ namespace CrossWord
                     var crossWordModel = cb.ToCrossWordModel(dictionary);
                     crossWordModel.Title = "Generated crossword number " + generatedCount;
 
+                    Log.Debug("Succesfully converted generated crossword {0} to a Times model", generatedCount);
+
                     await hubConnection.InvokeAsync("SendCrossword", "Client", crossWordModel, cancellationToken);
 
-                    // await Task.Delay(100); // this makes the generation slower, can be removed
-                    break;
+                    await Task.Delay(50); // this makes the generation slower, can be removed
+                    // break; // unncomment if we only want to use the first generated crossword
                 }
             }
             catch (OperationCanceledException)
@@ -61,12 +71,16 @@ namespace CrossWord
             }
 
             await hubConnection.DisposeAsync();
+
+            Log.Information("Succesfully disconnected from the SignalR Hub @ {0}", signalRHubURL);
         }
 
         private static IEnumerable<ICrossBoard> GenerateCrossWords(ICrossBoard board, ICrossDictionary dictionary, string puzzle, CancellationToken cancellationToken)
         {
             if (puzzle != null)
             {
+                Log.Information("Trying to generate crosswords for puzzle {0}", puzzle);
+
                 var placer = new PuzzlePlacer(board, puzzle);
                 foreach (var boardWithPuzzle in placer.GetAllPossiblePlacements(dictionary))
                 {
@@ -82,6 +96,8 @@ namespace CrossWord
                         cancellationToken.ThrowIfCancellationRequested();
                         generatedCount++;
 
+                        Log.Debug("Generated crossword {0}/{1}", generatedCount, MAX_GENERATOR_COUNT);
+
                         if (generatedCount >= MAX_GENERATOR_COUNT) break;
 
                         yield return solution;
@@ -90,6 +106,8 @@ namespace CrossWord
             }
             else
             {
+                Log.Information("Trying to generate crosswords without a puzzle");
+
                 var gen = new CrossGenerator(dictionary, board);
                 board.Preprocess(dictionary);
 
@@ -101,8 +119,9 @@ namespace CrossWord
                 foreach (var resultBoard in crosswords)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
-
                     generatedCount++;
+
+                    Log.Debug("Generated crossword {0}/{1}", generatedCount, MAX_GENERATOR_COUNT);
 
                     if (generatedCount >= MAX_GENERATOR_COUNT) break;
 

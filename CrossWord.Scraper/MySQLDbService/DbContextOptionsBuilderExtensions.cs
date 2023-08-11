@@ -16,11 +16,17 @@ namespace CrossWord.Scraper.MySQLDbService
 
                 if (throwOnQueryWarnings)
                 {
+                    // warnings.Throw(RelationalEventId.QueryClientEvaluationWarning);
+                    // warnings.Throw(RelationalEventId.QueryPossibleExceptionWithAggregateOperator);
                     warnings.Throw(RelationalEventId.QueryPossibleUnintendedUseOfEqualsWarning);
+                    warnings.Throw(RelationalEventId.MultipleCollectionIncludeWarning);
                 }
                 else
                 {
+                    // warnings.Log(RelationalEventId.QueryClientEvaluationWarning);
+                    // warnings.Log(RelationalEventId.QueryPossibleExceptionWithAggregateOperator);
                     warnings.Log(RelationalEventId.QueryPossibleUnintendedUseOfEqualsWarning);
+                    warnings.Log(RelationalEventId.MultipleCollectionIncludeWarning);
                 }
             });
 

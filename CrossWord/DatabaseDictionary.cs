@@ -6,6 +6,7 @@ using CrossWord.Scraper.MySQLDbService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace CrossWord;
 
@@ -17,35 +18,35 @@ public class DatabaseDictionary : ICrossDictionary
     Dictionary<string, string> _description;
     int _maxWordLength; // longest possible word in number of characters
 
-    readonly bool doSQLDebug = false;
-    readonly string? connectionString;
+    readonly bool _doSQLDebug = false;
+    readonly string? _connectionString;
 
-    private readonly IServiceScopeFactory? scopeFactory;
-    private readonly ILogger? logger;
+    private readonly IServiceScopeFactory? _scopeFactory;
+    private readonly Microsoft.Extensions.Logging.ILogger? _logger;
 
     private WordHintDbContext CreateDbContext()
     {
-        if (logger != null) logger.LogDebug("CreateDbContext()");
+        if (_logger != null) _logger.LogDebug("CreateDbContext()");
 
-        if (scopeFactory != null)
+        if (_scopeFactory != null)
         {
-            if (logger != null) logger.LogDebug("Getting WordHintDbContext using scopeFactory.");
-            var scope = scopeFactory.CreateScope();
+            if (_logger != null) _logger.LogDebug("Getting WordHintDbContext using scopeFactory.");
+            var scope = _scopeFactory.CreateScope();
             return scope.ServiceProvider.GetRequiredService<WordHintDbContext>();
         }
         else
         {
-            if (doSQLDebug)
+            if (_doSQLDebug)
             {
-                if (logger != null) logger.LogDebug("Getting WordHintDbContext using DesignTimeDbContextFactory.");
+                if (_logger != null) _logger.LogDebug("Getting WordHintDbContext using DesignTimeDbContextFactory.");
                 var dbContextFactory = new DesignTimeDbContextFactory();
-                return dbContextFactory.CreateDbContext(connectionString, null);
+                return dbContextFactory.CreateDbContext(_connectionString, Log.Logger);
             }
             else
             {
-                if (logger != null) logger.LogDebug("Getting WordHintDbContext using DbContextOptionsBuilder.");
+                if (_logger != null) _logger.LogDebug("Getting WordHintDbContext using DbContextOptionsBuilder.");
                 var options = new DbContextOptionsBuilder<WordHintDbContext>();
-                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+                options.UseMySql(_connectionString, ServerVersion.AutoDetect(_connectionString));
                 return new WordHintDbContext(options.Options);
             }
         }
@@ -83,11 +84,11 @@ public class DatabaseDictionary : ICrossDictionary
     public DatabaseDictionary(string connectionString, int maxWordLength, ILoggerFactory loggerFactory)
         : this(maxWordLength)
     {
-        this.connectionString = connectionString;
-        // this._doSQLDebug = true;
+        _connectionString = connectionString;
+        _doSQLDebug = true; // turn on sql debugging
 
-        logger = loggerFactory.CreateLogger<DatabaseDictionary>();
-        if (logger != null) logger.LogInformation("Initializing Database Dictionary");
+        _logger = loggerFactory.CreateLogger<DatabaseDictionary>();
+        if (_logger != null) _logger.LogInformation("Initializing Database Dictionary");
 
         using var db = CreateDbContext();
 
@@ -108,10 +109,10 @@ public class DatabaseDictionary : ICrossDictionary
     public DatabaseDictionary(ILoggerFactory loggerFactory, IServiceScopeFactory scopeFactory, int maxWordLength = 25)
     : this(maxWordLength)
     {
-        this.scopeFactory = scopeFactory;
+        _scopeFactory = scopeFactory;
 
-        logger = loggerFactory.CreateLogger("DatabaseDictionary");
-        if (logger != null) logger.LogInformation("Initializing Database Dictionary");
+        _logger = loggerFactory.CreateLogger("DatabaseDictionary");
+        if (_logger != null) _logger.LogInformation("Initializing Database Dictionary");
 
         ResetDictionary(maxWordLength);
     }
@@ -128,7 +129,7 @@ public class DatabaseDictionary : ICrossDictionary
 
     private void ReadWordsIntoDatabase(WordHintDbContext db)
     {
-        if (logger != null) logger.LogInformation("Starting to read words into database...");
+        if (_logger != null) _logger.LogInformation("Starting to read words into database...");
 
 #if DEBUG
         // Create new stopwatch.
@@ -139,75 +140,73 @@ public class DatabaseDictionary : ICrossDictionary
 #endif
 
         // var wordIdsToExclude = WordDatabaseService.GetWordIdList(db, new List<string> { "BY", "NAVN", "ELV", "FJELL", "FORKORTELSE", "IATA-FLYPLASSKODE", "ISO-KODE" });
-        var wordIdsToExclude = WordDatabaseService.GetWordIdList(db, new List<string> { "BY", "NAVN" });
+        // var wordIdsToExclude = WordDatabaseService.GetWordIdList(db, new List<string> { "BY", "NAVN" });
+
+        // search for all words excluding an array of ids
+        // var words = db.Words
+        //     .Where(w => (w.NumberOfWords == 1) && (w.NumberOfLetters <= _maxWordLength) && !wordIdsToExclude.Contains(w.WordId))
+        //     .OrderBy(w => w.Value)
+        //     .Select(w => w.Value)
+        //     .AsNoTracking();
 
         // search for all words
-        var words = db.Words
-            .Where(w => (w.NumberOfWords == 1) && (w.NumberOfLetters <= _maxWordLength) && !wordIdsToExclude.Contains(w.WordId))
-            .OrderBy(w => w.Value)
-            .Select(w => w.Value)
-            .AsNoTracking();
-
-        // search for all words
-        // var words = _db.Words
-        //     .Where((w => (w.NumberOfWords == 1) && (w.NumberOfLetters <= _maxWordLength)))
+        // var words = db.Words
+        //     .Where(w => (w.NumberOfWords == 1) && (w.NumberOfLetters <= _maxWordLength))
         //     .OrderBy(w => w.Value)
         //     .Select(w => w.Value)
         //     .AsNoTracking();
 
         // in order to sort with Collation we need to use raw SQL
-        // var words = _db.Words.FromSql(
+        // var words = db.Words.FromSql(
         //     $"SELECT w.Value FROM Words AS w WHERE w.NumberOfWords = 1 AND w.NumberOfLetters <= {_maxWordLength} ORDER BY w.Value COLLATE utf8mb4_da_0900_as_cs")
         //     .Select(w => w.Value)
         //     .AsNoTracking();
 
-        foreach (var word in words)
-        {
-            string wordText = word;
-            if (wordText.All(char.IsLetter))
-            // if (wordText.All(x => char.IsLetter(x) || x == '-' || x == ' '))
-            {
-                AddWord(wordText);
-            }
-        }
+        // foreach (var word in words)
+        // {
+        //     string wordText = word;
+        //     if (wordText.All(char.IsLetter))
+        //     // if (wordText.All(x => char.IsLetter(x) || x == '-' || x == ' '))
+        //     {
+        //         AddWord(wordText);
+        //     }
+        // }
 
         // using ADO.NET seems faster than ef core for raw SQLs
-        // using (var command = _db.Database.GetDbConnection().CreateCommand())
-        // {
-        //     command.CommandText = $"SELECT w.Value FROM Words AS w WHERE w.NumberOfWords = 1 AND w.NumberOfLetters <= {_maxWordLength} ORDER BY w.Value COLLATE utf8mb4_da_0900_as_cs";
-        //     db.Database.OpenConnection();
-        //     using (var reader = command.ExecuteReader())
-        //     {
-        //         while (reader.Read())
-        //         {
-        //             string wordText = reader[0].ToString();
-        //             if (wordText.All(char.IsLetter))
-        //             // if (wordText.All(x => char.IsLetter(x) || x == '-' || x == ' '))
-        //             {
-        //                 AddWord(wordText);
-        //             }
-        //         }
-        //     }
-        // }    
+        using (var command = db.Database.GetDbConnection().CreateCommand())
+        {
+            command.CommandText = $"SELECT w.Value FROM Words AS w WHERE w.NumberOfWords = 1 AND w.NumberOfLetters <= {_maxWordLength} ORDER BY w.Value COLLATE utf8mb4_da_0900_as_cs";
+            db.Database.OpenConnection();
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    string? wordText = reader[0].ToString();
+                    if (!string.IsNullOrEmpty(wordText) && wordText.All(char.IsLetter))
+                    // if (wordText.All(x => char.IsLetter(x) || x == '-' || x == ' '))
+                    {
+                        AddWord(wordText);
+                    }
+                }
+            }
+        }
 
 #if DEBUG
         // Stop timing.
         stopwatch.Stop();
 
         // Write result.
-        if (logger != null)
-        {
-            logger.LogDebug("ReadWordsIntoDatabase - Time elapsed: {0}", stopwatch.Elapsed);
-        }
-        else
-        {
-            Console.WriteLine("ReadWordsIntoDatabase - Time elapsed: {0}", stopwatch.Elapsed);
-        }
+        if (_logger != null) _logger.LogInformation("Succesfully read words into database - Time elapsed: {0}", stopwatch.Elapsed);
+#else
+    if (logger != null) logger.LogInformation("Succesfully read words into database!");
 #endif
+
     }
 
     private void ReadDescriptionsIntoDatabase(WordHintDbContext db, List<string> words)
     {
+        if (_logger != null) _logger.LogInformation("Starting to read descriptions into database...");
+
 #if DEBUG
         // Create new stopwatch.
         Stopwatch stopwatch = new();
@@ -218,17 +217,36 @@ public class DatabaseDictionary : ICrossDictionary
 
         Random rnd = new();
 
+        // increase timeout
+        db.Database.SetCommandTimeout(400);
+
         // find out which words have already a description
         var newWords = words.Where(value => !_description.Any(entry => entry.Key == value));
 
         // find the words in the database
-        var existingWords = db.Words
+        // chunk to avoid timeouts
+        // https://nishanc.medium.com/writing-better-performant-queries-with-linq-on-ef-core-6-0-%EF%B8%8F-85a1a406879
+         var existingWords = db.Words
             .Include(w => w.RelatedFrom)
             .ThenInclude(w => w.WordTo)
             .Include(w => w.RelatedTo)
             .ThenInclude(w => w.WordFrom)
             .Where(x => newWords.Contains(x.Value))
             .AsNoTracking();
+
+        // var existingWords = db.Words
+        //     .Select(w => new Scraper.MySQLDbService.Models.Word()
+        //     {
+        //         WordId = w.WordId,
+        //         // Language = w.Language,
+        //         Value = w.Value,
+        //         // NumberOfLetters = w.NumberOfLetters,
+        //         // NumberOfWords = w.NumberOfWords,
+        //         RelatedFrom = w.RelatedFrom.Take(10).ToList(),
+        //         RelatedTo = w.RelatedTo.Take(10).ToList(),
+        //     })
+        //     .Where(x => newWords.Contains(x.Value))
+        //     .AsNoTracking();
 
         foreach (var word in existingWords)
         {
@@ -261,15 +279,11 @@ public class DatabaseDictionary : ICrossDictionary
         stopwatch.Stop();
 
         // Write result.
-        if (logger != null)
-        {
-            logger.LogDebug("ReadDescriptionsIntoDatabase - Time elapsed: {0}", stopwatch.Elapsed);
-        }
-        else
-        {
-            Console.WriteLine("ReadDescriptionsIntoDatabase - Time elapsed: {0}", stopwatch.Elapsed);
-        }
+        if (_logger != null) _logger.LogInformation("Succesfully read descriptions into database - Time elapsed: {0}", stopwatch.Elapsed);
+#else
+    if (logger != null) logger.LogInformation("Succesfully read descriptions into database!");
 #endif
+
     }
 
     public void AddAllDescriptions(List<string> words)
