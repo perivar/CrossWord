@@ -25,7 +25,7 @@ public class DatabaseDictionary : ICrossDictionary
 
     private WordHintDbContext CreateDbContext()
     {
-        if (logger != null) logger.LogInformation("CreateDbContext()");
+        if (logger != null) logger.LogDebug("CreateDbContext()");
 
         if (scopeFactory != null)
         {
@@ -90,6 +90,17 @@ public class DatabaseDictionary : ICrossDictionary
         if (logger != null) logger.LogInformation("Initializing Database Dictionary");
 
         using var db = CreateDbContext();
+
+        // setup database
+        // You would either call EnsureCreated() or Migrate(). 
+        // EnsureCreated() is an alternative that completely skips the migrations pipeline and just creates a database that matches you current model. 
+        // It's good for unit testing or very early prototyping, when you are happy just to delete and re-create the database when the model changes.
+        // db.Database.EnsureDeleted();
+        // db.Database.EnsureCreated();
+
+        // Note! Therefore don't use EnsureDeleted() and EnsureCreated() but Migrate();
+        db.Database.Migrate();
+
         ReadWordsIntoDatabase(db);
     }
 
@@ -117,7 +128,7 @@ public class DatabaseDictionary : ICrossDictionary
 
     private void ReadWordsIntoDatabase(WordHintDbContext db)
     {
-        if (logger != null) logger.LogInformation("Reading words into database");
+        if (logger != null) logger.LogInformation("Starting to read words into database...");
 
 #if DEBUG
         // Create new stopwatch.

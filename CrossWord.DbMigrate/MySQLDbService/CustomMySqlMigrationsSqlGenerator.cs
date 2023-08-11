@@ -4,12 +4,23 @@ using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Update;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure.Internal;
 using Pomelo.EntityFrameworkCore.MySql.Migrations;
+using System.Linq;
 using Serilog;
 
 namespace CrossWord.DbMigrate.MySQLDbService
 {
     public class CustomMySqlMigrationsSqlGenerator : MySqlMigrationsSqlGenerator
     {
+        private ILogger logger;
+
+        private void InitLoggerIfNull()
+        {
+            if (logger == null)
+            {
+                logger = Log.ForContext<CustomMySqlMigrationsSqlGenerator>();
+            }
+        }
+
         public CustomMySqlMigrationsSqlGenerator(
                     MigrationsSqlGeneratorDependencies dependencies,
                     ICommandBatchPreparer commandBatchPreparer,
@@ -17,6 +28,7 @@ namespace CrossWord.DbMigrate.MySQLDbService
                     )
                     : base(dependencies, commandBatchPreparer, options)
         {
+            InitLoggerIfNull();
         }
 
         // test this with: dotnet ef migrations script
@@ -29,7 +41,7 @@ namespace CrossWord.DbMigrate.MySQLDbService
             IModel model,
             MigrationCommandListBuilder builder)
         {
-            // Log.Information("CustomMySqlMigrationsSqlGenerator: ColumnDefinition for {0}: {1} [{2}]", table, name, string.Join(";", operation.GetAnnotations().Select(x => x.Name)));
+            if (logger != null) logger.Verbose("ColumnDefinition for {0}: {1} [{2}]", table, name, string.Join(";", operation.GetAnnotations().Select(x => x.Name)));
 
             base.ColumnDefinition(schema, table, name, operation, model, builder);
 
@@ -39,7 +51,7 @@ namespace CrossWord.DbMigrate.MySQLDbService
             if (annotation != null)
             {
                 string collateValue = annotation.Value.ToString();
-                Log.Information("CustomMySqlMigrationsSqlGenerator: Found {0} for {1}:{2}, fixing COLLATE: {3}", annotationName, table, name, collateValue);
+                if (logger != null) logger.Debug("Found {0} for {1}:{2}, fixing COLLATE: {3}", annotationName, table, name, collateValue);
 
                 builder.Append(string.Format(" COLLATE {0}", collateValue));
             }
@@ -63,7 +75,7 @@ namespace CrossWord.DbMigrate.MySQLDbService
             // SO HARDCODE A FIX!
             if (alterColumnOperation.Table == "Words" && alterColumnOperation.Name == "Value")
             {
-                Log.Information("CustomMySqlMigrationsSqlGenerator: Found AlterColumn for {0}:{1}, fixing COLLATE utf8mb4_0900_as_cs", alterColumnOperation.Table, alterColumnOperation.Name);
+                if (logger != null) logger.Debug("Found AlterColumn for {0}:{1}, fixing COLLATE utf8mb4_0900_as_cs", alterColumnOperation.Table, alterColumnOperation.Name);
 
                 builder
                         .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(alterColumnOperation.Name))

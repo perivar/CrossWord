@@ -39,19 +39,19 @@ namespace CrossWord.Scraper.MySQLDbService
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             InitLoggerIfNull();
+            if (logger != null) logger.Debug("OnConfiguring()");
 
-            if (logger != null) logger.Information("OnConfiguring()");
             base.OnConfiguring(optionsBuilder);
 
-            if (logger != null) logger.Information("Replacing built-in generator with CustomMySqlMigrationsSqlGenerator");
+            if (logger != null) logger.Debug("Replacing built-in generator with CustomMySqlMigrationsSqlGenerator");
             optionsBuilder.ReplaceService<IMigrationsSqlGenerator, CustomMySqlMigrationsSqlGenerator>();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             InitLoggerIfNull();
+            if (logger != null) logger.Debug("OnModelCreating()");
 
-            if (logger != null) logger.Information("OnModelCreating()");
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<WordRelation>()
