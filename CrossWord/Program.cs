@@ -85,110 +85,54 @@ namespace CrossWord
 
             if (outputFile.Equals("signalr"))
             {
-                // generate and send to signalr hub
-                // var tokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(20));
-                var tokenSource = new CancellationTokenSource();
-                Task workerTask = Task.Run(
-                            async () =>
-                            {
-                                CancellationToken token = tokenSource.Token;
-                                try
+                try
+                {
+                    // generate and send to signalr hub
+                    // var tokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(20));
+                    var tokenSource = new CancellationTokenSource();
+                    Task workerTask = Task.Run(
+                                async () =>
                                 {
-                                    var signalRHubURL = configuration["SignalRHubURL"] ?? "http://localhost:8000/crosswordsignalrhub";
-                                    await Generator.GenerateCrosswordsAsync(board, dictionary, puzzle, signalRHubURL, token);
-                                }
-                                catch (OperationCanceledException)
-                                {
-                                    Console.WriteLine("Cancelled @ {0}", DateTime.Now);
-                                }
-                            });
+                                    CancellationToken token = tokenSource.Token;
+                                    try
+                                    {
+                                        var signalRHubURL = configuration["SignalRHubURL"] ?? "http://localhost:8000/crosswordsignalrhub";
+                                        await Generator.GenerateCrosswordsAsync(board, dictionary, puzzle, signalRHubURL, token);
+                                    }
+                                    catch (OperationCanceledException)
+                                    {
+                                        Log.Information("Cancelled @ {0}", DateTime.Now);
+                                    }
+                                });
 
-                // wait until the task is done
-                workerTask.Wait();
+                    // wait until the task is done
+                    workerTask.Wait();
 
-                // or wait until the user presses a key
-                // Console.WriteLine("Press Enter to Exit ...");
-                // Console.ReadLine();
-                // tokenSource.Cancel();
+                    // or wait until the user presses a key
+                    // Console.WriteLine("Press Enter to Exit ...");
+                    // Console.ReadLine();
+                    // tokenSource.Cancel();
+
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e, $"Failed generating crossword asynchronously");
+                    return 4;
+                }
             }
             else if (outputFile.Equals("database"))
             {
-                var dbContextFactory = new DesignTimeDbContextFactory();
-                using var db = dbContextFactory.CreateDbContext("server=localhost;database=dictionary;user=user;password=password;charset=utf8;", Log.Logger); // null instead of Log.Logger enables debugging
-
-                // setup database
-                // You would either call EnsureCreated() or Migrate(). 
-                // EnsureCreated() is an alternative that completely skips the migrations pipeline and just creates a database that matches you current model. 
-                // It's good for unit testing or very early prototyping, when you are happy just to delete and re-create the database when the model changes.
-                // db.Database.EnsureDeleted();
-                // db.Database.EnsureCreated();
-
-                // Note! Therefore don't use EnsureDeleted() and EnsureCreated() but Migrate();
-                db.Database.Migrate();
+                string source = "norwegian-synonyms.json";
 
                 // set admin user
-                var user = new User()
+                var adminUser = new User()
                 {
                     FirstName = "",
                     LastName = "Norwegian Synonyms json",
                     UserName = "norwegian-synonyms.json"
                 };
 
-                // check if user already exists
-                var existingUser = db.DictionaryUsers.Where(u => u.FirstName == user.FirstName).FirstOrDefault();
-                if (existingUser != null)
-                {
-                    user = existingUser;
-                }
-                else
-                {
-                    db.DictionaryUsers.Add(user);
-                    db.SaveChanges();
-                }
-
-                // disable tracking to speed things up
-                // note that this doesn't load the virtual properties, but loads the object ids after a save
-                db.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-
-                // this works when using the same user for all words.
-                db.ChangeTracker.AutoDetectChangesEnabled = false;
-
-                bool isDebugging = false;
-#if DEBUG
-                isDebugging = true;
-#endif
-
-                var source = "norwegian-synonyms.json";
-                if (Path.GetExtension(dictionaryFile).ToLower().Equals(".json"))
-                {
-                    // read json files
-                    using StreamReader r = new(dictionaryFile);
-                    var json = r.ReadToEnd();
-                    var jobj = JObject.Parse(json);
-
-                    var totalCount = jobj.Properties().Count();
-                    int count = 0;
-                    foreach (var item in jobj.Properties())
-                    {
-                        count++;
-
-                        var wordText = item.Name;
-                        var relatedArray = item.Values().Select(a => a.Value<string>());
-
-                        WordDatabaseService.AddToDatabase(db, source, user, wordText, relatedArray);
-
-                        if (isDebugging)
-                        {
-                            // in debug mode the Console.Write \r isn't shown in the output console
-                            Console.WriteLine("[{0}] / [{1}]", count, totalCount);
-                        }
-                        else
-                        {
-                            Console.Write("\r[{0}] / [{1}]", count, totalCount);
-                        }
-                    }
-                    Console.WriteLine("Done!");
-                }
+                OutputToDatabase(dictionaryFile, source, adminUser);
             }
             else
             {
@@ -202,13 +146,13 @@ namespace CrossWord
                 catch (Exception e)
                 {
                     Log.Error(e, $"Generating crossword has failed.");
-                    return 4;
+                    return 5;
                 }
 
                 if (resultBoard == null)
                 {
                     Log.Error("No solution has been found.");
-                    return 5;
+                    return 6;
                 }
 
                 try
@@ -218,10 +162,81 @@ namespace CrossWord
                 catch (Exception e)
                 {
                     Log.Error(e, $"Saving result crossword to file {outputFile} has failed.");
-                    return 6;
+                    return 7;
                 }
             }
             return 0;
+        }
+
+        private static void OutputToDatabase(string dictionaryFile, string source, User adminUser)
+        {
+            var dbContextFactory = new DesignTimeDbContextFactory();
+            using var db = dbContextFactory.CreateDbContext("server=localhost;database=dictionary;user=user;password=password;charset=utf8;", Log.Logger); // null instead of Log.Logger enables debugging
+
+            // setup database
+            // You would either call EnsureCreated() or Migrate(). 
+            // EnsureCreated() is an alternative that completely skips the migrations pipeline and just creates a database that matches you current model. 
+            // It's good for unit testing or very early prototyping, when you are happy just to delete and re-create the database when the model changes.
+            // db.Database.EnsureDeleted();
+            // db.Database.EnsureCreated();
+
+            // Note! Therefore don't use EnsureDeleted() and EnsureCreated() but Migrate();
+            db.Database.Migrate();
+
+            // check if admin user already exists
+            var existingUser = db.DictionaryUsers.Where(u => u.FirstName == adminUser.FirstName).FirstOrDefault();
+            if (existingUser != null)
+            {
+                adminUser = existingUser;
+            }
+            else
+            {
+                db.DictionaryUsers.Add(adminUser);
+                db.SaveChanges();
+            }
+
+            // disable tracking to speed things up
+            // note that this doesn't load the virtual properties, but loads the object ids after a save
+            db.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+
+            // this works when using the same user for all words.
+            db.ChangeTracker.AutoDetectChangesEnabled = false;
+
+            bool isDebugging = false;
+#if DEBUG
+            isDebugging = true;
+#endif
+
+            if (Path.GetExtension(dictionaryFile).ToLower().Equals(".json"))
+            {
+                // read json files
+                using StreamReader r = new(dictionaryFile);
+                var json = r.ReadToEnd();
+                var jobj = JObject.Parse(json);
+
+                var totalCount = jobj.Properties().Count();
+                int count = 0;
+                foreach (var item in jobj.Properties())
+                {
+                    count++;
+
+                    var wordText = item.Name;
+                    var relatedArray = item.Values().Select(a => a.Value<string>());
+
+                    WordDatabaseService.AddToDatabase(db, source, adminUser, wordText, relatedArray);
+
+                    if (isDebugging)
+                    {
+                        // in debug mode the Console.Write \r isn't shown in the output console
+                        Console.WriteLine("[{0}] / [{1}]", count, totalCount);
+                    }
+                    else
+                    {
+                        Console.Write("\r[{0}] / [{1}]", count, totalCount);
+                    }
+                }
+                Console.WriteLine("Done!");
+            }
         }
 
         static bool ParseInput(IEnumerable<string> args, out string? inputFile, out string? outputFile, out string? puzzle, out string? dictionary)
