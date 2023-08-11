@@ -224,29 +224,15 @@ public class DatabaseDictionary : ICrossDictionary
         var newWords = words.Where(value => !_description.Any(entry => entry.Key == value));
 
         // find the words in the database
-        // chunk to avoid timeouts
         // https://nishanc.medium.com/writing-better-performant-queries-with-linq-on-ef-core-6-0-%EF%B8%8F-85a1a406879
-         var existingWords = db.Words
-            .Include(w => w.RelatedFrom)
-            .ThenInclude(w => w.WordTo)
-            .Include(w => w.RelatedTo)
-            .ThenInclude(w => w.WordFrom)
-            .Where(x => newWords.Contains(x.Value))
-            .AsNoTracking();
-
-        // var existingWords = db.Words
-        //     .Select(w => new Scraper.MySQLDbService.Models.Word()
-        //     {
-        //         WordId = w.WordId,
-        //         // Language = w.Language,
-        //         Value = w.Value,
-        //         // NumberOfLetters = w.NumberOfLetters,
-        //         // NumberOfWords = w.NumberOfWords,
-        //         RelatedFrom = w.RelatedFrom.Take(10).ToList(),
-        //         RelatedTo = w.RelatedTo.Take(10).ToList(),
-        //     })
-        //     .Where(x => newWords.Contains(x.Value))
-        //     .AsNoTracking();
+        var existingWords = db.Words
+           .Include(w => w.RelatedFrom)
+           .ThenInclude(w => w.WordTo)
+           .Include(w => w.RelatedTo)
+           .ThenInclude(w => w.WordFrom)
+           .AsSplitQuery() // use split query to avoid timeouts
+           .Where(x => newWords.Contains(x.Value))
+           .AsNoTracking();
 
         foreach (var word in existingWords)
         {

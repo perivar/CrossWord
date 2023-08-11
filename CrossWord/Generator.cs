@@ -61,7 +61,7 @@ namespace CrossWord
 
                     await hubConnection.InvokeAsync("SendCrossword", "Client", crossWordModel, cancellationToken);
 
-                    await Task.Delay(50); // this makes the generation slower, can be removed
+                    await Task.Delay(100); // this makes the generation slower, can be removed
                     // break; // unncomment if we only want to use the first generated crossword
                 }
             }

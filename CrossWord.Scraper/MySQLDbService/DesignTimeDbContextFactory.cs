@@ -39,9 +39,6 @@ namespace CrossWord.Scraper.MySQLDbService
 
         public WordHintDbContext CreateDbContext(string[] args, Serilog.ILogger log)
         {
-            // set logging
-            ILoggerFactory loggerFactory = new LoggerFactory();
-
             // this is only null when called from 'dotnet ef migrations ...'
             log ??= new LoggerConfiguration()
                     .MinimumLevel.Debug()
@@ -55,6 +52,9 @@ namespace CrossWord.Scraper.MySQLDbService
             // only output to serilog if log level is debug or lower
             if (log.IsEnabled(LogEventLevel.Debug) || log.IsEnabled(LogEventLevel.Verbose))
             {
+                // set logging
+                ILoggerFactory loggerFactory = new LoggerFactory();
+
                 // Disable client evaluation in development environment
                 options.UseSerilog(loggerFactory, throwOnQueryWarnings: true);
 
@@ -64,6 +64,14 @@ namespace CrossWord.Scraper.MySQLDbService
 
             string connectionString = GetConnectionString(args);
             Log.Information($"Using connection string: {connectionString}");
+
+            // Define a global QuerySplittingBehavior.SplitQuery like this:
+            //     o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)
+            // Alternatively use .AsSplitQuery() in the query itself
+            // Example:
+            // options.UseMySql(connectionString,
+            //     ServerVersion.AutoDetect(connectionString),
+            //     o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)); // default added as Scoped
 
             options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)); // default added as Scoped
 
