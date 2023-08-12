@@ -32,7 +32,7 @@ namespace CrossWord
 
             Log.Information("Starting Puzzle generator app ver. {0} ", "1.0");
 
-            if (!ParseInput(args, out string? inputFile, out string? outputFile, out string? puzzle, out string? dictionaryFile))
+            if (!ParseInput(args, out string inputFile, out string outputFile, out string dictionaryFile, out string? puzzle))
             {
                 return 1;
             }
@@ -93,11 +93,10 @@ namespace CrossWord
                     Task workerTask = Task.Run(
                                 async () =>
                                 {
-                                    CancellationToken token = tokenSource.Token;
                                     try
                                     {
                                         var signalRHubURL = configuration["SignalRHubURL"] ?? "http://localhost:8000/crosswordsignalrhub";
-                                        await Generator.GenerateCrosswordsAsync(board, dictionary, puzzle, signalRHubURL, token);
+                                        await Generator.GenerateCrosswordsAsync(board, dictionary, puzzle, signalRHubURL, tokenSource);
                                     }
                                     catch (OperationCanceledException)
                                     {
@@ -112,7 +111,6 @@ namespace CrossWord
                     // Console.WriteLine("Press Enter to Exit ...");
                     // Console.ReadLine();
                     // tokenSource.Cancel();
-
                 }
                 catch (Exception e)
                 {
@@ -239,7 +237,7 @@ namespace CrossWord
             }
         }
 
-        static bool ParseInput(IEnumerable<string> args, out string? inputFile, out string? outputFile, out string? puzzle, out string? dictionary)
+        static bool ParseInput(IEnumerable<string> args, out string inputFile, out string outputFile, out string dictionary, out string? puzzle)
         {
             bool help = false;
             string? i = null, o = null, p = null, d = null;
@@ -256,8 +254,8 @@ namespace CrossWord
             outputFile = o;
             puzzle = p;
             dictionary = d;
-            if (help || unparsed.Count > 1 || string.IsNullOrEmpty(inputFile) ||
-                string.IsNullOrEmpty(outputFile) || string.IsNullOrEmpty(dictionary))
+            if (help || unparsed.Count > 1 || string.IsNullOrEmpty(i) ||
+                string.IsNullOrEmpty(o) || string.IsNullOrEmpty(d))
             {
                 optionSet.WriteOptionDescriptions(Console.Out);
                 return false;

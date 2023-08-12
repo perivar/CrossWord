@@ -176,6 +176,8 @@ public class DatabaseDictionary : ICrossDictionary
         using (var command = db.Database.GetDbConnection().CreateCommand())
         {
             command.CommandText = $"SELECT w.Value FROM Words AS w WHERE w.NumberOfWords = 1 AND w.NumberOfLetters <= {_maxWordLength} ORDER BY w.Value COLLATE utf8mb4_da_0900_as_cs";
+            if (_logger != null) _logger.LogDebug(command.CommandText);
+
             db.Database.OpenConnection();
             using (var reader = command.ExecuteReader())
             {
@@ -215,48 +217,86 @@ public class DatabaseDictionary : ICrossDictionary
         stopwatch.Start();
 #endif
 
-        Random rnd = new();
-
         // increase timeout
         db.Database.SetCommandTimeout(400);
 
         // find out which words have already a description
         var newWords = words.Where(value => !_description.Any(entry => entry.Key == value));
-
-        // find the words in the database
-        // https://nishanc.medium.com/writing-better-performant-queries-with-linq-on-ef-core-6-0-%EF%B8%8F-85a1a406879
-        var existingWords = db.Words
-           .Include(w => w.RelatedFrom)
-           .ThenInclude(w => w.WordTo)
-           .Include(w => w.RelatedTo)
-           .ThenInclude(w => w.WordFrom)
-           .AsSplitQuery() // use split query to avoid timeouts
-           .Where(x => newWords.Contains(x.Value))
-           .AsNoTracking();
-
-        foreach (var word in existingWords)
+        if (newWords.Any())
         {
-            var wordText = word.Value;
+            // find the words in the database
+            // https://nishanc.medium.com/writing-better-performant-queries-with-linq-on-ef-core-6-0-%EF%B8%8F-85a1a406879
+            // var existingWords = db.Words
+            //    .Include(w => w.RelatedFrom)
+            //    .ThenInclude(w => w.WordTo)
+            //    .Include(w => w.RelatedTo)
+            //    .ThenInclude(w => w.WordFrom)
+            // // .AsSplitQuery() // use split query to avoid timeouts
+            //    .AsSingleQuery()
+            //    .Where(x => newWords.Contains(x.Value))
+            //    .AsNoTracking();
 
-            if (word.RelatedFrom.Count > 0)
+            // Random rnd = new();
+
+            // foreach (var word in existingWords)
+            // {
+            //     var wordText = word.Value;
+
+            //     if (word.RelatedFrom.Count > 0)
+            //     {
+            //         // string hintText = word.RelatedFrom.Last().WordTo.Value
+
+            //         // randomize the word descriptions
+            //         int indexFrom = rnd.Next(0, word.RelatedFrom.Count - 1);
+            //         string hintText = word.RelatedFrom.ToArray()[indexFrom].WordTo.Value;
+
+            //         AddDescription(wordText, hintText);
+            //     }
+            //     else if (word.RelatedTo.Count > 0)
+            //     {
+            //         // string hintText = word.RelatedTo.Last().WordFrom.Value;
+
+            //         // randomize the word descriptions
+            //         int indexTo = rnd.Next(0, word.RelatedTo.Count - 1);
+            //         string hintText = word.RelatedTo.ToArray()[indexTo].WordFrom.Value;
+
+            //         AddDescription(wordText, hintText);
+            //     }
+            // }
+
+            // using ADO.NET seems faster than ef core for raw SQLs
+            using (var command = db.Database.GetDbConnection().CreateCommand())
             {
-                // string hintText = word.RelatedFrom.Last().WordTo.Value
+                var inClause = string.Join(", ", newWords.Select(word => $"'{word}'"));
+                int maxHintsPerWord = 10;
+                command.CommandText =
+                    $@"SELECT sub.WordId, sub.Value, sub.RelatedValue
+                FROM (
+                    SELECT
+                        w1.WordId,
+                        w1.Value,
+                        w2.Value AS RelatedValue,
+                        ROW_NUMBER() OVER (PARTITION BY w1.WordId ORDER BY w2.WordId) AS row_num
+                    FROM Words AS w1
+                    LEFT JOIN WordRelations AS wr1 ON w1.WordId = wr1.WordFromId
+                    LEFT JOIN Words AS w2 ON wr1.WordToId = w2.WordId
+                    WHERE w1.Value IN ({inClause})
+                ) AS sub
+                WHERE sub.row_num <= {maxHintsPerWord};";
 
-                // randomize the word descriptions
-                int indexFrom = rnd.Next(0, word.RelatedFrom.Count - 1);
-                string hintText = word.RelatedFrom.ToArray()[indexFrom].WordTo.Value;
+                if (_logger != null) _logger.LogDebug(command.CommandText);
 
-                AddDescription(wordText, hintText);
-            }
-            else if (word.RelatedTo.Count > 0)
-            {
-                // string hintText = word.RelatedTo.Last().WordFrom.Value;
-
-                // randomize the word descriptions
-                int indexTo = rnd.Next(0, word.RelatedTo.Count - 1);
-                string hintText = word.RelatedTo.ToArray()[indexTo].WordFrom.Value;
-
-                AddDescription(wordText, hintText);
+                db.Database.OpenConnection();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string? wordId = reader[0].ToString();
+                        string? wordText = reader[1].ToString();
+                        string? hintText = reader[2].ToString();
+                        AddDescription(wordText!, hintText!);
+                    }
+                }
             }
         }
 

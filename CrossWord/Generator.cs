@@ -10,9 +10,9 @@ namespace CrossWord
 {
     public static class Generator
     {
-        private const int MAX_GENERATOR_COUNT = 10;
+        private const int MAX_GENERATOR_COUNT = 100;
 
-        public static async Task GenerateCrosswordsAsync(ICrossBoard board, ICrossDictionary dictionary, string puzzle, string signalRHubURL, CancellationToken cancellationToken)
+        public static async Task GenerateCrosswordsAsync(ICrossBoard board, ICrossDictionary dictionary, string puzzle, string signalRHubURL, CancellationTokenSource tokenSource)
         {
             Log.Debug("GenerateCrosswordsAsync()");
 
@@ -33,42 +33,38 @@ namespace CrossWord
 
                 try
                 {
-                    await hubConnection.StartAsync(cancellationToken);
+                    await hubConnection.StartAsync(tokenSource.Token);
                     await hubConnection.InvokeAsync("Broadcast", "Generator", "GenerateCrosswordsAsync");
                     break;
                 }
                 catch (Exception)
                 {
-                    await Task.Delay(1000, cancellationToken);
+                    await Task.Delay(1000, tokenSource.Token);
                 }
             }
 
             Log.Information("Succesfully connected to SignalR Hub @ {0}", signalRHubURL);
 
-            try
+            var generated = GenerateCrossWords(board, dictionary, puzzle, tokenSource.Token);
+            int generatedCount = 0;
+            foreach (var curCrossword in generated)
             {
-                var generated = GenerateCrossWords(board, dictionary, puzzle, cancellationToken);
-                int generatedCount = 0;
-                foreach (var curCrossword in generated)
-                {
-                    generatedCount++;
+                generatedCount++;
 
-                    var cb = curCrossword as CrossBoard;
-                    var crossWordModel = cb.ToCrossWordModel(dictionary);
-                    crossWordModel.Title = "Generated crossword number " + generatedCount;
+                var cb = curCrossword as CrossBoard;
+                var crossWordModel = cb.ToCrossWordModel(dictionary);
+                crossWordModel.Title = "Generated crossword number " + generatedCount;
 
-                    Log.Debug("Succesfully converted generated crossword {0} to a Times model", generatedCount);
+                Log.Debug("Succesfully converted generated crossword {0} to a Times model", generatedCount);
 
-                    await hubConnection.InvokeAsync("SendCrossword", "Client", crossWordModel, cancellationToken);
+                await hubConnection.InvokeAsync("SendCrossword", "Client", crossWordModel, tokenSource.Token);
 
-                    await Task.Delay(100); // this makes the generation slower, can be removed
-                    // break; // unncomment if we only want to use the first generated crossword
-                }
+                // await Task.Delay(50, tokenSource.Token); // this makes the generation slower, can be removed
+
+                // break; // uncomment if we only want to use the first generated crossword
             }
-            catch (OperationCanceledException)
-            {
-                // Cancel and timeout logic
-            }
+
+            // tokenSource.Cancel();
 
             await hubConnection.DisposeAsync();
 
@@ -98,7 +94,7 @@ namespace CrossWord
 
                         Log.Debug("Generated crossword {0}/{1}", generatedCount, MAX_GENERATOR_COUNT);
 
-                        if (generatedCount >= MAX_GENERATOR_COUNT) break;
+                        if (generatedCount >= MAX_GENERATOR_COUNT) yield break;
 
                         yield return solution;
                     }
@@ -123,7 +119,7 @@ namespace CrossWord
 
                     Log.Debug("Generated crossword {0}/{1}", generatedCount, MAX_GENERATOR_COUNT);
 
-                    if (generatedCount >= MAX_GENERATOR_COUNT) break;
+                    if (generatedCount >= MAX_GENERATOR_COUNT) yield break;
 
                     yield return resultBoard;
                 }
