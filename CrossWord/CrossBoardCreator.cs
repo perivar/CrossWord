@@ -55,7 +55,8 @@ public static class CrossBoardCreator
                 try
                 {
                     jsonData = await httpClient.GetStringAsync(nytUrl);
-                    break;
+                    model = CrossWordTimes.FromJson(jsonData);
+                    return model;
                 }
                 catch (WebException)
                 {
@@ -68,8 +69,6 @@ public static class CrossBoardCreator
                 }
             }
             sw.Stop();
-
-            model = CrossWordTimes.FromJson(null);
         }
         else
         {
@@ -78,6 +77,7 @@ public static class CrossBoardCreator
                 // url = "https://raw.githubusercontent.com/doshea/nyt_crosswords/master/1997/03/13.json";
                 var jsonData = await httpClient.GetStringAsync(url);
                 model = CrossWordTimes.FromJson(jsonData);
+                return model;
             }
             catch (WebException e)
             {
@@ -86,7 +86,7 @@ public static class CrossBoardCreator
             }
         }
 
-        return model;
+        return null;
     }
 
     public static async Task<ICrossBoard> CreateFromFileAsync(string path)
