@@ -173,9 +173,9 @@ namespace CrossWord.API.Controllers
                 db.SaveChanges();
             }
 
+            // Generate First CrossWord
             var gen = new CrossGenerator(dictionary, board);
             board.Preprocess(dictionary);
-
             var generated = gen.Generate(CancellationToken.None).FirstOrDefault() as CrossBoard;
             return generated;
         }
@@ -190,7 +190,7 @@ namespace CrossWord.API.Controllers
         // [Authorize]
         [HttpGet]
         [Route("api/templates/generate")]
-        public async Task<IActionResult> GenerateTemplates()
+        public IActionResult GenerateTemplates()
         {
             Queue.QueueBackgroundWorkItem(async token =>
             {
