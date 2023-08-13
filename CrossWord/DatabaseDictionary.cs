@@ -175,7 +175,15 @@ public class DatabaseDictionary : ICrossDictionary
         // using ADO.NET seems faster than ef core for raw SQLs
         using (var command = db.Database.GetDbConnection().CreateCommand())
         {
-            command.CommandText = $"SELECT w.Value FROM Words AS w WHERE w.NumberOfWords = 1 AND w.NumberOfLetters <= {_maxWordLength} ORDER BY w.Value COLLATE utf8mb4_da_0900_as_cs";
+            // limit to only words that are only uppercase A-Å
+            command.CommandText =
+            $@"SELECT w.Value 
+            FROM Words AS w 
+            WHERE w.NumberOfWords = 1 
+            AND w.NumberOfLetters <= {_maxWordLength}
+            AND w.Value REGEXP '^[A-Å]+$'
+            ORDER BY w.Value COLLATE utf8mb4_da_0900_as_cs;";
+
             if (_logger != null) _logger.LogDebug(command.CommandText);
 
             db.Database.OpenConnection();
@@ -184,11 +192,11 @@ public class DatabaseDictionary : ICrossDictionary
                 while (reader.Read())
                 {
                     string? wordText = reader[0].ToString();
-                    if (!string.IsNullOrEmpty(wordText) && wordText.All(char.IsLetter))
-                    // if (wordText.All(x => char.IsLetter(x) || x == '-' || x == ' '))
-                    {
-                        AddWord(wordText);
-                    }
+                    // if (!string.IsNullOrEmpty(wordText) && wordText.All(char.IsLetter))
+                    // // if (wordText.All(x => char.IsLetter(x) || x == '-' || x == ' '))
+                    // {
+                    AddWord(wordText);
+                    // }
                 }
             }
         }
@@ -271,18 +279,18 @@ public class DatabaseDictionary : ICrossDictionary
                 int maxHintsPerWord = 10;
                 command.CommandText =
                     $@"SELECT sub.WordId, sub.Value, sub.RelatedValue
-                FROM (
-                    SELECT
-                        w1.WordId,
-                        w1.Value,
-                        w2.Value AS RelatedValue,
-                        ROW_NUMBER() OVER (PARTITION BY w1.WordId ORDER BY w2.WordId) AS row_num
-                    FROM Words AS w1
-                    LEFT JOIN WordRelations AS wr1 ON w1.WordId = wr1.WordFromId
-                    LEFT JOIN Words AS w2 ON wr1.WordToId = w2.WordId
-                    WHERE w1.Value IN ({inClause})
-                ) AS sub
-                WHERE sub.row_num <= {maxHintsPerWord};";
+                    FROM (
+                        SELECT
+                            w1.WordId,
+                            w1.Value,
+                            w2.Value AS RelatedValue,
+                            ROW_NUMBER() OVER (PARTITION BY w1.WordId ORDER BY w2.WordId) AS row_num
+                        FROM Words AS w1
+                        LEFT JOIN WordRelations AS wr1 ON w1.WordId = wr1.WordFromId
+                        LEFT JOIN Words AS w2 ON wr1.WordToId = w2.WordId
+                        WHERE w1.Value IN ({inClause})
+                    ) AS sub
+                    WHERE sub.row_num <= {maxHintsPerWord};";
 
                 if (_logger != null) _logger.LogDebug(command.CommandText);
 

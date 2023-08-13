@@ -1,3 +1,11 @@
+; -- find all words that only contain the letters a-å and no spaces
+SELECT w.Value 
+FROM Words AS w 
+WHERE w.NumberOfWords = 1 
+AND w.NumberOfLetters <= 23 
+AND w.Value REGEXP '^[A-Å]+$'
+ORDER BY w.Value COLLATE utf8mb4_da_0900_as_cs;
+
 ; -- separated into three queries 
 SELECT `w`.`WordId`, `w`.`Value`
 FROM `Words` AS `w`
