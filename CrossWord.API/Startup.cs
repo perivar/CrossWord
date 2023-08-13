@@ -16,7 +16,9 @@ using Microsoft.IdentityModel.Tokens;
 using CrossWord.API.Configuration;
 using Microsoft.OData.ModelBuilder;
 using Microsoft.AspNetCore.OData;
-using System.Text.Json;
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.OData.NewtonsoftJson;
 
 namespace CrossWord.API
 {
@@ -166,20 +168,25 @@ namespace CrossWord.API
             services.AddAutoMapper(typeof(Startup), typeof(AutoMapperProfile));
 
             services.AddControllers()
-            .AddJsonOptions(options =>
+            .AddNewtonsoftJson(options =>
                 {
-                    // turn on camel case for non EDM controllers, see EnableLowerCamelCase() for EDM models
-                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-                    options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
-                    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-                    // options.JsonSerializerOptions.WriteIndented = true; // disable indented to save bandwidth and align with odata defaults
+                    // options.UseCamelCasing(false);
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    // options.SerializerSettings.Culture = CultureInfo.InvariantCulture; // Specify culture for parsing and formatting
+                    // options.SerializerSettings.Formatting = Formatting.None; // You can set it to Formatting.Indented if you want indented output
+                    // options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore; // Ignore null values
+                    // options.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+                    // options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+                    // options.SerializerSettings.MetadataPropertyHandling = MetadataPropertyHandling.Ignore;
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore; // Handle circular references
                 })
             .AddOData(
                 options =>
                 {
                     options.Select().Filter().OrderBy().Expand().Count().SetMaxTop(300);
                     options.AddRouteComponents("odata", model);
-                });
+                })
+            .AddODataNewtonsoftJson();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
