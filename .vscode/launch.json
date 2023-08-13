@@ -80,7 +80,7 @@
       "args": [],
       "cwd": "${workspaceFolder}/CrossWord",
       // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
-      "console": "internalConsole",
+      "console": "integratedTerminal",
       "stopAtEntry": false,
       "internalConsoleOptions": "openOnSessionStart"
     },
@@ -107,7 +107,7 @@
       ],
       "cwd": "${workspaceFolder}/CrossWord",
       // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
-      "console": "internalConsole",
+      "console": "integratedTerminal",
       "stopAtEntry": false,
       "internalConsoleOptions": "openOnSessionStart"
     },
@@ -128,7 +128,7 @@
       ],
       "cwd": "${workspaceFolder}/CrossWord",
       // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
-      "console": "internalConsole",
+      "console": "integratedTerminal",
       "stopAtEntry": false,
       "internalConsoleOptions": "openOnSessionStart"
     },
@@ -151,7 +151,7 @@
       ],
       "cwd": "${workspaceFolder}/CrossWord",
       // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
-      "console": "internalConsole",
+      "console": "integratedTerminal",
       "stopAtEntry": false,
       "internalConsoleOptions": "openOnSessionStart"
     },
@@ -172,7 +172,7 @@
       ],
       "cwd": "${workspaceFolder}/CrossWord",
       // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
-      "console": "internalConsole",
+      "console": "integratedTerminal",
       "stopAtEntry": false,
       "internalConsoleOptions": "openOnSessionStart"
     },
@@ -193,7 +193,7 @@
       ],
       "cwd": "${workspaceFolder}/CrossWord",
       // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
-      "console": "internalConsole",
+      "console": "integratedTerminal",
       "stopAtEntry": false,
       "internalConsoleOptions": "openOnSessionStart"
     },
@@ -216,7 +216,7 @@
       ],
       "cwd": "${workspaceFolder}/CrossWord",
       // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
-      "console": "internalConsole",
+      "console": "integratedTerminal",
       "stopAtEntry": false,
       "internalConsoleOptions": "openOnSessionStart"
     },
@@ -239,7 +239,7 @@
       ],
       "cwd": "${workspaceFolder}/CrossWord",
       // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
-      "console": "internalConsole",
+      "console": "integratedTerminal",
       "stopAtEntry": false,
       "internalConsoleOptions": "openOnSessionStart"
     },
@@ -262,7 +262,7 @@
       ],
       "cwd": "${workspaceFolder}/CrossWord",
       // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
-      "console": "internalConsole",
+      "console": "integratedTerminal",
       "stopAtEntry": false,
       "internalConsoleOptions": "openOnSessionStart"
     },
@@ -285,7 +285,7 @@
       ],
       "cwd": "${workspaceFolder}/CrossWord",
       // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
-      "console": "internalConsole",
+      "console": "integratedTerminal",
       "stopAtEntry": false,
       "internalConsoleOptions": "openOnSessionStart"
     },
@@ -308,7 +308,7 @@
       ],
       "cwd": "${workspaceFolder}/CrossWord",
       // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
-      "console": "internalConsole",
+      "console": "integratedTerminal",
       "stopAtEntry": false,
       "internalConsoleOptions": "openOnSessionStart"
     },
@@ -331,7 +331,7 @@
       ],
       "cwd": "${workspaceFolder}/CrossWord",
       // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
-      "console": "internalConsole",
+      "console": "integratedTerminal",
       "stopAtEntry": false,
       "internalConsoleOptions": "openOnSessionStart"
     },    
@@ -352,7 +352,7 @@
       ],
       "cwd": "${workspaceFolder}/CrossWord",
       // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
-      "console": "internalConsole",
+      "console": "integratedTerminal",
       "stopAtEntry": false,
       "internalConsoleOptions": "openOnSessionStart"
     },
@@ -366,7 +366,7 @@
       "args": [],
       "cwd": "${workspaceFolder}/CrossWord.Scraper",
       // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
-      "console": "internalConsole",
+      "console": "integratedTerminal",
       "stopAtEntry": false,
       "internalConsoleOptions": "openOnSessionStart"
     },
@@ -382,7 +382,7 @@
       ],
       "cwd": "${workspaceFolder}/CrossWord.DbMigrate",
       // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
-      "console": "internalConsole",
+      "console": "integratedTerminal",
       "stopAtEntry": false,
       "internalConsoleOptions": "openOnSessionStart"
     },

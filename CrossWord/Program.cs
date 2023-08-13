@@ -85,37 +85,46 @@ namespace CrossWord
 
             if (outputFile.Equals("signalr"))
             {
+                // generate and send to signalr hub
+                // https://learn.microsoft.com/en-us/dotnet/standard/parallel-programming/how-to-cancel-a-task-and-its-children
+                var tokenSource = new CancellationTokenSource();
+                var cancellationToken = tokenSource.Token;
+
+                var task = Task.Run(async () =>
+                {
+                    var signalRHubURL = configuration["SignalRHubURL"] ?? "http://localhost:8000/crosswordsignalrhub";
+                    await Generator.GenerateCrosswordsSignalRAsync(board, dictionary, puzzle, signalRHubURL, cancellationToken);
+
+                }, cancellationToken);
+
+                // Request cancellation from the UI thread.
+                char ch = Console.ReadKey().KeyChar;
+                if (ch == 'c' || ch == 'C')
+                {
+                    tokenSource.Cancel();
+                    Log.Information("Task cancellation requested from command line.");
+
+                    // Optional: Observe the change in the Status property on the task.
+                    // It is not necessary to wait on tasks that have canceled. However,
+                    // if you do wait, you must enclose the call in a try-catch block to
+                    // catch the TaskCanceledExceptions that are thrown. If you do
+                    // not wait, no exception is thrown if the token that was passed to the
+                    // Task.Run method is the same token that requested the cancellation.
+                }
+
                 try
                 {
-                    // generate and send to signalr hub
-                    // var tokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(20));
-                    var tokenSource = new CancellationTokenSource();
-                    Task workerTask = Task.Run(
-                                async () =>
-                                {
-                                    try
-                                    {
-                                        var signalRHubURL = configuration["SignalRHubURL"] ?? "http://localhost:8000/crosswordsignalrhub";
-                                        await Generator.GenerateCrosswordsAsync(board, dictionary, puzzle, signalRHubURL, tokenSource);
-                                    }
-                                    catch (OperationCanceledException)
-                                    {
-                                        Log.Information("Cancelled @ {0}", DateTime.Now);
-                                    }
-                                });
-
                     // wait until the task is done
-                    workerTask.Wait();
-
-                    // or wait until the user presses a key
-                    // Console.WriteLine("Press Enter to Exit ...");
-                    // Console.ReadLine();
-                    // tokenSource.Cancel();
+                    task.Wait();
                 }
                 catch (Exception e)
                 {
                     Log.Error(e, $"Failed generating crossword asynchronously");
                     return 4;
+                }
+                finally
+                {
+                    tokenSource.Dispose();
                 }
             }
             else if (outputFile.Equals("database"))

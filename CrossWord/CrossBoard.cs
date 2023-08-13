@@ -413,11 +413,10 @@ public class CrossBoard : ICrossBoard
 
     private static string GetDescription(ICrossDictionary dictionary, string word)
     {
-        if (!dictionary.TryGetDescription(word, out string? description))
+        if (!dictionary.TryGetDescription(word, out var description))
         {
             description = "[PUZZLE]";
         }
-
         return description!;
     }
 
