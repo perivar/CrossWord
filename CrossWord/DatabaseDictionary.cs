@@ -208,7 +208,7 @@ public class DatabaseDictionary : ICrossDictionary
         // Write result.
         if (_logger != null) _logger.LogInformation("Succesfully read words into database - Time elapsed: {0}", stopwatch.Elapsed);
 #else
-    if (logger != null) logger.LogInformation("Succesfully read words into database!");
+    if (_logger != null) _logger.LogInformation("Succesfully read words into database!");
 #endif
 
     }
@@ -315,7 +315,7 @@ public class DatabaseDictionary : ICrossDictionary
         // Write result.
         if (_logger != null) _logger.LogInformation("Succesfully read descriptions into database - Time elapsed: {0}", stopwatch.Elapsed);
 #else
-    if (logger != null) logger.LogInformation("Succesfully read descriptions into database!");
+    if (_logger != null) _logger.LogInformation("Succesfully read descriptions into database!");
 #endif
 
     }
