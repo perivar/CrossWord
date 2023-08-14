@@ -67,9 +67,10 @@ namespace CrossWord
                     }
                     else
                     {
-                        Log.Information("Using database with connection string: {0}", connectionString);
+                        var doSQLDebug = configuration.GetValue<bool>("DoSQLDebug");
+                        Log.Information("Using database with connection string: {0} (sql debugging: {1})", connectionString, doSQLDebug);
                         var loggerFactory = new LoggerFactory().AddSerilog(Log.Logger);
-                        dictionary = new DatabaseDictionary(connectionString, board.MaxWordLength, loggerFactory);
+                        dictionary = new DatabaseDictionary(connectionString, board.MaxWordLength, loggerFactory, doSQLDebug);
                     }
                 }
                 else

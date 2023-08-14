@@ -11,13 +11,13 @@ namespace CrossWord.DbMigrate.MySQLDbService
 {
     public class CustomMySqlMigrationsSqlGenerator : MySqlMigrationsSqlGenerator
     {
-        private ILogger logger;
+        private ILogger _logger;
 
         private void InitLoggerIfNull()
         {
-            if (logger == null)
+            if (_logger == null)
             {
-                logger = Log.ForContext<CustomMySqlMigrationsSqlGenerator>();
+                _logger = Log.ForContext<CustomMySqlMigrationsSqlGenerator>();
             }
         }
 
@@ -41,7 +41,7 @@ namespace CrossWord.DbMigrate.MySQLDbService
             IModel model,
             MigrationCommandListBuilder builder)
         {
-            if (logger != null) logger.Verbose("ColumnDefinition for {0}: {1} [{2}]", table, name, string.Join(";", operation.GetAnnotations().Select(x => x.Name)));
+            _logger?.Verbose("ColumnDefinition for {0}: {1} [{2}]", table, name, string.Join(";", operation.GetAnnotations().Select(x => x.Name)));
 
             base.ColumnDefinition(schema, table, name, operation, model, builder);
 
@@ -51,7 +51,7 @@ namespace CrossWord.DbMigrate.MySQLDbService
             if (annotation != null)
             {
                 string collateValue = annotation.Value.ToString();
-                if (logger != null) logger.Debug("Found {0} for {1}:{2}, fixing COLLATE: {3}", annotationName, table, name, collateValue);
+                _logger?.Debug("Found {0} for {1}:{2}, fixing COLLATE: {3}", annotationName, table, name, collateValue);
 
                 builder.Append(string.Format(" COLLATE {0}", collateValue));
             }
@@ -75,7 +75,7 @@ namespace CrossWord.DbMigrate.MySQLDbService
             // SO HARDCODE A FIX!
             if (alterColumnOperation.Table == "Words" && alterColumnOperation.Name == "Value")
             {
-                if (logger != null) logger.Debug("Found AlterColumn for {0}:{1}, fixing COLLATE utf8mb4_0900_as_cs", alterColumnOperation.Table, alterColumnOperation.Name);
+                _logger?.Debug("Found AlterColumn for {0}:{1}, fixing COLLATE utf8mb4_0900_as_cs", alterColumnOperation.Table, alterColumnOperation.Name);
 
                 builder
                         .Append(Dependencies.SqlGenerationHelper.DelimitIdentifier(alterColumnOperation.Name))

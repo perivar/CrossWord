@@ -9,7 +9,7 @@ namespace CrossWord.Scraper.MySQLDbService
 {
     public class WordHintDbContext : IdentityDbContext<ApplicationUser>
     {
-        private ILogger logger;
+        private ILogger _logger;
 
         public DbSet<Word> Words { get; set; }
         public DbSet<WordRelation> WordRelations { get; set; }
@@ -21,8 +21,8 @@ namespace CrossWord.Scraper.MySQLDbService
 
         private void InitLoggerIfNull()
         {
-            if (logger == null) {
-                logger = Log.ForContext<WordHintDbContext>();
+            if (_logger == null) {
+                _logger = Log.ForContext<WordHintDbContext>();
             }
         }
 
@@ -39,18 +39,18 @@ namespace CrossWord.Scraper.MySQLDbService
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             InitLoggerIfNull();
-            if (logger != null) logger.Debug("OnConfiguring()");
+            _logger?.Debug("OnConfiguring()");
 
             base.OnConfiguring(optionsBuilder);
 
-            if (logger != null) logger.Debug("Replacing built-in generator with CustomMySqlMigrationsSqlGenerator");
+            _logger?.Debug("Replacing built-in generator with CustomMySqlMigrationsSqlGenerator");
             optionsBuilder.ReplaceService<IMigrationsSqlGenerator, CustomMySqlMigrationsSqlGenerator>();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             InitLoggerIfNull();
-            if (logger != null) logger.Debug("OnModelCreating()");
+            _logger?.Debug("OnModelCreating()");
 
             base.OnModelCreating(modelBuilder);
 

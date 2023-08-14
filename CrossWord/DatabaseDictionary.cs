@@ -26,11 +26,11 @@ public class DatabaseDictionary : ICrossDictionary
 
     private WordHintDbContext CreateDbContext()
     {
-        if (_logger != null) _logger.LogDebug("CreateDbContext()");
+        _logger?.LogDebug("CreateDbContext()");
 
         if (_scopeFactory != null)
         {
-            if (_logger != null) _logger.LogDebug("Getting WordHintDbContext using scopeFactory.");
+            _logger?.LogDebug("Getting WordHintDbContext using scopeFactory.");
             var scope = _scopeFactory.CreateScope();
             return scope.ServiceProvider.GetRequiredService<WordHintDbContext>();
         }
@@ -38,13 +38,13 @@ public class DatabaseDictionary : ICrossDictionary
         {
             if (_doSQLDebug)
             {
-                if (_logger != null) _logger.LogDebug("Getting WordHintDbContext using DesignTimeDbContextFactory.");
+                _logger?.LogDebug("Getting WordHintDbContext using DesignTimeDbContextFactory (SQL debugging).");
                 var dbContextFactory = new DesignTimeDbContextFactory();
                 return dbContextFactory.CreateDbContext(_connectionString, Log.Logger);
             }
             else
             {
-                if (_logger != null) _logger.LogDebug("Getting WordHintDbContext using DbContextOptionsBuilder.");
+                _logger?.LogDebug("Getting WordHintDbContext using DbContextOptionsBuilder.");
                 var options = new DbContextOptionsBuilder<WordHintDbContext>();
                 options.UseMySql(_connectionString, ServerVersion.AutoDetect(_connectionString));
                 return new WordHintDbContext(options.Options);
@@ -81,14 +81,14 @@ public class DatabaseDictionary : ICrossDictionary
         _description = new Dictionary<string, string>();
     }
 
-    public DatabaseDictionary(string connectionString, int maxWordLength, ILoggerFactory loggerFactory)
+    public DatabaseDictionary(string connectionString, int maxWordLength, ILoggerFactory loggerFactory, bool doSQLDebug = false)
         : this(maxWordLength)
     {
-        _connectionString = connectionString;
-        _doSQLDebug = true; // turn on sql debugging
+        _connectionString = connectionString;    
+        _doSQLDebug = doSQLDebug;    
 
         _logger = loggerFactory.CreateLogger<DatabaseDictionary>();
-        if (_logger != null) _logger.LogInformation("Initializing Database Dictionary");
+        _logger?.LogInformation("Initializing Database Dictionary");
 
         using var db = CreateDbContext();
 
@@ -112,7 +112,7 @@ public class DatabaseDictionary : ICrossDictionary
         _scopeFactory = scopeFactory;
 
         _logger = loggerFactory.CreateLogger("DatabaseDictionary");
-        if (_logger != null) _logger.LogInformation("Initializing Database Dictionary");
+        _logger?.LogInformation("Initializing Database Dictionary");
 
         ResetDictionary(maxWordLength);
     }
@@ -129,7 +129,7 @@ public class DatabaseDictionary : ICrossDictionary
 
     private void ReadWordsIntoDatabase(WordHintDbContext db)
     {
-        if (_logger != null) _logger.LogInformation("Starting to read words into database...");
+        _logger?.LogInformation("Starting to read words into database...");
 
 #if DEBUG
         // Create new stopwatch.
@@ -184,7 +184,7 @@ public class DatabaseDictionary : ICrossDictionary
             AND w.Value REGEXP '^[A-Å]+$'
             ORDER BY w.Value COLLATE utf8mb4_da_0900_as_cs;";
 
-            if (_logger != null) _logger.LogDebug(command.CommandText);
+            if (_doSQLDebug) _logger?.LogDebug(command.CommandText);
 
             db.Database.OpenConnection();
             using (var reader = command.ExecuteReader())
@@ -192,11 +192,7 @@ public class DatabaseDictionary : ICrossDictionary
                 while (reader.Read())
                 {
                     string? wordText = reader[0].ToString();
-                    // if (!string.IsNullOrEmpty(wordText) && wordText.All(char.IsLetter))
-                    // // if (wordText.All(x => char.IsLetter(x) || x == '-' || x == ' '))
-                    // {
                     AddWord(wordText);
-                    // }
                 }
             }
         }
@@ -206,16 +202,16 @@ public class DatabaseDictionary : ICrossDictionary
         stopwatch.Stop();
 
         // Write result.
-        if (_logger != null) _logger.LogInformation("Succesfully read words into database - Time elapsed: {0}", stopwatch.Elapsed);
+        _logger?.LogInformation("Succesfully read words into database - Time elapsed: {0}", stopwatch.Elapsed);
 #else
-    if (_logger != null) _logger.LogInformation("Succesfully read words into database!");
+    _logger?.LogInformation("Succesfully read words into database!");
 #endif
 
     }
 
     private void ReadDescriptionsIntoDatabase(WordHintDbContext db, List<string> words)
     {
-        if (_logger != null) _logger.LogInformation("Starting to read descriptions into database...");
+        _logger?.LogInformation("Starting to read descriptions into database...");
 
 #if DEBUG
         // Create new stopwatch.
@@ -278,7 +274,7 @@ public class DatabaseDictionary : ICrossDictionary
                 var inClause = string.Join(", ", newWords.Select(word => $"'{word}'"));
                 int maxHintsPerWord = 10;
                 command.CommandText =
-                    $@"SELECT sub.WordId, sub.Value, sub.RelatedValue
+                    $@"SELECT sub.Value, sub.RelatedValue
                     FROM (
                         SELECT
                             w1.WordId,
@@ -292,17 +288,32 @@ public class DatabaseDictionary : ICrossDictionary
                     ) AS sub
                     WHERE sub.row_num <= {maxHintsPerWord};";
 
-                if (_logger != null) _logger.LogDebug(command.CommandText);
+                if (_doSQLDebug) _logger?.LogDebug(command.CommandText);
 
                 db.Database.OpenConnection();
                 using (var reader = command.ExecuteReader())
                 {
+                    // Random number generator for random hintText selection
+                    var random = new Random();
+
                     while (reader.Read())
                     {
-                        string? wordId = reader[0].ToString();
-                        string? wordText = reader[1].ToString();
-                        string? hintText = reader[2].ToString();
-                        AddDescription(wordText!, hintText!);
+                        string? wordText = reader[0].ToString();   // Get wordText from the reader
+                        string? hintText = reader[1].ToString();   // Get hintText from the reader
+
+                        if (!Descriptions.ContainsKey(wordText))
+                        {
+                            // If wordId is encountered for the first time, add hintText to description map
+                            AddDescription(wordText!, hintText!);
+                        }
+                        else
+                        {
+                            // If wordId has been encountered before, randomly decide whether to update hintText
+                            if (random.Next(2) == 0)
+                            {
+                                AddDescription(wordText!, hintText!); // Call AddDescription with updated hintText
+                            }
+                        }
                     }
                 }
             }
@@ -313,9 +324,9 @@ public class DatabaseDictionary : ICrossDictionary
         stopwatch.Stop();
 
         // Write result.
-        if (_logger != null) _logger.LogInformation("Succesfully read descriptions into database - Time elapsed: {0}", stopwatch.Elapsed);
+        _logger?.LogInformation("Succesfully read descriptions into database - Time elapsed: {0}", stopwatch.Elapsed);
 #else
-    if (_logger != null) _logger.LogInformation("Succesfully read descriptions into database!");
+    _logger?.LogInformation("Succesfully read descriptions into database!");
 #endif
 
     }
