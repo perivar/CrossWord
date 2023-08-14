@@ -39,6 +39,8 @@
         // save the new york crossword url
         var nytUrl = "";
 
+        var baseUrl = "@ViewData["ApiBaseUrl"]";
+
         var signalRHubURL = "@ViewData["SignalRHubURL"]";
         var connection = new signalR.HubConnectionBuilder()
             .withUrl(signalRHubURL)
@@ -77,7 +79,7 @@
 
         function ReloadDictionary() {
             $("#puzTitle").html("Starting reloading the dictionary ...");
-            var reloaddUrl = window.location.protocol + "//" + window.location.hostname + ':' + 8000 + '/api/crosswords/init';
+            var reloaddUrl = baseUrl + "crosswords/init";
             $.getJSON(reloaddUrl, function( json ) {
                 $("#puzTitle").html("Reloaded the dictionary successfully!");
             })
@@ -208,8 +210,8 @@
                 });
             } else 
             {
-                var generatedUrl = window.location.protocol + "//" + window.location.hostname + ':' + 8000 + '/api/crosswords';
-			    $.getJSON(generatedUrl, function( json ) {
+                var generatedUrl = baseUrl + "crosswords";
+		$.getJSON(generatedUrl, function( json ) {
                     ShowPuzzle(json);
                 })
                 .fail(function() {

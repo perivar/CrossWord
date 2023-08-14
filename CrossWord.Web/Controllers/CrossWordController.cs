@@ -26,7 +26,10 @@ namespace CrossWord.Web.Controllers
 
         public IActionResult Index()
         {
+            var apiBaseUrl = appConfig["ApiBaseUrl"] ?? "http://localhost:8000/api/";
             var signalRHubURL = appConfig["SignalRHubURL"] ?? "http://localhost:8000/crosswordsignalrhub";
+
+            ViewData["ApiBaseUrl"] = apiBaseUrl;
             ViewData["SignalRHubURL"] = signalRHubURL;
 
             return View();
