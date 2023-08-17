@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -12,23 +13,52 @@ namespace CrossWord
     {
         private const int MAX_GENERATOR_COUNT = 100;
 
+        public static ICrossBoard? GenerateFirstCrossWord(ICrossBoard board, ICrossDictionary dictionary)
+        {
+            var gen = new CrossGenerator(dictionary, board);
+            board.Preprocess(dictionary);
+            return gen.Generate(CancellationToken.None).FirstOrDefault();
+        }
+
+        public static ICrossBoard GenerateFirstCrossWord(ICrossBoard board, ICrossDictionary dictionary, string puzzle)
+        {
+            var placer = new PuzzlePlacer(board, puzzle);
+            var cts = new CancellationTokenSource();
+            var mre = new ManualResetEvent(false);
+            ICrossBoard? successFullBoard = null;
+            foreach (var boardWithPuzzle in placer.GetAllPossiblePlacements(dictionary))
+            {
+                var gen = new CrossGenerator(dictionary, boardWithPuzzle);
+                var _ = Task.Factory.StartNew(() =>
+                {
+                    var solution = gen.Generate(cts.Token).FirstOrDefault();
+                    if (solution != null)
+                    {
+                        successFullBoard = solution;
+                        cts.Cancel();
+                        mre.Set();
+                    }
+
+                }, cts.Token);
+                if (cts.IsCancellationRequested)
+                    break;
+            }
+
+            mre.WaitOne();
+            return successFullBoard!;
+        }
+
         public static async Task GenerateCrosswordsSignalRAsync(ICrossBoard board, ICrossDictionary dictionary, string? puzzle, string signalRHubURL, CancellationToken cancellationToken)
         {
             Log.Debug("GenerateCrosswordsSignalRAsync()");
-
-            // Was cancellation already requested?
-            if (cancellationToken.IsCancellationRequested)
-            {
-                Log.Warning("GenerateCrosswordsSignalRAsync was cancelled before it got started!");
-                cancellationToken.ThrowIfCancellationRequested();
-            }
-
             Log.Information("Trying to connect to SignalR Hub @ {0}", signalRHubURL);
 
             // Keep trying to until we can start
             HubConnection? hubConnection = null;
             while (true)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 try
                 {
                     hubConnection = new HubConnectionBuilder()
@@ -51,12 +81,6 @@ namespace CrossWord
                     // delay before trying again
                     await Task.Delay(1000, cancellationToken);
                 }
-
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    Log.Warning("GenerateCrosswordsSignalRAsync was cancelled!");
-                    cancellationToken.ThrowIfCancellationRequested();
-                }
             }
 
             Log.Information("Succesfully connected to SignalR Hub @ {0}", signalRHubURL);
@@ -65,6 +89,8 @@ namespace CrossWord
             int generatedCount = 0;
             foreach (var curCrossword in generated)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 generatedCount++;
 
                 var cb = curCrossword as CrossBoard;
@@ -74,12 +100,6 @@ namespace CrossWord
                 Log.Debug("Succesfully converted generated crossword {0} to a Times model", generatedCount);
 
                 await hubConnection.InvokeAsync("SendCrossword", "Client", crossWordModel, cancellationToken);
-
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    Log.Warning("GenerateCrosswordsSignalRAsync was cancelled!");
-                    cancellationToken.ThrowIfCancellationRequested();
-                }
 
                 await Task.Delay(50, cancellationToken); // this makes the generation slower, can be removed
                 // break; // uncomment if we only want to use the first generated crossword
@@ -99,13 +119,9 @@ namespace CrossWord
                 var placer = new PuzzlePlacer(board, puzzle);
                 foreach (var boardWithPuzzle in placer.GetAllPossiblePlacements(dictionary))
                 {
-                    var gen = new CrossGenerator(dictionary, boardWithPuzzle);
+                    cancellationToken.ThrowIfCancellationRequested();
 
-                    if (cancellationToken.IsCancellationRequested)
-                    {
-                        Log.Warning("Trying to generate crosswords for puzzle {0} was cancelled!", puzzle);
-                        cancellationToken.ThrowIfCancellationRequested();
-                    }
+                    var gen = new CrossGenerator(dictionary, boardWithPuzzle);
 
                     // limit
                     int generatedCount = 0;
@@ -113,13 +129,9 @@ namespace CrossWord
                     var generated = gen.Generate(cancellationToken);
                     foreach (var solution in generated)
                     {
-                        generatedCount++;
+                        cancellationToken.ThrowIfCancellationRequested();
 
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            Log.Warning("Trying to generate crosswords for puzzle {0} was cancelled @ {1}/{2}!", puzzle, generatedCount, MAX_GENERATOR_COUNT);
-                            cancellationToken.ThrowIfCancellationRequested();
-                        }
+                        generatedCount++;
 
                         Log.Debug("Generated crossword {0}/{1}", generatedCount, MAX_GENERATOR_COUNT);
 
@@ -134,29 +146,16 @@ namespace CrossWord
                 Log.Information("Trying to generate crosswords without a puzzle");
 
                 var gen = new CrossGenerator(dictionary, board);
-
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    Log.Warning("Trying to generate crosswords without a puzzle was cancelled!");
-                    cancellationToken.ThrowIfCancellationRequested();
-                }
-
                 board.Preprocess(dictionary);
-
                 var crosswords = gen.Generate(cancellationToken);
 
                 // limit
                 int generatedCount = 0;
-
                 foreach (var resultBoard in crosswords)
                 {
-                    generatedCount++;
+                    cancellationToken.ThrowIfCancellationRequested();
 
-                    if (cancellationToken.IsCancellationRequested)
-                    {
-                        Log.Warning("Trying to generate crosswords without puzzle was cancelled @ {0}/{1}!", generatedCount, MAX_GENERATOR_COUNT);
-                        cancellationToken.ThrowIfCancellationRequested();
-                    }
+                    generatedCount++;
 
                     Log.Debug("Generated crossword {0}/{1}", generatedCount, MAX_GENERATOR_COUNT);
 

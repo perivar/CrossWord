@@ -148,8 +148,8 @@ namespace CrossWord
                 try
                 {
                     resultBoard = puzzle != null
-                        ? GenerateFirstCrossWord(board, dictionary, puzzle)
-                        : GenerateFirstCrossWord(board, dictionary);
+                        ? Generator.GenerateFirstCrossWord(board, dictionary, puzzle)
+                        : Generator.GenerateFirstCrossWord(board, dictionary);
                 }
                 catch (Exception e)
                 {
@@ -271,41 +271,6 @@ namespace CrossWord
                 return false;
             }
             return true;
-        }
-
-        static ICrossBoard? GenerateFirstCrossWord(ICrossBoard board, ICrossDictionary dictionary)
-        {
-            var gen = new CrossGenerator(dictionary, board);
-            board.Preprocess(dictionary);
-            return gen.Generate(CancellationToken.None).FirstOrDefault();
-        }
-
-        static ICrossBoard GenerateFirstCrossWord(ICrossBoard board, ICrossDictionary dictionary, string puzzle)
-        {
-            var placer = new PuzzlePlacer(board, puzzle);
-            var cts = new CancellationTokenSource();
-            var mre = new ManualResetEvent(false);
-            ICrossBoard? successFullBoard = null;
-            foreach (var boardWithPuzzle in placer.GetAllPossiblePlacements(dictionary))
-            {
-                var gen = new CrossGenerator(dictionary, boardWithPuzzle);
-                var _ = Task.Factory.StartNew(() =>
-                {
-                    var solution = gen.Generate(cts.Token).FirstOrDefault();
-                    if (solution != null)
-                    {
-                        successFullBoard = solution;
-                        cts.Cancel();
-                        mre.Set();
-                    }
-
-                }, cts.Token);
-                if (cts.IsCancellationRequested)
-                    break;
-            }
-
-            mre.WaitOne();
-            return successFullBoard!;
         }
 
         static void SaveResultToFile(string outputFile, ICrossBoard resultBoard, ICrossDictionary dictionary)

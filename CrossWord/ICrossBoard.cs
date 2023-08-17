@@ -17,6 +17,11 @@ public struct StartWord
 {
     public int StartX { get; set; }
     public int StartY { get; set; }
+
+    public override string ToString()
+    {
+        return string.Format("X: {0}, Y: {1}", StartX, StartY);
+    }
 }
 
 public interface ICrossBoard

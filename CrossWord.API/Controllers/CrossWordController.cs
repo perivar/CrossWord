@@ -123,7 +123,7 @@ namespace CrossWord.API.Controllers
             return new JsonResult(crossword, CrossWordGuardianConverter.Settings);
         }
 
-        private async Task<CrossBoard> GetCrossboard()
+        private async Task<CrossBoard?> GetCrossboard()
         {
             // var template = GetRandomCrosswordTemplateFromDb();
             CrosswordTemplate? template = null;
@@ -159,25 +159,27 @@ namespace CrossWord.API.Controllers
             else
             {
                 var model = await CrossBoardCreator.GetCrossWordModelFromUrlAsync("http-random");
-                board = model.ToCrossBoard();
-
-                // add in database
-                var newTemplate = new CrosswordTemplate()
+                if (model != null)
                 {
-                    Rows = model.Size.Rows,
-                    Cols = model.Size.Cols,
-                    Grid = model.Grid
-                };
+                    board = model.ToCrossBoard();
 
-                db.CrosswordTemplates.Add(newTemplate);
-                db.SaveChanges();
+                    // add in database
+                    var newTemplate = new CrosswordTemplate()
+                    {
+                        Rows = model.Size.Rows,
+                        Cols = model.Size.Cols,
+                        Grid = model.Grid
+                    };
+
+                    db.CrosswordTemplates.Add(newTemplate);
+                    db.SaveChanges();
+
+                    // Generate First CrossWord
+                    return Generator.GenerateFirstCrossWord(board, dictionary) as CrossBoard;
+                }
             }
 
-            // Generate First CrossWord
-            var gen = new CrossGenerator(dictionary, board);
-            board.Preprocess(dictionary);
-            var generated = gen.Generate(CancellationToken.None).FirstOrDefault() as CrossBoard;
-            return generated;
+            return null;
         }
 
         // GET: api/crosswords/5

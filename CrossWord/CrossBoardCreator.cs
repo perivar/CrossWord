@@ -31,7 +31,7 @@ public static class CrossBoardCreator
         return string.Format(CultureInfo.InvariantCulture, "{0:yyyy/MM/dd}", newDate);
     }
 
-    public static async Task<CrossWordTimes> GetCrossWordModelFromUrlAsync(string url)
+    public static async Task<CrossWordTimes?> GetCrossWordModelFromUrlAsync(string url)
     {
         using var httpClient = new HttpClient();
 
