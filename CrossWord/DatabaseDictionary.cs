@@ -173,30 +173,36 @@ public class DatabaseDictionary : ICrossDictionary
         // }
 
         // get exclude words
-        var excludeWordValues = new List<string>() { "LANDKODE", "IATA-FLYSELSKAPSKODE", "IATA-FLYPLASSKODE", "IATA-KODE", "BY", "NAVN", "ELV", "FJELL", "FORKORTELSE", "ISO-KODE" };
-        var excludeWords = db.Words
-            .AsNoTracking()
-            .Where(w => excludeWordValues.Contains(w.Value))
-            .Select(w => w.WordId);
+        var excludeWordValues = new List<string>() { "LANDKODE", "IATA-FLYSELSKAPSKODE", "IATA-FLYPLASSKODE", "IATA-KODE", "FORKORTELSE", "ISO-KODE", "NAVN", "ELV", "FJELL" }; // "BY"
+        // var excludeWordIds = db.Words
+        //     .AsNoTracking()
+        //     .Where(w => excludeWordValues.Contains(w.Value))
+        //     .Select(w => w.WordId);
 
         // using ADO.NET seems faster than ef core for raw SQLs
         using (var command = db.Database.GetDbConnection().CreateCommand())
         {
             // limit to only words that are only uppercase A-Å
             // and that does not have a relation to the exclude words
-            var inClause = string.Join(", ", excludeWords.Select(word => $"'{word}'"));
+            // var inIdClause = string.Join(", ", excludeWordIds.Select(word => $"'{word}'"));
+            var inWordClause = string.Join(", ", excludeWordValues.Select(word => $"'{word}'"));
             command.CommandText =
             $@"SELECT w.Value 
             FROM Words w 
-            WHERE w.NumberOfWords = 1 
+            LEFT JOIN (
+                SELECT DISTINCT WordFromId FROM WordRelations wr
+                JOIN Words w_sub ON wr.WordToId = w_sub.WordId
+                WHERE w_sub.Value IN ({inWordClause})
+            ) wr_from ON w.WordId = wr_from.WordFromId
+            LEFT JOIN (
+                SELECT DISTINCT WordToId FROM WordRelations wr
+                JOIN Words w_sub ON wr.WordFromId = w_sub.WordId
+                WHERE w_sub.Value IN ({inWordClause})
+            ) wr_to ON w.WordId = wr_to.WordToId
+            WHERE wr_from.WordFromId IS NULL AND wr_to.WordToId IS NULL
+            AND w.NumberOfWords = 1 
             AND w.NumberOfLetters <= {_maxWordLength}
             AND w.Value REGEXP '^[A-Å]+$'
-            AND w.WordId NOT IN (
-                SELECT DISTINCT WordFromId FROM WordRelations WHERE WordFromId IN ({inClause})
-            )
-            AND w.WordId NOT IN (
-                SELECT DISTINCT WordToId FROM WordRelations WHERE WordToId IN ({inClause})
-            )
             ORDER BY w.Value COLLATE utf8mb4_da_0900_as_cs;";
 
             if (_doSQLDebug) _logger?.LogDebug(command.CommandText);

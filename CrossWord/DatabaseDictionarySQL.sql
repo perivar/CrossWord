@@ -105,17 +105,30 @@ AND w.NumberOfLetters <= 23
 AND w.Value REGEXP '^[A-Å]+$'
 ORDER BY w.Value COLLATE utf8mb4_da_0900_as_cs;
 
-; -- find words but exclude LANDKODE, IATA-FLYSELSKAPSKODE, IATA-KODE (32170, 31818, 31735)
+
+; -- find words but exclude LANDKODE, IATA-FLYSELSKAPSKODE, IATA-KODE (32170, 31818, 31735) SLOW
 SELECT COUNT(w.WordId)
 FROM Words w
 WHERE w.WordId NOT IN (
-    SELECT DISTINCT WordFromId FROM WordRelations WHERE WordFromId IN (32170, 31818, 31735)
+    SELECT DISTINCT WordFromId FROM WordRelations WHERE WordToId IN (32170, 31818, 31735)
 )
 AND w.WordId NOT IN (
-    SELECT DISTINCT WordToId FROM WordRelations WHERE WordToId IN (32170, 31818, 31735)
+    SELECT DISTINCT WordToId FROM WordRelations WHERE WordFromId IN (32170, 31818, 31735)
 );
 
-; -- combined
+; -- find words but exclude LANDKODE, IATA-FLYSELSKAPSKODE, IATA-KODE (32170, 31818, 31735) FAST
+SELECT COUNT(w.WordId)
+FROM Words w
+LEFT JOIN (
+    SELECT DISTINCT WordFromId FROM WordRelations WHERE WordToId IN (32170, 31818, 31735)
+) wr_from ON w.WordId = wr_from.WordFromId
+LEFT JOIN (
+    SELECT DISTINCT WordToId FROM WordRelations WHERE WordFromId IN (32170, 31818, 31735)
+) wr_to ON w.WordId = wr_to.WordToId
+WHERE wr_from.WordFromId IS NULL AND wr_to.WordToId IS NULL;
+
+
+; -- combined SLOW
 ; -- w.WordId, w.Value 
 SELECT COUNT(w.WordId)
 FROM Words w 
@@ -123,26 +136,77 @@ WHERE w.NumberOfWords = 1
 AND w.NumberOfLetters <= 23
 AND w.Value REGEXP '^[A-Å]+$'
 AND w.WordId NOT IN (
-    SELECT DISTINCT WordFromId FROM WordRelations WHERE WordFromId IN (32170, 31818, 31735)
+    SELECT DISTINCT WordFromId FROM WordRelations WHERE WordToId IN (32170, 31818, 31735)
 )
 AND w.WordId NOT IN (
-    SELECT DISTINCT WordToId FROM WordRelations WHERE WordToId IN (32170, 31818, 31735)
+    SELECT DISTINCT WordToId FROM WordRelations WHERE WordFromId IN (32170, 31818, 31735)
 )
 ORDER BY w.Value COLLATE utf8mb4_da_0900_as_cs;
 
 
-; -- find words but exclude LANDKODE, IATA-FLYSELSKAPSKODE, IATA-KODE (32170, 31818, 31735) SLOWER
+; -- combined FAST
+; -- w.WordId, w.Value 
+SELECT COUNT(w.WordId)
+FROM Words w
+LEFT JOIN (
+    SELECT DISTINCT WordFromId FROM WordRelations WHERE WordToId IN (32170, 31818, 31735)
+) wr_from ON w.WordId = wr_from.WordFromId
+LEFT JOIN (
+    SELECT DISTINCT WordToId FROM WordRelations WHERE WordFromId IN (32170, 31818, 31735)
+) wr_to ON w.WordId = wr_to.WordToId
+WHERE wr_from.WordFromId IS NULL AND wr_to.WordToId IS NULL
+AND w.NumberOfWords = 1 
+AND w.NumberOfLetters <= 23
+AND w.Value REGEXP '^[A-Å]+$'
+ORDER BY w.Value COLLATE utf8mb4_da_0900_as_cs;
+
+
+; -- find words but exclude LANDKODE, IATA-FLYSELSKAPSKODE, IATA-KODE (32170, 31818, 31735) OK
 SELECT COUNT(w.WordId)
 FROM Words w
 WHERE w.WordId NOT IN (
-    SELECT DISTINCT WordFromId FROM WordRelations WHERE WordFromId IN (
+    SELECT DISTINCT WordFromId FROM WordRelations WHERE WordToId IN (
         SELECT WordId FROM Words WHERE Value IN ('LANDKODE', 'IATA-FLYSELSKAPSKODE', 'IATA-KODE')
     )
 )
 AND w.WordId NOT IN (
-    SELECT DISTINCT WordToId FROM WordRelations WHERE WordToId IN (
+    SELECT DISTINCT WordToId FROM WordRelations WHERE WordFromId IN (
         SELECT WordId FROM Words WHERE Value IN ('LANDKODE', 'IATA-FLYSELSKAPSKODE', 'IATA-KODE')
     )
 );
 
+; -- find words but exclude LANDKODE, IATA-FLYSELSKAPSKODE, IATA-KODE (32170, 31818, 31735) FAST
+SELECT COUNT(w.WordId)
+FROM Words w
+LEFT JOIN (
+    SELECT DISTINCT WordFromId FROM WordRelations wr
+    JOIN Words w_sub ON wr.WordToId = w_sub.WordId
+    WHERE w_sub.Value IN ('LANDKODE', 'IATA-FLYSELSKAPSKODE', 'IATA-KODE')
+) wr_from ON w.WordId = wr_from.WordFromId
+LEFT JOIN (
+    SELECT DISTINCT WordToId FROM WordRelations wr
+    JOIN Words w_sub ON wr.WordFromId = w_sub.WordId
+    WHERE w_sub.Value IN ('LANDKODE', 'IATA-FLYSELSKAPSKODE', 'IATA-KODE')
+) wr_to ON w.WordId = wr_to.WordToId
+WHERE wr_from.WordFromId IS NULL AND wr_to.WordToId IS NULL;
 
+
+; -- combined FAST
+; -- w.WordId, w.Value 
+SELECT COUNT(w.WordId)
+FROM Words w 
+LEFT JOIN (
+    SELECT DISTINCT WordFromId FROM WordRelations wr
+    JOIN Words w_sub ON wr.WordToId = w_sub.WordId
+    WHERE w_sub.Value IN ('LANDKODE', 'IATA-FLYSELSKAPSKODE', 'IATA-KODE')
+) wr_from ON w.WordId = wr_from.WordFromId
+LEFT JOIN (
+    SELECT DISTINCT WordToId FROM WordRelations wr
+    JOIN Words w_sub ON wr.WordFromId = w_sub.WordId
+    WHERE w_sub.Value IN ('LANDKODE', 'IATA-FLYSELSKAPSKODE', 'IATA-KODE')
+) wr_to ON w.WordId = wr_to.WordToId
+WHERE wr_from.WordFromId IS NULL AND wr_to.WordToId IS NULL
+AND w.NumberOfWords = 1 
+AND w.NumberOfLetters <= 23
+AND w.Value REGEXP '^[A-Å]+$'
+ORDER BY w.Value COLLATE utf8mb4_da_0900_as_cs;
