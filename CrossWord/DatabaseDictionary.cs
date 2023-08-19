@@ -84,8 +84,8 @@ public class DatabaseDictionary : ICrossDictionary
     public DatabaseDictionary(string connectionString, int maxWordLength, ILoggerFactory loggerFactory, bool doSQLDebug = false)
         : this(maxWordLength)
     {
-        _connectionString = connectionString;    
-        _doSQLDebug = doSQLDebug;    
+        _connectionString = connectionString;
+        _doSQLDebug = doSQLDebug;
 
         _logger = loggerFactory.CreateLogger<DatabaseDictionary>();
         _logger?.LogInformation("Initializing Database Dictionary");
@@ -172,16 +172,31 @@ public class DatabaseDictionary : ICrossDictionary
         //     }
         // }
 
+        // get exclude words
+        var excludeWordValues = new List<string>() { "LANDKODE", "IATA-FLYSELSKAPSKODE", "IATA-FLYPLASSKODE", "IATA-KODE", "BY", "NAVN", "ELV", "FJELL", "FORKORTELSE", "ISO-KODE" };
+        var excludeWords = db.Words
+            .AsNoTracking()
+            .Where(w => excludeWordValues.Contains(w.Value))
+            .Select(w => w.WordId);
+
         // using ADO.NET seems faster than ef core for raw SQLs
         using (var command = db.Database.GetDbConnection().CreateCommand())
         {
             // limit to only words that are only uppercase A-Å
+            // and that does not have a relation to the exclude words
+            var inClause = string.Join(", ", excludeWords.Select(word => $"'{word}'"));
             command.CommandText =
             $@"SELECT w.Value 
-            FROM Words AS w 
+            FROM Words w 
             WHERE w.NumberOfWords = 1 
             AND w.NumberOfLetters <= {_maxWordLength}
             AND w.Value REGEXP '^[A-Å]+$'
+            AND w.WordId NOT IN (
+                SELECT DISTINCT WordFromId FROM WordRelations WHERE WordFromId IN ({inClause})
+            )
+            AND w.WordId NOT IN (
+                SELECT DISTINCT WordToId FROM WordRelations WHERE WordToId IN ({inClause})
+            )
             ORDER BY w.Value COLLATE utf8mb4_da_0900_as_cs;";
 
             if (_doSQLDebug) _logger?.LogDebug(command.CommandText);

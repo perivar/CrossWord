@@ -28,17 +28,20 @@ public class CrossGenerator
     public ICrossBoard Board => _board;
 
     /*
-      1. Choosing which pattern to fill (i.e. which variable to solve for).
-      2. Picking a suitable word (i.e. which value to select).
+      Crossword generation process consists of three main steps:
+      1. Choosing which pattern to fill (i.e., which variable to solve for).
+      2. Picking a suitable word (i.e., which value to select).
       3. Choosing where to backtrack to when we reach an impasse.
-     */
-
+    */
     public IEnumerable<ICrossBoard> Generate(CancellationToken cancellationToken)
     {
         var history = new List<int>();
         var historyTrans = new List<List<CrossTransformation>>();
         var usedWords = new HashSet<string>();
 
+        Random rnd = new();
+
+        // Choosing initial pattern to fill (i.e., which variable to solve for).
         var pattern = _board.GetMostConstrainedPattern(_dict);
         while (true)
         {
@@ -48,21 +51,33 @@ public class CrossGenerator
             {
                 var succTrans = FindPossibleCrossTransformations(pattern, usedWords);
 
-                if (succTrans.Count > 0)
+                if (succTrans.Count > 0) // If there are successful transformations
                 {
                     succTrans.Sort(new CrossTransformationComparer());
-                    var trans = succTrans[0];
+
+                    // always use the first index (i.e. the one with the most possible adjacent hits)
+                    // var trans = succTrans[0];
+                    // history.Add(0);
+
+                    // don't always use the "best" match to randomize the crossword better
+                    var lowestIndexToUse = 0;
+                    var highestIndexToUse = succTrans.Count > 500 ? 500 : succTrans.Count - 1;
+                    int index = rnd.Next(lowestIndexToUse, highestIndexToUse);
+                    var trans = succTrans[index];
+                    history.Add(index);
+
                     usedWords.Add(trans.Word);
                     trans.Transform(pattern);
                     historyTrans.Add(succTrans);
-                    history.Add(0);
+
                     pattern = _board.GetMostConstrainedPattern(_dict);
                 }
                 else
                 {
+                    // No valid transformation, backtrack to a previous pattern
                     pattern = BackTrack(history, historyTrans, usedWords);
                     if (pattern == null)
-                        yield break;
+                        yield break; // If backtracking fails, exit the loop
                 }
             }
             else

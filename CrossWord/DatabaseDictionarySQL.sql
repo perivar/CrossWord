@@ -6,83 +6,81 @@ AND w.NumberOfLetters <= 23
 AND w.Value REGEXP '^[A-Å]+$'
 ORDER BY w.Value COLLATE utf8mb4_da_0900_as_cs;
 
-; -- separated into three queries 
-SELECT `w`.`WordId`, `w`.`Value`
-FROM `Words` AS `w`
-WHERE `w`.`Value` IN ('SAMS', 'STADEL', 'ELIANA')
-ORDER BY `w`.`WordId`;
+; -- find all descriptions for the given words separated into three queries 
+SELECT w.WordId, w.Value
+FROM Words AS w
+WHERE w.Value IN ('SAMS', 'STADEL', 'ELIANA')
+ORDER BY w.WordId;
 
-SELECT `t`.`WordFromId`, `t`.`WordToId`, `t`.`Value`, `w`.`WordId`
-FROM `Words` AS `w`
+SELECT t.WordFromId, t.WordToId, t.Value, w.WordId
+FROM Words AS w
 INNER JOIN (
-    SELECT `w0`.`WordFromId`, `w0`.`WordToId`, `w1`.`WordId`, `w1`.`Value`
-    FROM `WordRelations` AS `w0`
-    INNER JOIN `Words` AS `w1` ON `w0`.`WordToId` = `w1`.`WordId`
-) AS `t` ON `w`.`WordId` = `t`.`WordFromId`
-WHERE `w`.`Value` IN ('SAMS', 'STADEL', 'ELIANA')
-ORDER BY `w`.`WordId`;
+    SELECT w0.WordFromId, w0.WordToId, w1.WordId, w1.Value
+    FROM WordRelations AS w0
+    INNER JOIN Words AS w1 ON w0.WordToId = w1.WordId
+) AS t ON w.WordId = t.WordFromId
+WHERE w.Value IN ('SAMS', 'STADEL', 'ELIANA')
+ORDER BY w.WordId;
 
-SELECT `t`.`WordFromId`, `t`.`WordToId`, `t`.`Value`, `w`.`WordId`
-FROM `Words` AS `w`
+SELECT t.WordFromId, t.WordToId, t.Value, w.WordId
+FROM Words AS w
 INNER JOIN (
-    SELECT `w0`.`WordFromId`, `w0`.`WordToId`,`w1`.`WordId`, `w1`.`Value`
-    FROM `WordRelations` AS `w0`
-    INNER JOIN `Words` AS `w1` ON `w0`.`WordFromId` = `w1`.`WordId`
-) AS `t` ON `w`.`WordId` = `t`.`WordToId`
-WHERE `w`.`Value` IN ('SAMS', 'STADEL', 'ELIANA')
-ORDER BY `w`.`WordId`;
+    SELECT w0.WordFromId, w0.WordToId,w1.WordId, w1.Value
+    FROM WordRelations AS w0
+    INNER JOIN Words AS w1 ON w0.WordFromId = w1.WordId
+) AS t ON w.WordId = t.WordToId
+WHERE w.Value IN ('SAMS', 'STADEL', 'ELIANA')
+ORDER BY w.WordId;
 
-; -- one query but too many columns
-SELECT DISTINCT `w`.`WordId`, `w`.`Value`, `t`.`WordFromId`, `t`.`WordToId`, `t0`.`WordId`, `t0`.`Value`
-FROM `Words` AS `w`
+; -- find all descriptions for the given words in one query but too many columns
+SELECT DISTINCT w.WordId, w.Value, t.WordFromId, t.WordToId, t0.WordId, t0.Value
+FROM Words AS w
 LEFT JOIN (
-    SELECT `w0`.`WordFromId`, `w0`.`WordToId`, `w1`.`WordId`, `w1`.`Value`
-    FROM `WordRelations` AS `w0`
-    INNER JOIN `Words` AS `w1` ON `w0`.`WordToId` = `w1`.`WordId`
-) AS `t` ON `w`.`WordId` = `t`.`WordFromId`
+    SELECT w0.WordFromId, w0.WordToId, w1.WordId, w1.Value
+    FROM WordRelations AS w0
+    INNER JOIN Words AS w1 ON w0.WordToId = w1.WordId
+) AS t ON w.WordId = t.WordFromId
 LEFT JOIN (
-    SELECT `w2`.`WordFromId`, `w2`.`WordToId`, `w3`.`WordId`, `w3`.`Value`
-    FROM `WordRelations` AS `w2`
-    INNER JOIN `Words` AS `w3` ON `w2`.`WordFromId` = `w3`.`WordId`
-) AS `t0` ON `w`.`WordId` = `t0`.`WordToId`
-WHERE `w`.`Value` IN ('SAMS', 'STADEL', 'ELIANA')
-ORDER BY `w`.`WordId`, `t`.`WordFromId`, `t`.`WordToId`, `t0`.`Value`;
+    SELECT w2.WordFromId, w2.WordToId, w3.WordId, w3.Value
+    FROM WordRelations AS w2
+    INNER JOIN Words AS w3 ON w2.WordFromId = w3.WordId
+) AS t0 ON w.WordId = t0.WordToId
+WHERE w.Value IN ('SAMS', 'STADEL', 'ELIANA')
+ORDER BY w.WordId, t.WordFromId, t.WordToId, t0.Value;
 
-; -- one query OK
-SELECT DISTINCT `w`.`WordId`, `w`.`Value`, `t0`.`Value`
-FROM `Words` AS `w`
+; -- find all descriptions for the given words in one query OK
+SELECT DISTINCT w.WordId, w.Value, t0.Value
+FROM Words AS w
 LEFT JOIN (
-    SELECT `w0`.`WordFromId`, `w0`.`WordToId`, `w1`.`WordId`, `w1`.`Value`
-    FROM `WordRelations` AS `w0`
-    INNER JOIN `Words` AS `w1` ON `w0`.`WordToId` = `w1`.`WordId`
-) AS `t` ON `w`.`WordId` = `t`.`WordFromId`
+    SELECT w0.WordFromId, w0.WordToId, w1.WordId, w1.Value
+    FROM WordRelations AS w0
+    INNER JOIN Words AS w1 ON w0.WordToId = w1.WordId
+) AS t ON w.WordId = t.WordFromId
 LEFT JOIN (
-    SELECT `w2`.`WordFromId`, `w2`.`WordToId`, `w3`.`WordId`, `w3`.`Value`
-    FROM `WordRelations` AS `w2`
-    INNER JOIN `Words` AS `w3` ON `w2`.`WordFromId` = `w3`.`WordId`
-) AS `t0` ON `w`.`WordId` = `t0`.`WordToId`
-WHERE `w`.`Value` IN ('SAMS', 'STADEL', 'ELIANA')
-ORDER BY `w`.`WordId`, `w`.`Value`, `t0`.`Value`;
+    SELECT w2.WordFromId, w2.WordToId, w3.WordId, w3.Value
+    FROM WordRelations AS w2
+    INNER JOIN Words AS w3 ON w2.WordFromId = w3.WordId
+) AS t0 ON w.WordId = t0.WordToId
+WHERE w.Value IN ('SAMS', 'STADEL', 'ELIANA')
+ORDER BY w.WordId, w.Value, t0.Value;
 
-; -- test with many words
-SELECT DISTINCT `w`.`WordId`, `w`.`Value`, `t0`.`Value`
-FROM `Words` AS `w`
+; -- find all descriptions for the given words in one query - TEST with many words
+SELECT DISTINCT w.WordId, w.Value, t0.Value
+FROM Words AS w
 LEFT JOIN (
-    SELECT `w0`.`WordFromId`, `w0`.`WordToId`, `w1`.`WordId`, `w1`.`Value`
-    FROM `WordRelations` AS `w0`
-    INNER JOIN `Words` AS `w1` ON `w0`.`WordToId` = `w1`.`WordId`
-) AS `t` ON `w`.`WordId` = `t`.`WordFromId`
+    SELECT w0.WordFromId, w0.WordToId, w1.WordId, w1.Value
+    FROM WordRelations AS w0
+    INNER JOIN Words AS w1 ON w0.WordToId = w1.WordId
+) AS t ON w.WordId = t.WordFromId
 LEFT JOIN (
-    SELECT `w2`.`WordFromId`, `w2`.`WordToId`, `w3`.`WordId`, `w3`.`Value`
-    FROM `WordRelations` AS `w2`
-    INNER JOIN `Words` AS `w3` ON `w2`.`WordFromId` = `w3`.`WordId`
-) AS `t0` ON `w`.`WordId` = `t0`.`WordToId`
-WHERE `w`.`Value` IN ('SAMS', 'STADEL', 'ELIANA', 'WIS', 'ARAT', 'STIDELE', 'SARGEN', 'EAT', 'MARA', 'KAMGRAN', 'SPRETNESTE', 'ESTETENE', 'ITT', 'OSER', 'DERN', 'NOONE', 'SNEIENES', 'MARNIE', 'ENSETE', 'AAN', 'RNN', 'SIPES', 'MIKKELSMESSELEITE', 'ULLRAGGE', 'AAA', 'ARER', 'EIN', 'SOUEN', 'LEAVED', 'VOR', 'VISENE', 'PENGESORGER', 'BASES', 'ELNES', 'DAGENE', 'NOR', 'OORT', 'SATO', 'KES', 'UTENDØRSARENA', 'TAO', 'TREA', 'EIRE', 'TAK', 'NATALE', 'BAREA', 'RINGE', 'SUVERENENES', 'SAARDE', 'EEE', 'SANAGA', 'SNARE', 'ARV', 'ALAN', 'GON', 'AGREERER', 'SEMULEGRYNSGRØTEN', 'LANEN', 'OUA', 'ØIA', 'BESTAS', 'SPIREA', 'LOCOVARE', 'STEKT', 'IONE', 'MARC', 'IRS', 'MARKERER', 'STENEMARKA', 'SOLBANE', 'TREE', 'TEN', 'PONGEE', 'TRENSEN', 'TORE', 'ETE', 'PANSER', 'AARNES', 'ARET', 'SAMENE', 'USPD', 'BSA', 'SISTE', 'ARASON', 'LOEAK', 'AARS', 'POTET', 'MARTOS', 'LUNGE', 'RAVELINENE', 'STAENE', 'REGESTER', 'MAREN', 'TET', 'ANEN', 'RADAUNE', 'EPP', 'SKE', 'EMG', 'SEUE', 'ELLEA', 'MOA', 'STAN', 'IGLO', 'TAR', 'AEN', 'MANN', 'TIME', 'AKEERNE', 'IENG', 'LARGS', 'ADG', 'SAK', 'AGONENE', 'ROORKEE', 'DERINNE', 'VERDIGE', 'YUCCAER', 'ELATE', 'LAER', 'ØRE', 'GNAO', 'LENTI', 'SAD', 'ORE', 'SOS', 'VISTA', 'ERMA', 'BOS', 'SANG', 'ARORA', 'ESSONNE', 'VARATUN', 'RØRSLER', 'LAPSENS', 'OSTRAVA', 'ØIE', 'BNN', 'IRRES', 'SARE', 'EKEGATA', 'MASE', 'AGER', 'SER', 'SSN', 'RAGE', 'ANES', 'NET', 'MILEV', 'AANE', 'RNB', 'REN', 'ANN', 'APERIET', 'ANSE', 'ESK', 'EDREI', 'SLOTTENE', 'STETTA', 'WESENSTEEN', 'AANAR', 'TERROR', 'IATRI', 'EINE', 'OLERE', 'AKEERE', 'STENE', 'NES', 'ESER', 'STREET')
-ORDER BY `w`.`WordId`, `w`.`Value`, `t0`.`Value`;
+    SELECT w2.WordFromId, w2.WordToId, w3.WordId, w3.Value
+    FROM WordRelations AS w2
+    INNER JOIN Words AS w3 ON w2.WordFromId = w3.WordId
+) AS t0 ON w.WordId = t0.WordToId
+WHERE w.Value IN ('SAMS', 'STADEL', 'ELIANA', 'WIS', 'ARAT', 'STIDELE', 'SARGEN', 'EAT', 'MARA', 'KAMGRAN', 'SPRETNESTE', 'ESTETENE', 'ITT', 'OSER', 'DERN', 'NOONE', 'SNEIENES', 'MARNIE', 'ENSETE', 'AAN', 'RNN', 'SIPES', 'MIKKELSMESSELEITE', 'ULLRAGGE', 'AAA', 'ARER', 'EIN', 'SOUEN', 'LEAVED', 'VOR', 'VISENE', 'PENGESORGER', 'BASES', 'ELNES', 'DAGENE', 'NOR', 'OORT', 'SATO', 'KES', 'UTENDØRSARENA', 'TAO', 'TREA', 'EIRE', 'TAK', 'NATALE', 'BAREA', 'RINGE', 'SUVERENENES', 'SAARDE', 'EEE', 'SANAGA', 'SNARE', 'ARV', 'ALAN', 'GON', 'AGREERER', 'SEMULEGRYNSGRØTEN', 'LANEN', 'OUA', 'ØIA', 'BESTAS', 'SPIREA', 'LOCOVARE', 'STEKT', 'IONE', 'MARC', 'IRS', 'MARKERER', 'STENEMARKA', 'SOLBANE', 'TREE', 'TEN', 'PONGEE', 'TRENSEN', 'TORE', 'ETE', 'PANSER', 'AARNES', 'ARET', 'SAMENE', 'USPD', 'BSA', 'SISTE', 'ARASON', 'LOEAK', 'AARS', 'POTET', 'MARTOS', 'LUNGE', 'RAVELINENE', 'STAENE', 'REGESTER', 'MAREN', 'TET', 'ANEN', 'RADAUNE', 'EPP', 'SKE', 'EMG', 'SEUE', 'ELLEA', 'MOA', 'STAN', 'IGLO', 'TAR', 'AEN', 'MANN', 'TIME', 'AKEERNE', 'IENG', 'LARGS', 'ADG', 'SAK', 'AGONENE', 'ROORKEE', 'DERINNE', 'VERDIGE', 'YUCCAER', 'ELATE', 'LAER', 'ØRE', 'GNAO', 'LENTI', 'SAD', 'ORE', 'SOS', 'VISTA', 'ERMA', 'BOS', 'SANG', 'ARORA', 'ESSONNE', 'VARATUN', 'RØRSLER', 'LAPSENS', 'OSTRAVA', 'ØIE', 'BNN', 'IRRES', 'SARE', 'EKEGATA', 'MASE', 'AGER', 'SER', 'SSN', 'RAGE', 'ANES', 'NET', 'MILEV', 'AANE', 'RNB', 'REN', 'ANN', 'APERIET', 'ANSE', 'ESK', 'EDREI', 'SLOTTENE', 'STETTA', 'WESENSTEEN', 'AANAR', 'TERROR', 'IATRI', 'EINE', 'OLERE', 'AKEERE', 'STENE', 'NES', 'ESER', 'STREET')
+ORDER BY w.WordId, w.Value, t0.Value;
 
-
-
-; -- limit with many words
+; -- find all descriptions for the given words in one query and limit 
 SELECT sub.WordId, sub.Value, sub.RelatedValue
 FROM (
     SELECT
@@ -96,3 +94,55 @@ FROM (
     WHERE w1.Value IN ('SAMS', 'STADEL', 'ELIANA', 'WIS', 'ARAT', 'STIDELE', 'SARGEN', 'EAT', 'MARA', 'KAMGRAN', 'SPRETNESTE', 'ESTETENE', 'ITT', 'OSER', 'DERN', 'NOONE', 'SNEIENES', 'MARNIE', 'ENSETE', 'AAN', 'RNN', 'SIPES', 'MIKKELSMESSELEITE', 'ULLRAGGE', 'AAA', 'ARER', 'EIN', 'SOUEN', 'LEAVED', 'VOR', 'VISENE', 'PENGESORGER', 'BASES', 'ELNES', 'DAGENE', 'NOR', 'OORT', 'SATO', 'KES', 'UTENDØRSARENA', 'TAO', 'TREA', 'EIRE', 'TAK', 'NATALE', 'BAREA', 'RINGE', 'SUVERENENES', 'SAARDE', 'EEE', 'SANAGA', 'SNARE', 'ARV', 'ALAN', 'GON', 'AGREERER', 'SEMULEGRYNSGRØTEN', 'LANEN', 'OUA', 'ØIA', 'BESTAS', 'SPIREA', 'LOCOVARE', 'STEKT', 'IONE', 'MARC', 'IRS', 'MARKERER', 'STENEMARKA', 'SOLBANE', 'TREE', 'TEN', 'PONGEE', 'TRENSEN', 'TORE', 'ETE', 'PANSER', 'AARNES', 'ARET', 'SAMENE', 'USPD', 'BSA', 'SISTE', 'ARASON', 'LOEAK', 'AARS', 'POTET', 'MARTOS', 'LUNGE', 'RAVELINENE', 'STAENE', 'REGESTER', 'MAREN', 'TET', 'ANEN', 'RADAUNE', 'EPP', 'SKE', 'EMG', 'SEUE', 'ELLEA', 'MOA', 'STAN', 'IGLO', 'TAR', 'AEN', 'MANN', 'TIME', 'AKEERNE', 'IENG', 'LARGS', 'ADG', 'SAK', 'AGONENE', 'ROORKEE', 'DERINNE', 'VERDIGE', 'YUCCAER', 'ELATE', 'LAER', 'ØRE', 'GNAO', 'LENTI', 'SAD', 'ORE', 'SOS', 'VISTA', 'ERMA', 'BOS', 'SANG', 'ARORA', 'ESSONNE', 'VARATUN', 'RØRSLER', 'LAPSENS', 'OSTRAVA', 'ØIE', 'BNN', 'IRRES', 'SARE', 'EKEGATA', 'MASE', 'AGER', 'SER', 'SSN', 'RAGE', 'ANES', 'NET', 'MILEV', 'AANE', 'RNB', 'REN', 'ANN', 'APERIET', 'ANSE', 'ESK', 'EDREI', 'SLOTTENE', 'STETTA', 'WESENSTEEN', 'AANAR', 'TERROR', 'IATRI', 'EINE', 'OLERE', 'AKEERE', 'STENE', 'NES', 'ESER', 'STREET')
 ) AS sub
 WHERE sub.row_num <= 10;
+
+
+; -- find all words that are between 1 and 23 letters and only contain A-Å
+; -- w.WordId, w.Value 
+SELECT COUNT(w.WordId)
+FROM Words w 
+WHERE w.NumberOfWords = 1 
+AND w.NumberOfLetters <= 23
+AND w.Value REGEXP '^[A-Å]+$'
+ORDER BY w.Value COLLATE utf8mb4_da_0900_as_cs;
+
+; -- find words but exclude LANDKODE, IATA-FLYSELSKAPSKODE, IATA-KODE (32170, 31818, 31735)
+SELECT COUNT(w.WordId)
+FROM Words w
+WHERE w.WordId NOT IN (
+    SELECT DISTINCT WordFromId FROM WordRelations WHERE WordFromId IN (32170, 31818, 31735)
+)
+AND w.WordId NOT IN (
+    SELECT DISTINCT WordToId FROM WordRelations WHERE WordToId IN (32170, 31818, 31735)
+);
+
+; -- combined
+; -- w.WordId, w.Value 
+SELECT COUNT(w.WordId)
+FROM Words w 
+WHERE w.NumberOfWords = 1 
+AND w.NumberOfLetters <= 23
+AND w.Value REGEXP '^[A-Å]+$'
+AND w.WordId NOT IN (
+    SELECT DISTINCT WordFromId FROM WordRelations WHERE WordFromId IN (32170, 31818, 31735)
+)
+AND w.WordId NOT IN (
+    SELECT DISTINCT WordToId FROM WordRelations WHERE WordToId IN (32170, 31818, 31735)
+)
+ORDER BY w.Value COLLATE utf8mb4_da_0900_as_cs;
+
+
+; -- find words but exclude LANDKODE, IATA-FLYSELSKAPSKODE, IATA-KODE (32170, 31818, 31735) SLOWER
+SELECT COUNT(w.WordId)
+FROM Words w
+WHERE w.WordId NOT IN (
+    SELECT DISTINCT WordFromId FROM WordRelations WHERE WordFromId IN (
+        SELECT WordId FROM Words WHERE Value IN ('LANDKODE', 'IATA-FLYSELSKAPSKODE', 'IATA-KODE')
+    )
+)
+AND w.WordId NOT IN (
+    SELECT DISTINCT WordToId FROM WordRelations WHERE WordToId IN (
+        SELECT WordId FROM Words WHERE Value IN ('LANDKODE', 'IATA-FLYSELSKAPSKODE', 'IATA-KODE')
+    )
+);
+
+
