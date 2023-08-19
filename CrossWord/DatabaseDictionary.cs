@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using CrossWord.Scraper.MySQLDbService;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -16,8 +17,9 @@ public class DatabaseDictionary : ICrossDictionary
     IList<string>[] _words; // different array list for each word length
     WordIndex[] _indexes;
     Dictionary<string, string> _description;
-    int _maxWordLength; // longest possible word in number of characters
 
+    readonly int _maxWordLength; // longest possible word in number of characters
+    readonly IEnumerable<string> _excludeWordValues; // any words that reference these words are excluded
     readonly bool _doSQLDebug = false;
     readonly string? _connectionString;
 
@@ -62,6 +64,21 @@ public class DatabaseDictionary : ICrossDictionary
         get { return _description; }
     }
 
+    public int MaxWordLength
+    {
+        get { return _maxWordLength; }
+    }
+
+    public bool DoSQLDebug
+    {
+        get { return _doSQLDebug; }
+    }
+
+    public IEnumerable<string> ExcludeWordValues
+    {
+        get { return _excludeWordValues; }
+    }
+
     public DatabaseDictionary(int maxWordLength)
     {
         _maxWordLength = maxWordLength;
@@ -79,13 +96,15 @@ public class DatabaseDictionary : ICrossDictionary
 
         _filter = new WordFilter(1, maxWordLength);
         _description = new Dictionary<string, string>();
+        _excludeWordValues = new List<string>();
     }
 
-    public DatabaseDictionary(string connectionString, int maxWordLength, ILoggerFactory loggerFactory, bool doSQLDebug = false)
+    public DatabaseDictionary(string connectionString, int maxWordLength, IEnumerable<string> excludeWordValues, ILoggerFactory loggerFactory, bool doSQLDebug = false)
         : this(maxWordLength)
     {
         _connectionString = connectionString;
         _doSQLDebug = doSQLDebug;
+        _excludeWordValues = excludeWordValues ?? new List<string>();
 
         _logger = loggerFactory.CreateLogger<DatabaseDictionary>();
         _logger?.LogInformation("Initializing Database Dictionary");
@@ -106,13 +125,24 @@ public class DatabaseDictionary : ICrossDictionary
     }
 
     // This is intitialized from the API using services.AddSingleton<ICrossDictionary, DatabaseDictionary>();
-    public DatabaseDictionary(ILoggerFactory loggerFactory, IServiceScopeFactory scopeFactory, int maxWordLength = 25)
+    public DatabaseDictionary(ILoggerFactory loggerFactory, IServiceScopeFactory scopeFactory, IConfiguration configuration, int maxWordLength = 25)
     : this(maxWordLength)
     {
         _scopeFactory = scopeFactory;
 
         _logger = loggerFactory.CreateLogger("DatabaseDictionary");
         _logger?.LogInformation("Initializing Database Dictionary");
+
+        _doSQLDebug = configuration.GetValue<bool>("DoSQLDebug");
+        _logger?.LogInformation($"Using database (sql debugging: {DoSQLDebug})");
+
+        // using exclude words        
+        var excludeWordArray = configuration.GetSection("ExcludeWords").Get<string[]>();
+        if (excludeWordArray != null)
+        {
+            _excludeWordValues = excludeWordArray.ToList();
+            _logger?.LogInformation("Building database dictionary excluding words that reference: {0}", ExcludeWordValues);
+        }
 
         ResetDictionary(maxWordLength);
     }
@@ -173,10 +203,10 @@ public class DatabaseDictionary : ICrossDictionary
         // }
 
         // get exclude words
-        var excludeWordValues = new List<string>() { "LANDKODE", "IATA-FLYSELSKAPSKODE", "IATA-FLYPLASSKODE", "IATA-KODE", "FORKORTELSE", "ISO-KODE", "NAVN", "ELV", "FJELL" }; // "BY"
+        // var excludeWordValues = new List<string>() { "LANDKODE", "IATA-FLYSELSKAPSKODE", "IATA-FLYPLASSKODE", "IATA-KODE", "FORKORTELSE", "ISO-KODE", "NAVN", "ELV", "FJELL", "BY" };
         // var excludeWordIds = db.Words
         //     .AsNoTracking()
-        //     .Where(w => excludeWordValues.Contains(w.Value))
+        //     .Where(w => _excludeWordValues.Contains(w.Value))
         //     .Select(w => w.WordId);
 
         // using ADO.NET seems faster than ef core for raw SQLs
@@ -185,7 +215,7 @@ public class DatabaseDictionary : ICrossDictionary
             // limit to only words that are only uppercase A-Å
             // and that does not have a relation to the exclude words
             // var inIdClause = string.Join(", ", excludeWordIds.Select(word => $"'{word}'"));
-            var inWordClause = string.Join(", ", excludeWordValues.Select(word => $"'{word}'"));
+            var inWordClause = string.Join(", ", _excludeWordValues.Select(word => $"'{word}'"));
             command.CommandText =
             $@"SELECT w.Value 
             FROM Words w 
@@ -194,15 +224,10 @@ public class DatabaseDictionary : ICrossDictionary
                 JOIN Words w_sub ON wr.WordToId = w_sub.WordId
                 WHERE w_sub.Value IN ({inWordClause})
             ) wr_from ON w.WordId = wr_from.WordFromId
-            LEFT JOIN (
-                SELECT DISTINCT WordToId FROM WordRelations wr
-                JOIN Words w_sub ON wr.WordFromId = w_sub.WordId
-                WHERE w_sub.Value IN ({inWordClause})
-            ) wr_to ON w.WordId = wr_to.WordToId
-            WHERE wr_from.WordFromId IS NULL AND wr_to.WordToId IS NULL
+            WHERE wr_from.WordFromId IS NULL
             AND w.NumberOfWords = 1 
             AND w.NumberOfLetters <= {_maxWordLength}
-            AND w.Value REGEXP '^[A-Å]+$'
+            AND w.Value REGEXP '^[A-Za-zÆØÅæøå]+$'
             ORDER BY w.Value COLLATE utf8mb4_da_0900_as_cs;";
 
             if (_doSQLDebug) _logger?.LogDebug(command.CommandText);

@@ -63,14 +63,24 @@ namespace CrossWord
                     var connectionString = configuration.GetConnectionString(CONNECTION_STRING_KEY);
                     if (string.IsNullOrEmpty(connectionString))
                     {
-                        throw new Exception(string.Format("Cannot use database without a configured connection string! (looking for key: {0})", CONNECTION_STRING_KEY));
+                        throw new Exception(string.Format($"Cannot use database without a configured connection string! (looking for key: {CONNECTION_STRING_KEY})"));
                     }
                     else
                     {
                         var doSQLDebug = configuration.GetValue<bool>("DoSQLDebug");
-                        Log.Information("Using database with connection string: {0} (sql debugging: {1})", connectionString, doSQLDebug);
+                        Log.Information($"Using database with connection string: {connectionString} (sql debugging: {doSQLDebug})");
+
+                        // using exclude words
+                        var excludeWordValues = new List<string>();
+                        var excludeWordArray = configuration.GetSection("ExcludeWords").Get<string[]>();
+                        if (excludeWordArray != null)
+                        {
+                            excludeWordValues = excludeWordArray.ToList();
+                            Log.Information("Building database dictionary excluding words that reference: {0}", excludeWordValues);
+                        }
+
                         var loggerFactory = new LoggerFactory().AddSerilog(Log.Logger);
-                        dictionary = new DatabaseDictionary(connectionString, board.MaxWordLength, loggerFactory, doSQLDebug);
+                        dictionary = new DatabaseDictionary(connectionString, board.MaxWordLength, excludeWordValues, loggerFactory, doSQLDebug);
                     }
                 }
                 else

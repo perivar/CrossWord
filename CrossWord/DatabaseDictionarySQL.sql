@@ -3,7 +3,7 @@ SELECT w.Value
 FROM Words AS w 
 WHERE w.NumberOfWords = 1 
 AND w.NumberOfLetters <= 23 
-AND w.Value REGEXP '^[A-Å]+$'
+AND w.Value REGEXP '^[A-Za-zÆØÅæøå]+$'
 ORDER BY w.Value COLLATE utf8mb4_da_0900_as_cs;
 
 ; -- find all descriptions for the given words separated into three queries 
@@ -102,7 +102,7 @@ SELECT COUNT(w.WordId)
 FROM Words w 
 WHERE w.NumberOfWords = 1 
 AND w.NumberOfLetters <= 23
-AND w.Value REGEXP '^[A-Å]+$'
+AND w.Value REGEXP '^[A-Za-zÆØÅæøå]+$'
 ORDER BY w.Value COLLATE utf8mb4_da_0900_as_cs;
 
 
@@ -134,7 +134,7 @@ SELECT COUNT(w.WordId)
 FROM Words w 
 WHERE w.NumberOfWords = 1 
 AND w.NumberOfLetters <= 23
-AND w.Value REGEXP '^[A-Å]+$'
+AND w.Value REGEXP '^[A-Za-zÆØÅæøå]+$'
 AND w.WordId NOT IN (
     SELECT DISTINCT WordFromId FROM WordRelations WHERE WordToId IN (32170, 31818, 31735)
 )
@@ -157,7 +157,7 @@ LEFT JOIN (
 WHERE wr_from.WordFromId IS NULL AND wr_to.WordToId IS NULL
 AND w.NumberOfWords = 1 
 AND w.NumberOfLetters <= 23
-AND w.Value REGEXP '^[A-Å]+$'
+AND w.Value REGEXP '^[A-Za-zÆØÅæøå]+$'
 ORDER BY w.Value COLLATE utf8mb4_da_0900_as_cs;
 
 
@@ -208,5 +208,30 @@ LEFT JOIN (
 WHERE wr_from.WordFromId IS NULL AND wr_to.WordToId IS NULL
 AND w.NumberOfWords = 1 
 AND w.NumberOfLetters <= 23
-AND w.Value REGEXP '^[A-Å]+$'
+AND w.Value REGEXP '^[A-Za-zÆØÅæøå]+$'
 ORDER BY w.Value COLLATE utf8mb4_da_0900_as_cs;
+
+; -- limit with exclude
+SELECT w.WordId, w.Value
+FROM Words w 
+LEFT JOIN (
+    SELECT DISTINCT WordFromId FROM WordRelations wr
+    JOIN Words w_sub ON wr.WordToId = w_sub.WordId
+    WHERE w_sub.Value IN ('LANDKODE', 'IATA-FLYSELSKAPSKODE', 'IATA-KODE')
+) wr_from ON w.WordId = wr_from.WordFromId
+WHERE wr_from.WordFromId IS NULL
+AND w.NumberOfWords = 1 
+AND w.NumberOfLetters <= 23
+AND w.Value REGEXP '^[A-Za-zÆØÅæøå]+$'
+ORDER BY w.Value COLLATE utf8mb4_da_0900_as_cs
+LIMIT 20;
+
+; -- limit no exclude
+SELECT w.WordId, w.Value
+FROM Words w 
+WHERE w.NumberOfWords = 1 
+AND w.NumberOfLetters <= 23
+AND w.Value REGEXP '^[A-Za-zÆØÅæøå]+$'
+ORDER BY w.Value COLLATE utf8mb4_da_0900_as_cs
+LIMIT 20;
+
