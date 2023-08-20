@@ -1,0 +1,54 @@
+.crossword__cell {
+    cursor: pointer;
+    fill: #ffffff;
+}
+
+.crossword__cell--highlighted {
+    &,
+    .crossword__grid--focussed & {
+        fill: $xword-highlight-colour;
+    }
+}
+
+.crossword__cell--focussed {
+    &,
+    .crossword__grid--focussed & {
+        fill: $xword-focussed-background-colour;
+    }
+}
+
+.crossword__cell-number,
+.crossword__cell-text {
+    fill: $brightness-20;
+    font-family: $f-sans-serif-text;
+}
+
+.crossword__cell-number {
+    font-size: 11px;
+}
+
+.crossword__cell-text {
+    display: inline-block;
+    opacity: 1;
+    -webkit-font-smoothing: subpixel-antialiased;
+    transition: opacity 0.15s ease-in;
+
+    @each $xword, $cells in $xword-grid-sizes {
+        .crossword__container--#{$xword} & {
+            font-size: ceil(1.3px * $cells);
+
+            @include mq(tablet) {
+                font-size: 1.3px * $cells;
+            }
+        }
+    }
+}
+
+.crossword__cell-text--focussed {
+    font-weight: bold;
+}
+
+.crossword__cell-text--error {
+    fill: darken($news-main, 20%);
+    opacity: 0;
+}

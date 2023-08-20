@@ -1,4 +1,54 @@
 {
-    "dotnet.defaultSolution": "CrossWordCore.sln",
-    "cSpell.enabled": false
+  "dotnet.defaultSolution": "CrossWordCore.sln",
+  "cSpell.enabled": false,
+  "editor.detectIndentation": false,
+  "editor.insertSpaces": false,
+  "editor.tabSize": 4,
+  "editor.formatOnSave": true,
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false,
+    "editor.tabSize": 2
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false,
+    "editor.tabSize": 2
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false,
+    "editor.tabSize": 2
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false,
+    "editor.tabSize": 2
+  },
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "eslint.workingDirectories": [
+    { "directory": "ClientApp", "changeProcessCWD": true }
+  ],
+  "css.validate": false,
+  "less.validate": false,
+  "scss.validate": false,
+  "scss.showErrors": false,
+  "backtix.languages": {
+    "javascript": true,
+    "javascriptreact": true,
+    "typescript": true,
+    "typescriptreact": true
+  },
+  "backtix.placeholders": {
+    "active": true,
+    "text": "Add placeholder."
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  }
 }

@@ -1,0 +1,93 @@
+// Import only what you need from Bulma
+@import '../../../../node_modules/bulma/sass/utilities/_all.sass';
+// @import '../../../../node_modules/bulma/sass/base/_all.sass';
+// @import '../../../../node_modules/bulma/sass/elements/_all.sass';
+// @import '../../../../node_modules/bulma/sass/form/_all.sass';
+@import '../../../../node_modules/bulma/sass/components/_all.sass';
+// @import '../../../../node_modules/bulma/sass/grid/_all.sass';
+// @import '../../../../node_modules/bulma/sass/layout/_all.sass';
+
+button.pagination-button {
+    background: none;
+    // font: inherit;
+    // cursor: pointer;
+    // outline: inherit;
+
+    border-color: $pagination-border-color;
+    color: $pagination-color; // text
+
+    // States
+    &:hover,
+    &.is-hovered {
+        //  a rule which only works when you are hovering a button but not clicking it (buttons are :active while you click them).
+        &:not(:active) {
+            border-color: $pagination-hover-border-color;
+        }
+    }
+    &:focus,
+    &.is-focused {
+        border-color: $pagination-border-color; // $pagination-hover-border-color;
+        //  a rule which only works when the button is in focus but not clicking it (buttons are :active while you click them).
+        &:not(:active) {
+            box-shadow: none;
+        }
+    }
+    &:active,
+    &.is-active {
+        border-color: $pagination-hover-border-color;
+    }
+    &.is-current {
+        background-color: $pagination-current-background-color;
+        border-color: $pagination-current-border-color;
+        color: $pagination-current-color;
+
+        &:hover,
+        &.is-hovered {
+            // keep the hover effect
+            // border-color: $pagination-current-background-color;
+        }
+    }
+    // &[disabled] {
+    //     background-color: $pagination-disabled-background-color;
+    //     border-color: $pagination-disabled-border-color;
+    //     box-shadow: none;
+    //     color: $pagination-disabled-color;
+    //     opacity: 0.5;
+    // }
+}
+
+button.is-icon-button {
+    background: none;
+    color: inherit;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+}
+
+.is-icon-button {
+    opacity: 0.5;
+    cursor: pointer;
+    pointer-events: initial !important; // reset pointer events that have been turned off (bulma .icon)
+    z-index: 10;
+}
+
+.is-icon-button:hover {
+    opacity: 1;
+}
+
+/* make sure the editable links are dashed */
+.is-editable,
+a.is-editable,
+a.is-editable:hover {
+    text-decoration: none;
+    border-bottom: dashed 1px;
+}
+
+.is-editable,
+a.is-editable,
+a.is-editable:hover {
+    text-decoration: none;
+    border-bottom: dashed 1px;
+}

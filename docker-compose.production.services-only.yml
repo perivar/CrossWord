@@ -105,6 +105,21 @@ services:
     ports:
       - "8080:8080"
 
+  crosswordfeud:
+    container_name: crossword.feud
+    build:
+      context: ./
+      dockerfile: ClientApp/Dockerfile
+    restart: always
+    depends_on:
+      - api
+    environment:
+      NAME: CrosswordFeud
+    expose:
+      - "3000"
+    ports:
+      - "3000:3000"
+
   smtp:
     container_name: crossword.smtp
     image: namshi/smtp
