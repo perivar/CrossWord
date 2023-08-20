@@ -82,14 +82,14 @@ public class DatabaseDictionary : ICrossDictionary
         ResetVariables(maxWordLength);
     }
 
-    public DatabaseDictionary(string connectionString, int maxWordLength, IEnumerable<string> excludeWordValues, ILoggerFactory loggerFactory, bool doSQLDebug = false)
+    public DatabaseDictionary(string connectionString, int maxWordLength, ILoggerFactory loggerFactory, IConfiguration configuration)
         : this(maxWordLength)
     {
         _logger = loggerFactory.CreateLogger<DatabaseDictionary>();
 
         _connectionString = connectionString;
-        _doSQLDebug = doSQLDebug;
-        _excludeWordValues = excludeWordValues;
+        _doSQLDebug = configuration.GetBoolValue("DoSQLDebug", false);
+        _excludeWordValues = configuration.GetSectionList("ExcludeWords", new List<string>());
 
         InitializeDictionary();
     }

@@ -42,7 +42,7 @@ namespace CrossWord.Scraper.Extensions
         /// <param name="key">key</param>
         /// <param name="defaultValue">default value to return if the key is null or missing</param>
         /// <returns>the key value as a list or empty list</returns>
-        /// <example>KNOWNPROXIES='10.0.0.1, 10.0.0.2'</example>
+        /// <example>docker-compose: - KNOWNPROXIES='10.0.0.1, 10.0.0.2'</example>
         public static List<string> GetArrayValues(this IConfiguration configuration, string key, string defaultValue)
         {
             string stringValue = configuration[key] ?? defaultValue;
@@ -60,13 +60,14 @@ namespace CrossWord.Scraper.Extensions
         /// <param name="key">key</param>
         /// <param name="defaultList">default value to return if the key is null or missing</param>
         /// <returns>the key value as a list or empty list</returns>
-        /// <example>"Words": [ "Word1", "Word2", "Word3" ]</example>
+        /// <example>appconfig.json: "Words": [ "Word1", "Word2", "Word3" ]</example>
+        /// <example>docker-compose: - Words__0=${Words__0}\n- Words__1=${Words__1}</example>
         public static List<string> GetSectionList(this IConfiguration configuration, string key, List<string> defaultList)
         {
-            var stringArray = configuration.GetSection(key).Get<string[]>();
+            var stringArray = configuration.GetSection(key).Get<List<string>>();
             if (stringArray != null)
             {
-                return stringArray.ToList();
+                return stringArray;
             }
             return defaultList;
         }

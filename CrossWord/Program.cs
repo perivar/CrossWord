@@ -67,20 +67,8 @@ namespace CrossWord
                     }
                     else
                     {
-                        var doSQLDebug = configuration.GetValue<bool>("DoSQLDebug");
-                        Log.Information($"Using database with connection string: {connectionString} (sql debugging: {doSQLDebug})");
-
-                        // using exclude words
-                        var excludeWordValues = new List<string>();
-                        var excludeWordArray = configuration.GetSection("ExcludeWords").Get<string[]>();
-                        if (excludeWordArray != null)
-                        {
-                            excludeWordValues = excludeWordArray.ToList();
-                            Log.Information("Building database dictionary excluding words that reference: {0}", excludeWordValues);
-                        }
-
                         var loggerFactory = new LoggerFactory().AddSerilog(Log.Logger);
-                        dictionary = new DatabaseDictionary(connectionString, board.MaxWordLength, excludeWordValues, loggerFactory, doSQLDebug);
+                        dictionary = new DatabaseDictionary(connectionString, board.MaxWordLength, loggerFactory, configuration);
                     }
                 }
                 else

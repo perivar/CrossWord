@@ -92,6 +92,14 @@ services:
       DBPASSWORD: secret
       DATABASE: dictionary
       KNOWNPROXIES: ''
+      ExcludeWords__0: "LANDKODE"
+      ExcludeWords__1: "IATA-FLYSELSKAPSKODE"
+      ExcludeWords__2: "IATA-FLYPLASSKODE"
+      ExcludeWords__3: "IATA-KODE"
+      ExcludeWords__4: "FORKORTELSE"
+      ExcludeWords__5: "ISO-KODE"
+      ExcludeWords__6: "BY"
+      ExcludeWords__7: "NAVN"
     expose:
       - "8080"
     ports:
