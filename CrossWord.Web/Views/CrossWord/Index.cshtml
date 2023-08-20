@@ -79,7 +79,7 @@
 
         function ReloadDictionary() {
             $("#puzTitle").html("Starting reloading the dictionary ...");
-            var reloaddUrl = baseUrl + "crosswords/init";
+            var reloaddUrl = baseUrl + "crosswords/init/25";
             $.getJSON(reloaddUrl, function( json ) {
                 $("#puzTitle").html("Reloaded the dictionary successfully!");
             })

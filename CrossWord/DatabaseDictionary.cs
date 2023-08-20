@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
 
+using CrossWord.Scraper.Extensions;
+
 namespace CrossWord;
 
 public class DatabaseDictionary : ICrossDictionary
@@ -18,10 +20,10 @@ public class DatabaseDictionary : ICrossDictionary
     WordIndex[] _indexes;
     Dictionary<string, string> _description;
 
-    readonly int _maxWordLength; // longest possible word in number of characters
-    readonly IEnumerable<string> _excludeWordValues; // any words that reference these words are excluded
-    readonly bool _doSQLDebug = false;
-    readonly string? _connectionString;
+    int _maxWordLength; // longest possible word in number of characters
+    IEnumerable<string> _excludeWordValues; // any words that reference these words are excluded
+    bool _doSQLDebug = false;
+    string? _connectionString;
 
     private readonly IServiceScopeFactory? _scopeFactory;
     private readonly Microsoft.Extensions.Logging.ILogger? _logger;
@@ -54,32 +56,7 @@ public class DatabaseDictionary : ICrossDictionary
         }
     }
 
-    public IEnumerable<string>[] Words
-    {
-        get { return _words; }
-    }
-
-    public IDictionary<string, string> Descriptions
-    {
-        get { return _description; }
-    }
-
-    public int MaxWordLength
-    {
-        get { return _maxWordLength; }
-    }
-
-    public bool DoSQLDebug
-    {
-        get { return _doSQLDebug; }
-    }
-
-    public IEnumerable<string> ExcludeWordValues
-    {
-        get { return _excludeWordValues; }
-    }
-
-    public DatabaseDictionary(int maxWordLength)
+    private void ResetVariables(int maxWordLength)
     {
         _maxWordLength = maxWordLength;
         _words = new List<string>[maxWordLength + 1];
@@ -96,18 +73,48 @@ public class DatabaseDictionary : ICrossDictionary
 
         _filter = new WordFilter(1, maxWordLength);
         _description = new Dictionary<string, string>();
-        _excludeWordValues = new List<string>();
+
+        // _excludeWordValues = new List<string>(); // do not discard the list that is read in at runtime
+    }
+
+    public DatabaseDictionary(int maxWordLength)
+    {
+        ResetVariables(maxWordLength);
     }
 
     public DatabaseDictionary(string connectionString, int maxWordLength, IEnumerable<string> excludeWordValues, ILoggerFactory loggerFactory, bool doSQLDebug = false)
         : this(maxWordLength)
     {
+        _logger = loggerFactory.CreateLogger<DatabaseDictionary>();
+
         _connectionString = connectionString;
         _doSQLDebug = doSQLDebug;
-        _excludeWordValues = excludeWordValues ?? new List<string>();
+        _excludeWordValues = excludeWordValues;
 
+        InitializeDictionary();
+    }
+
+    // This is intitialized from the API using services.AddSingleton<ICrossDictionary, DatabaseDictionary>();
+    public DatabaseDictionary(ILoggerFactory loggerFactory, IServiceScopeFactory scopeFactory, IConfiguration configuration)
+    : this(configuration.GetIntValue("MaxWordLength", 25))
+    {
         _logger = loggerFactory.CreateLogger<DatabaseDictionary>();
+
+        _scopeFactory = scopeFactory;
+
+        _doSQLDebug = configuration.GetBoolValue("DoSQLDebug", false);
+        _excludeWordValues = configuration.GetSectionList("ExcludeWords", new List<string>());
+
+        InitializeDictionary();
+    }
+
+    private void InitializeDictionary()
+    {
         _logger?.LogInformation("Initializing Database Dictionary");
+        _logger?.LogDebug($"Connection string: {_connectionString}");
+        _logger?.LogDebug($"SQL debugging: {_doSQLDebug}");
+        _logger?.LogDebug("Excluding words longer than: {0} characters", _maxWordLength);
+        _logger?.LogDebug("Excluding words that reference: {0}", _excludeWordValues);
 
         using var db = CreateDbContext();
 
@@ -122,39 +129,16 @@ public class DatabaseDictionary : ICrossDictionary
         db.Database.Migrate();
 
         ReadWordsIntoDatabase(db);
-    }
-
-    // This is intitialized from the API using services.AddSingleton<ICrossDictionary, DatabaseDictionary>();
-    public DatabaseDictionary(ILoggerFactory loggerFactory, IServiceScopeFactory scopeFactory, IConfiguration configuration, int maxWordLength = 25)
-    : this(maxWordLength)
-    {
-        _scopeFactory = scopeFactory;
-
-        _logger = loggerFactory.CreateLogger("DatabaseDictionary");
-        _logger?.LogInformation("Initializing Database Dictionary");
-
-        _doSQLDebug = configuration.GetValue<bool>("DoSQLDebug");
-        _logger?.LogInformation($"Using database (sql debugging: {DoSQLDebug})");
-
-        // using exclude words        
-        var excludeWordArray = configuration.GetSection("ExcludeWords").Get<string[]>();
-        if (excludeWordArray != null)
-        {
-            _excludeWordValues = excludeWordArray.ToList();
-            _logger?.LogInformation("Building database dictionary excluding words that reference: {0}", ExcludeWordValues);
-        }
-
-        ResetDictionary(maxWordLength);
-    }
-
-    public void ResetDictionary(int maxWordLength = 25)
-    {
-        using var db = CreateDbContext();
-        ReadWordsIntoDatabase(db);
 
         // when we exit the using block,
         // the IServiceScope will dispose itself 
         // and dispose all of the services that it resolved.
+    }
+
+    public void ResetDictionary(int maxWordLength)
+    {
+        ResetVariables(maxWordLength);
+        InitializeDictionary();
     }
 
     private void ReadWordsIntoDatabase(WordHintDbContext db)
@@ -347,7 +331,7 @@ public class DatabaseDictionary : ICrossDictionary
                         string? wordText = reader[0].ToString();   // Get wordText from the reader
                         string? hintText = reader[1].ToString();   // Get hintText from the reader
 
-                        if (!Descriptions.ContainsKey(wordText))
+                        if (!_description.ContainsKey(wordText))
                         {
                             // If wordId is encountered for the first time, add hintText to description map
                             AddDescription(wordText!, hintText!);

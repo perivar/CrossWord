@@ -52,5 +52,23 @@ namespace CrossWord.Scraper.Extensions
 
             return stringValues;
         }
+
+        /// <summary>
+        /// Very similar to GetArrayValues() but uses the more modern GetSection to parse an array directly
+        /// </summary>
+        /// <param name="configuration">configuration</param>
+        /// <param name="key">key</param>
+        /// <param name="defaultList">default value to return if the key is null or missing</param>
+        /// <returns>the key value as a list or empty list</returns>
+        /// <example>"Words": [ "Word1", "Word2", "Word3" ]</example>
+        public static List<string> GetSectionList(this IConfiguration configuration, string key, List<string> defaultList)
+        {
+            var stringArray = configuration.GetSection(key).Get<string[]>();
+            if (stringArray != null)
+            {
+                return stringArray.ToList();
+            }
+            return defaultList;
+        }
     }
 }

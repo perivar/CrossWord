@@ -38,14 +38,14 @@ namespace CrossWord.API.Controllers
             this.Queue = queue;
             this.serviceScopeFactory = serviceScopeFactory;
         }
-
-        // GET: api/crosswords/init
+    
+        // GET: api/crosswords/init/25
         // [Authorize]
         [HttpGet]
-        [Route("api/crosswords/init")]
-        public IActionResult InitCrossWordDictionary()
+        [Route("api/crosswords/init/{maxWordLength}")]
+        public IActionResult InitCrossWordDictionary(int maxWordLength)
         {
-            dictionary.ResetDictionary(25);
+            dictionary.ResetDictionary(maxWordLength);
             return Ok("CrossWordDictionary was updated");
         }
 
