@@ -286,6 +286,7 @@ function Autocomplete(props: BulmaAutocompleteArguments) {
             {filteredSuggestions.map((suggestion, index) => {
               return (
                 <div
+                  // eslint-disable-next-line react/no-array-index-key
                   key={index}
                   role="presentation"
                   className={`dropdown-item${index === activeSuggestion ? ' is-active' : ''}`}

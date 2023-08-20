@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import { crosswordActions } from './ducks/actions';
 import { IStoreState } from '../../state/store';
 import { ICrosswordContainerState } from './types';
-import Crossword from './crosswords/crossword';
+import MyCrossword from 'mycrossword';
+import 'mycrossword/dist/index.css';
 
 class CrosswordContainer extends Component<any, ICrosswordContainerState> {
   constructor(props: any) {
@@ -27,14 +28,14 @@ class CrosswordContainer extends Component<any, ICrosswordContainerState> {
     }
 
     return (
-      <div>
+      <>
         {/* {error} */}
         {/* {JSON.stringify(data)} */}
-        <Crossword data={data} />
+        <MyCrossword id={data.id} data={data} />
         <button type="button" className="btn btn-primary" onClick={this.getCrossword}>
           Get crossword
         </button>
-      </div>
+      </>
     );
   }
 }

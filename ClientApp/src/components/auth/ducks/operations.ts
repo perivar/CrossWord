@@ -135,15 +135,11 @@ function _delete(username: string) {
   return fetch(`${config.apiUrl}/api/Account/Delete/${username}`, requestOptions).then(handleResponse);
 }
 
-function refreshToken(token: string, refreshToken: string) {
-  // const encodedToken = encodeURIComponent(token);
-  // const encodedRefreshToken = encodeURIComponent(refreshToken);
-
+function refreshToken(token: string, rToken: string) {
   const requestOptions: RequestInit = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    // body: JSON.stringify({ token: encodedToken, refreshToken: encodedRefreshToken })
-    body: JSON.stringify({ token, refreshToken })
+    body: JSON.stringify({ token, refreshToken: rToken })
   };
 
   // note the refresh is a POST call but with query parameters

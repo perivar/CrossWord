@@ -4,11 +4,22 @@
 
 import { CrosswordActions, CrosswordActionTypes } from './types';
 import { ICrosswordContainerState } from '../types';
-import Crossword from '../crosswords/crossword';
 
 const initialCrosswordState: ICrosswordContainerState = {
   loading: false,
-  data: Crossword.defaultProps.data,
+  data: {
+    id: '',
+    number: 0,
+    name: '',
+    creator: { name: '', webUrl: '' },
+    date: 0,
+    entries: [],
+    solutionAvailable: false,
+    dateSolutionAvailable: 0,
+    dimensions: { rows: 0, cols: 0 },
+    crosswordType: 'quick',
+    pdf: ''
+  },
   error: ''
 };
 

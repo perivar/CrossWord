@@ -112,14 +112,14 @@ function LetterBoxes(props: LetterBoxesArguments) {
   }, [updateHiddenPatternField]);
 
   const updateLetterBoxes = useCallback(
-    (value?: string) => {
-      if (value === '') {
+    (val?: string) => {
+      if (val === '') {
         // reset
         handleReset();
-      } else if (value) {
-        for (let i = 0; i < value.length; i++) {
+      } else if (val) {
+        for (let i = 0; i < val.length; i++) {
           const current = letterBoxRefs.current[i];
-          if (current && value.charAt(i) !== '_') current.value = value.charAt(i);
+          if (current && val.charAt(i) !== '_') current.value = val.charAt(i);
         }
       }
     },
@@ -127,16 +127,16 @@ function LetterBoxes(props: LetterBoxesArguments) {
   );
 
   const handleLetterLess = () => {
-    setLetterCount((letterCount) => {
-      const count = Math.max(letterCount - 1, 0);
+    setLetterCount((lcount) => {
+      const count = Math.max(lcount - 1, 0);
       updateHiddenPatternField(count);
       return count;
     });
   };
 
   const handleLetterMore = () => {
-    setLetterCount((letterCount) => {
-      const count = Math.min(letterCount + 1, MAX_LETTERS);
+    setLetterCount((lcount) => {
+      const count = Math.min(lcount + 1, MAX_LETTERS);
       updateHiddenPatternField(count);
       return count;
     });
