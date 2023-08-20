@@ -1,6 +1,8 @@
-using System.Text.Json;
 using Microsoft.AspNetCore.OData;
+using Microsoft.AspNetCore.OData.NewtonsoftJson;
 using Microsoft.OData.ModelBuilder;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using TodoApi.Models;
 
 namespace TodoApi
@@ -25,20 +27,25 @@ namespace TodoApi
             services.AddAuthorization();
 
             services.AddControllers()
-            .AddJsonOptions(options =>
+            .AddNewtonsoftJson(options =>
                 {
-                    // turn on camel case for non EDM controllers, see EnableLowerCamelCase() for EDM models
-                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-                    options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
-                    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-                    // options.JsonSerializerOptions.WriteIndented = true; // disable indented to save bandwidth and align with odata defaults
+                    // options.UseCamelCasing(false);
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    // options.SerializerSettings.Culture = CultureInfo.InvariantCulture; // Specify culture for parsing and formatting
+                    // options.SerializerSettings.Formatting = Formatting.None; // You can set it to Formatting.Indented if you want indented output
+                    // options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore; // Ignore null values
+                    // options.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+                    // options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+                    // options.SerializerSettings.MetadataPropertyHandling = MetadataPropertyHandling.Ignore;
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore; // Handle circular references
                 })
             .AddOData(
                 options =>
                 {
                     options.Select().Filter().OrderBy().Expand().Count().SetMaxTop(300);
                     options.AddRouteComponents("odata", modelBuilder.GetEdmModel());
-                });
+                })
+            .AddODataNewtonsoftJson();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
