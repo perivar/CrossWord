@@ -21,7 +21,7 @@ networks:
 services:
   db:
     container_name: crosswordapi.db
-    image: mysql:8.0.15
+    image: mysql:8.0.34
     volumes:
       - ./init-db-scripts/:/docker-entrypoint-initdb.d/ # reload using docker-compose down -v (Note that this deletes the volumes!)
       - datafiles:/var/lib/mysql

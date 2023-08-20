@@ -6,7 +6,7 @@ services:
   # Used for handling the services separate from the proxy and certbot docker containers
   db:
     container_name: crossword.db
-    image: mysql:8.0.15
+    image: mysql:8.0.34
     command: [--default-authentication-plugin=mysql_native_password]      # get rid of the Authentication plugin ‘caching_sha2_password’ cannot be loaded error
     volumes:
       - ./CrossWord.Scraper/init-db-scripts/:/docker-entrypoint-initdb.d/ # reload using docker-compose down -v (Note that this deletes the volumes!)

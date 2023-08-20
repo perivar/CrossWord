@@ -28,7 +28,7 @@ networks:
 services:
   db:
     container_name: crosswordapi.db
-    image: mysql:8.0.15
+    image: mysql:8.0.34
     volumes:
       - datafiles:/var/lib/mysql
     restart: always

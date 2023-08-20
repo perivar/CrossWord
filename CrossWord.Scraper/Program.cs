@@ -40,7 +40,7 @@ namespace CrossWord.Scraper
             // either use a local mysql install running on port 3306 (default)
             // or use Docker:
             // spinning up directly on port 3360
-            // docker run -p 3360:3306 --name mysqldb -e MYSQL_ROOT_PASSWORD=password -d mysql:8.0.15            
+            // docker run -p 3360:3306 --name mysqldb -e MYSQL_ROOT_PASSWORD=password -d mysql:8.0.34            
             // or use docker compose to init with data on port 3360
             // docker compose up db -d
             // and enter using
