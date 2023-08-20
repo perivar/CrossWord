@@ -15,10 +15,10 @@ WORKDIR /app
 # RUN npm ci 
 
 # Cache and install dependencies
-COPY package.json .
-# COPY package-lock.json .
+COPY ClientApp/package.json .
+# COPY ClientApp/package-lock.json .
 # RUN npm install
-COPY yarn.lock .
+COPY ClientApp/yarn.lock .
 RUN yarn
 
 # Copy over the rest of the client files
