@@ -22,7 +22,7 @@ COPY ClientApp/yarn.lock .
 RUN yarn
 
 # Copy over the rest of the client files
-COPY . .
+COPY ClientApp/. .
 # RUN npm run build
 RUN yarn build
 
@@ -37,8 +37,8 @@ COPY --from=builder /app/build /usr/share/nginx/html
 
 # Add your nginx.conf
 RUN rm /etc/nginx/conf.d/default.conf
-COPY nginx/default.conf /etc/nginx/conf.d
-COPY nginx/gzip.conf /etc/nginx/conf.d
+COPY ClientApp/nginx/default.conf /etc/nginx/conf.d
+COPY ClientApp/nginx/gzip.conf /etc/nginx/conf.d
 
 # EXPOSE 3000 # Remember, I like to expose ports in docker-compose
 
