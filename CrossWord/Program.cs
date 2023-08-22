@@ -15,6 +15,7 @@ using Serilog;
 using CrossWord.Scraper.Extensions;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using System.Text;
 
 namespace CrossWord
 {
@@ -34,12 +35,39 @@ namespace CrossWord
 				.ReadFrom.Configuration(configuration)
 				.CreateLogger();
 
+			// output æøå properly to console
+			Console.OutputEncoding = Console.InputEncoding = Encoding.UTF8;
+
 			Log.Information("Starting Puzzle generator app ver. {0} ", "1.0");
 
 			if (!ParseInput(args, out string inputFile, out string outputFile, out string dictionaryFile, out string? puzzle))
 			{
 				return 1;
 			}
+
+			try
+			{
+				if (outputFile.Equals("database"))
+				{
+					const string CONNECTION_STRING_KEY = "DefaultConnection";
+					var connectionString = configuration.GetConnectionString(CONNECTION_STRING_KEY);
+					if (string.IsNullOrEmpty(connectionString))
+					{
+						throw new Exception(string.Format($"Cannot use database without a configured connection string! (looking for key: {CONNECTION_STRING_KEY})"));
+					}
+					else
+					{
+						var doSQLDebug = configuration.GetBoolValue("DoSQLDebug", false);
+						OutputToDatabase(connectionString, doSQLDebug, dictionaryFile);
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				Log.Error(e, $"Cannot load {dictionaryFile} into database.");
+				return 2;
+			}
+
 			ICrossBoard board;
 			try
 			{
@@ -55,7 +83,7 @@ namespace CrossWord
 			catch (Exception e)
 			{
 				Log.Error(e, $"Cannot load crossword layout from file {inputFile}.");
-				return 2;
+				return 3;
 			}
 
 			ICrossDictionary dictionary;
@@ -83,7 +111,7 @@ namespace CrossWord
 			catch (Exception e)
 			{
 				Log.Error(e, $"Cannot load dictionary from file {dictionaryFile}.");
-				return 3;
+				return 4;
 			}
 
 			if (outputFile.Equals("signalr"))
@@ -123,25 +151,11 @@ namespace CrossWord
 				catch (Exception e)
 				{
 					Log.Error(e, $"Failed generating crossword asynchronously");
-					return 4;
+					return 5;
 				}
 				finally
 				{
 					tokenSource.Dispose();
-				}
-			}
-			else if (outputFile.Equals("database"))
-			{
-				const string CONNECTION_STRING_KEY = "DefaultConnection";
-				var connectionString = configuration.GetConnectionString(CONNECTION_STRING_KEY);
-				if (string.IsNullOrEmpty(connectionString))
-				{
-					throw new Exception(string.Format($"Cannot use database without a configured connection string! (looking for key: {CONNECTION_STRING_KEY})"));
-				}
-				else
-				{
-					var doSQLDebug = configuration.GetBoolValue("DoSQLDebug", false);
-					OutputToDatabase(connectionString, doSQLDebug, dictionaryFile);
 				}
 			}
 			else
@@ -156,13 +170,13 @@ namespace CrossWord
 				catch (Exception e)
 				{
 					Log.Error(e, $"Generating crossword has failed.");
-					return 5;
+					return 6;
 				}
 
 				if (resultBoard == null)
 				{
 					Log.Error("No solution has been found.");
-					return 6;
+					return 7;
 				}
 
 				try
@@ -172,7 +186,7 @@ namespace CrossWord
 				catch (Exception e)
 				{
 					Log.Error(e, $"Saving result crossword to file {outputFile} has failed.");
-					return 7;
+					return 8;
 				}
 			}
 			return 0;
@@ -276,6 +290,90 @@ namespace CrossWord
 				}
 				Console.WriteLine("Done!");
 			}
+			else if (Path.GetExtension(dictionaryFile).ToLower().Equals(".dat"))
+			{
+				// read first line from the file using default encoding
+				Encoding? encoding = null;
+				using (StreamReader reader = new(dictionaryFile))
+				{
+					var encodingString = reader.ReadLine();
+					if (!string.IsNullOrEmpty(encodingString))
+					{
+						encoding = Encoding.GetEncoding(encodingString);
+					}
+				}
+
+				if (encoding == null)
+				{
+					throw new Exception("Could not detect file encoding!");
+				}
+				else
+				{
+					Console.WriteLine("Detected file encoding: {0}", encoding.HeaderName);
+				}
+
+				using (StreamReader reader = new(dictionaryFile, encoding))
+				{
+					string linePattern = @"\|(\d+)$"; // Regex pattern to detect lines ending with |<number>
+					int lineCounter = 0;
+					int count = 0;
+					int totalCount = 0; // unknown
+					while (!reader.EndOfStream)
+					{
+						string? line = reader.ReadLine();
+						lineCounter++;
+
+						// skip first line
+						if (lineCounter == 1) continue;
+
+						string wordText = "";
+						int numberOfLinesToRead = 0;
+						if (!string.IsNullOrEmpty(line))
+						{
+							Match match = Regex.Match(line, linePattern);
+							if (match.Success)
+							{
+								count++;
+
+								wordText = line.Substring(0, match.Index);
+								numberOfLinesToRead = int.Parse(match.Groups[1].Value);
+
+								var relatedArray = new HashSet<string>();
+								for (int i = 0; i < numberOfLinesToRead; i++)
+								{
+									string? l = reader.ReadLine();
+									if (!string.IsNullOrEmpty(l))
+									{
+										var synonyms = l.Split('|').Skip(1); // ignore the first "-" entry
+										foreach (string synonym in synonyms)
+										{
+											relatedArray.Add(synonym);
+										}
+									}
+								}
+
+								// Define a regex pattern to match "(word)"
+								string pattern = @"^\([^)]+\)\s*";
+								wordText = Regex.Replace(wordText, pattern, ""); // Replace the pattern with an empty string
+
+								// Console.WriteLine("{0} {1}:{2}", lineCounter, word, string.Join(",", synonyms));
+								WordDatabaseService.AddToDatabase(db, source, adminUser, wordText, relatedArray, Console.Out);
+
+								if (isDebugging)
+								{
+									// in debug mode the Console.Write \r isn't shown in the output console
+									Console.WriteLine("[{0}] / [{1}]", count, totalCount);
+								}
+								else
+								{
+									Console.Write("\r[{0}] / [{1}]", count, totalCount);
+								}
+							}
+						}
+					}
+				}
+				Console.WriteLine("Done!");
+			}
 		}
 
 		static bool ParseInput(IEnumerable<string> args, out string inputFile, out string outputFile, out string dictionary, out string? puzzle)
@@ -295,7 +393,12 @@ namespace CrossWord
 			outputFile = o;
 			puzzle = p;
 			dictionary = d;
-			if (help || unparsed.Count > 1 || string.IsNullOrEmpty(i) ||
+			// support not having mandatory input file if we write to a database, then only directory file is required
+			if ("database".Equals(o) && !string.IsNullOrEmpty(d))
+			{
+				return true;
+			}
+			else if (help || unparsed.Count > 1 || string.IsNullOrEmpty(i) ||
 				string.IsNullOrEmpty(o) || string.IsNullOrEmpty(d))
 			{
 				optionSet.WriteOptionDescriptions(Console.Out);
@@ -310,6 +413,18 @@ namespace CrossWord
 			using var writer = new StreamWriter(new FileStream(outputFile, FileMode.Create));
 			resultBoard.WriteTo(writer);
 			resultBoard.WritePatternsTo(writer, dictionary);
+		}
+
+		static IEnumerable<string> ReadLines(string filePath, Encoding encoding)
+		{
+			using (StreamReader reader = new(filePath, encoding))
+			{
+				string? line;
+				while ((line = reader.ReadLine()) != null)
+				{
+					yield return line;
+				}
+			}
 		}
 	}
 }

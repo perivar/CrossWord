@@ -343,19 +343,36 @@
       "internalConsoleOptions": "openOnSessionStart"
     },
     {
-      "name": "CrossWord (importer Norsk)",
+      "name": "CrossWord (import norwegian-synonyms.json)",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
       "program": "${workspaceFolder}/CrossWord/bin/Debug/net7.0/CrossWord.dll",
       "args": [
-        "-i",
-        "${workspaceFolder}/templates/template1.txt",
         "-o",
         "database",
         "-d",
         "${workspaceFolder}/dict/norwegian-synonyms.json"
+      ],
+      "cwd": "${workspaceFolder}/CrossWord",
+      // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
+      "console": "integratedTerminal",
+      "stopAtEntry": false,
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "name": "CrossWord (import th_nb_NO_v2.dat)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      // If you have changed target frameworks, make sure to update the program path.
+      "program": "${workspaceFolder}/CrossWord/bin/Debug/net7.0/CrossWord.dll",
+      "args": [
+        "-o",
+        "database",
+        "-d",
+        "${workspaceFolder}/dict/th_nb_NO_v2.dat"
       ],
       "cwd": "${workspaceFolder}/CrossWord",
       // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
