@@ -60,6 +60,7 @@ namespace CrossWord
 						var doSQLDebug = configuration.GetBoolValue("DoSQLDebug", false);
 						OutputToDatabase(connectionString, doSQLDebug, dictionaryFile);
 					}
+					return 0;
 				}
 			}
 			catch (Exception e)
