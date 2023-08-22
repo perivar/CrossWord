@@ -357,7 +357,7 @@ namespace CrossWord
 								wordText = Regex.Replace(wordText, pattern, ""); // Replace the pattern with an empty string
 
 								// Console.WriteLine("{0} {1}:{2}", lineCounter, word, string.Join(",", synonyms));
-								WordDatabaseService.AddToDatabase(db, source, adminUser, wordText, relatedArray, Console.Out);
+								WordDatabaseService.AddToDatabase(db, source, adminUser, wordText, relatedArray);
 
 								if (isDebugging)
 								{
