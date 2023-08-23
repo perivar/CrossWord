@@ -259,7 +259,7 @@
       "program": "${workspaceFolder}/CrossWord/bin/Debug/net7.0/CrossWord.dll",
       "args": [
         "-i",
-        "http-random",
+        "${workspaceFolder}/templates/british.txt",
         "-o",
         "signalr",
         "-d",

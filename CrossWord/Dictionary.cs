@@ -95,14 +95,14 @@ public class Dictionary : ICrossDictionary
 					// skip first line
 					if (lineCounter == 1) continue;
 
-					string wordText = "";
+					string description = "";
 					int numberOfLinesToRead = 0;
 					if (!string.IsNullOrEmpty(line))
 					{
 						Match match = Regex.Match(line, linePattern);
 						if (match.Success)
 						{
-							wordText = line.Substring(0, match.Index);
+							description = line.Substring(0, match.Index);
 							numberOfLinesToRead = int.Parse(match.Groups[1].Value);
 
 							var relatedArray = new HashSet<string>();
@@ -121,14 +121,15 @@ public class Dictionary : ICrossDictionary
 
 							// Define a regex pattern to match "(word)"
 							string pattern = @"^\([^)]+\)\s*";
-							wordText = Regex.Replace(wordText, pattern, ""); // Replace the pattern with an empty string
+							description = Regex.Replace(description, pattern, ""); // Replace the pattern with an empty string
 
 							// Console.WriteLine("{0} {1}:{2}", lineCounter, word, string.Join(",", synonyms));
 
 							foreach (string synonym in relatedArray)
 							{
-								AddWord(synonym);
-								AddDescription(synonym, wordText);
+								var word = synonym.ToUpper();
+								AddWord(word);
+								AddDescription(word, description);
 							}
 						}
 					}
