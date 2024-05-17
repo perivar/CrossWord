@@ -98,7 +98,7 @@
       "processId": "${command:pickProcess}"
     },
     {
-      "name": "CrossWord (Template1 En)",
+      "name": "CrossWord (generate) ENG TMP1",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
@@ -119,7 +119,7 @@
       "internalConsoleOptions": "openOnSessionStart"
     },
     {
-      "name": "CrossWord (Template2 En)",
+      "name": "CrossWord (generate) ENG TMP2",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
@@ -140,7 +140,7 @@
       "internalConsoleOptions": "openOnSessionStart"
     },
     {
-      "name": "CrossWord (American En)",
+      "name": "CrossWord (generate ISRAEL) ENG",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
@@ -163,7 +163,7 @@
       "internalConsoleOptions": "openOnSessionStart"
     },
     {
-      "name": "CrossWord (perivar En)",
+      "name": "CrossWord (generate) ENG perivar",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
@@ -184,7 +184,7 @@
       "internalConsoleOptions": "openOnSessionStart"
     },
     {
-      "name": "CrossWord (generator En)",
+      "name": "CrossWord (generate) ENG",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
@@ -205,7 +205,7 @@
       "internalConsoleOptions": "openOnSessionStart"
     },
     {
-      "name": "CrossWord (generator En Norway)",
+      "name": "CrossWord (generate Norway) ENG",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
@@ -228,7 +228,7 @@
       "internalConsoleOptions": "openOnSessionStart"
     },
     {
-      "name": "CrossWord (generator Norsk Maleri)",
+      "name": "CrossWord (generate Maleri) JSON",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
@@ -251,7 +251,30 @@
       "internalConsoleOptions": "openOnSessionStart"
     },
     {
-      "name": "CrossWord (generator Norsk db Maleri)",
+      "name": "CrossWord (generate Maleri) DAT",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      // If you have changed target frameworks, make sure to update the program path.
+      "program": "${workspaceFolder}/CrossWord/bin/Debug/net7.0/CrossWord.dll",
+      "args": [
+        "-i",
+        "${workspaceFolder}/templates/british.txt",
+        "-o",
+        "signalr",
+        "-d",
+        "${workspaceFolder}/dict/th_nb_NO_v2.dat",
+        "-p",
+        "MALERI"
+      ],
+      "cwd": "${workspaceFolder}/CrossWord",
+      // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
+      "console": "integratedTerminal",
+      "stopAtEntry": false,
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "name": "CrossWord (generate Maleri) DB",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
@@ -274,7 +297,7 @@
       "internalConsoleOptions": "openOnSessionStart"
     },
     {
-      "name": "CrossWord (generator Norsk db Norway)",
+      "name": "CrossWord (generate Norway) DB AMER",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
@@ -297,7 +320,7 @@
       "internalConsoleOptions": "openOnSessionStart"
     },
     {
-      "name": "CrossWord (generator NO DB NY RND POTET)",
+      "name": "CrossWord (generate POTET) DB RND",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
@@ -320,7 +343,7 @@
       "internalConsoleOptions": "openOnSessionStart"
     },
     {
-      "name": "CrossWord (generator NO DB NY 2002 POTET)",
+      "name": "CrossWord (generate POTET) DB 2002",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
@@ -343,19 +366,36 @@
       "internalConsoleOptions": "openOnSessionStart"
     },
     {
-      "name": "CrossWord (importer Norsk)",
+      "name": "CrossWord (import norwegian-synonyms.json)",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
       "program": "${workspaceFolder}/CrossWord/bin/Debug/net7.0/CrossWord.dll",
       "args": [
-        "-i",
-        "${workspaceFolder}/templates/template1.txt",
         "-o",
         "database",
         "-d",
         "${workspaceFolder}/dict/norwegian-synonyms.json"
+      ],
+      "cwd": "${workspaceFolder}/CrossWord",
+      // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
+      "console": "integratedTerminal",
+      "stopAtEntry": false,
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "name": "CrossWord (import th_nb_NO_v2.dat)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      // If you have changed target frameworks, make sure to update the program path.
+      "program": "${workspaceFolder}/CrossWord/bin/Debug/net7.0/CrossWord.dll",
+      "args": [
+        "-o",
+        "database",
+        "-d",
+        "${workspaceFolder}/dict/th_nb_NO_v2.dat"
       ],
       "cwd": "${workspaceFolder}/CrossWord",
       // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
